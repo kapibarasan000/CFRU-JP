@@ -1,0 +1,38 @@
+#org @SpikesLayString
+[FD][35] あしもとに\nまきびしが ちらばった！
+
+#org @ToxicSpikesLayString
+[FD][35] あしもとに\nどくびしが ちらばった！
+
+#org @StealthRockLayString
+[FD][35] まわりに\nとがったいわが ただよいはじめた！
+
+#org @StickyWebLayString
+[FD][35] あしもとに\nねばねばネットが ひろがった！
+
+#org @gText_SteelsurgeLay
+[FD][35] まわりに\nとがった はがねが ただよいはじめた！
+
+#org @RemovedEntryHazardsString
+[FD][36] まわりの\nトラップが きえさった！
+
+#org @RemovedEntryHazardsTargetSideString
+[FD][35] まわりの\nトラップが きえさった！
+
+#org @gText_HurtBySpikes
+[TARGET]は\nまきびしの ダメージを うけた！
+
+#org @gText_HurtByStealthRock
+[TARGET]に\nとがったいわが くいこんだ！
+
+#org @gText_HurtBySteelsurge
+[TARGET]に\nとがった はがねが くいこんだ！
+
+#org @gText_AbsorbedToxicSpikes
+[FD][36] あしもとの\nどくびしが きえさった！
+
+#org @gText_CaughtInStickyWeb
+[TARGET]は\nねばねばネットに ひっかかった！
+
+#org @gText_HazardsBlownAway
+[ATTACKER]は まわりの\nトラップを ふきとばした！

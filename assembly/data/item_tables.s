@@ -1,0 +1,224 @@
+.thumb
+.global AbilityDamageListTable
+
+.include "../asm_defines.s"
+
+/*
+item_tables.s
+	tables of item IDs associated with battle moves and effects
+*/
+
+.equ ITEM_TABLES_TERMIN, 0xFEFE
+
+.global gNaturalGiftTable
+.global ConsumableItemEffectTable
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+gNaturalGiftTable:
+.hword ITEM_CHERI_BERRY
+.byte TYPE_FIRE, 80
+
+.hword ITEM_CHESTO_BERRY
+.byte TYPE_WATER, 80
+
+.hword ITEM_PECHA_BERRY
+.byte TYPE_ELECTRIC, 80
+
+.hword ITEM_RAWST_BERRY
+.byte TYPE_GRASS, 80
+
+.hword ITEM_ASPEAR_BERRY
+.byte TYPE_ICE, 80
+
+.hword ITEM_LEPPA_BERRY
+.byte TYPE_FIGHTING, 80
+
+.hword ITEM_ORAN_BERRY
+.byte TYPE_POISON, 80
+
+.hword ITEM_PERSIM_BERRY
+.byte TYPE_GROUND, 80
+
+.hword ITEM_LUM_BERRY
+.byte TYPE_FLYING, 80
+
+.hword ITEM_SITRUS_BERRY
+.byte TYPE_PSYCHIC, 80
+
+.hword ITEM_FIGY_BERRY
+.byte TYPE_BUG, 80
+
+.hword ITEM_WIKI_BERRY
+.byte TYPE_ROCK, 80
+
+.hword ITEM_MAGO_BERRY
+.byte TYPE_GHOST, 80
+
+.hword ITEM_AGUAV_BERRY
+.byte TYPE_DRAGON, 80
+
+.hword ITEM_IAPAPA_BERRY
+.byte TYPE_DARK, 80
+
+.hword ITEM_RAZZ_BERRY
+.byte TYPE_STEEL, 80
+
+.hword ITEM_BLUK_BERRY
+.byte TYPE_FIRE, 90
+
+.hword ITEM_NANAB_BERRY
+.byte TYPE_WATER, 90
+
+.hword ITEM_WEPEAR_BERRY
+.byte TYPE_ELECTRIC, 90
+
+.hword ITEM_PINAP_BERRY
+.byte TYPE_GRASS, 90
+
+.hword ITEM_POMEG_BERRY
+.byte TYPE_ICE, 90
+
+.hword ITEM_KELPSY_BERRY
+.byte TYPE_FIGHTING, 90
+
+.hword ITEM_QUALOT_BERRY
+.byte TYPE_POISON, 90
+
+.hword ITEM_HONDEW_BERRY
+.byte TYPE_GROUND, 90
+
+.hword ITEM_GREPA_BERRY
+.byte TYPE_FLYING, 90
+
+.hword ITEM_TAMATO_BERRY
+.byte TYPE_PSYCHIC, 90
+
+.hword ITEM_CORNN_BERRY
+.byte TYPE_BUG, 90
+
+.hword ITEM_MAGOST_BERRY
+.byte TYPE_ROCK, 90
+
+.hword ITEM_RABUTA_BERRY
+.byte TYPE_GHOST, 90
+
+.hword ITEM_NOMEL_BERRY
+.byte TYPE_DRAGON, 90
+
+.hword ITEM_SPELON_BERRY
+.byte TYPE_DARK, 90
+
+.hword ITEM_PAMTRE_BERRY
+.byte TYPE_STEEL, 90
+
+.hword ITEM_WATMEL_BERRY
+.byte TYPE_FIRE, 100
+
+.hword ITEM_DURIN_BERRY
+.byte TYPE_WATER, 100
+
+.hword ITEM_BELUE_BERRY
+.byte TYPE_ELECTRIC, 100
+
+.hword ITEM_OCCA_BERRY
+.byte TYPE_FIRE, 80
+
+.hword ITEM_PASSHO_BERRY
+.byte TYPE_WATER, 80
+
+.hword ITEM_WACAN_BERRY
+.byte TYPE_ELECTRIC, 80
+
+.hword ITEM_RINDO_BERRY
+.byte TYPE_GRASS, 80
+
+.hword ITEM_YACHE_BERRY
+.byte TYPE_ICE, 80
+
+.hword ITEM_CHOPLE_BERRY
+.byte TYPE_FIGHTING, 80
+
+.hword ITEM_KEBIA_BERRY
+.byte TYPE_POISON, 80
+
+.hword ITEM_SHUCA_BERRY
+.byte TYPE_GROUND, 80
+
+.hword ITEM_COBA_BERRY
+.byte TYPE_FLYING, 80
+
+.hword ITEM_PAYAPA_BERRY
+.byte TYPE_PSYCHIC, 80
+
+.hword ITEM_TANGA_BERRY
+.byte TYPE_BUG, 80
+
+.hword ITEM_CHARTI_BERRY
+.byte TYPE_ROCK, 80
+
+.hword ITEM_KASIB_BERRY
+.byte TYPE_GHOST, 80
+
+.hword ITEM_HABAN_BERRY
+.byte TYPE_DRAGON, 80
+
+.hword ITEM_COLBUR_BERRY
+.byte TYPE_DARK, 80
+
+.hword ITEM_BABIRI_BERRY
+.byte TYPE_STEEL, 80
+
+.hword ITEM_CHILAN_BERRY
+.byte TYPE_NORMAL, 80
+
+.hword ITEM_LIECHI_BERRY
+.byte TYPE_GRASS, 100
+
+.hword ITEM_GANLON_BERRY
+.byte TYPE_ICE, 100
+
+.hword ITEM_SALAC_BERRY
+.byte TYPE_FIGHTING, 100
+
+.hword ITEM_PETAYA_BERRY
+.byte TYPE_POISON, 100
+
+.hword ITEM_APICOT_BERRY
+.byte TYPE_GROUND, 100
+
+.hword ITEM_LANSAT_BERRY
+.byte TYPE_FLYING, 100
+
+.hword ITEM_STARF_BERRY
+.byte TYPE_PSYCHIC, 100
+
+.hword ITEM_ENIGMA_BERRY_OLD
+.byte TYPE_BUG, 100
+
+.hword ITEM_ENIGMA_BERRY
+.byte TYPE_BUG, 100
+
+.hword ITEM_MICLE_BERRY
+.byte TYPE_ROCK, 100
+
+.hword ITEM_CUSTAP_BERRY
+.byte TYPE_GHOST, 100
+
+.hword ITEM_JABOCA_BERRY
+.byte TYPE_DRAGON, 100
+
+.hword ITEM_ROWAP_BERRY
+.byte TYPE_DARK, 100
+
+.hword ITEM_ROSELI_BERRY
+.byte TYPE_FAIRY, 100
+
+.hword ITEM_KEE_BERRY
+.byte TYPE_FAIRY, 100
+
+.hword ITEM_MARANGA_BERRY
+.byte TYPE_DARK, 100
+
+.hword ITEM_TABLES_TERMIN
+.hword ITEM_TABLES_TERMIN

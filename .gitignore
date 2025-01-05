@@ -1,0 +1,29 @@
+Grit_Flags.docx
+*.ini
+*.gba
+build/*
+*/Images/*.h
+*.sgm
+*.dmp
+*.bak
+*.lnk
+*.sav
+*.sa1
+*.sg1
+*.ss1
+*.ss2
+*.ss3
+Multi Target Moves Plan.txt
+generatedrepoints
+*__pycache__
+*.idea
+tables.xlsx
+cfru_thread.txt
+src/Tables/criminon_trainer_spreads.c
+Cover Art.png
+
+# generated temporary files
+.fuse*
+
+# pycache files
+*.pyc

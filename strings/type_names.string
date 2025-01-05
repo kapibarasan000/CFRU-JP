@@ -1,0 +1,75 @@
+MAX_LENGTH=5
+FILL_FF=True
+
+#org @gTypeNames
+#org @NAME_NORMAL
+ノーマル
+
+#org @NAME_FIGHTING
+かくとう
+
+#org @NAME_FLYING
+ひこう
+
+#org @NAME_POISON
+どく
+
+#org @NAME_GROUND
+じめん
+
+#org @NAME_ROCK
+いわ
+
+#org @NAME_BUG
+むし
+
+#org @NAME_GHOST
+ゴースト
+
+#org @NAME_STEEL
+はがね
+
+#org @NAME_TYPELESS
+？？？
+
+#org @NAME_FIRE
+ほのお
+
+#org @NAME_WATER
+みず
+
+#org @NAME_GRASS
+くさ
+
+#org @NAME_ELECTRIC
+でんき
+
+#org @NAME_PSYCHC
+エスパー
+
+#org @NAME_ICE
+こおり
+
+#org @NAME_DRAGON
+ドラゴン
+
+#org @NAME_DARK
+あく
+
+#org @FAIRY_TYPE_ALIGNMENT_1
+ー
+
+#org @FAIRY_TYPE_ALIGNMENT_2
+ー
+
+#org @FAIRY_TYPE_ALIGNMENT_3
+ー
+
+#org @FAIRY_TYPE_ALIGNMENT_4
+ー
+
+#org @FAIRY_TYPE_ALIGNMENT_5
+ー
+
+#org @NAME_FAIRY
+フェアリー

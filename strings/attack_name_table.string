@@ -1,0 +1,2700 @@
+MAX_LENGTH=15
+FILL_FF=True
+
+#org @gMoveNames
+#org @NAME_MOVE_NONE
+ー
+
+#org @NAME_POUND
+はたく
+
+#org @NAME_KARATE_CHOP
+からてチョップ
+
+#org @NAME_DOUBLESLAP
+おうふくビンタ
+
+#org @NAME_COMET_PUNCH
+れんぞくパンチ
+
+#org @NAME_MEGA_PUNCH
+メガトンパンチ
+
+#org @NAME_PAY_DAY
+ネコにこばん
+
+#org @NAME_FIRE_PUNCH
+ほのおのパンチ
+
+#org @NAME_ICE_PUNCH
+れいとうパンチ
+
+#org @NAME_THUNDERPUNCH
+かみなりパンチ
+
+#org @NAME_SCRATCH
+ひっかく
+
+#org @NAME_VISE_GRIP
+はさむ
+
+#org @NAME_GUILLOTINE
+ハサミギロチン
+
+#org @NAME_RAZOR_WIND
+かまいたち
+
+#org @NAME_SWORDS_DANCE
+つるぎのまい
+
+#org @NAME_CUT
+いあいぎり
+
+#org @NAME_GUST
+かぜおこし
+
+#org @NAME_WING_ATTACK
+つばさでうつ
+
+#org @NAME_WHIRLWIND
+ふきとばし
+
+#org @NAME_FLY
+そらをとぶ
+
+#org @NAME_BIND
+しめつける
+
+#org @NAME_SLAM
+たたきつける
+
+#org @NAME_VINE_WHIP
+つるのムチ
+
+#org @NAME_STOMP
+ふみつけ
+
+#org @NAME_DOUBLE_KICK
+にどげり
+
+#org @NAME_MEGA_KICK
+メガトンキック
+
+#org @NAME_JUMP_KICK
+とびげり
+
+#org @NAME_ROLLING_KICK
+まわしげり
+
+#org @NAME_SAND_ATTACK
+すなかけ
+
+#org @NAME_HEADBUTT
+ずつき
+
+#org @NAME_HORN_ATTACK
+つのでつく
+
+#org @NAME_FURY_ATTACK
+みだれづき
+
+#org @NAME_HORN_DRILL
+つのドリル
+
+#org @NAME_TACKLE
+たいあたり
+
+#org @NAME_BODY_SLAM
+のしかかり
+
+#org @NAME_WRAP
+まきつく
+
+#org @NAME_TAKE_DOWN
+とっしん
+
+#org @NAME_THRASH
+あばれる
+
+#org @NAME_DOUBLE_EDGE
+すてみタックル
+
+#org @NAME_TAIL_WHIP
+しっぽをふる
+
+#org @NAME_POISON_STING
+どくばり
+
+#org @NAME_TWINEEDLE
+ダブルニードル
+
+#org @NAME_PIN_MISSILE
+ミサイルばり
+
+#org @NAME_LEER
+にらみつける
+
+#org @NAME_BITE
+かみつく
+
+#org @NAME_GROWL
+なきごえ
+
+#org @NAME_ROAR
+ほえる
+
+#org @NAME_SING
+うたう
+
+#org @NAME_SUPERSONIC
+ちょうおんぱ
+
+#org @NAME_SONIC_BOOM
+ソニックブーム
+
+#org @NAME_DISABLE
+かなしばり
+
+#org @NAME_ACID
+ようかいえき
+
+#org @NAME_EMBER
+ひのこ
+
+#org @NAME_FLAMETHROWER
+かえんほうしゃ
+
+#org @NAME_MIST
+しろいきり
+
+#org @NAME_WATER_GUN
+みずでっぽう
+
+#org @NAME_HYDRO_PUMP
+ハイドロポンプ
+
+#org @NAME_SURF
+なみのり
+
+#org @NAME_ICE_BEAM
+れいとうビーム
+
+#org @NAME_BLIZZARD
+ふぶき
+
+#org @NAME_PSYBEAM
+サイケこうせん
+
+#org @NAME_BUBBLE_BEAM
+バブルこうせん
+
+#org @NAME_AURORA_BEAM
+オーロラビーム
+
+#org @NAME_HYPER_BEAM
+はかいこうせん
+
+#org @NAME_PECK
+つつく
+
+#org @NAME_DRILL_PECK
+ドリルくちばし
+
+#org @NAME_SUBMISSION
+じごくぐるま
+
+#org @NAME_LOW_KICK
+けたぐり
+
+#org @NAME_COUNTER
+カウンター
+
+#org @NAME_SEISMIC_TOSS
+ちきゅうなげ
+
+#org @NAME_STRENGTH
+かいりき
+
+#org @NAME_ABSORB
+すいとる
+
+#org @NAME_MEGA_DRAIN
+メガドレイン
+
+#org @NAME_LEECH_SEED
+やどりぎのタネ
+
+#org @NAME_GROWTH
+せいちょう
+
+#org @NAME_RAZOR_LEAF
+はっぱカッター
+
+#org @NAME_SOLAR_BEAM
+ソーラービーム
+
+#org @NAME_POISONPOWDER
+どくのこな
+
+#org @NAME_STUN_SPORE
+しびれごな
+
+#org @NAME_SLEEP_POWDER
+ねむりごな
+
+#org @NAME_PETAL_DANCE
+はなびらのまい
+
+#org @NAME_STRING_SHOT
+いとをはく
+
+#org @NAME_DRAGON_RAGE
+りゅうのいかり
+
+#org @NAME_FIRE_SPIN
+ほのおのうず
+
+#org @NAME_THUNDERSHOCK
+でんきショック
+
+#org @NAME_THUNDERBOLT
+10まんボルト
+
+#org @NAME_THUNDER_WAVE
+でんじは
+
+#org @NAME_THUNDER
+かみなり
+
+#org @NAME_ROCK_THROW
+いわおとし
+
+#org @NAME_EARTHQUAKE
+じしん
+
+#org @NAME_FISSURE
+じわれ
+
+#org @NAME_DIG
+あなをほる
+
+#org @NAME_TOXIC
+どくどく
+
+#org @NAME_CONFUSION
+ねんりき
+
+#org @NAME_PSYCHIC
+サイコキネシス
+
+#org @NAME_HYPNOSIS
+さいみんじゅつ
+
+#org @NAME_MEDITATE
+ヨガのポーズ
+
+#org @NAME_AGILITY
+こうそくいどう
+
+#org @NAME_QUICK_ATTACK
+でんこうせっか
+
+#org @NAME_RAGE
+いかり
+
+#org @NAME_TELEPORT
+テレポート
+
+#org @NAME_NIGHT_SHADE
+ナイトヘッド
+
+#org @NAME_MIMIC
+ものまね
+
+#org @NAME_SCREECH
+いやなおと
+
+#org @NAME_DOUBLE_TEAM
+かげぶんしん
+
+#org @NAME_RECOVER
+じこさいせい
+
+#org @NAME_HARDEN
+かたくなる
+
+#org @NAME_MINIMIZE
+ちいさくなる
+
+#org @NAME_SMOKESCREEN
+えんまく
+
+#org @NAME_CONFUSE_RAY
+あやしいひかり
+
+#org @NAME_WITHDRAW
+からにこもる
+
+#org @NAME_DEFENSE_CURL
+まるくなる
+
+#org @NAME_BARRIER
+バリアー
+
+#org @NAME_LIGHT_SCREEN
+ひかりのかべ
+
+#org @NAME_HAZE
+くろいきり
+
+#org @NAME_REFLECT
+リフレクター
+
+#org @NAME_FOCUS_ENERGY
+きあいだめ
+
+#org @NAME_BIDE
+がまん
+
+#org @NAME_METRONOME
+ゆびをふる
+
+#org @NAME_MIRROR_MOVE
+オウムがえし
+
+#org @NAME_SELFDESTRUCT
+じばく
+
+#org @NAME_EGG_BOMB
+タマゴばくだん
+
+#org @NAME_LICK
+したでなめる
+
+#org @NAME_SMOG
+スモッグ
+
+#org @NAME_SLUDGE
+ヘドロこうげき
+
+#org @NAME_BONE_CLUB
+ホネこんぼう
+
+#org @NAME_FIRE_BLAST
+だいもんじ
+
+#org @NAME_WATERFALL
+たきのぼり
+
+#org @NAME_CLAMP
+からではさむ
+
+#org @NAME_SWIFT
+スピードスター
+
+#org @NAME_SKULL_BASH
+ロケットずつき
+
+#org @NAME_SPIKE_CANNON
+とげキャノン
+
+#org @NAME_CONSTRICT
+からみつく
+
+#org @NAME_AMNESIA
+ドわすれ
+
+#org @NAME_KINESIS
+スプーンまげ
+
+#org @NAME_SOFT_BOILED
+タマゴうみ
+
+#org @NAME_HI_JUMP_KICK
+とびひざげり
+
+#org @NAME_GLARE
+へびにらみ
+
+#org @NAME_DREAM_EATER
+ゆめくい
+
+#org @NAME_POISON_GAS
+どくガス
+
+#org @NAME_BARRAGE
+たまなげ
+
+#org @NAME_LEECH_LIFE
+きゅうけつ
+
+#org @NAME_LOVELY_KISS
+あくまのキッス
+
+#org @NAME_SKY_ATTACK
+ゴッドバード
+
+#org @NAME_TRANSFORM
+へんしん
+
+#org @NAME_BUBBLE
+あわ
+
+#org @NAME_DIZZY_PUNCH
+ピヨピヨパンチ
+
+#org @NAME_SPORE
+キノコのほうし
+
+#org @NAME_FLASH
+フラッシュ
+
+#org @NAME_PSYWAVE
+サイコウェーブ
+
+#org @NAME_SPLASH
+はねる
+
+#org @NAME_ACID_ARMOR
+とける
+
+#org @NAME_CRABHAMMER
+クラブハンマー
+
+#org @NAME_EXPLOSION
+だいばくはつ
+
+#org @NAME_FURY_SWIPES
+みだれひっかき
+
+#org @NAME_BONEMERANG
+ホネブーメラン
+
+#org @NAME_REST
+ねむる
+
+#org @NAME_ROCK_SLIDE
+いわなだれ
+
+#org @NAME_HYPER_FANG
+ひっさつまえば
+
+#org @NAME_SHARPEN
+かくばる
+
+#org @NAME_CONVERSION
+テクスチャー
+
+#org @NAME_TRI_ATTACK
+トライアタック
+
+#org @NAME_SUPER_FANG
+いかりのまえば
+
+#org @NAME_SLASH
+きりさく
+
+#org @NAME_SUBSTITUTE
+みがわり
+
+#org @NAME_STRUGGLE
+わるあがき
+
+#org @NAME_SKETCH
+スケッチ
+
+#org @NAME_TRIPLE_KICK
+トリプルキック
+
+#org @NAME_THIEF
+どろぼう
+
+#org @NAME_SPIDER_WEB
+クモのす
+
+#org @NAME_MIND_READER
+こころのめ
+
+#org @NAME_NIGHTMARE
+あくむ
+
+#org @NAME_FLAME_WHEEL
+かえんぐるま
+
+#org @NAME_SNORE
+いびき
+
+#org @NAME_CURSE
+のろい
+
+#org @NAME_FLAIL
+じたばた
+
+#org @NAME_CONVERSION_2
+テクスチャー2
+
+#org @NAME_AEROBLAST
+エアロブラスト
+
+#org @NAME_COTTON_SPORE
+わたほうし
+
+#org @NAME_REVERSAL
+きしかいせい
+
+#org @NAME_SPITE
+うらみ
+
+#org @NAME_POWDER_SNOW
+こなゆき
+
+#org @NAME_PROTECT
+まもる
+
+#org @NAME_MACH_PUNCH
+マッハパンチ
+
+#org @NAME_SCARY_FACE
+こわいかお
+
+#org @NAME_FEINT_ATTACK
+だましうち
+
+#org @NAME_SWEET_KISS
+てんしのキッス
+
+#org @NAME_BELLY_DRUM
+はらだいこ
+
+#org @NAME_SLUDGE_BOMB
+ヘドロばくだん
+
+#org @NAME_MUD_SLAP
+どろかけ
+
+#org @NAME_OCTAZOOKA
+オクタンほう
+
+#org @NAME_SPIKES
+まきびし
+
+#org @NAME_ZAP_CANNON
+でんじほう
+
+#org @NAME_FORESIGHT
+みやぶる
+
+#org @NAME_DESTINY_BOND
+みちづれ
+
+#org @NAME_PERISH_SONG
+ほろびのうた
+
+#org @NAME_ICY_WIND
+こごえるかぜ
+
+#org @NAME_DETECT
+みきり
+
+#org @NAME_BONE_RUSH
+ボーンラッシュ
+
+#org @NAME_LOCK_ON
+ロックオン
+
+#org @NAME_OUTRAGE
+げきりん
+
+#org @NAME_SANDSTORM
+すなあらし
+
+#org @NAME_GIGA_DRAIN
+ギガドレイン
+
+#org @NAME_ENDURE
+こらえる
+
+#org @NAME_CHARM
+あまえる
+
+#org @NAME_ROLLOUT
+ころがる
+
+#org @NAME_FALSE_SWIPE
+みねうち
+
+#org @NAME_SWAGGER
+いばる
+
+#org @NAME_MILK_DRINK
+ミルクのみ
+
+#org @NAME_SPARK
+スパーク
+
+#org @NAME_FURY_CUTTER
+れんぞくぎり
+
+#org @NAME_STEEL_WING
+はがねのつばさ
+
+#org @NAME_MEAN_LOOK
+くろいまなざし
+
+#org @NAME_ATTRACT
+メロメロ
+
+#org @NAME_SLEEP_TALK
+ねごと
+
+#org @NAME_HEAL_BELL
+いやしのすず
+
+#org @NAME_RETURN
+おんがえし
+
+#org @NAME_PRESENT
+プレゼント
+
+#org @NAME_FRUSTRATION
+やつあたり
+
+#org @NAME_SAFEGUARD
+しんぴのまもり
+
+#org @NAME_PAIN_SPLIT
+いたみわけ
+
+#org @NAME_SACRED_FIRE
+せいなるほのお
+
+#org @NAME_MAGNITUDE
+マグニチュード
+
+#org @NAME_DYNAMICPUNCH
+ばくれつパンチ
+
+#org @NAME_MEGAHORN
+メガホーン
+
+#org @NAME_DRAGONBREATH
+りゅうのいぶき
+
+#org @NAME_BATON_PASS
+バトンタッチ
+
+#org @NAME_ENCORE
+アンコール
+
+#org @NAME_PURSUIT
+おいうち
+
+#org @NAME_RAPID_SPIN
+こうそくスピン
+
+#org @NAME_SWEET_SCENT
+あまいかおり
+
+#org @NAME_IRON_TAIL
+アイアンテール
+
+#org @NAME_METAL_CLAW
+メタルクロー
+
+#org @NAME_VITAL_THROW
+あてみなげ
+
+#org @NAME_MORNING_SUN
+あさのひざし
+
+#org @NAME_SYNTHESIS
+こうごうせい
+
+#org @NAME_MOONLIGHT
+つきのひかり
+
+#org @NAME_HIDDEN_POWER
+めざめるパワー
+
+#org @NAME_CROSS_CHOP
+クロスチョップ
+
+#org @NAME_TWISTER
+たつまき
+
+#org @NAME_RAIN_DANCE
+あまごい
+
+#org @NAME_SUNNY_DAY
+にほんばれ
+
+#org @NAME_CRUNCH
+かみくだく
+
+#org @NAME_MIRROR_COAT
+ミラーコート
+
+#org @NAME_PSYCH_UP
+じこあんじ
+
+#org @NAME_EXTREMESPEED
+しんそく
+
+#org @NAME_ANCIENTPOWER
+げんしのちから
+
+#org @NAME_SHADOW_BALL
+シャドーボール
+
+#org @NAME_FUTURE_SIGHT
+みらいよち
+
+#org @NAME_ROCK_SMASH
+いわくだき
+
+#org @NAME_WHIRLPOOL
+うずしお
+
+#org @NAME_BEAT_UP
+ふくろだたき
+
+#org @NAME_FAKE_OUT
+ねこだまし
+
+#org @NAME_UPROAR
+さわぐ
+
+#org @NAME_STOCKPILE
+たくわえる
+
+#org @NAME_SPIT_UP
+はきだす
+
+#org @NAME_SWALLOW
+のみこむ
+
+#org @NAME_HEAT_WAVE
+ねっぷう
+
+#org @NAME_HAIL
+あられ
+
+#org @NAME_TORMENT
+いちゃもん
+
+#org @NAME_FLATTER
+おだてる
+
+#org @NAME_WILL_O_WISP
+おにび
+
+#org @NAME_MEMENTO
+おきみやげ
+
+#org @NAME_FACADE
+からげんき
+
+#org @NAME_FOCUS_PUNCH
+きあいパンチ
+
+#org @NAME_SMELLINGSALT
+きつけ
+
+#org @NAME_FOLLOW_ME
+このゆびとまれ
+
+#org @NAME_NATURE_POWER
+しぜんのちから
+
+#org @NAME_CHARGE
+じゅうでん
+
+#org @NAME_TAUNT
+ちょうはつ
+
+#org @NAME_HELPING_HAND
+てだすけ
+
+#org @NAME_TRICK
+トリック
+
+#org @NAME_ROLE_PLAY
+なりきり
+
+#org @NAME_WISH
+ねがいごと
+
+#org @NAME_ASSIST
+ねこのて
+
+#org @NAME_INGRAIN
+ねをはる
+
+#org @NAME_SUPERPOWER
+ばかぢから
+
+#org @NAME_MAGIC_COAT
+マジックコート
+
+#org @NAME_RECYCLE
+リサイクル
+
+#org @NAME_REVENGE
+リベンジ
+
+#org @NAME_BRICK_BREAK
+かわらわり
+
+#org @NAME_YAWN
+あくび
+
+#org @NAME_KNOCK_OFF
+はたきおとす
+
+#org @NAME_ENDEAVOR
+がむしゃら
+
+#org @NAME_ERUPTION
+ふんか
+
+#org @NAME_SKILL_SWAP
+スキルスワップ
+
+#org @NAME_IMPRISON
+ふういん
+
+#org @NAME_REFRESH
+リフレッシュ
+
+#org @NAME_GRUDGE
+おんねん
+
+#org @NAME_SNATCH
+よこどり
+
+#org @NAME_SECRET_POWER
+ひみつのちから
+
+#org @NAME_DIVE
+ダイビング
+
+#org @NAME_ARM_THRUST
+つっぱり
+
+#org @NAME_CAMOUFLAGE
+ほごしょく
+
+#org @NAME_TAIL_GLOW
+ほたるび
+
+#org @NAME_LUSTER_PURGE
+ラスターパージ
+
+#org @NAME_MIST_BALL
+ミストボール
+
+#org @NAME_FEATHERDANCE
+フェザーダンス
+
+#org @NAME_TEETER_DANCE
+フラフラダンス
+
+#org @NAME_BLAZE_KICK
+ブレイズキック
+
+#org @NAME_MUD_SPORT
+どろあそび
+
+#org @NAME_ICE_BALL
+アイスボール
+
+#org @NAME_NEEDLE_ARM
+ニードルアーム
+
+#org @NAME_SLACK_OFF
+なまける
+
+#org @NAME_HYPER_VOICE
+ハイパーボイス
+
+#org @NAME_POISON_FANG
+どくどくのキバ
+
+#org @NAME_CRUSH_CLAW
+ブレイククロー
+
+#org @NAME_BLAST_BURN
+ブラストバーン
+
+#org @NAME_HYDRO_CANNON
+ハイドロカノン
+
+#org @NAME_METEOR_MASH
+コメットパンチ
+
+#org @NAME_ASTONISH
+おどろかす
+
+#org @NAME_WEATHER_BALL
+ウェザーボール
+
+#org @NAME_AROMATHERAPY
+アロマセラピー
+
+#org @NAME_FAKE_TEARS
+うそなき
+
+#org @NAME_AIR_CUTTER
+エアカッター
+
+#org @NAME_OVERHEAT
+オーバーヒート
+
+#org @NAME_ODOR_SLEUTH
+かぎわける
+
+#org @NAME_ROCK_TOMB
+がんせきふうじ
+
+#org @NAME_SILVER_WIND
+ぎんいろのかぜ
+
+#org @NAME_METAL_SOUND
+きんぞくおん
+
+#org @NAME_GRASSWHISTLE
+くさぶえ
+
+#org @NAME_TICKLE
+くすぐる
+
+#org @NAME_COSMIC_POWER
+コスモパワー
+
+#org @NAME_WATER_SPOUT
+しおふき
+
+#org @NAME_SIGNAL_BEAM
+シグナルビーム
+
+#org @NAME_SHADOW_PUNCH
+シャドーパンチ
+
+#org @NAME_EXTRASENSORY
+じんつうりき
+
+#org @NAME_SKY_UPPERCUT
+スカイアッパー
+
+#org @NAME_SAND_TOMB
+すなじごく
+
+#org @NAME_SHEER_COLD
+ぜったいれいど
+
+#org @NAME_MUDDY_WATER
+だくりゅう
+
+#org @NAME_BULLET_SEED
+タネマシンガン
+
+#org @NAME_AERIAL_ACE
+つばめがえし
+
+#org @NAME_ICICLE_SPEAR
+つららばり
+
+#org @NAME_IRON_DEFENSE
+てっぺき
+
+#org @NAME_BLOCK
+とおせんぼう
+
+#org @NAME_HOWL
+とおぼえ
+
+#org @NAME_DRAGON_CLAW
+ドラゴンクロー
+
+#org @NAME_FRENZY_PLANT
+ハードプラント
+
+#org @NAME_BULK_UP
+ビルドアップ
+
+#org @NAME_BOUNCE
+とびはねる
+
+#org @NAME_MUD_SHOT
+マッドショット
+
+#org @NAME_POISON_TAIL
+ポイズンテール
+
+#org @NAME_COVET
+ほしがる
+
+#org @NAME_VOLT_TACKLE
+ボルテッカー
+
+#org @NAME_MAGICAL_LEAF
+マジカルリーフ
+
+#org @NAME_WATER_SPORT
+みずあそび
+
+#org @NAME_CALM_MIND
+めいそう
+
+#org @NAME_LEAF_BLADE
+リーフブレード
+
+#org @NAME_DRAGON_DANCE
+りゅうのまい
+
+#org @NAME_ROCK_BLAST
+ロックブラスト
+
+#org @NAME_SHOCK_WAVE
+でんげきは
+
+#org @NAME_WATER_PULSE
+みずのはどう
+
+#org @NAME_DOOM_DESIRE
+はめつのねがい
+
+#org @NAME_PSYCHO_BOOST
+サイコブースト
+
+#org @NAME_LEECH_FANG
+Leech Fang
+
+#org @NAME_AIR_SLASH
+エアスラッシュ
+
+#org @NAME_AQUA_JET
+アクアジェット
+
+#org @NAME_AQUA_TAIL
+アクアテール
+
+#org @NAME_AURA_SPHERE
+はどうだん
+
+#org @NAME_AVALANCHE
+ゆきなだれ
+
+#org @NAME_BRAVE_BIRD
+ブレイブバード
+
+#org @NAME_BUG_BUZZ
+むしのさざめき
+
+#org @NAME_BULLET_PUNCH
+バレットパンチ
+
+#org @NAME_CHARGE_BEAM
+チャージビーム
+
+#org @NAME_CLOSE_COMBAT
+インファイト
+
+#org @NAME_CROSS_POISON
+クロスポイズン
+
+#org @NAME_DARK_PULSE
+あくのはどう
+
+#org @NAME_DISCHARGE
+ほうでん
+
+#org @NAME_DRACO_METEOR
+りゅうせいぐん
+
+#org @NAME_DRAGON_PULSE
+りゅうのはどう
+
+#org @NAME_DRAIN_PUNCH
+ドレインパンチ
+
+#org @NAME_EARTH_POWER
+だいちのちから
+
+#org @NAME_ENERGY_BALL
+エナジーボール
+
+#org @NAME_FOCUS_BLAST
+きあいだま
+
+#org @NAME_FORCE_PALM
+はっけい
+
+#org @NAME_GIGA_IMPACT
+ギガインパクト
+
+#org @NAME_GRASS_KNOT
+くさむすび
+
+#org @NAME_GUNK_SHOT
+ダストシュート
+
+#org @NAME_HAMMER_ARM
+アームハンマー
+
+#org @NAME_HEAD_SMASH
+もろはのずつき
+
+#org @NAME_ICE_SHARD
+こおりのつぶて
+
+#org @NAME_IRON_HEAD
+アイアンヘッド
+
+#org @NAME_LAVA_PLUME
+ふんえん
+
+#org @NAME_MAGNET_BOMB
+マグネットボム
+
+#org @NAME_MUD_BOMB
+どろばくだん
+
+#org @NAME_NASTY_PLOT
+わるだくみ
+
+#org @NAME_NIGHT_SLASH
+つじぎり
+
+#org @NAME_OMINOUS_WIND
+あやしいかぜ
+
+#org @NAME_POWER_GEM
+パワージェム
+
+#org @NAME_POWER_WHIP
+パワーウィップ
+
+#org @NAME_PSYCHO_CUT
+サイコカッター
+
+#org @NAME_ROCK_CLIMB
+ロッククライム
+
+#org @NAME_ROCK_POLISH
+ロックカット
+
+#org @NAME_ROCK_WRECKER
+がんせきほう
+
+#org @NAME_ROOST
+はねやすめ
+
+#org @NAME_SEED_BOMB
+タネばくだん
+
+#org @NAME_SHADOW_CLAW
+シャドークロー
+
+#org @NAME_SHADOW_SNEAK
+かげうち
+
+#org @NAME_VACUUM_WAVE
+しんくうは
+
+#org @NAME_X_SCISSOR
+シザークロス
+
+#org @NAME_ZEN_HEADBUTT
+しねんのずつき
+
+#org @NAME_SWITCHEROO
+すりかえ
+
+#org @NAME_DRILL_RUN
+ドリルライナー
+
+#org @NAME_BULLDOZE
+じならし
+
+#org @NAME_ELECTROWEB
+エレキネット
+
+#org @NAME_FLAME_CHARGE
+ニトロチャージ
+
+#org @NAME_FROST_BREATH
+こおりのいぶき
+
+#org @NAME_HEART_STAMP
+ハートスタンプ
+
+#org @NAME_HONE_CLAWS
+つめとぎ
+
+#org @NAME_HORN_LEECH
+ウッドホーン
+
+#org @NAME_COIL
+とぐろをまく
+
+#org @NAME_HURRICANE
+ぼうふう
+
+#org @NAME_ICICLE_CRASH
+つららおとし
+
+#org @NAME_WORK_UP
+ふるいたてる
+
+#org @NAME_QUIVER_DANCE
+ちょうのまい
+
+#org @NAME_LEAF_TORNADO
+グラスミキサー
+
+#org @NAME_LOW_SWEEP
+ローキック
+
+#org @NAME_SNARL
+バークアウト
+
+#org @NAME_STRUGGLE_BUG
+むしのていこう
+
+#org @NAME_STEAMROLLER
+ハードローラー
+
+#org @NAME_STORM_THROW
+やまあらし
+
+#org @NAME_VENOSHOCK
+ベノムショック
+
+#org @NAME_WILD_CHARGE
+ワイルドボルト
+
+#org @NAME_POISON_JAB
+どくづき
+
+#org @NAME_ACID_SPRAY
+アシッドボム
+
+#org @NAME_FIERY_DANCE
+ほのおのまい
+
+#org @NAME_CLEAR_SMOG
+クリアスモッグ
+
+#org @NAME_LEAF_STORM
+リーフストーム
+
+#org @NAME_STONE_EDGE
+ストーンエッジ
+
+#org @NAME_PAYBACK
+しっぺがえし
+
+#org @NAME_FIRE_FANG
+ほのおのキバ
+
+#org @NAME_ICE_FANG
+こおりのキバ
+
+#org @NAME_THUNDER_FANG
+かみなりのキバ
+
+#org @NAME_FLARE_BLITZ
+フレアドライブ
+
+#org @NAME_INFERNO
+れんごく
+
+#org @NAME_HEX
+たたりめ
+
+#org @NAME_DUAL_CHOP
+ダブルチョップ
+
+#org @NAME_DOUBLE_HIT
+ダブルアタック
+
+#org @NAME_COTTON_GUARD
+コットンガード
+
+#org @NAME_ACROBATICS
+アクロバット
+
+#org @NAME_FLAME_BURST
+はじけるほのお
+
+#org @NAME_U_TURN
+とんぼがえり
+
+#org @NAME_VOLT_SWITCH
+ボルトチェンジ
+
+#org @NAME_DRAGON_TAIL
+ドラゴンテール
+
+#org @NAME_CIRCLE_THROW
+ともえなげ
+
+#org @NAME_MIRROR_SHOT
+ミラーショット
+
+#org @NAME_WOOD_HAMMER
+ウッドハンマー
+
+#org @NAME_HEAL_PULSE
+いやしのはどう
+
+#org @NAME_FLASH_CANNON
+ラスターカノン
+
+#org @NAME_BUG_BITE
+むしくい
+
+#org @NAME_PLUCK
+ついばむ
+
+#org @NAME_SHELL_SMASH
+からをやぶる
+
+#org @NAME_RAGE_POWDER
+いかりのこな
+
+#org @NAME_WAKE_UP_SLAP
+めざましビンタ
+
+#org @NAME_RAZOR_SHELL
+シェルブレード
+
+#org @NAME_COPYCAT
+まねっこ
+
+#org @NAME_MIRACLE_EYE
+ミラクルアイ
+
+#org @NAME_SUCKER_PUNCH
+ふいうち
+
+#org @NAME_SCALD
+ねっとう
+
+#org @NAME_BRINE
+しおみず
+
+#org @NAME_FAIRY_WIND
+ようせいのかぜ
+
+#org @NAME_DOLL_EYES
+つぶらなひとみ
+
+#org @NAME_PLAY_ROUGH
+じゃれつく
+
+#org @NAME_MOONBLAST
+ムーンフォース
+
+#org @NAME_DRAIN_KISS
+ドレインキッス
+
+#org @NAME_DAZZLE_GLEAM
+マジカルシャイン
+
+#org @NAME_DISARM_CRY
+チャームボイス
+
+#org @NAME_STEALTH_ROCK
+ステルスロック
+
+#org @NAME_TOXIC_SPIKES
+どくびし
+
+#org @NAME_HEALING_WISH
+いやしのねがい
+
+#org @NAME_LUNAR_DANCE
+みかづきのまい
+
+#org @NAME_TAILWIND
+おいかぜ
+
+#org @NAME_BOOMBURST
+ばくおんぱ
+
+#org @NAME_INCINERATE
+やきつくす
+
+#org @NAME_WORRY_SEED
+なやみのタネ
+
+#org @NAME_GASTRO_ACID
+いえき
+
+#org @NAME_GEOMANCY
+ジオコントロール
+
+#org @NAME_FLOWER_GUARD
+フラワーガード
+
+#org @NAME_ROTOTILLER
+たがやす
+
+#org @NAME_SHIFT_GEAR
+ギアチェンジ
+
+#org @NAME_STICKY_WEB
+ねばねばネット
+
+#org @NAME_STORED_POWER
+アシストパワー
+
+#org @NAME_ACUPRESSURE
+つぼをつく
+
+#org @NAME_PUNISHMENT
+おしおき
+
+#org @NAME_ASSURANCE
+ダメおし
+
+#org @NAME_DRAGON_RUSH
+ドラゴンダイブ
+
+#org @NAME_DARK_VOID
+ダークホール
+
+#org @NAME_FEINT
+フェイント
+
+#org @NAME_PHANTOM_FORCE
+ゴーストダイブ
+
+#org @NAME_PETAL_STORM
+はなふぶき
+
+#org @NAME_PLAY_NICE
+なかよくする
+
+#org @NAME_ROAR_OF_TIME
+ときのほうこう
+
+#org @NAME_SPACIAL_REND
+あくうせつだん
+
+#org @NAME_MAGMA_STORM
+マグマストーム
+
+#org @NAME_FINAL_GAMBIT
+いのちがけ
+
+#org @NAME_SHADOW_FORCE
+シャドーダイブ
+
+#org @NAME_NUZZLE
+ほっぺすりすり
+
+#org @NAME_RETALIATE
+かたきうち
+
+#org @NAME_METAL_BASH
+Metal Bash
+
+#org @NAME_JUDGMENT
+さばきのつぶて
+
+#org @NAME_FREEZE_DRY
+フリーズドライ
+
+#org @NAME_PSYSHOCK
+サイコショック
+
+#org @NAME_ROUND
+りんしょう
+
+#org @NAME_TAIL_SLAP
+スイープビンタ
+
+#org @NAME_GEAR_GRIND
+ギアソーサー
+
+#org @NAME_NATURAL_GIFT
+しぜんのめぐみ
+
+#org @NAME_CHIP_AWAY
+なしくずし
+
+#org @NAME_SMACK_DOWN
+うちおとす
+
+#org @NAME_SPACE_HOLE
+いじげんホール
+
+#org @NAME_GYRO_BALL
+ジャイロボール
+
+#org @NAME_SPACE_FURY
+いじげんラッシュ
+
+#org @NAME_ATTACK_ORDER
+こうげきしれい
+
+#org @NAME_DEFEND_ORDER
+ぼうぎょしれい
+
+#org @NAME_HEAL_ORDER
+かいふくしれい
+
+#org @NAME_CAPTIVATE
+ゆうわく
+
+#org @NAME_DEFOG
+きりばらい
+
+#org @NAME_ORIGIN_PULSE
+こんげんのはどう
+
+#org @NAME_CLIFF_BLADES
+だんがいのつるぎ
+
+#org @NAME_GUARD_SWAP
+ガードスワップ
+
+#org @NAME_STEAM_PUMP
+スチームバースト
+
+#org @NAME_METAL_BURST
+メタルバースト
+
+#org @NAME_ME_FIRST
+さきどり
+
+#org @NAME_POWER_SWAP
+パワースワップ
+
+#org @NAME_POWER_TRICK
+パワートリック
+
+#org @NAME_PSYCHO_SHIFT
+サイコシフト
+
+#org @NAME_WRING_OUT
+しぼりとる
+
+#org @NAME_KINGS_SHIELD
+キングシールド
+
+#org @NAME_PSYSTRIKE
+サイコブレイク
+
+#org @NAME_AUTOTOMIZE
+ボディパージ
+
+#org @NAME_DIAMOND_STORM
+ダイヤストーム
+
+#org @NAME_SLUDGE_WAVE
+ヘドロウェーブ
+
+#org @NAME_HEAVY_SLAM
+ヘビーボンバー
+
+#org @NAME_SYNCHRONOISE
+シンクロノイズ
+
+#org @NAME_ELECTRO_BALL
+エレキボール
+
+#org @NAME_FOUL_PLAY
+イカサマ
+
+#org @NAME_ENTRAINMENT
+なかまづくり
+
+#org @NAME_NIGHT_DAZE
+ナイトバースト
+
+#org @NAME_ECHOED_VOICE
+エコーボイス
+
+#org @NAME_LAND'S_WRATH
+グランドフォース
+
+#org @NAME_OBLIVIONWING
+デスウイング
+
+#org @NAME_HEART_SWAP
+ハートスワップ
+
+#org @NAME_CRUSH_GRIP
+にぎりつぶす
+
+#org @NAME_SACRED_SWORD
+せいなるつるぎ
+
+#org @NAME_HEAT_CRASH
+ヒートスタンプ
+
+#org @NAME_HEAD_CHARGE
+アフロブレイク
+
+#org @NAME_TECHNO_BLAST
+テクノバスター
+
+#org @NAME_RELIC_SONG
+いにしえのうた
+
+#org @NAME_SECRET_SWORD
+しんぴのつるぎ
+
+#org @NAME_GLACIATE
+こごえるせかい
+
+#org @NAME_BOLT_STRIKE
+らいげき
+
+#org @NAME_BLUE_FLARE
+あおいほのお
+
+#org @NAME_FREEZE_SHOCK
+フリーズボルト
+
+#org @NAME_ICE_BURN
+コールドフレア
+
+#org @NAME_V_CREATE
+Vジェネレート
+
+#org @NAME_FUSION_FLARE
+クロスフレイム
+
+#org @NAME_FUSION_BOLT
+クロスサンダー
+
+#org @NAME_FELL_STINGER
+とどめばり
+
+#org @NAME_NOBLE_ROAR
+おたけび
+
+#org @NAME_DRAGON_RISE
+ガリョウテンセイ
+
+#org @NAME_PARTING_SHOT
+すてゼリフ
+
+#org @NAME_TOPSY_TURVY
+ひっくりかえす
+
+#org @NAME_CORE_ENFORCE
+コアパニッシャー
+
+#org @NAME_CHATTER
+おしゃべり
+
+#org @NAME_CONFIDE
+ないしょばなし
+
+#org @NAME_WATER_STAR
+みずしゅりけん
+
+#org @NAME_MYSTIC_FIRE
+マジカルフレイム
+
+#org @NAME_SPIKY_SHIELD
+ニードルガード
+
+#org @NAME_EERIEIMPULSE
+かいでんぱ
+
+#org @NAME_HOLD_BACK
+てかげん
+
+#org @NAME_INFESTATION
+まとわりつく
+
+#org @NAME_POWER_UP_HIT
+グロウパンチ
+
+#org @NAME_1000_ARROWS
+サウザンアロー
+
+#org @NAME_1000_WAVES
+サウザンウェーブ
+
+#org @NAME_PARA_CHARGE
+パラボラチャージ
+
+#org @NAME_SEARING_SHOT
+かえんだん
+
+#org @NAME_SEED_FLARE
+シードフレア
+
+#org @NAME_ACCELEROCK
+アクセルロック
+
+#org @NAME_ANCHOR_SHOT
+アンカーショット
+
+#org @NAME_AURORA_VEIL
+オーロラベール
+
+#org @NAME_BANEFUL_BUNK
+トーチカ
+
+#org @NAME_BEAK_BLAST
+くちばしキャノン
+
+#org @NAME_BRUTAL_SWING
+ぶんまわす
+
+#org @NAME_BURN_UP
+もえつきる
+
+#org @NAME_CLANG_SCALES
+スケイルノイズ
+
+#org @NAME_DARK_LARIAT
+DDラリアット
+
+#org @NAME_DRACO_HAMMER
+ドラゴンハンマー
+
+#org @NAME_FIRE_LASH
+ほのおのムチ
+
+#org @NAME_FIRST_PRESS
+であいがしら
+
+#org @NAME_FLEUR_CANNON
+フルールカノン
+
+#org @NAME_FLORAL_HEAL
+フラワーヒール
+
+#org @NAME_GEAR_UP
+アシストギア
+
+#org @NAME_HORSEPOWER
+10まんばりき
+
+#org @NAME_ICE_HAMMER
+アイスハンマー
+
+#org @NAME_LASER_FOCUS
+とぎすます
+
+#org @NAME_LEAFAGE
+このは
+
+#org @NAME_LIQUIDATION
+アクアブレイク
+
+#org @NAME_LUNGE
+とびかかる
+
+#org @NAME_GEIST_BEAM
+シャドーレイ
+
+#org @NAME_MULTI_ATTACK
+マルチアタック
+
+#org @NAME_NATURE'S_MAD
+しぜんのいかり
+
+#org @NAME_POLLEN_PUFF
+かふんだんご
+
+#org @NAME_POWER_TRIP
+つけあがる
+
+#org @NAME_PRISM_LASER
+プリズムレーザー
+
+#org @NAME_PSYCHIC_FANG
+サイコファング
+
+#org @NAME_PURIFY
+じょうか
+
+#org @NAME_REVEL_DANCE
+めざめるダンス
+
+#org @NAME_SHADOW_BONE
+シャドーボーン
+
+#org @NAME_SHELL_TRAP
+トラップシェル
+
+#org @NAME_SHORE_UP
+すなあつめ
+
+#org @NAME_SMART_STRIKE
+スマートホーン
+
+#org @NAME_SOLAR_BLADE
+ソーラーブレード
+
+#org @NAME_SPARKLE_ARIA
+うたかたのアリア
+
+#org @NAME_SPECT_THIEF
+シャドースチール
+
+#org @NAME_SPEED_SWAP
+スピードスワップ
+
+#org @NAME_SPIRIT_LOCK
+かげぬい
+
+#org @NAME_SPOTLIGHT
+スポットライト
+
+#org @NAME_BAD_TANTRUM
+じだんだ
+
+#org @NAME_STRENGTH_SAP
+ちからをすいとる
+
+#org @NAME_SUNSTEEL_RAM
+メテオドライブ
+
+#org @NAME_TEARY_LOOK
+なみだめ
+
+#org @NAME_THROAT_CHOP
+じごくづき
+
+#org @NAME_TOXIC_THREAD
+どくのいと
+
+#org @NAME_TROP_KICK
+トロピカルキック
+
+#org @NAME_ZING_ZAP
+びりびりちくちく
+
+#org @NAME_ELEC_TERRAIN
+エレキフィールド
+
+#org @NAME_GRAS_TERRAIN
+グラスフィールド
+
+#org @NAME_MIST_TERRAIN
+ミストフィールド
+
+#org @NAME_PSYC_TERRAIN
+サイコフィールド
+
+#org @NAME_GRASS_PLEDGE
+くさのちかい
+
+#org @NAME_FIRE_PLEDGE
+ほのおのちかい
+
+#org @NAME_WATER_PLEDGE
+みずのちかい
+
+#org @NAME_TRICK_ROOM
+トリックルーム
+
+#org @NAME_MAGIC_ROOM
+マジックルーム
+
+#org @NAME_WONDER_ROOM
+ワンダールーム
+
+#org @NAME_CRAFTY_GUARD
+トリックガード
+
+#org @NAME_MAT_BLOCK
+たたみがえし
+
+#org @NAME_QUICK_GUARD
+ファストガード
+
+#org @NAME_WIDE_GUARD
+ワイドガード
+
+#org @NAME_AQUA_RING
+アクアリング
+
+#org @NAME_AROMA_MIST
+アロマミスト
+
+#org @NAME_BELCH
+ゲップ
+
+#org @NAME_BESTOW
+ギフトパス
+
+#org @NAME_FLING
+なげつける
+
+#org @NAME_FLYING_PRESS
+フライングプレス
+
+#org @NAME_GRAVITY
+じゅうりょく
+
+#org @NAME_GUARD_SPLIT
+ガードシェア
+
+#org @NAME_HEAL_BLOCK
+かいふくふうじ
+
+#org @NAME_ION_DELUGE
+プラズマシャワー
+
+#org @NAME_LUCKY_CHANT
+おまじない
+
+#org @NAME_MAGNET_RISE
+でんじふゆう
+
+#org @NAME_MAGNET_FLUX
+じばそうさ
+
+#org @NAME_POWDER
+ふんじん
+
+#org @NAME_POWER_SPLIT
+パワーシェア
+
+#org @NAME_REFLECT_TYPE
+ミラータイプ
+
+#org @NAME_SIMPLE_BEAM
+シンプルビーム
+
+#org @NAME_SOAK
+みずびたし
+
+#org @NAME_TELEKINESIS
+テレキネシス
+
+#org @NAME_TRICKOTREAT
+ハロウィン
+
+#org @NAME_VENOM_DRENCH
+ベノムトラップ
+
+#org @NAME_WOODS_CURSE
+もりののろい
+
+#org @NAME_MIND_BLOWN
+ビックリヘッド
+
+#org @NAME_PHOTONGEYSER
+フォトンゲイザー
+
+#org @NAME_PLASMA_FISTS
+プラズマフィスト
+
+#org @NAME_ELECTRIFY
+そうでん
+
+#org @NAME_EMBARGO
+さしおさえ
+
+#org @NAME_FAIRY_LOCK
+フェアリーロック
+
+#org @NAME_LIGHT_O_RUIN
+はめつのひかり
+
+#org @NAME_TRUMP_CARD
+きりふだ
+
+#org @NAME_AFTER_YOU
+おさきにどうぞ
+
+#org @NAME_INSTRUCT
+さいはい
+
+#org @NAME_QUASH
+さきおくり
+
+#org @NAME_HAPPY_HOUR
+ハッピータイム
+
+#org @NAME_DOUBLE_IRON
+ダブルパンツァー
+
+#org @NAME_LAST_RESORT
+とっておき
+
+#org @NAME_SKY_DROP
+フリーフォール
+
+#org @NAME_CELEBRATE
+おいわい
+
+#org @NAME_HOLD_HANDS
+てをつなぐ
+
+#org @NAME_DYNAMAX_CANNON
+ダイマックスほう
+
+#org @NAME_SNIPE_SHOT
+ねらいうち
+
+#org @NAME_JAW_LOCK
+くらいつく
+
+#org @NAME_STUFF_CHEEKS
+ほおばる
+
+#org @NAME_NO_RETREAT
+はいすいのじん
+
+#org @NAME_TAR_SHOT
+タールショット
+
+#org @NAME_MAGIC_POWDER
+まほうのこな
+
+#org @NAME_DRAGON_DARTS
+ドラゴンアロー
+
+#org @NAME_TEATIME
+おちゃかい
+
+#org @NAME_OCTOLOCK
+たこがため
+
+#org @NAME_BOLT_BEAK
+でんげきくちばし
+
+#org @NAME_FISHIOUS_REND
+エラがみ
+
+#org @NAME_COURT_CHANGE
+コートチェンジ
+
+#org @NAME_CLANGOROUS_SOUL
+ソウルビート
+
+#org @NAME_BODY_PRESS
+ボディプレス
+
+#org @NAME_DECORATE
+デコレーション
+
+#org @NAME_DRUM_BEATING
+ドラムアタック
+
+#org @NAME_SNAP_TRAP
+トラバサミ
+
+#org @NAME_PYRO_BALL
+かえんボール
+
+#org @NAME_BEHEMOTH_BLADE
+きょじゅうざん
+
+#org @NAME_BEHEMOTH_BASH
+きょじゅうだん
+
+#org @NAME_AURA_WHEEL
+オーラぐるま
+
+#org @NAME_BREAKING_SWIPE
+ワイドブレイカー
+
+#org @NAME_BRANCH_POKE
+えだづき
+
+#org @NAME_OVERDRIVE
+オーバードライブ
+
+#org @NAME_APPLE_ACID
+りんごさん
+
+#org @NAME_GRAV_APPLE
+Gのちから
+
+#org @NAME_SPIRIT_BREAK
+ソウルクラッシュ
+
+#org @NAME_STRANGE_STEAM
+ワンダースチーム
+
+#org @NAME_LIFE_DEW
+いのちのしずく
+
+#org @NAME_OBSTRUCT
+ブロッキング
+
+#org @NAME_FALSE_SURRENDER
+どげざつき
+
+#org @NAME_METEOR_ASSAULT
+スターアサルト
+
+#org @NAME_ETERNABEAM
+ムゲンダイビーム
+
+#org @NAME_STEEL_BEAM
+てっていこうせん
+
+#org @NAME_EXPANDING_FORCE
+ワイドフォース
+
+#org @NAME_STEEL_ROLLER
+アイアンローラー
+
+#org @NAME_SCALE_SHOT
+スケイルショット
+
+#org @NAME_METEOR_BEAM
+メテオビーム
+
+#org @NAME_SHELL_SIDE_ARM
+シェルアームズ
+
+#org @NAME_MISTY_EXPLOSION
+ミストバースト
+
+#org @NAME_GRASSY_GLIDE
+グラススライダー
+
+#org @NAME_RISING_VOLTAGE
+ライジングボルト
+
+#org @NAME_TERRAIN_PULSE
+だいちのはどう
+
+#org @NAME_SKITTER_SMACK
+はいよるいちげき
+
+#org @NAME_BURNING_JEALOUSY
+しっとのほのお
+
+#org @NAME_LASH_OUT
+うっぷんばらし
+
+#org @NAME_POLTERGEIST
+ポルターガイスト
+
+#org @NAME_CORROSIVE_GAS
+ふしょくガス
+
+#org @NAME_COACHING
+コーチング
+
+#org @NAME_FLIP_TURN
+クイックターン
+
+#org @NAME_TRIPLE_AXEL
+トリプルアクセル
+
+#org @NAME_DUAL_WINGBEAT
+ダブルウイング
+
+#org @NAME_SCORCHING_SANDS
+ねっさのだいち
+
+#org @NAME_JUNGLE_HEALING
+ジャングルヒール
+
+#org @NAME_WICKED_BLOW
+あんこくきょうだ
+
+#org @NAME_SURGING_STRIKES
+すいりゅうれんだ
+
+#org @NAME_FREEZING_GLARE
+いてつくしせん
+
+#org @NAME_THUNDEROUS_KICK
+らいめいげり
+
+#org @NAME_FIERY_WRATH
+もえあがるいかり
+
+#org @NAME_EERIE_SPEELL
+ぶきみなじゅもん
+
+#org @NAME_THUNDER_CAGE
+サンダープリズン
+
+#org @NAME_DRAGON_ENERGY
+ドラゴンエナジー
+
+#org @NAME_ASTRAL_BARRAGE
+アストラルビット
+
+#org @NAME_GLACIAL_LANCE
+ブリザードランス
+
+#org @Z_Move_1
+ZーMove 1
+
+#org @Z_Move_2
+ZーMove 2
+
+#org @Z_Move_3
+ZーMove 3
+
+#org @Z_Move_4
+ZーMove 4
+
+#org @Z_Move_5
+ZーMove 5
+
+#org @Z_Move_6
+ZーMove 6
+
+#org @Z_Move_7
+ZーMove 7
+
+#org @Z_Move_8
+ZーMove 8
+
+#org @Z_Move_9
+ZーMove 9
+
+#org @Z_Move_10
+ZーMove 10
+
+#org @Z_Move_11
+ZーMove 11
+
+#org @Z_Move_12
+ZーMove 12
+
+#org @Z_Move_13
+ZーMove 13
+
+#org @Z_Move_14
+ZーMove 14
+
+#org @Z_Move_15
+ZーMove 15
+
+#org @Z_Move_16
+ZーMove 16
+
+#org @Z_Move_17
+ZーMove 17
+
+#org @Z_Move_18
+ZーMove 18
+
+#org @Z_Move_19
+ZーMove 19
+
+#org @Z_Move_20
+ZーMove 20
+
+#org @Z_Move_21
+ZーMove 21
+
+#org @Z_Move_22
+ZーMove 22
+
+#org @Z_Move_23
+ZーMove 23
+
+#org @Z_Move_24
+ZーMove 24
+
+#org @Z_Move_25
+ZーMove 25
+
+#org @Z_Move_26
+ZーMove 26
+
+#org @Z_Move_27
+ZーMove 27
+
+#org @Z_Move_28
+ZーMove 28
+
+#org @Z_Move_29
+ZーMove 29
+
+#org @Z_Move_30
+ZーMove 30
+
+#org @Z_Move_31
+ZーMove 31
+
+#org @Z_Move_32
+ZーMove 32
+
+#org @Z_Move_33
+ZーMove 33
+
+#org @Z_Move_34
+ZーMove 34
+
+#org @Z_Move_35
+ZーMove 35
+
+#org @Z_Move_36
+ZーMove 36
+
+#org @Z_Move_37
+ZーMove 37
+
+#org @Z_Move_38
+ZーMove 38
+
+#org @Z_Move_39
+ZーMove 39
+
+#org @Z_Move_40
+ZーMove 40
+
+#org @Z_Move_41
+ZーMove 41
+
+#org @Z_Move_42
+ZーMove 42
+
+#org @Z_Move_43
+ZーMove 43
+
+#org @Z_Move_44
+ZーMove 44
+
+#org @Z_Move_45
+ZーMove 45
+
+#org @Z_Move_46
+ZーMove 46
+
+#org @Z_Move_47
+ZーMove 47
+
+#org @Z_Move_48
+ZーMove 48
+
+#org @Z_Move_49
+ZーMove 49
+
+#org @Z_Move_50
+ZーMove 50
+
+#org @Z_Move_51
+ZーMove 51
+
+#org @Z_Move_52
+ZーMove 52
+
+#org @Z_Move_53
+ZーMove 53
+
+#org @NAME_MAX_GUARD
+ウォール
+
+#org @NAME_MAX_STRIKE_P
+アタック
+
+#org @NAME_MAX_STRIKE_S
+アタック
+
+#org @NAME_MAX_KNUCKLE_P
+ナックル
+
+#org @NAME_MAX_KNUCKLE_S
+ナックル
+
+#org @NAME_MAX_AIRSTREAM_P
+ジェット
+
+#org @NAME_MAX_AIRSTREAM_S
+ジェット
+
+#org @NAME_MAX_OOZE_P
+アシッド
+
+#org @NAME_MAX_OOZE_S
+アシッド
+
+#org @NAME_MAX_QUAKE_P
+アース
+
+#org @NAME_MAX_QUAKE_S
+アース
+
+#org @NAME_MAX_ROCKFALL_P
+ロック
+
+#org @NAME_MAX_ROCKFALL_S
+ロック
+
+#org @NAME_MAX_FLUTTERBY_P
+ワーム
+
+#org @NAME_MAX_FLUTTERBY_S
+ワーム
+
+#org @NAME_MAX_PHANTASM_P
+ホロウ
+
+#org @NAME_MAX_PHANTASM_S
+ホロウ
+
+#org @NAME_MAX_STEELSPIKE_P
+スチル
+
+#org @NAME_MAX_STEELSPIKE_S
+スチル
+
+#org @NAME_MAX_FLARE_P
+バーン
+
+#org @NAME_MAX_FLARE_S
+バーン
+
+#org @NAME_MAX_GEYSER_P
+ストリーム
+
+#org @NAME_MAX_GEYSER_S
+ストリーム
+
+#org @NAME_MAX_OVERGROWTH_P
+ソウゲン
+
+#org @NAME_MAX_OVERGROWTH_S
+ソウゲン
+
+#org @NAME_MAX_LIGHTNING_P
+サンダー
+
+#org @NAME_MAX_LIGHTNING_S
+サンダー
+
+#org @NAME_MAX_MINDSTORM_P
+サイコ
+
+#org @NAME_MAX_MINDSTORM_S
+サイコ
+
+#org @NAME_MAX_HAILSTORM_P
+アイス
+
+#org @NAME_MAX_HAILSTORM_S
+アイス
+
+#org @NAME_MAX_WYRMWIND_P
+ドラグーン
+
+#org @NAME_MAX_WYRMWIND_S
+ドラグーン
+
+#org @NAME_MAX_DARKNESS_P
+アーク
+
+#org @NAME_MAX_DARKNESS_S
+アーク
+
+#org @NAME_MAX_STARFALL_P
+フェアリー
+
+#org @NAME_MAX_STARFALL_S
+フェアリー
+
+#org @NAME_G_MAX_VINE_LASH_P
+ベンタツ
+
+#org @NAME_G_MAX_VINE_LASH_S
+ベンタツ
+
+#org @NAME_G_MAX_WILDFIRE_P
+ゴクエン
+
+#org @NAME_G_MAX_WILDFIRE_S
+ゴクエン
+
+#org @NAME_G_MAX_CANNONADE_P
+ホウゲキ
+
+#org @NAME_G_MAX_CANNONADE_S
+ホウゲキ
+
+#org @NAME_G_MAX_BEFUDDLE_P
+コワク
+
+#org @NAME_G_MAX_BEFUDDLE_S
+コワク
+
+#org @NAME_G_MAX_VOLTCRASH_P
+バンライ
+
+#org @NAME_G_MAX_VOLTCRASH_S
+バンライ
+
+#org @NAME_G_MAX_GOLDRUSH_P
+コバン
+
+#org @NAME_G_MAX_GOLDRUSH_S
+コバン
+
+#org @NAME_G_MAX_CHISTRIKE_P
+シンゲキ
+
+#org @NAME_G_MAX_CHISTRIKE_S
+シンゲキ
+
+#org @NAME_G_MAX_TERROR_P
+ゲンエイ
+
+#org @NAME_G_MAX_TERROR_S
+ゲンエイ
+
+#org @NAME_G_MAX_FOAMBURST_P
+ホウマツ
+
+#org @NAME_G_MAX_FOAMBURST_S
+ホウマツ
+
+#org @NAME_G_MAX_RESONANCE_P
+センリツ
+
+#org @NAME_G_MAX_RESONANCE_S
+センリツ
+
+#org @NAME_G_MAX_CUDDLE_P
+ホーヨー
+
+#org @NAME_G_MAX_CUDDLE_S
+ホーヨー
+
+#org @NAME_G_MAX_REPLENISH_P
+サイセイ
+
+#org @NAME_G_MAX_REPLENISH_S
+サイセイ
+
+#org @NAME_G_MAX_MALODOR_P
+シュウキ
+
+#org @NAME_G_MAX_MALODOR_S
+シュウキ
+
+#org @NAME_G_MAX_MELTDOWN_P
+ユウゲキ
+
+#org @NAME_G_MAX_MELTDOWN_S
+ユウゲキ
+
+#org @NAME_G_MAX_DRUM_SOLO_P
+コランダ
+
+#org @NAME_G_MAX_DRUM_SOLO_S
+コランダ
+
+#org @NAME_G_MAX_FIREBALL_P
+カキュウ
+
+#org @NAME_G_MAX_FIREBALL_S
+カキュウ
+
+#org @NAME_G_MAX_HYDROSNIPE_P
+ソゲキ
+
+#org @NAME_G_MAX_HYDROSNIPE_S
+ソゲキ
+
+#org @NAME_G_MAX_WINDRAGE_P
+フウゲキ
+
+#org @NAME_G_MAX_WINDRAGE_S
+フウゲキ
+
+#org @NAME_G_MAX_GRAVITAS_P
+テンドウ
+
+#org @NAME_G_MAX_GRAVITAS_S
+テンドウ
+
+#org @NAME_G_MAX_STONESURGE_P
+ガンジン
+
+#org @NAME_G_MAX_STONESURGE_S
+ガンジン
+
+#org @NAME_G_MAX_VOLCALITH_P
+フンセキ
+
+#org @NAME_G_MAX_VOLCALITH_S
+フンセキ
+
+#org @NAME_G_MAX_TARTNESS_P
+サンゲキ
+
+#org @NAME_G_MAX_TARTNESS_S
+サンゲキ
+
+#org @NAME_G_MAX_SWEETNESS_P
+カンロ
+
+#org @NAME_G_MAX_SWEETNESS_S
+カンロ
+
+#org @NAME_G_MAX_SANDBLAST_P
+サジン
+
+#org @NAME_G_MAX_SANDBLAST_S
+サジン
+
+#org @NAME_G_MAX_STUNSHOCK_P
+カンデン
+
+#org @NAME_G_MAX_STUNSHOCK_S
+カンデン
+
+#org @NAME_G_MAX_CENTIFERNO_P
+ヒャッカ
+
+#org @NAME_G_MAX_CENTIFERNO_S
+ヒャッカ
+
+#org @NAME_G_MAX_SMITE_P
+テンバツ
+
+#org @NAME_G_MAX_SMITE_S
+テンバツ
+
+#org @NAME_G_MAX_SNOOZE_P
+スイマ
+
+#org @NAME_G_MAX_SNOOZE_S
+スイマ
+
+#org @NAME_G_MAX_FINALE_P
+ダンエン
+
+#org @NAME_G_MAX_FINALE_S
+ダンエン
+
+#org @NAME_G_MAX_STEELSURGE_P
+コウジン
+
+#org @NAME_G_MAX_STEELSURGE_S
+コウジン
+
+#org @NAME_G_MAX_DEPLETION_P
+ゲンスイ
+
+#org @NAME_G_MAX_DEPLETION_S
+ゲンスイ
+
+#org @NAME_G_MAX_ONE_BLOW_P
+イチゲキ
+
+#org @NAME_G_MAX_ONE_BLOW_S
+イチゲキ
+
+#org @NAME_G_MAX_RAPID_FLOW_P
+レンゲキ
+
+#org @NAME_G_MAX_RAPID_FLOW_S
+レンゲキ

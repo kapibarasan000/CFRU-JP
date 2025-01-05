@@ -1,0 +1,62 @@
+#org @gText_SwapItemsPart1
+[BUFFER1]の\n[BUFFER2]と 
+
+#org @gText_SwapItemsPart2
+\p[BUFFER1]の\n[BUFFER2]を いれかえた！[PAUSE_UNTIL_PRESS]
+
+#org @gMenuText_Move
+いどう
+
+#org @gText_MoveItemWhere
+どこに いどうする？
+
+#org @gText_FieldMoveDesc_RockClimb
+かべを のぼって いどうする
+
+#org @gText_FieldMoveDesc_Defog
+ふかい きりを はらう
+
+#org @gText_FieldMoveDesc_Dive
+すいちゅうに もぐる
+
+#org @gText_EVReducingBerryBothEffects
+[BUFFER1]は\nちょっと なついた！\p[BUFFER2]の\nきそポイントが さがった！[PAUSE_UNTIL_PRESS]
+
+#org @gText_EVReducingBerryLoweredStat
+[BUFFER1]は\nさいこうに なついている！\p[BUFFER2]の\nきそポイントが さがった！[PAUSE_UNTIL_PRESS]
+
+#org @gText_EVReducingBerryIncreasedFriendship
+[BUFFER1]は\nちょっと なついた！\p[BUFFER2]の\nきそポイントは もうさがらない！[PAUSE_UNTIL_PRESS]
+
+#org @gText_FormChangeItem
+[BUFFER1]は\nべつの すがたに へんかした[PAUSE_UNTIL_PRESS]
+
+#org @gText_DNASplicersFuseWithWhich
+どのポケモンと がったい？[PAUSE_UNTIL_PRESS]
+
+#org @gText_AlreadyHaveFused
+[BUFFER1]は すでに\n[BUFFER2]と がったい しています[PAUSE_UNTIL_PRESS]
+
+#org @gText_NoSpaceForDefuse
+てもちが いっぱい なので\nぶんり できません[PAUSE_UNTIL_PRESS]
+
+#org @gText_CantFuseWithPokemon
+その ポケモンとは\nがったい できません[PAUSE_UNTIL_PRESS]
+
+#org @gText_AbilityCapsuleOfferChange
+[BUFFER1]の とくせいを\n[BUFFER2]に かえますか？
+
+#org @gText_AbilityCapsuleChangedAbility
+[BUFFER1]の とくせいが\n[BUFFER2]に へんかした！[PAUSE_UNTIL_PRESS]
+
+#org @gText_MaxPowderOfferGive
+[BUFFER1]の ダイマックスを\nキョダイマックスに かえますか？
+
+#org @gText_MaxPowderOfferRevert
+[BUFFER1]の キョダイマックスを\nダイマックスに かえますか？
+
+#org @gText_MaxPowderAllowsGigantamax
+[BUFFER1]は キョダイマックス\nできるようになった！[PAUSE_UNTIL_PRESS]
+
+#org @gText_MaxPowderRemovesGigantamax
+[BUFFER1]は キョダイマックス\nできなくなった[PAUSE_UNTIL_PRESS]

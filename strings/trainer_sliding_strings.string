@@ -1,0 +1,15 @@
+#include "src/config.h"
+
+//Notice the extra whitespace character after the "\p"s. Without it, the message won't disappear from the screen when the player presses A.
+
+#org @gText_DefaultTrainerDynamaxMsg
+いくぞ！ ダイマックスだ！\p 
+
+#org @gText_TestTrainerDynamaxMsg
+いまこそ ダイマックスの\nちからを ときはなつ！\p 
+
+//For Pokemon Unbound - Feel free to remove, and do not place strings below
+#ifdef UNBOUND
+
+
+#endif

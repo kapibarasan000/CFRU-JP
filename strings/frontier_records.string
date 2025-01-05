@@ -1,0 +1,254 @@
+#org @gText_SingleBattleRecord
+シングルバトル
+
+#org @gText_DoubleBattleRecord
+ダブルバトル
+
+#org @gText_MultiBattleRecord
+マルチバトル
+
+#org @gText_LinkMultiBattleRecord
+Link Multi Battle Record
+
+#org @gText_SingleRandomBattleRecord
+Rand Single Btl Record
+
+#org @gText_DoubleRandomBattleRecord
+Rand Double Btl Record
+
+#org @gText_MultiRandomBattleRecord
+Rand Multi Btl Record
+
+#org @gText_SingleBattle
+シングルバトル
+
+#org @gText_DoubleBattle
+ダブルバトル
+
+#org @gText_MultiBattle
+マルチバトル
+
+#org @gText_LinkMultiBattle
+Link Multi Battle
+
+#org @gText_RandomSingleBattle
+Random Single Battle
+
+#org @gText_RandomDoubleBattle
+Random Double Battle
+
+#org @gText_RandomMultiBattle
+Random Multi Battle
+
+#org @gText_FrontierRecordLevel5
+レベル 5
+
+#org @gText_FrontierRecordLevel50
+レベル 50
+
+#org @gText_FrontierRecordLevel100
+レベル 100
+
+#org @gText_CurrentStreak
+げんざい\nさいこう
+
+#org @gText_MaxStreak
+さいこう
+
+#org @gText_3v3
+3 v 3
+
+#org @gText_4v4
+4 v 4
+
+#org @gText_6v6
+6 v 6
+
+#org @gText_BattleTowerStandard
+スタンダード
+
+#org @gText_NoRestrictions
+せいげんなし
+
+#org @gText_SmogonGen7OU
+Smogon Gen 7 OU
+
+#org @gText_SmogonGen7Uber
+Smogon Gen 7 Ubers
+
+#org @gText_SmogonLittleCup
+Smogon Little Cup
+
+#org @gText_MiddleCup
+Middle Cup
+
+#org @gText_SmogonMonotype
+Smogon Monotype
+
+#org @gText_GSCup
+GS Cup
+
+#org @gText_SmogonCamomons
+Smogon Camomons
+
+#org @gText_UberCamomons
+Uber Camomons
+
+#org @gText_LittleCupCamomons
+Little Cup Camomons
+
+#org @gText_MiddleCupCamomons
+Middle Cup Camomons
+
+#org @gText_GSCupCamomons
+GS Cup Camomons
+
+#org @gText_SmogonScalemons
+Smogon Scalemons
+
+#org @gText_Smogon350Cup
+Smogon 350 Cup
+
+#org @gText_SmogonAveragemons
+Smogon Averagemons
+
+#org @gText_SmogonBenjaminButterfree
+Smogon Benjamin Butterfree
+
+#org @gText_MegaBrawl
+Mega Brawl
+
+#org @gText_DynamaxStandard
+Dynamax Standard
+
+#org @gText_NationalDexOU
+Smogon National Dex OU
+
+#org @gText_BattleMineFormat1
+Cave Format
+
+#org @gText_BattleMineFormat2
+Mountain Format
+
+#org @gText_BattleMineFormat3
+Pebble Format
+
+#org @gText_On
+on
+
+#org @gText_Off
+off
+
+#org @gText_BeAble
+be able
+
+#org @gText_NotBeAble
+not be able
+
+#org @gText_Previous
+Previous
+
+#org @gText_Max
+Max
+
+#org @gText_None
+None
+
+//Preceded by "The next battle will take place"
+
+#org @gText_BattleCircusDescriptionElectricTerrain
+with the battlefield electrified！\pGrounded Pokemon can't fall asleep\nand have stronger Electricーmoves！
+
+#org @gText_BattleCircusDescriptionGrassyTerrain
+with the battlefield grassy！\pGrounded Pokemon have stronger\nGrassーmoves and heal every turn！
+
+#org @gText_BattleCircusDescriptionMistyTerrain
+with the battlefield misty！\pGrounded Pokemon have stronger\nFairyーmoves and can't be afflicted\lwith status conditions！
+
+#org @gText_BattleCircusDescriptionPsychicTerrain
+with the battlefield weird！\pGrounded Pokemon have stronger\nPsychicーmoves and can't be hit\lby priority moves！
+
+#org @gText_BattleCircusDescriptionRain
+in the rain！
+
+#org @gText_BattleCircusDescriptionSun
+in the sun！
+
+#org @gText_BattleCircusDescriptionSandstorm
+in a sandstorm！
+
+#org @gText_BattleCircusDescriptionHail
+in a hailstorm！
+
+#org @gText_BattleCircusDescriptionFog
+under the cover of a deep fog。
+
+#org @gText_BattleCircusDescriptionTrickRoom
+in a Trick Room！\pSlower Pokemon get to move first！
+
+#org @gText_BattleCircusDescriptionMagicRoom
+in a Magic Room！\pMost held items have no effect！
+
+#org @gText_BattleCircusDescriptionWonderRoom
+in a Wonder Room！\pDefense and Sp。 Def stats are\nswapped！
+
+#org @gText_BattleCircusDescriptionGravity
+with intense gravity！\pNo Pokemon will remain airborne！
+
+#org @gText_BattleCircusDescriptionIonDeluge
+with a deluge of ions in the air！\pAll Normalーtype moves will become\nElectricーtype！
+
+#org @gText_BattleCircusDescriptionFairyLock
+with the battlefield locked down！\pNo Pokemon will be able to switch\nout！
+
+#org @gText_BattleCircusDescriptionMudSport
+with mud showering the battlefield！\pAll Electricーtype moves will be\nweakened！
+
+#org @gText_BattleCircusDescriptionWaterSport
+with water in the air！\pAll Fireーtype moves will be\nweakened！
+
+#org @gText_BattleCircusDescriptionInverseBattle
+in an Inverse Battle！\pAll type matchups are reversed！
+
+#org @gText_BattleCircusDescriptionDynamax
+with a Power Spot active！\pAll Pokemon will be able to\nDynamax！\pHowever, no Pokemon may Mega\nEvolve, undergo Primal Reversion,\lUltra Burst, or use ZーMoves！
+
+#org @gText_BattleCircusDescriptionTradeMon
+with Pokemon swapped！\pEach side will use one of the\nopposing side's Pokemon at random！
+
+#org @gText_BattleCircusDescriptionSafeguard
+with a veil protecting both sides\lof the battlefield！\pNo Pokemon may inflict status\nconditions on another！
+
+#org @gText_BattleCircusDescriptionMist
+with Mist surrounding both sides\lof the battlefield！\pNo Pokemon may have their stats\nlowered by another！
+
+#org @gText_BattleCircusDescriptionSeaOfFire
+with a Sea of Fire engulfing both\lsides of the battlefield！\pAll nonーFireーtype Pokemon will be\ndamaged each turn！
+
+#org @gText_BattleCircusDescriptionRainbow
+with a Rainbow present on both\lsides of the battlefield！\pAll moves have their secondary\neffect chance doubled！
+
+#org @gText_BattleCircusDescriptionConfused
+with all Pokemon confused！
+
+#org @gText_BattleCircusDescriptionTaunt
+with all Pokemon taunted！\pNo status moves can be used！
+
+#org @gText_BattleCircusDescriptionTorment
+with all Pokemon tormented！\pNo move can be used twice in a row。
+
+#org @gText_BattleCircusDescriptionHealBlock
+with all Pokemon Heal Blocked！\pNo Pokemon will be able to heal！
+
+#org @gText_BattleCircusDescriptionThroatChop
+with all Pokemon Throat Chopped！\pNo soundーbased moves can be used！
+
+#org @gText_BattleCircusDescriptionAlwaysCrit
+with all Pokemon Laser Focused！\pMoves will always score critical\nhits！
+
+#org @gText_BattleCircusDescriptionNoCrits
+with no Pokemon being able to\lscore a critical hit！
+
+#org @gText_BattleCircusDescriptionAbilitySuppression
+with all Pokemon having their\labilities suppressed！
+。

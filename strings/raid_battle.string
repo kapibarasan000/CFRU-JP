@@ -1,0 +1,11 @@
+#org @gText_RecommendedLevel
+すいしょうLv:
+
+#org @gText_RaidIntroSelection
+[DPAD_UP_DOWN]えらぶ [A_BUTTON]けってい [START_BUTTON]ランダム [B_BUTTON]やめる
+
+#org @gText_RaidBattleRules
+しゅうりょうルール\n4かい ひんし\n10ターン けいか
+
+#org @gText_RaidBattleChoosePartner
+パートナーせんたく

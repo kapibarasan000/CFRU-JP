@@ -1,0 +1,233 @@
+#org @gText_ChangeSaveType
+WRONG SAVE TYPE！\nPlease change to Flash 128k。
+
+#org @gText_MainMenuEnableRTC
+WARNING！\pThe correct system time could\nnot be read。\pEnable the Real Time Clock RTC,\nand make sure the time is correct。
+
+#org @gText_UsedVar2WildStronger
+[BUFFER][01]は\n[BUFFER][03]を つかった！\pつよいポケモンと\nそうぐう しやすくなった！[FC][09]
+
+#org @gText_UsedVar2WildWeaker
+[BUFFER][01]は\n[BUFFER][03]を つかった！\pよわいポケモンと\nそうぐう しやすくなった！[FC][09]
+
+#org @gText_SecondBagItemCanBeRegisteredToL
+A second item in the Cube can be\nregistered to [L_BUTTON] for easy use。
+
+#org @gText_AutoRunEnable
+オートラン [GREEN]ゆうこう[BLACK]
+
+#org @gText_AutoRunDisable
+オートラン [GREEN]むこう[BLACK]
+
+#org @gText_BikeTurboBoostEnable
+ターボブースト [GREEN]ゆうこう[BLACK]
+
+#org @gText_BikeTurboBoostDisable
+ターボブースト [GREEN]むこう[BLACK]
+
+#org @gText_PoisonSurvial
+[BUFFER][02]は なんとか どくにたえた\nどくが きえさった！
+
+#org @gText_ThrowInOnePremierBall
+[BUFFER][03] 1コ\nおまけ しておきますね！[FC][09]
+
+#org @gText_ThrowInPremierBalls
+[BUFFER][03] [BUFFER][02]コ\nおまけ しておきますね！[FC][09]
+
+#org @gText_AskUseAnotherRepel
+スプレーの こうかが きれた！\nつづけて つかいますか？
+
+#org @gText_UsedAnotherRepel
+[BUFFER][01]は [BUFFER][04]を つかった！
+
+#org @gText_RepelWoreOff
+スプレーの こうかが きれた！
+
+#org @gText_FoundMultipleItems
+[PLAYER]は\n[BUFFER2]を  [BUFFER1]コ みつけた！
+
+#org @gText_ObtainedMultipleItems
+[PLAYER]は\n[BUFFER2]を [BUFFER1]コ てにいれた！
+
+#org @gText_ObtainedTMHM
+[PLAYER]は[BUFFER][03]\n‘[BUFFER][02]’を みつけた！
+
+#org @gText_UseWhichRegisteredItem
+どれを つかう？
+
+#org @gText_ScurriedToNearestHealer
+つかれて うごけなくなった\nポケモンたちを かばいながら\n[PLAYER]は いそいで\nポケモンセンターに もどるのであった\p
+
+#org @gText_WantToScaleCliff
+いわはだが ゴツゴツしている……\n[BUFFER2]を つかいますか？
+
+#org @gText_RockIsRocky
+いわはだが ゴツゴツしている……\nポケモンのわざで いどうできるかも？
+
+#org @gText_DefogBlewAwayFog
+ふかいきりが きえさった！
+
+#org @gText_WaterDyed
+みずは ふかい あおに\nそまっている……
+
+#org @gText_WaterMurkyBrown
+みずは ちゃいろく\nにごっている……
+
+#org @gText_WaterMurkyBrownUseSurf
+みずは ちゃいろく\nにごっている……\pなみのりを つかいますか？
+
+#org @gText_LikeToLavaSurf
+マグマは まっかに\nかがやいている……\pなみのりを つかいますか？
+
+#org @gText_LavaSurfedWith
+[BUFFER1]は マグマで\nなみに のりはじめた！
+
+#org @gText_LavaDyed
+マグマは まっかに\nかがやいている……
+
+#org @gText_WantToDive
+ふかい うみだ！\n[BUFFER2]を つかいますか？
+
+#org @gText_WantToSurface
+うえから ひかりが さしこんでいる！\n[BUFFER2]を つかいますか？
+
+#org @gText_CantDive
+ふかい うみだ！\nポケモンの わざで もぐれるかも？
+
+#org @gText_CantSurface
+うえから ひかりが さしこんでいる！\nポケモンの わざで あがれるかも？
+
+#org @gText_DoorIsLocked
+カギが かかっている
+
+#org @gText_PsychicBarrier
+There appears to be some sort of\nPsychic barrier in the way
+
+#org @gText_ClimbLadder
+Would you like to climb the\nladder？
+
+#org @gText_CantReachLadder
+You can't reach the ladder from\nhere！
+
+#org @gText_FollowNarrowPath
+おや？\nとおれそうな すきまが ある！\pはいってみますか？
+
+#org @gText_FollowNarrowPathNowhere
+どこにも つながって いなかった
+
+#org @gText_WantToUseHeadbutt
+ずつきに てごろな\nおおきな き が ある！\pずつきを つかいますか？
+
+#org @gText_TreeCanBeHeadbutted
+ずつきに てごろな\nおおきな き が ある！
+
+#org @gText_StartMining
+かべが すこし もりあがっている\nほってみますか？
+
+//Mart Strings
+
+#org @gText_SingleTmBuy
+[BUFFER][02]‘[BUFFER][04]’ですね\n[BUFFER][03]\$に なりますが？
+
+#org @gText_AlreadyOwnTM
+そのわざマシンは すでに\nもっています[FC][09]
+
+//Bag Strings
+
+#org @gText_WantToSortItems
+どのように\nならびかえますか？
+
+#org @gMenuText_ByType
+しゅるい
+
+#org @gMenuText_ByName
+なまえ
+
+#org @gMenuText_ByMost
+おおい
+
+#org @gMenuText_ByLeast
+すくない
+
+#org @gMenuText_ByAmount
+ねだん
+
+#org @gText_name
+なまえ
+
+#org @gText_type
+しゅるい
+
+#org @gText_most
+おおい
+
+#org @gText_least
+すくない
+
+#org @gText_amount
+ねだん
+
+#org @gText_SortItemsBy
+[BUFFER1]じゅんで\nならべかえますか？
+
+#org @gText_ItemsSortedBy
+[BUFFER1]じゅんで\nならべかえた！
+
+//Battle Tower Pokemon Select
+
+#org @gOtherText_NoMoreOnePoke
+さんか できる ポケモンは\n1ひき まで です！[FC][09]
+
+#org @gOtherText_NoMoreFourPoke
+さんか できる ポケモンは\n4ひき まで です！[FC][09]
+
+#org @gOtherText_NoMoreFivePoke
+さんか できる ポケモンは\n5ひき まで です！[FC][09]
+
+#org @gText_First
+いちばんめ
+
+#org @gText_Second
+にばんめ
+
+#org @gText_Third
+さんばんめ
+
+#org @gText_Fourth
+よんばんめ
+
+#org @gText_Fifth
+ごばんめ
+
+#org @gText_Sixth
+ろくばんめ
+
+#org @gText_PokemonAreNeeded
+[BUFFER][02]ひき そろっていません
+
+#org @gText_EnterNumber
+ばんごうを にゅうりょく してください
+
+#org @gText_EnterPhrase
+あいことばを にゅうりょく してください
+
+#org @gText_EnterPassword
+パスワードを にゅうりょく してください
+
+#org @gText_Purchased
+ーーーー\$
+
+#org @gText_StopZooming
+Stop zooming！
+
+#org @gText_Exp_Share_Ask_On
+がくしゅうそうちを オンにしますか？
+
+#org @gText_Exp_Share_Ask_Off
+がくしゅうそうちを オフにしますか？
+
+#org @gText_Exp_Share_On
+がくしゅうそうちが オンになった
+
+#org @gText_Exp_Share_Off
+がくしゅうそうちが オフになった

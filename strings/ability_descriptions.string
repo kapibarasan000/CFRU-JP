@@ -1,0 +1,553 @@
+#include "src/config.h"
+
+#org @DESC_SWEETVEIL
+みかたの ポケモンは ねむらなくなる
+
+#org @DESC_SKILLLINK
+れんぞく わざを たくさん だせる
+
+#org @DESC_MOTORDRIVE
+でんきを うけると すばやさが あがる
+
+#org @DESC_MULTISCALE
+HPまんたんで うける ダメージが へる
+
+#org @DESC_TECHNICIAN
+よわい わざの いりょくが あがる
+
+#org @DESC_SCRAPPY
+ゴーストタイプに わざが あたる
+
+#org @DESC_SUPERLUCK
+こうげきが きゅうしょに あたりやすい
+
+#org @DESC_SNIPER
+きゅうしょの ダメージが あがる
+
+#org @DESC_REGENERATOR
+ひっこめると HPが かいふくする
+
+#org @DESC_PRANKSTER
+へんかわざを せんせいで だせる
+
+#org @DESC_ADAPTABILITY
+じぶんの タイプの いりょくが あがる
+
+#org @DESC_BIGPECKS
+ぼうぎょを さげる こうかを うけない
+
+#org @DESC_MAGICBOUNCE
+へんかわざを かえす ことが できる
+
+#org @DESC_RECKLESS
+はんどうを うけるわざが つよくなる
+
+#org @DESC_SHEERFORCE
+ついかこうかを なくし わざを つよめる
+
+#org @DESC_IRONFIST
+パンチわざの いりょくが あがる
+
+#org @DESC_RIVALRY
+せいべつが おなじだと つよくなる
+
+#org @DESC_SANDFORCE
+すなあらしで わざの いりょくが あがる
+
+#org @DESC_SOLARPOWER
+はれで とくこうが あがるが HPがへる
+
+#org @DESC_HEATPROOF
+ほのお わざの いりょくを よわめる
+
+#org @DESC_DRYSKIN
+あついと HPが へり みずで かいふく
+
+#org @DESC_TINTEDLENS
+こうかいまひとつの わざを つよめる
+
+#org @DESC_SOLIDROCK
+ばつぐんのとき うけるダメージを へらす
+
+#org @DESC_INFILTRATOR
+あいての かべを すりぬけて こうげき
+
+#org @DESC_DOWNLOAD
+あいての のうりょくで つよさを かえる
+
+#org @DESC_POISONHEAL
+どくに なると HPを かいふくする
+
+#org @DESC_ICEBODY
+あられのとき HPを かいふくする
+
+#org @DESC_MOODY
+のうりょくが あがったり さがったりする
+
+#org @DESC_HYDRATION
+あめで じょうたいいじょうが なおる
+
+#org @DESC_HEALER
+みかたの じょうたいいじょうを なおす
+
+#org @DESC_SNOWCLOAK
+あられのとき かいひりつが あがる
+
+#org @DESC_TANGLEDFEET
+こんらんのとき かいひりつが あがる
+
+#org @DESC_SNOWWARNING
+せんとうに でると あられを ふらす
+
+#org @DESC_QUICKFEET
+じょうたいいじょうで すばやさが あがる
+
+#org @DESC_SAPSIPPER
+くさわざを うけると こうげきが あがる
+
+#org @DESC_OVERCOAT
+てんきの ダメージや こなを ふせぐ
+
+#org @DESC_MAGICGUARD
+こうげき いがいの ダメージを うけない
+
+#org @DESC_BULLETPROOF
+たまや ばくだんの わざを ふせぐ
+
+#org @DESC_GALEWINGS
+ひこうわざが せんせいで だせる
+
+#org @DESC_MOXIE
+あいてを たおすと こうげきが あがる
+
+#org @DESC_AFTERMATH
+たおされると ふれた あいてに ダメージ
+
+#org @DESC_CURSEDBODY
+うけたわざを たまに かなしばりにする
+
+#org @DESC_GOOEY
+ふれた あいての すばやさを さげる
+
+#org @DESC_MUMMY
+さわられると あいてを ミイラにする
+
+#org @DESC_IRONBARBS
+ふれた あいてを キズつける
+
+#org @DESC_SANDRUSH
+すなあらしで すばやさが あがる
+
+#org @DESC_ANALYTIC
+さいごに わざをだすと つよくなる
+
+#org @DESC_NOGUARD
+おたがいの わざが かならず あたる
+
+#org @DESC_MEGALAUNCHER
+はどうの わざの いりょくが あがる
+
+#org @DESC_TOUGHCLAWS
+せっしょくわざの いりょくが あがる
+
+#org @DESC_STRONGJAW
+かむ わざの いりょくが あがる
+
+#org @DESC_VICTORYSTAR
+じぶんや みかたの めいちゅうが あがる
+
+#org @DESC_STORMDRAIN
+みずを よびこんで とくこうを あげる
+
+#org @DESC_DARKAURA
+ぜんいんの あくわざが つよくなる
+
+#org @DESC_FAIRYAURA
+ぜんいんの フェアリーわざが つよくなる
+
+#org @DESC_AURABREAK
+オーラの こうかが ぎゃくに なる
+
+#org @DESC_REFRIGERATE
+ノーマルわざが こおりタイプになる
+
+#org @DESC_PIXILATE
+ノーマルわざが フェアリータイプになる
+
+#org @DESC_AERILATE
+ノーマルわざが ひこうタイプになる
+
+#org @DESC_NORMALIZE
+わざが すべて ノーマルタイプになる
+
+#org @DESC_UNBURDEN
+どうぐが なくなると すばやさが あがる
+
+#org @DESC_SIMPLE
+のうりょく へんかが 2ばいになる
+
+#org @DESC_UNAWARE
+あいての のうりょくへんかを むしする
+
+#org @DESC_DEFIANT
+のうりょくが さがると こうげきがあがる
+
+#org @DESC_COMPETITIVE
+のうりょくが さがると とくこうがあがる
+
+#org @DESC_DEFEATIST
+HPが へると のうりょくが さがる
+
+#org @DESC_SLOWSTART
+こうげきと すばやさが しばらく さがる
+
+#org @DESC_TOXICBOOST
+どくのとき ぶつりの いりょくが あがる
+
+#org @DESC_FLAREBOOST
+やけどで とくしゅの いりょくが あがる
+
+#org @DESC_FURCOAT
+ぶつりわざの ダメージが はんぶんになる
+
+#org @DESC_WONDERSKIN
+あいての へんかわざが あたりにくくなる
+
+#org @DESC_PROTEAN
+#org @DESC_LIBERO
+だしたわざと おなじタイプに へんかする
+
+#org @DESC_PARENTALBOND
+おやこ 2ひきで こうげきする
+
+#org @DESC_MOLDBREAKER
+#org @DESC_TURBOBLAZE
+#org @DESC_TERAVOLT
+あいての とくせいを むしする
+
+#org @DESC_ZENMODE
+ピンチに なると すがたが へんかする
+
+#org @DESC_BATTLEBOND
+あいてを たおすと すがたが へんかする
+
+#org @DESC_BEASTBOOST
+あいてを たおすと のうりょくが あがる
+
+#org @DESC_CORROSION
+はがねや どくタイプも どくに できる
+
+#org @DESC_DISGUISE
+こうげきを 1かい ふせぐことが できる
+
+#org @DESC_EMERGENCYEXIT
+#org @DESC_WIMPOUT
+HPが はんぶんで てもちに もどる
+
+#org @DESC_FLUFFY
+せっしょくわざの ダメージを はんげん
+
+#org @DESC_BROKEN_1
+#org @DESC_BROKEN_2
+とくせいなし
+
+#org @DESC_POWERCONSTRUCT
+HPが はんぶんで すがたを かえる
+
+#org @DESC_PRISMARMOR
+ばつぐんのとき うけるダメージを へらす
+
+#org @DESC_RKS_SYSTEM
+もっている メモリで タイプが かわる
+
+#org @DESC_SCHOOLING
+HPが おおいと むれて つよくなる
+
+#org @DESC_SHADOWSHIELD
+HPまんたんで うける ダメージが へる
+
+#org @DESC_SHIELDSDOWN
+HPが はんぶんで すがたが へんかする
+
+#org @DESC_SLUSHRUSH
+あられのとき すばやさが あがる
+
+#org @DESC_SOULHEART
+だれかが たおれると とくこうが あがる
+
+#org @DESC_STAMINA
+こうげきを うけると ぼうぎょが あがる
+
+#org @DESC_STEELWORKER
+はがね わざの いりょくが あがる
+
+#org @DESC_TRIAGE
+かいふくわざを せんせいで だせる
+
+#org @DESC_WATERBUBBLE
+ほのおわざを よわめ やけどに ならない
+
+#org @DESC_WATERCOMPACTION
+みずわざを うけると ぼうぎょが あがる
+
+#org @DESC_STALL
+わざをだす じゅんばんが さいごになる
+
+#org @DESC_MULTITYPE
+もっている プレートで タイプが かわる
+
+#org @DESC_ELECTRICSURGE
+エレキフィールドを はりめぐらせる
+
+#org @DESC_GRASSYSURGE
+グラスフィールドを はりめぐらせる
+
+#org @DESC_MISTYSURGE
+ミストフィールドを はりめぐらせる
+
+#org @DESC_PSYCHICSURGE
+サイコフィールドを はりめぐらせる
+
+#org @DESC_SURGESURFER
+エレキフィールドのとき すばやさがあがる
+
+#org @DESC_GRASSPELT
+グラスフィールドのとき ぼうぎょがあがる
+
+#org @DESC_ANGERPOINT
+きゅうしょに うけると こうげきがあがる
+
+#org @DESC_ANTICIPATION
+きけんな わざを さっちする
+
+#org @DESC_FOREWARN
+あいての わざを よみとることが できる
+
+#org @DESC_FRISK
+あいての もちものを しることが できる
+
+#org @DESC_CONTRARY
+のうりょくの へんかが ぎゃくてんする
+
+#org @DESC_UNNERVE
+あいてが きのみを たべられなくする
+
+#org @DESC_WEAKARMOR
+ぶつりで ぼうぎょがさがり すばやくなる
+
+#org @DESC_HEAVYMETAL
+じぶんの おもさが 2ばいに なる
+
+#org @DESC_LIGHTMETAL
+じぶんの おもさが はんぶんに なる
+
+#org @DESC_STEADFAST
+ひるむ たびに すばやさが あがる
+
+#org @DESC_IMPOSTER
+めのまえの ポケモンに へんしん する
+
+#org @DESC_JUSTIFIED
+あくを うけると こうげきが あがる
+
+#org @DESC_RATTLED
+あく ゴースト むしで すばやさがあがる
+
+#org @DESC_MERCILESS
+あいてが どくだと きゅうしょに あたる
+
+#org @DESC_AROMAVEIL
+みかたへの メンタル こうげきを ふせぐ
+
+#org @DESC_FLOWERVEIL
+くさポケモンは のうりょくが さがらない
+
+#org @DESC_LEAFGUARD
+はれのとき じょうたいいじょうを ふせぐ
+
+#org @DESC_KLUTZ
+もっている どうぐを つかえない
+
+#org @DESC_FLOWERGIFT
+はれのとき じぶんとみかたが つよくなる
+
+#org @DESC_BADDREAMS
+ねむっている あいての HPを へらす
+
+#org @DESC_PICKPOCKET
+さわられた あいてから どうぐを ぬすむ
+
+#org @DESC_PORTALPOWER
+ー
+
+#org @DESC_POISONTOUCH
+あいてに さわると どくにすることがある
+
+#org @DESC_MAGICIAN
+わざをあてた あいてのどうぐを うばう
+
+#org @DESC_STANCECHANGE
+せんとうモードで すがたが かわる
+
+#org @DESC_PRIMORDIALSEA
+てんきを おおあめに する
+
+#org @DESC_DESOLATELAND
+てんきを おおひでりに する
+
+#org @DESC_DELTASTREAM
+てんきを らんきりゅうに する
+
+#org @DESC_BERSERK
+HPが はんぶんで とくこうが あがる
+
+#org @DESC_LONGREACH
+すべてのわざを せっしょくせずに だせる
+
+#org @DESC_LIQUIDVOICE
+すべての おとわざが みずタイプに なる
+
+#org @DESC_ASONE_CHILLING
+#org @DESC_ASONE_GRIM
+ふたつの とくせいを あわせもつ
+
+#org @DESC_INNARDSOUT
+たおされたとき ダメージを あたえる
+
+#org @DESC_DAZZLING
+あいてが せんせいわざを だせなくなる
+
+#org @DESC_GLUTTONY
+きのみを いつもより はやく つかう
+
+#org @DESC_HONEYGATHER
+あまいミツを あつめて くることが ある
+
+#org @DESC_FRIENDGUARD
+みかたの ダメージを へらすことができる
+
+#org @DESC_HARVEST
+つかったきのみを なんかいも つくりだす
+
+#org @DESC_TELEPATHY
+みかたの こうげきを うけない
+
+#org @DESC_ILLUSION
+うしろのポケモンに なりきって でてくる
+
+#org @DESC_CHEEKPOUCH
+きのみを たべると HPも かいふくする
+
+#org @DESC_SYMBIOSIS
+みかたに どうぐを わたせるように なる
+
+#org @DESC_STAKEOUT
+こうたいした あいてに ダメージがあがる
+
+#org @DESC_COMATOSE
+つねに ねむりで ぜったいに めざめない
+
+#org @DESC_DANCER
+おどりわざを まねして つかう
+
+#org @DESC_BATTERY
+みかたの とくしゅの いりょくを あげる
+
+#org @DESC_RECEIVER
+たおれた みかたの とくせいを うけつぐ
+
+#org @DESC_POWEROFALCHEMY
+たおれた みかたの とくせいを うけつぐ
+
+#org @DESC_NEUROFORCE
+こうかばつぐんのとき  いりょくがあがる
+
+#org @DESC_GALVANIZE
+ノーマル わざが でんきタイプになる
+
+//Sword and Shield Abilities.
+
+#org @DESC_INTREPIDSWORD
+せんとうに でたとき こうげきが あがる
+
+#org @DESC_DAUNTLESSSHIELD
+せんとうに でたとき ぼうぎょが あがる
+
+#org @DESC_BALLFETCH
+しっぱいした ボールを ひろってくる
+
+#org @DESC_COTTONDOWN
+こうげきされると すばやさを さげる
+
+#org @DESC_MIRRORARMOR
+のうりょくダウンの こうかを はねかえす
+
+#org @DESC_GULPMISSILE
+くわえたえものを はきだしてはんげきする
+
+#org @DESC_STALWART
+#org @DESC_PROPELLERTAIL
+わざをひきうける こうかを むしできる
+
+#org @DESC_STEAMENGINE
+みずや ほのお わざで すばやさがあがる
+
+#org @DESC_PUNKROCK
+おとわざの いりょくが あがる
+
+#org @DESC_SANDSPIT
+こうげきを うけると すなあらしをおこす
+
+#org @DESC_ICESCALES
+とくしゅの ダメージを はんげんする
+
+#org @DESC_RIPEN
+きのみの こうかが ばいに なる
+
+#org @DESC_ICEFACE
+ぶつりわざを ふせぎ すがたが かわる
+
+#org @DESC_POWERSPOT
+みかたの わざの いりょくが あがる
+
+#org @DESC_MIMICRY
+フィールドによって タイプが かわる
+
+#org @DESC_SCREENCLEANER
+せんとうに でたとき バリアを けす
+
+#org @DESC_STEELYSPIRIT
+みかたの はがねわざの いりょくがあがる
+
+#org @DESC_PERISHBODY
+ふれたあいてと じぶんに ほろびをかける
+
+#org @DESC_WANDERINGSPIRIT
+ふれたあいてと とくせいを いれかえる
+
+#org @DESC_GORILLATACTICS
+こうげきがあがり おなじわざしかだせない
+
+#org @DESC_NEUTRALISINGGAS
+ぜんいんの とくせいを むこうにする
+
+#org @DESC_PASTEL_VEIL
+みかたが どくに ならない
+
+#org @DESC_HUNGERSWITCH
+まいターン こうごに すがたが かわる
+
+#org @DESC_TRANSISTOR
+でんきわざの いりょくが あがる
+
+#org @DESC_CHILLINGNEIGH
+あいてを たおすと こうげきが あがる
+
+#org @DESC_DRAGONSMAW
+ドラゴンわざの いりょくが あがる
+
+#org @DESC_UNSEENFIST
+せっしょくわざ なら まもりを むしする
+
+#org @DESC_GRIMNEIGH
+あいてを たおすと とくこうが あがる

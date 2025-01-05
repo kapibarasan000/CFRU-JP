@@ -1,0 +1,768 @@
+MAX_LENGTH=16
+FILL_FF=True
+
+#org @gAbilityNames
+#org @NAME_ABILITY_NONE
+ーーーーーーー
+
+#org @NAME_STENCH
+あくしゅう
+
+#org @NAME_DRIZZLE
+あめふらし
+
+#org @NAME_SPEED_BOOST
+かそく
+
+#org @NAME_UNSEENFIST
+ふかしのこぶし
+
+#org @NAME_STURDY
+がんじょう
+
+#org @NAME_DAMP
+しめりけ
+
+#org @NAME_LIMBER
+じゅうなん
+
+#org @NAME_SAND_VEIL
+すながくれ
+
+#org @NAME_STATIC
+せいでんき
+
+#org @NAME_VOLT_ABSORB
+ちくでん
+
+#org @NAME_WATER_ABSORB
+ちょすい
+
+#org @NAME_OBLIVIOUS
+どんかん
+
+#org @NAME_CLOUD_NINE
+ノーてんき
+
+#org @NAME_COMPOUND_EYES
+ふくがん
+
+#org @NAME_INSOMNIA
+ふみん
+
+#org @NAME_COLOR_CHANGE
+へんしょく
+
+#org @NAME_IMMUNITY
+めんえき
+
+#org @NAME_FLASH_FIRE
+もらいび
+
+#org @NAME_SHIELD_DUST
+りんぷん
+
+#org @NAME_OWN_TEMPO
+マイペース
+
+#org @NAME_SUCTION_CUPS
+きゅうばん
+
+#org @NAME_INTIMIDATE
+いかく
+
+#org @NAME_SHADOW_TAG
+かげふみ
+
+#org @NAME_ROUGH_SKIN
+さめはだ
+
+#org @NAME_WONDER_GUARD
+ふしぎなまもり
+
+#org @NAME_LEVITATE
+ふゆう
+
+#org @NAME_EFFECT_SPORE
+ほうし
+
+#org @NAME_SYNCHRONIZE
+シンクロ
+
+#org @NAME_CLEAR_BODY
+クリアボディ
+
+#org @NAME_NATURAL_CURE
+しぜんかいふく
+
+#org @NAME_LIGHTNING_ROD
+ひらいしん
+
+#org @NAME_SERENE_GRACE
+てんのめぐみ
+
+#org @NAME_SWIFT_SWIM
+すいすい
+
+#org @NAME_CHLOROPHYLL
+ようりょくそ
+
+#org @NAME_DRAGONSMAW
+りゅうのあぎと
+
+#org @NAME_TRACE
+トレース
+
+#org @NAME_HUGE_POWER
+ちからもち
+
+#org @NAME_POISON_POINT
+どくのトゲ
+
+#org @NAME_INNER_FOCUS
+せいしんりょく
+
+#org @NAME_MAGMA_ARMOR
+マグマのよろい
+
+#org @NAME_WATER_VEIL
+みずのベール
+
+#org @NAME_MAGNET_PULL
+じりょく
+
+#org @NAME_SOUNDPROOF
+ぼうおん
+
+#org @NAME_RAIN_DISH
+あめうけざら
+
+#org @NAME_SAND_STREAM
+すなおこし
+
+#org @NAME_PRESSURE
+プレッシャー
+
+#org @NAME_THICK_FAT
+あついしぼう
+
+#org @NAME_EARLY_BIRD
+はやおき
+
+#org @NAME_FLAME_BODY
+ほのおのからだ
+
+#org @NAME_RUN_AWAY
+にげあし
+
+#org @NAME_KEEN_EYE
+するどいめ
+
+#org @NAME_HYPER_CUTTER
+かいりきバサミ
+
+#org @NAME_PICKUP
+ものひろい
+
+#org @NAME_TRUANT
+なまけ
+
+#org @NAME_HUSTLE
+はりきり
+
+#org @NAME_CUTE_CHARM
+メロメロボディ
+
+#org @NAME_PLUS
+プラス
+
+#org @NAME_MINUS
+マイナス
+
+#org @NAME_FORECAST
+てんきや
+
+#org @NAME_STICKY_HOLD
+ねんちゃく
+
+#org @NAME_SHED_SKIN
+だっぴ
+
+#org @NAME_GUTS
+こんじょう
+
+#org @NAME_MARVEL_SCALE
+ふしぎなうろこ
+
+#org @NAME_LIQUID_OOZE
+ヘドロえき
+
+#org @NAME_OVERGROW
+しんりょく
+
+#org @NAME_BLAZE
+もうか
+
+#org @NAME_TORRENT
+げきりゅう
+
+#org @NAME_SWARM
+むしのしらせ
+
+#org @NAME_ROCK_HEAD
+いしあたま
+
+#org @NAME_DROUGHT
+ひでり
+
+#org @NAME_ARENA_TRAP
+ありじごく
+
+#org @NAME_TRANSISTOR
+トランジスタ
+
+#org @NAME_FULL_METAL_BODY
+メタルプロテクト
+
+#org @NAME_NEUTRALISING_GAS
+かがくへんかガス
+
+#org @NAME_SHELL_ARMOR
+シェルアーマー
+
+#org @NAME_HUNGER_SWITCH
+はらぺこスイッチ
+
+#org @NAME_AIR_LOCK
+エアロック
+
+#org @NAME_SWEET_VEIL
+スイートベール
+
+#org @NAME_SKILL_LINK
+スキルリンク
+
+#org @NAME_MOTOR_DRIVE
+でんきエンジン
+
+#org @NAME_MULTISCALE
+マルチスケイル
+
+#org @NAME_TECHNICIAN
+テクニシャン
+
+#org @NAME_SCRAPPY
+きもったま
+
+#org @NAME_SUPER_LUCK
+きょううん
+
+#org @NAME_SNIPER
+スナイパー
+
+#org @NAME_REGENERATOR
+さいせいりょく
+
+#org @NAME_PRANKSTER
+いたずらごころ
+
+#org @NAME_ADAPTABILITY
+てきおうりょく
+
+#org @NAME_BIG_PECKS
+はとむね
+
+#org @NAME_MAGIC_BOUNCE
+マジックミラー
+
+#org @NAME_RECKLESS
+すてみ
+
+#org @NAME_SHEER_FORCE
+ちからずく
+
+#org @NAME_IRON_FIST
+てつのこぶし
+
+#org @NAME_RIVALRY
+とうそうしん
+
+#org @NAME_SAND_FORCE
+すなのちから
+
+#org @NAME_SOLAR_POWER
+サンパワー
+
+#org @NAME_HEATPROOF
+たいねつ
+
+#org @NAME_DRY_SKIN
+かんそうはだ
+
+#org @NAME_TINTED_LENS
+いろめがね
+
+#org @NAME_SOLID_ROCK
+ハードロック
+
+#org @NAME_CHILLINGNEIGH
+しろのいななき
+
+#org @NAME_INFILTRATOR
+すりぬけ
+
+#org @NAME_DOWNLOAD
+ダウンロード
+
+#org @NAME_POISON_HEAL
+ポイズンヒール
+
+#org @NAME_ICE_BODY
+アイスボディ
+
+#org @NAME_MOODY
+ムラっけ
+
+#org @NAME_HYDRATION
+うるおいボディ
+
+#org @NAME_HEALER
+いやしのこころ
+
+#org @NAME_SNOW_CLOAK
+ゆきがくれ
+
+#org @NAME_TANGLED_FEET
+ちどりあし
+
+#org @NAME_SNOW_WARNING
+ゆきふらし
+
+#org @NAME_QUICK_FEET
+はやあし
+
+#org @NAME_SAP_SIPPER
+そうしょく
+
+#org @NAME_OVERCOAT
+ぼうじん
+
+#org @NAME_MAGIC_GUARD
+マジックガード
+
+#org @NAME_BULLETPROOF
+ぼうだん
+
+#org @NAME_GALE_WINGS
+はやてのつばさ
+
+#org @NAME_MOXIE
+じしんかじょう
+
+#org @NAME_AFTERMATH
+ゆうばく
+
+#org @NAME_CURSED_BODY
+のろわれボディ
+
+#org @NAME_GOOEY
+ぬめぬめ
+
+#org @NAME_MUMMY
+ミイラ
+
+#org @NAME_IRON_BARBS
+てつのトゲ
+
+#org @NAME_SAND_RUSH
+すなかき
+
+#org @NAME_ANALYTIC
+アナライズ
+
+#org @NAME_NO_GUARD
+ノーガード
+
+#org @NAME_MEGA_LAUNCHER
+メガランチャー
+
+#org @NAME_TOUGH_CLAWS
+かたいツメ
+
+#org @NAME_STRONG_JAW
+がんじょうあご
+
+#org @NAME_VICTORY_STAR
+しょうりのほし
+
+#org @NAME_STORM_DRAIN
+よびみず
+
+#org @NAME_DARK_AURA
+ダークオーラ
+
+#org @NAME_FAIRY_AURA
+フェアリーオーラ
+
+#org @NAME_AURA_BREAK
+オーラブレイク
+
+#org @NAME_REFRIGERATE
+フリーズスキン
+
+#org @NAME_PIXILATE
+フェアリースキン
+
+#org @NAME_AERILATE
+スカイスキン
+
+#org @NAME_NORMALIZE
+ノーマルスキン
+
+#org @NAME_UNBURDEN
+かるわざ
+
+#org @NAME_SIMPLE
+たんじゅん
+
+#org @NAME_UNAWARE
+てんねん
+
+#org @NAME_DEFIANT
+まけんき
+
+#org @NAME_COMPETITIVE
+かちき
+
+#org @NAME_DEFEATIST
+よわき
+
+#org @NAME_SLOW_START
+スロースタート
+
+#org @NAME_TOXIC_BOOST
+どくぼうそう
+
+#org @NAME_FLARE_BOOST
+ねつぼうそう
+
+#org @NAME_FUR_COAT
+ファーコート
+
+#org @NAME_WONDER_SKIN
+ミラクルスキン
+
+#org @NAME_PROTEAN
+へんげんじざい
+
+#org @NAME_PARENTAL_BOND
+おやこあい
+
+#org @NAME_MOLD_BREAKER
+かたやぶり
+
+#org @NAME_TURBOBLAZE
+ターボブレイズ
+
+#org @NAME_TERAVOLT
+テラボルテージ
+
+#org @NAME_ZEN_MODE
+ダルマモード
+
+#org @NAME_BATTLE_BOND
+きずなへんげ
+
+#org @NAME_BEAST_BOOST
+ビーストブースト
+
+#org @NAME_CORROSION
+ふしょく
+
+#org @NAME_DISGUISE
+ばけのかわ
+
+#org @NAME_EMERGENCY_EXIT
+ききかいひ
+
+#org @NAME_FLUFFY
+もふもふ
+
+#org @NAME_STEELY_SPIRIT
+はがねのせいしん
+
+#org @NAME_PERISH_BODY
+ほろびのボディ
+
+#org @NAME_WANDERING_SPIRIT
+さまようたましい
+
+#org @NAME_POWER_CONSTRUCT
+スワームチェンジ
+
+#org @NAME_PRISM_ARMOR
+プリズムアーマー
+
+#org @NAME_RKS_SYSTEM
+ARシステム
+
+#org @NAME_SCHOOLING
+ぎょぐん
+
+#org @NAME_SHADOW_SHIELD
+ファントムガード
+
+#org @NAME_SHIELDS_DOWN
+リミットシールド
+
+#org @NAME_SLUSH_RUSH
+ゆきかき
+
+#org @NAME_SOULHEART
+ソウルハート
+
+#org @NAME_STAMINA
+じきゅうりょく
+
+#org @NAME_STEELWORKER
+はがねつかい
+
+#org @NAME_GRIMNEIGH
+くろのいななき
+
+#org @NAME_TRIAGE
+ヒーリングシフト
+
+#org @NAME_WATER_BUBBLE
+すいほう
+
+#org @NAME_WATER_COMPACTION
+みずがため
+
+#org @NAME_STALL
+あとだし
+
+#org @NAME_MULTITYPE
+マルチタイプ
+
+#org @NAME_ELECTRIC_SURGE
+エレキメイカー
+
+#org @NAME_GRASSY_SURGE
+グラスメイカー
+
+#org @NAME_MISTY_SURGE
+ミストメイカー
+
+#org @NAME_PSYCHIC_SURGE
+サイコメイカー
+
+#org @NAME_SURGE_SURFER
+サーフテール
+
+#org @NAME_GRASS_PELT
+くさのけがわ
+
+#org @NAME_ANGER_POINT
+いかりのつぼ
+
+#org @NAME_ANTICIPATION
+きけんよち
+
+#org @NAME_FOREWARN
+よちむ
+
+#org @NAME_FRISK
+おみとおし
+
+#org @NAME_CONTRARY
+あまのじゃく
+
+#org @NAME_UNNERVE
+きんちょうかん
+
+#org @NAME_WEAK_ARMOR
+くだけるよろい
+
+#org @NAME_HEAVY_METAL
+ヘヴィメタル
+
+#org @NAME_LIGHT_METAL
+ライトメタル
+
+#org @NAME_STEADFAST
+ふくつのこころ
+
+#org @NAME_IMPOSTER
+かわりもの
+
+#org @NAME_JUSTIFIED
+せいぎのこころ
+
+#org @NAME_RATTLED
+びびり
+
+#org @NAME_MERCILESS
+ひとでなし
+
+#org @NAME_AROMA_VEIL
+アロマベール
+
+#org @NAME_FLOWER_VEIL
+フラワーベール
+
+#org @NAME_LEAF_GUARD
+リーフガード
+
+#org @NAME_KLUTZ
+ぶきよう
+
+#org @NAME_FLOWER_GIFT
+フラワーギフト
+
+#org @NAME_BAD_DREAMS
+ナイトメア
+
+#org @NAME_PICKPOCKET
+わるいてぐせ
+
+#org @NAME_PORTAL_POWER
+ポータルパワー
+
+#org @NAME_POISON_TOUCH
+どくしゅ
+
+#org @NAME_MAGICIAN
+マジシャン
+
+#org @NAME_STANCE_CHANGE
+バトルスイッチ
+
+#org @NAME_PRIMORDIAL_SEA
+はじまりのうみ
+
+#org @NAME_DESOLATE_LAND
+おわりのだいち
+
+#org @NAME_DELTA_STREAM
+デルタストリーム
+
+#org @NAME_GORILLA_TACTICS
+ごりむちゅう
+
+#org @NAME_BERSERK
+ぎゃくじょう
+
+#org @NAME_LONG_REACH
+えんかく
+
+#org @NAME_LIQUID_VOICE
+うるおいボイス
+
+#org @NAME_ASONE_CHILLING
+じんばいったい
+
+#org @NAME_INNARDS_OUT
+とびだすなかみ
+
+#org @NAME_DAZZLING
+ビビッドボディ
+
+#org @NAME_GLUTTONY
+くいしんぼう
+
+#org @NAME_HONEY_GATHER
+みつあつめ
+
+#org @NAME_FRIEND_GUARD
+フレンドガード
+
+#org @NAME_HARVEST
+しゅうかく
+
+#org @NAME_TELEPATHY
+テレパシー
+
+#org @NAME_ILLUSION
+イリュージョン
+
+#org @NAME_CHEEK_POUCH
+ほおぶくろ
+
+#org @NAME_SYMBIOSIS
+きょうせい
+
+#org @NAME_STAKEOUT
+はりこみ
+
+#org @NAME_COMATOSE
+ぜったいねむり
+
+#org @NAME_DANCER
+おどりこ
+
+#org @NAME_BATTERY
+バッテリー
+
+#org @NAME_RECEIVER
+レシーバー
+
+#org @NAME_ASONE_GRIM
+じんばいったい
+
+#org @NAME_NEUROFORCE
+ブレインフォース
+
+#org @NAME_GALVANIZE
+エレキスキン
+
+#org @NAME_INTREPID_SWORD
+ふとうのけん
+
+#org @NAME_DAUNTLESS_SHIELD
+ふくつのたて
+
+#org @NAME_BALL_FETCH
+たまひろい
+
+#org @NAME_COTTON_DOWN
+わたげ
+
+#org @NAME_MIRROR_ARMOR
+ミラーアーマー
+
+#org @NAME_GULP_MISSLE
+うのミサイル
+
+#org @NAME_STALWART
+すじがねいり
+
+#org @NAME_STEAM_ENGINE
+じょうききかん
+
+#org @NAME_PUNK_ROCK
+パンクロック
+
+#org @NAME_SAND_SPIT
+すなはき
+
+#org @NAME_ICE_SCALES
+こおりのりんぷん
+
+#org @NAME_RIPEN
+じゅくせい
+
+#org @NAME_ICE_FACE
+アイスフェイス
+
+#org @NAME_POWER_SPOT
+パワースポット
+
+#org @NAME_MIMICRY
+ぎたい
+
+#org @NAME_SCREEN_CLEANER
+バリアフリー
+
+#org @NAME_PASTEL_VEIL
+パステルベール

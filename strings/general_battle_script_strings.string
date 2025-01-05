@@ -1,0 +1,390 @@
+#org @gText_SuperEffectiveTarget
+[TARGET]には\nこうかは ばつぐんだ！
+
+#org @gText_SuperEffectiveTwoFoes
+[DEF_PREFIX_5][TARGET_NAME]と [TARGET_PARTNER_NAME]に\nこうかは ばつぐんだ！
+
+#org @gText_NotVeryEffectiveTarget
+[TARGET]には\nこうかは いまひとつ のようだ……
+
+#org @gText_NotVeryEffectiveTwoFoes
+[DEF_PREFIX_5][TARGET_NAME]と [TARGET_PARTNER_NAME]に\nこうかは いまひとつ のようだ……
+
+#org @gText_DoesntAffectTwoFoes
+[DEF_PREFIX_5][TARGET_NAME]と\n[TARGET_PARTNER_NAME]には こうかが ないようだ…
+
+#org @gText_CriticalHit
+[MAIN_COLOUR][02][SHADOW_COLOUR][09]きゅうしょに あたった！
+
+#org @gText_CriticalHitTarget
+[MAIN_COLOUR][02][SHADOW_COLOUR][09]きゅうしょに あたった！
+
+#org @gText_CriticalHitTwoFoes
+[MAIN_COLOUR][02][SHADOW_COLOUR][09]きゅうしょに あたった！
+
+#org @TrickRoomSetString
+[ATTACKER]は\nじくうを ゆがめた！
+
+#org @WonderRoomSetString
+ぼうぎょと とくぼうが いれかわる\nくうかんを つくりだした！
+
+#org @MagicRoomSetString
+もたせた どうぐの こうかが なくなる\nくうかんを つくりだした！
+
+#org @GravitySetString
+じゅうりょくが つよくなった！
+
+#org @IonDelugeShowerString
+でんしのシャワーが ふりそそいだ！
+
+#org @NoMoreAirborneFromGravityString
+[SCRIPTING_BANK]は\nじゅうりょくの えいきょうで\lくうちゅうに いられなくなった！
+
+#org @Bank0AWasBroughtDownString
+[SCRIPTING_BANK]は\nうちおとされて じめんに おちた！
+
+#org @ElectricTerrainSetString
+あしもとに でんきが かけめぐる！
+
+#org @GrassyTerrainSetString
+あしもとに くさが おいしげった！
+
+#org @MistyTerrainSetString
+あしもとに きりが たちこめた！
+
+#org @PsychicTerrainSetString
+あしもとが ふしぎなかんじに なった！
+
+#org @TargetTransformedIntoType
+[TARGET]は\n[BUFFER][00]タイプになった！
+
+#org @gText_AttackerChangedType
+[ATTACKER]は\n[BUFFER][00]タイプになった！
+
+#org @gText_AbilityChangedType
+[SCRIPTING_BANK]は\n[BUFFER][00]タイプになった！
+
+#org @ThirdTypeAddedString
+[TARGET]に\n[BUFFER][00]タイプが ついかされた！
+
+#org @gText_MimicryReturnedToNormal
+[SCRIPTING_BANK]は\nタイプが もとに もどった！
+
+#org @FairyLockString
+つぎのターンは にげられない！
+
+#org @HappyHourString
+みんなが\nハッピーな きぶんに つつまれた！
+
+#org @CelebrateString
+おめでとう！\n[PLAYER_NAME]！
+
+#org @HoldHandsString
+[ATTACKER] と\n[TARGET]は\nてを つないだ！
+
+#org @TailwindSetString
+[FD][36] うしろから\nおいかぜが ふきはじめた！
+
+#org @LuckyChantSetString
+おまじないの ちからで\n[FD][36] きゅうしょが かくれた！
+
+#org @EntrainmentString
+#org @WorrySeedString
+#org @SimpleBeamString
+[TARGET]は\n[TARGET_ABILITY]に なった！
+
+#org @AbilitySuppressedString
+[TARGET]の\nとくせいが きかなくなった！
+
+#org @TargetStatsResetString
+[TARGET]の\nのうりょくへんかが もとに もどった！
+
+#org @RoastedBerryString
+[TARGET]の\n[FD][16]は やけて なくなった！
+
+#org @gText_TargetWasInfested
+[TARGET]は [ATTACKER]に\nまとわりつかれた！
+
+#org @SkyDropUpString
+[ATTACKER]は [TARGET]を\nじょうくうに つれさった！
+
+#org @FreedFromSkyDropString
+[SCRIPTING_BANK]は\nフリーフォールから かいほうされた！
+
+#org @CraftyShieldSetString
+[FD][36] まわりを\nトリックガードが まもっている！
+
+#org @MatBlockSetString
+[ATTACKER]は\nたたみがえしを ねらっている！
+
+#org @QuickGuardSetString
+[FD][36] まわりを\nファストガードが まもっている！
+
+#org @WideGuardSetString
+[FD][36] まわりを\nワイドガードが まもっている！
+
+#org @CraftyShieldProtectedString
+[TARGET]は\nトリックガードで まもられた！
+
+#org @MatBlockProtectedString
+[CURRENT_MOVE]は\nたたみがえしで ふせがれた！
+
+#org @QuickGuardProtectedString
+[TARGET]は\nクイックガードで まもられた！
+
+#org @WideGuardProtectedString
+[TARGET]は\nワイドガードで まもられた！
+
+#org @gText_JawLockNoEscape
+おたがいの ポケモンは\nにげることが できなくなった！
+
+//#org @gText_CanNoLongerEscape
+//[TARGET]は\nもう にげられない！
+
+//#org @gText_CloakedInLight
+//[ATTACKER]を\nはげしい ひかりが つつむ！
+
+//#org @gText_ItemPumpedMon
+//[SCRIPTING_BANK]は\n[LAST_ITEM]を つかって\lはりきり だした！
+
+#org @gText_ItemIncreasedSpeedBracket
+[SCRIPTING_BANK]は [LAST_ITEM]で\nこうどうが はやくなった！
+
+#org @gText_MeteorBeamCharge
+[ATTACKER]に\nうちゅうの ちからが あふれだす！
+
+#org @gText_PoltergeistWarn
+[TARGET]に\n[LAST_ITEM]が おそいかかる！
+
+#org @gText_CorrodedItem
+[ATTACKER]は\n[TARGET]の\l[LAST_ITEM]を とかした！
+
+#org @gText_CourtChange
+[ATTACKER]は おたがいの\nばの こうかを いれかえた！
+
+//Status Strings
+
+#org @gText_TargetStaysAwake
+[TARGET]には\nこうかが ないようだ…
+
+#org @gText_TeamProtectedBySafeguard
+[TARGET]は\nしんぴのベールに まもられている！
+
+#org @gText_TargetWrappedInMistyTerrain
+[TARGET]は\nミストフィールドに まもられている！
+
+#org @gText_TargetWrappedInElectricTerrain
+[TARGET]は\nエレキフィールドに まもられている！
+
+#org @gText_TargetAlreadyHasStatusCondition
+しかし うまく きまらなかった！！
+
+#org @gText_AlreadyDrowsy
+しかし うまく きまらなかった！！
+
+#org @gText_SweetVeilProtects
+[TARGET]は\nスイートベールで ねむらない！
+
+#org @gText_FlowerVeilProtects
+[TARGET]は\nフラワーベールに まもられている！
+
+#org @gText_AromaVeilProtects
+[TARGET]は\nアロマベールに まもられている！
+
+#org @gText_SleepClausePrevents
+The sleep clause prevents more\nPokemon from being put to sleep！
+
+#org @gText_AbilityPreventsStatLoss
+[SCRIPTING_BANK]は\nのうりょくが さがらない！
+
+#org @gText_AbilityPreventsSpecificStatLoss
+[SCRIPTING_BANK]は\n[BUFFER][00]が さがらない！
+
+#org @gText_AbilityPreventsConfusion
+[SCRIPTING_BANK]は\nこんらんしない！
+
+#org @gText_AbilityBlocksHealBell
+[SCRIPTING_BANK]は\n[CURRENT_MOVE]を うけない！
+
+#org @gText_DefogRemovedSideStatus
+[FD][35] [BUFFER][00]が\nなくなった！
+
+#org @gText_ReflectRaisedStat
+[FD][38] [CURRENT_MOVE]で\nぶつりに つよくなった！
+
+#org @gText_LightScreenRaisedStat
+[FD][38] [CURRENT_MOVE]で\nとくしゅに つよくなった！
+
+#org @gText_SetAuroraVeil
+[FD][38] オーロラベールで\nぶつりと とくしゅに つよくなった！
+
+#org @gText_ShroudedInMist
+[BUFFER][38]\nしろいきりに つつまれた！
+
+#org @gText_SideStatusWoreOff
+[BUFFER][36] [BUFFER][00]が\nなくなった！
+
+#org @gText_TauntWoreOff
+[SCRIPTING_BANK]は\nちょうはつの こうかが きれた！
+
+#org @gText_TailwindWoreOff
+[BUFFER][36]\nおいかぜが やんだ！
+
+#org @gText_LuckyChantWoreOff
+[BUFFER][36] おまじないの\nこうかが きれた！
+
+#org @gText_RainbowDisappeared
+[FD][36] まわりの\nにじが きえさった！
+
+#org @gText_SeaOfFireDisappeared
+[FD][36] まわりの\nひのうみが きえさった！
+
+#org @gText_SwampDisappeared
+[FD][36] まわりの\nしつげんが きえさった！
+
+#org @gText_WhiteHerbFling
+[SCRIPTING_BANK]は [LAST_ITEM]で\nステータスを もとに もどした！
+
+#org @gText_BellyDrumMinimizedAttack
+[ATTACKER]は\nたいりょくを けずって パワーぜんかい！
+
+#org @gText_SqueezedByOctolock
+[ATTACKER]は\nたこがためで しめつけられた！
+
+#org @gText_NoRetreatTrapped
+[ATTACKER]は [CURRENT_MOVE]で\nにげることが できなくなった！
+
+#org @gText_TarShotAffected
+[TARGET]は\nほのおに よわくなった！
+
+#org @gText_TargetWasCaughtInSnapTrap
+[TARGET]は\nトラバサミに とらわれた！
+
+#org @gText_TargetWasTrappedByAttacker
+[TARGET]は\n[ATTACKER]に とじこめられた！
+
+#org @gText_HurtBySeaOfFire
+[ATTACKER]は\nひのうみの ダメージを うけた！
+
+#org @gText_BallFetchRetrievedItem
+[SCRIPTING_BANK]は\n[LAST_ITEM]を ひろってきた！
+
+#org @gText_PerishBodyActivated
+おたがいは\n3ターンごに ほろびてしまう！
+
+#org @gText_SurroundedByGMaxVineLash
+[FD][35] ポケモンが\nムチの もうだに つつまれた！
+
+#org @gText_HurtByGMaxVineLash
+[ATTACKER]は\nキョダイベンタツの もうだに\lさらされていて いたい！
+
+#org @gText_GMaxVineLashEnded
+[FD][36] ポケモンは\nキョダイベンタツから かいほうされた！
+
+#org @gText_SurroundedByGMaxWildfire
+[FD][35] ポケモンが\nほのおに つつまれた！
+
+#org @gText_HurtByGMaxWildfire
+[ATTACKER]は\nキョダイゴクエンの ほのおに\lつつまれていて あつい！
+
+#org @gText_GMaxWildfireEnded
+[FD][36] ポケモンは\nキョダイゴクエンから かいほうされた！
+
+#org @gText_SurroundedByGMaxCannonade
+[FD][35] ポケモンが\nみずの ながれに つつまれた！
+
+#org @gText_HurtByGMaxCannonade
+[ATTACKER]は\nキョダイホウゲキの ながれに\lのみこまれていて くるしい！
+
+#org @gText_GMaxCannonadeEnded
+[FD][36] ポケモンは\nキョダイホウゲキから かいほうされた！
+
+#org @gText_SurroundedByGMaxVolcalith
+[FD][35] ポケモンが\nいわに かこまれた！
+
+#org @gText_HurtByGMaxVolcalith
+[ATTACKER]は\nキョダイフンセキの いわに\lかこまれていて いたい！
+
+#org @gText_GMaxVolcalithEnded
+[FD][36] ポケモンは\nキョダイフンセキから かいほうされた！
+
+#org @gText_TrappedByGMaxCentiferno
+[FD][35] ポケモンは\nほのおのうずに とじこめられた！
+
+#org @gText_CouldntFullyProtect
+[TARGET]は こうげきを\nまもりきれずに ダメージを うけた！
+
+//Other Battle Features
+
+#org @gText_Devolved
+[EFFECT_BANK]は\n[BUFFER][00]に たいかした！
+
+#org @gText_DevolvedForgotMove
+[ATTACKER]は たいかして\nだそうとした わざを わすれてしまった！
+
+#org @gText_DevolutionsStatsReset
+[EFFECT_BANK]の\nステータスが もとに もどった！
+
+#org @gText_CamomonsTypeReveal
+[SCRIPTING_BANK] appears as the\n[BUFFER][00]ーtype！
+
+#org @gText_CamomonsTypeRevealDualType
+[SCRIPTING_BANK] appears as the\n[BUFFER][00]ー and [BUFFER][01]ーtype！
+
+#org @gText_DynamaxUsable
+[PLAYER_NAME]に\nダイマックスパワーが あつまった！
+
+#org @gText_MonDynamaxed
+[SCRIPTING_BANK]は\nダイマックスした！
+
+#org @gText_DynamaxEnded
+[SCRIPTING_BANK]の\nダイマックスが とけた！
+
+#org @gText_DynamaxAttackCancel
+[ATTACKER]は\nくびを よこにふった\pこのわざを しかけることが\nできないようだ……
+
+#org @gText_RaidBattleAttackCancel
+ダイマックスの ちからで はじかれた！
+
+#org @gText_DynamaxItemBlock
+ダイマックスの ちからで はじかれた！
+
+#org @gText_RaidBattleReveal
+[SCRIPTING_BANK]は\nダイマックス している！
+
+#org @gText_RaidBattleStormStarted
+じょうくうで あらしが はっせいした！
+
+#org @gText_RaidPokemonGettingDesperate
+[SCRIPTING_BANK]は おいこまれ\nこうげきの はげしさが ました！
+
+#org @gText_RaidShield
+[SCRIPTING_BANK]に\nふしぎなバリアが できて\lあらゆる こうげきから みを まもる！
+
+#org @gText_RaidShieldProtected
+ふしぎなバリアが\n[TARGET]を まもっている！
+
+#org @gText_RaidShieldBroke
+[SCRIPTING_BANK]を まもっていた\nふしぎなバリアが きえさった！
+
+#org @gText_RaidBattleStatBoost
+[SCRIPTING_BANK]の\n[BUFFER][00]が [BUFFER][01]
+
+#org @gText_RaidBattleStatNullification
+[SCRIPTING_BANK]が\nステータスへんかと\lポケモンの とくせいを かきけした！
+
+#org @gText_RaidBattleKO1
+じょうくうの あらしが\nいきおいを つよめている……！
+
+#org @gText_RaidBattleKO2
+さらに あらしが\nいきおいを つよめている！！
+
+#org @gText_RaidBattleKO3
+あらしに たえるのは\nもう げんかいだ……！
+
+#org @gText_RaidBattleKO4
+[PLAYER_NAME]たちは すの そとに\nふきとばされて しまった……
+
+#org @gText_RaidMonRanAway
+[PLAY_SE][11][00][FD][06]は すあなの どこかに\nすがたを けした……！\p
+

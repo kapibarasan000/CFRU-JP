@@ -1,0 +1,96 @@
+#org @gText_AirLockActivate
+てんきの えいきょうが なくなった！
+
+#org @gText_PressureActivate
+[SCRIPTING_BANK]は\nプレッシャーを はなっている！
+
+#org @gText_MoldBreakerActivate
+[SCRIPTING_BANK]は\nかたやぶりだ！
+
+#org @gText_TeravoltActivate
+[SCRIPTING_BANK]は\nはじける オーラを はなっている！ 
+
+#org @gText_TurboblazeActivate
+[SCRIPTING_BANK]は\nもえさかる オーラを はなっている！
+
+#org @gText_SlowStartActivate
+[SCRIPTING_BANK]は\nちょうしが あがらない！
+
+#org @gText_UnnerveActivate
+[FD][37] きんちょうして\nきのみが たべられなくなった！
+
+#org @gText_DarkAuraActivate
+[SCRIPTING_BANK]は\nダークオーラを はなっている！
+
+#org @gText_FairyAuraActivate
+[SCRIPTING_BANK]は\nフェアリーオーラを はなっている！
+
+#org @gText_AuraBreakActivate
+[SCRIPTING_BANK]は\nすべての オーラを せいあつする！
+
+#org @gText_ComatoseActivate
+[SCRIPTING_BANK]は\nゆめうつつの じょうたい！
+
+#org @gText_AnticipationActivate
+[SCRIPTING_BANK]は\nみぶるいした！
+
+#org @gText_ForewarnActivate
+よちむで\n[BUFFER][00]を よみとった！
+
+#org @gText_FriskActivate
+[SCRIPTING_BANK]は [TARGET]の\n[LAST_ITEM]を おみとおしだ！
+
+#org @gText_FogIsDeep
+きりが ふかい
+
+#org @gText_PrimordialSeaActivate
+つよい あめが ふりはじめた！
+
+#org @gText_DesolateLandActivate
+ひざしが とても つよくなった！
+
+#org @gText_DeltaStream
+なぞの らんきりゅうが\nひこうポケモンを まもる！
+
+#org @gText_SlowStartEnd
+[SCRIPTING_BANK]は\nちょうしを とりもどした！
+
+#org @gText_FlashFirePowerUp
+[SCRIPTING_BANK]は\nほのおの いりょくが あがった！
+
+#org @gText_AbilityCuredStatusProblem
+[SCRIPTING_BANK]は\n[BUFFER][00]が なおった！
+
+#org @gText_HealerCuredStatusProblem
+[EFFECT_BANK]は\n[BUFFER][00]が なおった！
+
+#org @gText_MagicBounce
+[SCRIPTING_BANK]は\n[CURRENT_MOVE]を はねかえした！
+
+#org @gText_StartedSchooling
+ヨワシの むれが あつまった！
+
+#org @gText_StoppedSchooling
+ヨワシの むれは\nちりぢりに なった！
+
+#org @gText_GorillaTacticsMoveMenuBlockage
+[SCRIPTING_BANK]は\n[CURRENT_MOVE]しか だせない\p
+
+#org @gText_IceFaceTookDamage
+アイスフェイスが みがわりに なった！
+
+#org @gText_IceFaceBusted
+[TARGET]の\nすがたが へんかした！
+
+#org @gText_ScreenCleanerActivate
+すべての バリアが なくなった！
+
+#org @gText_NeutralizingGasActivate
+あたりに かがくへんかガスが じゅうまんした！
+
+#org @gText_NeutralizingGasEnd
+かがくへんかガスの こうかが きれた！
+
+#org @gText_PkmnHurtsWith
+[ATTACKER]は\nきずついた！
+

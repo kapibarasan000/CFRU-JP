@@ -1,0 +1,367 @@
+//New Encounter Strings
+
+#org @BattleText_TwoTrainersWantToBattle
+[FD][1C]の [FD][1D]と\n[FD][2E]の [FD][2F]が\lしょうぶを しかけてきた！\p
+
+#org @BattleText_ShadowWarriorAttacked
+The Shadow Warrior attacked！\p
+
+#org @BattleText_InGamePartnerSentOutZGoN
+[FD][32]の [FD][33]は\n[FD][07]を くりだした！\lゆけっ！ [FD][05]！
+
+#org @BattleText_TwoTrainersSentPkmn
+[FD][1C]の [FD][1D]は\n[FD][06]を くりだした！\p[FD][2E]の [FD][2F]は\n[FD][08]を くりだした！
+
+#org @BattleText_Trainer2WithdrewPkmn
+[FD][2E]の [FD][2F]は\n[FD][00]を ひっこめた！
+
+#org @BattleText_Trainer2SentOutPkmn
+[FD][2E]の [FD][2F]は\n[FD][00]を くりだした！
+
+#org @BattleText_GoTwoPkmn_BattleSands
+[FD][32]の [FD][33]は\n[FD][05]と [FD][07]をくりだした！
+
+#org @BattleText_GoPkmn_BattleSands
+[FD][32]の [FD][33]は\n[FD][05]を くりだした！
+
+#org @BattleText_PartnerWithdrewPkmn
+[FD][32]の [FD][33]は\n[FD][00]を ひっこめた！
+
+#org @BattleText_PartnerSaysGo
+[FD][32]の [FD][33]は\n[FD][00]を くりだした！
+
+#org @BattleText_AttackerUsedZStatusMove
+[FD][0F]の\nZ[FD][01]
+
+#org @BattleText_AttackerUsedMaxMove
+[FD][0F]の\nダイ[FD][01]
+
+#org @BattleText_AttackerUsedGMaxMove
+[FD][0F]の\nキョダイ[FD][01]
+
+#org @BattleText_TwoInGameTrainersDefeated
+[FD][1C]の [FD][1D]と\n[FD][2E]の [FD][2F]との\lしょうぶに かった！\p
+
+#org @BattleText_PlayerLostToTwoInGameTrainers
+[FD][1C]の [FD][1D]と\n[FD][2E]の [FD][2F]との\lしょうぶに まけた！\p
+
+//Rewritten Encounter Strings
+
+#org @BattleText_TwoLinkTrainersWantToBattle
+[FD][20]と [FD][21]が\nしょうぶを しかけてきた！\p
+
+#org @BattleText_Trainer1WantsToBattle
+[FD][1C]の [FD][1D]が\nしょうぶを しかけてきた！\p
+
+#org @BattleText_Trainer1WantsToBattle_BattleSands
+[FD][1C]の [FD][1D]が\n[FD][32]の [FD][33]に\lしょうぶを しかけてきた！\p
+
+#org @BattleText_LinkTrainerWantsToBattle
+[FD][20]が\nしょうぶを しかけてきた！\p
+
+#org @BattleText_WildPkmnAppeared6
+[FD][06]が あらわれた！\p
+
+#org @BattleText_TwoWildPkmnAppeared
+あ！ やせいの [FD][06]と\n[FD][08]が とびだしてきた！\p
+
+#org @BattleText_WildPkmnAppearedPause
+あ！ やせいの\n[FD][06]が とびだしてきた！[FC][08][7F]
+
+#org @BattleText_WildPkmnAppeared
+あ！ やせいの\n[FD][06]が とびだしてきた！\p
+
+//Status Strings
+
+#org @gStatusConditionString_DisableProblem
+かなしばり
+
+#org @gStatusConditionString_EncoreProblem
+アンコール
+
+#org @gStatusConditionString_Confusion
+こんらん
+
+#org @gStatusConditionString_MentalState
+メンタルいじょう
+
+#org @gStatusConditionString_TauntProblem
+ちょうはつ
+
+//Stat Buff Strings
+
+#org @DrasticallyString
+ぐぐーんと 
+
+#org @SeverelyString
+がくーんと 
+
+//General String Updates
+
+#org @sText_FoePkmnPrefix2
+#org @sText_FoePkmnPrefix3
+#org @sText_FoePkmnPrefix4
+#org @TheOpposingString
+あいての 
+
+#org @sText_FoePkmnPrefix5
+あいての 
+
+#org @TheWildString
+やせいの 
+
+#org @sText_thewild
+やせいの 
+
+#org @TheShadowString
+The Shadow 
+
+#org @sText_TheOpposingCapsNoSpace
+あいては
+
+#org @sText_TheOpposingNoCaps
+あいての
+
+#org @sText_Your
+みかたの
+
+#org @sText_YourCaps
+みかたは
+
+#org @sText_GotMoneyForWinning
+[PLAYER_NAME]は しょうきんとして\n[FD][00][B7] てにいれた！
+
+#org @sText_OutofUsablePokemon
+[PLAYER_NAME]の てもとには\nたたかえる ポケモンが いない！\p
+
+#org @sText_LostAgaintWild
+[PLAYER_NAME]は あわてて\n[BUFFER][00][B7] なくしてしまった……\p… … … …\p[PLAYER_NAME]は\nめのまえが まっくらに なった！[FC][09]
+
+#org @sText_LostAgainstTrainer
+[PLAYER_NAME]の てもとには\nたたかえる ポケモンが いない！\p[FD][1C]の [FD][1D]\nとの しょうぶに まけた……[FC][09]
+
+#org @sText_PaidPrizeMoney
+[PLAYER_NAME]は しょうきんとして\n[BUFFER][00][B7] しはらった……\p… … … …\p[PLAYER_NAME]は\nめのまえが まっくらに なった！[FC][09]
+
+#org @sText_BlackedOut
+[PLAYER_NAME]は\nめのまえが まっくらに なった！[FC][09]
+
+#org @gText_BattleMenu
+[FC][05][05][FC][04][0D][0E][0F]たたかう  [ALIGN][38]バッグ\nポケモン  [ALIGN][38]にげる
+
+#org @gText_BattleMenu2
+[FC][05][05][FC][04][0D][0E][0F]たたかう  [ALIGN][38]バッグ\nポケモン  [ALIGN][38]もどる
+
+#org @gText_UnboundBattleMenu
+[FC][05][05][FC][04][0D][0E][0F]たたかう[ALIGN][38]Cube\nポケモン[ALIGN][38]Run
+
+#org @gText_UnboundBattleMenu2
+[FC][05][05][FC][04][0D][0E][0F]たたかう[ALIGN][38]Cube\nポケモン[ALIGN][38]Back
+
+#org @gText_BattleMenuRaidEnd
+[FC][05][05][FC][04][0D][0E][0F]つかまえる [ALIGN][38]おわる
+
+#org @gText_CaptureRaidMon
+いまなら ボールを\nなげる チャンス！
+
+//Exp String
+
+#org @sText_ExpGain
+[FD][00]は\n[FD][34] けいけんちを もらった！\p
+
+#org @String_TeamExpGain
+がくしゅうそうちで\nそれぞれ けいけんちを もらった！
+
+//Other
+#org @gText_Power
+いりょく:
+
+#org @gText_OHKO
+ー
+
+#org @gText_Acc
+めいちゅう
+
+#org @gText_NoMiss
+ー
+
+#org @gText_Physical
+ぶつり
+
+#org @gText_Special
+とくしゅ
+
+#org @gText_Status
+へんか
+
+#org @gText_ResetStats
+さがった のうりょくを もどす
+
+#org @gText_StatsPlus
+すべての のうりょくを あげる
+
+#org @gText_CritHitsPlus
+きゅうしょに あたりやすくなる
+
+#org @gText_FollowMe
+ちゅうもくの まとになる
+
+#org @gText_RecoverHP
+たいりょくを ぜんかいふく
+
+#org @gText_HealAllyHP
+つぎの ポケモンを ぜんかいふく
+
+#org @gText_ZMoveRaise1
+が あがる
+
+#org @gText_ZMoveRaise2
+が ぐーんと あがる
+
+#org @gText_ZMoveRaise3
+が ぐぐーんと あがる
+
+#org @gText_MaxMoveProtect
+あいての こうげきを ふせぐ
+
+#org @gText_MaxMoveRaiseTeamStat
+みかたの [BUFFER][0]
+
+#org @gText_Raise
+を あげる
+
+#org @gText_MaxMoveFoes
+あいての [BUFFER][0]
+
+#org @gText_Lower
+を さげる
+
+#org @gText_MaxMoveSet
+ にする
+
+#org @gText_MaxMoveWeather
+てんきを 
+
+#org @gText_MaxMoveTerrain
+フィールド
+
+#org @gText_MaxMoveSunny
+にほんばれ
+
+#org @gText_MaxMoveRainy
+あめ
+
+#org @gText_MaxMoveSandstorm
+すなあらし
+
+#org @gText_MaxMoveHail
+あられ
+
+#org @gText_MaxMoveElectric
+エレキ
+
+#org @gText_MaxMoveGrassy
+グラス
+
+#org @gText_MaxMoveMisty
+ミスト
+
+#org @gText_MaxMovePsychic
+サイコ
+
+#org @gText_MaxMoveLastingDamage
+けいぞくダメージをあたえる
+
+#org @gText_MaxMoveTrapDamage
+バインドじょうたいにする
+
+#org @gText_MaxMoveEffectSpore
+どく・まひ・ねむりのどれかにする
+
+#org @gText_MaxMoveParalyzeFoes
+あいてを まひさせる
+
+#org @gText_MaxMoveConfusePayDay
+こんらんさせ おかねをひろう
+
+#org @gText_MaxMoveCritPlus
+きゅうしょに あたりやすくなる
+
+#org @gText_MaxMoveMeanLook
+あいてを にげられなくする
+
+#org @gText_MaxMoveAuroraVeil
+オーロラベールじょうたいにする
+
+#org @gText_MaxMoveInfatuate
+あいてを メロメロにする
+
+#org @gText_MaxMoveRecycleBerries
+きのみを ふっかつさせる
+
+#org @gText_MaxMovePoisonFoes
+あいてを どくにする
+
+#org @gText_MaxMoveStealthRock
+とがった いわを せっちする
+
+#org @gText_MaxMoveRemoveScreens
+ばの じょうたいを けしさる
+
+#org @gText_MaxMovePoisonParalyzeFoes
+あいてを どくか まひにする
+
+#org @gText_MaxMoveHealTeam
+みかたの たいりょくを かいふく
+
+#org @gText_MaxMoveSpite
+さいごの わざのPPを 2へらす
+
+#org @gText_MaxMoveGravity
+じゅうりょく じょうたいにする
+
+#org @gText_MaxMoveYawn
+あいての ねむけを さそう
+
+#org @gText_MaxMoveLowerEvasiveness
+あいての かいひりつを さげる
+
+#org @gText_MaxMoveAromatherapy
+みかたの いじょうを なおす
+
+#org @gText_MaxMoveSteelsurge
+とがった はがねを せっちする
+
+#org @gText_MaxMoveConfuseFoes
+あいてを こんらんさせる
+
+#org @gText_MaxMoveTormentFoes
+いちゃもん じょうたいにする
+
+#org @gText_MaxMoveLowerSpeed2
+すばやさを がくっと さげる
+
+#org @gText_MaxMoveIgnoreAbility
+あいての とくせいを むしする
+
+#org @gText_MaxMoveBypassProtect
+あいての まもりを むしする
+
+#org @gText_CantAimAtTwoTargets
+だめだ！ 2ひきいて\nねらいが さだまらない……！[FC][09]
+
+#org @gText_CantAimAtSemiInvulnerableTarget
+だめだ！ ポケモンが みえなくて\nねらいが さだまらない……！[FC][09]
+
+#org @gText_CantCatchPokemonYet
+ボールを なげることが できない！[FC][09]
+
+#org @gText_CantCatchPokemonRightNow
+ボールを なげることが できない！[FC][09]
+
+#org @sText_QuestionForfeitMatch
+しょうぶを あきらめて\nこうさんしますか？
+
+#org @sText_PlayerForfeitedMatch
+[PLAYER_NAME]は こうさんした！
+

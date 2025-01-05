@@ -1,0 +1,20 @@
+##Repoints all pointers found at given location 
+##(Eg. repoints pointer located at 0x8016364 which is 0x81D65A8 in vanilla, does not repoint 0x8016364)
+gBattleMoves 080001CC
+gMoveNames 0804E7B4
+gBattleScriptsForMoveEffects 08015B78
+gAbilityNames 080001C0
+
+##Poke Ball Stuff
+gBallSpriteSheets 080001D0
+gBallSpritePalettes 080001D4
+gBallSpriteTemplates 0804A274
+gBallOpenParticleAnimNums 080F11D4
+gBallParticleSpritesheets 080F1540
+gBallParticlePalettes 080F1548
+gBallOpenParticleAnimationFuncs 080F15CC
+gBallParticleSpriteTemplates 080F16E4
+gBallOpenMonFadePal 080F21E4
+
+gItemData 0809A2E4
+gItemEffectTable2 081259B0
