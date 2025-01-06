@@ -132,6 +132,19 @@ void HealMon(struct Pokemon* mon)
 	SetMonData(mon, MON_DATA_STATUS, &none);
 }
 
+void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality)
+{
+    u8 getFlagCaseId = (caseId == FLAG_SET_SEEN) ? FLAG_GET_SEEN : FLAG_GET_CAUGHT;
+    if (!GetSetPokedexFlag(nationalNum, getFlagCaseId)) // don't set if it's already set
+    {
+        GetSetPokedexFlag(nationalNum, caseId);
+        if (NationalPokedexNumToSpecies(nationalNum) == SPECIES_UNOWN)
+            gSaveBlock2->pokedex.unownPersonality = personality;
+        if (NationalPokedexNumToSpecies(nationalNum) == SPECIES_SPINDA)
+            gSaveBlock2->pokedex.spindaPersonality = personality;
+    }
+}
+
 void SetMonPokedexFlags(struct Pokemon* mon)
 {
 	if (!GetMonData(mon, MON_DATA_IS_EGG, NULL))

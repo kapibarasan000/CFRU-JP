@@ -724,7 +724,7 @@ bool8 __attribute__((long_call)) IsTradedMon(struct Pokemon *mon);
 bool8 __attribute__((long_call)) IsOtherTrainer(u32 otId, u8* otName);
 void __attribute__((long_call)) MonRestorePP(struct Pokemon *mon);
 bool8 __attribute__((long_call)) GetSetPokedexFlag(u16 nationalNum, u8 caseID);
-void __attribute__((long_call)) HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality);
+void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality);
 u16 __attribute__((long_call)) GetPokedexHeightWeight(u16 dexNum, u8 data);
 void __attribute__((long_call)) HealPlayerParty(void);
 void __attribute__((long_call)) ReducePartyToThree(void);
