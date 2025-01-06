@@ -23,7 +23,7 @@
 
 7. 解凍したフォルダにROMをコピーし、ファイル名を`BPRJ0.gba`に変更する。
 
-8. `scripts/make.py`を開き、`OFFSET_TO_PUT`の値を自身のROMの空き容量に変更。
+8. `scripts/make.py`を開き、`OFFSET_TO_PUT`の値を自身のROMの空き領域に変更。
 
 9. ROMを入れたフォルダで`shift + 右クリック`。`PowerShell ウインドウをここで開く`を選択。
 
