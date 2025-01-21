@@ -22,6 +22,7 @@
 #include "../include/new/frontier.h"
 #include "../include/new/multi.h"
 #include "../include/new/mega.h"
+#include "../include/new/mega_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/set_z_effect.h"
@@ -854,6 +855,29 @@ void RunTurnActionsFunctions(void)
 					}
 					return;
 				}
+			}
+			else if (gNewBS->terastalData.chosen[bank]
+			&& !gNewBS->terastalData.done[bank]
+			&& !DoesZMoveUsageStopMegaEvolution(bank))
+			{
+				gNewBS->terastalData.chosen[bank] = FALSE;
+				gNewBS->terastalData.done[bank] = TRUE;
+				gNewBS->terastalData.partyIndex[SIDE(bank)] = gBitTable[gBattlerPartyIndexes[bank]];
+
+				if (SIDE(bank) == B_SIDE_PLAYER)
+				{
+					gNewBS->terastalData.chosen[PARTNER(bank)] = FALSE;
+					gNewBS->terastalData.done[PARTNER(bank)] = TRUE;
+				}
+				else
+				{
+					gNewBS->terastalData.chosen[PARTNER(bank)] = FALSE;
+					gNewBS->terastalData.done[PARTNER(bank)] = TRUE;
+				}
+
+				BattleScriptExecute(BattleScript_Terastal);
+				gCurrentActionFuncId = savedActionFuncId;
+				return;
 			}
 		}
 	

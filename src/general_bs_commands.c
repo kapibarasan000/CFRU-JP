@@ -27,6 +27,7 @@
 #include "../include/new/frontier.h"
 #include "../include/new/general_bs_commands.h"
 #include "../include/new/item_battle_scripts.h"
+#include "../include/new/mega_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/multi.h"
@@ -34,6 +35,7 @@
 #include "../include/new/stat_buffs.h"
 #include "../include/new/switching.h"
 #include "../include/new/set_z_effect.h"
+#include "../include/new/terastal.h"
 #include "../include/new/util.h"
 
 /*
@@ -374,6 +376,16 @@ void atk09_attackanimation(void)
 		}
 	}
 	
+	if (gNewBS->terastalBoost)
+	{
+		gBattleScripting.bank = gBankAttacker;
+		BattleScriptPush(gBattlescriptCurrInstr);
+		gBattlescriptCurrInstr = BattleScript_TerastalBoost - 1;
+		gNewBS->terastalBoost = FALSE;
+		gBattlescriptCurrInstr++;
+		return;
+	}
+
 	u8 resultFlags = gMoveResultFlags;
 	if (IsDoubleSpreadMove())
 		resultFlags = UpdateEffectivenessResultFlagsForDoubleSpreadMoves(resultFlags);
@@ -1323,6 +1335,8 @@ void atk1B_cleareffectsonfaint(void) {
 				gBattleMons[gActiveBattler].status1 = 0;
 				EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 0x4, &gBattleMons[gActiveBattler].status1);
 				MarkBufferBankForExecution(gActiveBattler);
+				if (IsTerastal(gActiveBattler))
+					gNewBS->terastalData.fainted[gActiveBattler] = 1;
 
 				{
 					u32 backupStatus2[gBattlersCount];
@@ -2647,7 +2661,11 @@ void atk90_tryconversiontypechange(void)
 	{
 		u8 moveType = gBattleMoves[gBattleMons[gBankAttacker].moves[0]].type;
 
-		if (IS_BLANK_TYPE(moveType))
+		if (IsTerastal(gBankAttacker))
+		{
+			gBattlescriptCurrInstr = failScript;
+		}
+		else if (IS_BLANK_TYPE(moveType))
 		{
 			gBattlescriptCurrInstr = failScript;
 		}
@@ -2671,14 +2689,25 @@ void atk90_tryconversiontypechange(void)
 	}
 	else //Reflect Type
 	{
-		u8 defType1 = gBattleMons[gBankTarget].type1;
-		u8 defType2 = gBattleMons[gBankTarget].type2;
-		u8 defType3 = gBattleMons[gBankTarget].type3;
+		u8 defType1, defType2, defType3;
+		if (IsTerastal(gBankTarget))
+		{
+			defType1 = defType2 = defType3 = GetTeraType(gBankTarget);
+		}
+		else
+		{
+			defType1 = gBattleMons[gBankTarget].type1;
+			defType2 = gBattleMons[gBankTarget].type2;
+			defType3 = gBattleMons[gBankTarget].type3;
+		}
 
-		//If target has no type
-		if((IS_BLANK_TYPE(defType1))
+		if (IsTerastal(gBankAttacker))
+		{
+			gBattlescriptCurrInstr = failScript;
+		}
+		else if((IS_BLANK_TYPE(defType1))
 		&& (IS_BLANK_TYPE(defType2))
-		&& (IS_BLANK_TYPE(defType3)))
+		&& (IS_BLANK_TYPE(defType3))) //If target has no type
 		{
 			gBattlescriptCurrInstr = failScript;
 		}
@@ -3380,7 +3409,7 @@ void atkA6_settypetorandomresistance(void) //Conversion 2
 	u8 bankDef = gBankTarget;
 	bool8 isInverseBattle = IsInverseBattle();
 
-	if (gLastUsedMoves[bankDef] == MOVE_NONE || gLastUsedMoves[bankDef] == 0xFFFF)
+	if (gLastUsedMoves[bankDef] == MOVE_NONE || gLastUsedMoves[bankDef] == 0xFFFF || IsTerastal(bankAtk))
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 		return;

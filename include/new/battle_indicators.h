@@ -18,6 +18,7 @@ void DestroyMegaIndicator(u8 bank);
 void TryLoadMegaTriggers(void);
 void TryLoadZTrigger(void);
 void TryLoadDynamaxTrigger(void);
+void TryLoadTerastalTrigger(void);
 void DestroyRaidShieldSprite(void);
 
 //Exported Data Structures

@@ -24,6 +24,7 @@
 #include "../include/new/move_tables.h"
 #include "../include/new/set_z_effect.h"
 #include "../include/new/stat_buffs.h"
+#include "../include/new/terastal.h"
 #include "../include/new/util.h"
 
 /*
@@ -738,6 +739,11 @@ void TryFadeBankPaletteForDynamax(u8 bank, u16 paletteOffset)
 	|| (IsRaidBattle() && bank == BANK_RAID_BOSS)) //So it stays lit up when you try to catch it
 	{
 		BlendPalette(paletteOffset, 16, 4, RGB(31, 0, 12)); //Dynamax Pinkish-Red
+		CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
+	}
+	else if(IsTerastal(bank))
+	{
+		BlendPalette(paletteOffset, 16, 4, GetTeraTypeColor(GetTeraType(bank)));
 		CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
 	}
 }

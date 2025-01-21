@@ -425,7 +425,7 @@ static void PlayerPartnerHandleChooseMove(void)
 	gChosenMovesByBanks[gActiveBattler] = chosenMove;
 	TryRemoveDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove);
 
-	EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], FALSE);
+	EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], FALSE, gNewBS->terastalData.chosen[gActiveBattler]);
 	PlayerPartnerBufferExecComplete();
 }
 

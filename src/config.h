@@ -10,6 +10,7 @@
 //#define DEBUG_HMS //HMs can always be used from the party screen, Surf, Waterfall, and Rock Climb can always be used
 //#define DEBUG_OBEDIENCE //Traded Pokemon never have obedience issues
 //#define DEBUG_DYNAMAX //Dynamax can be used in Dynamax battles without a Dynamax Band
+#define DEBUG_TERASTAL
 
 /*===== General Vars =====*/
 #define VAR_TERRAIN 0x5000 //Set to a terrain type for a battle to begin with the given terrain
@@ -60,6 +61,7 @@
 #define FLAG_FAST_BATTLE_MESSAGES 0x925 //When set, battle messages have no wait time once they've completed printing
 #define FLAG_FOLLOWER_IGNORE_ACTIVE_SCRIPT 0x926 //If set, the follower will reappear and move even when a script is in progress
 #define FLAG_KEEP_CONSUMABLE_ITEMS 0x927 //If set, consumable items are returned after battles
+#define FLAG_TERASTAL_DISABLED 0x929
 #define FLAG_DAILY_EVENTS_START 0xE00 //To flag + 0xFF, resets every new day.
 
 /*===== Start Menu/Poketools Flags =====*/
@@ -210,6 +212,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define BRIDGE_FIX //If this remains uncommented, the water battle background will only be loaded if the player's surfing sprite is shown
 #define MEGA_EVOLUTION_FEATURE //Comment this line to remove Mega Evolutions
 #define DYNAMAX_FEATURE //Comment this line to remove Dynamax and Raid Battles
+#define TERASTAL_FEATURE
 //#define TUTORIAL_BATTLES //Comment this line to remove Oak's Tutorial
 #define TANOBY_RUINS_ENABLED //The Tanoby Ruins will be the only location Unown can be encountered
 #define ALTERING_CAVE_ENABLED //The Altering Cave from FR will work as intended provided the proper var is set

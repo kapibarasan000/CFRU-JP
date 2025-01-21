@@ -28,7 +28,8 @@ struct __attribute__((packed)) CompressedPokemon
 {
 	u32 personality;
 	u32 otid;
-	u8 nickname[10];
+	u8 nickname[9];
+	u8 teratype;
 	u8 language;
 	u8 sanity;
 	u8 otname[7];

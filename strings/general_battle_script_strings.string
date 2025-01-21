@@ -388,3 +388,5 @@ The sleep clause prevents more\nPokemon from being put to sleep！
 #org @gText_RaidMonRanAway
 [PLAY_SE][11][00][FD][06]は すあなの どこかに\nすがたを けした……！\p
 
+#org @gText_MonTerastal
+[SCRIPTING_BANK]は\nテラスタルした！

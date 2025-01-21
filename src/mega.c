@@ -556,6 +556,7 @@ void MegaRetrieveData(void)
 		gNewBS->ultraData.chosen[gActiveBattler] = 0;
 		gNewBS->zMoveData.toBeUsed[gActiveBattler] = 0;
 		gNewBS->dynamaxData.toBeUsed[gActiveBattler] = 0;
+		gNewBS->terastalData.chosen[gActiveBattler] = 0;
 	}
 	else
 	{
@@ -563,5 +564,6 @@ void MegaRetrieveData(void)
 		gNewBS->ultraData.chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][5];
 		gNewBS->zMoveData.toBeUsed[gActiveBattler] |= gBattleBufferB[gActiveBattler][6];
 		gNewBS->dynamaxData.toBeUsed[gActiveBattler] |= gBattleBufferB[gActiveBattler][7];
+		gNewBS->terastalData.chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][8];
 	}
 }

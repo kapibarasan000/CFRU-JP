@@ -62,6 +62,7 @@ move_tables.s
 .global gAromaVeilProtectedMoves
 .global gMovesThatLiftProtectTable
 .global gMovesWithQuietBGM
+.global gTerastalPowerBoostBannedMoves
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1193,3 +1194,63 @@ gMovesWithQuietBGM:
 .hword MOVE_ROUND
 @.hword MOVE_DARKPULSE
 .hword 0xFFFF
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+gTerastalPowerBoostBannedMoves:
+.hword MOVE_TWINEEDLE
+.hword MOVE_DOUBLEKICK
+.hword MOVE_BONEMERANG
+.hword MOVE_DOUBLEHIT
+.hword MOVE_GEARGRIND
+.hword MOVE_DUALCHOP
+.hword MOVE_DOUBLEIRONBASH
+.hword MOVE_DRAGONDARTS
+.hword MOVE_DUALWINGBEAT
+.hword MOVE_WATERSHURIKEN
+.hword MOVE_SURGINGSTRIKES
+.hword MOVE_DOUBLESLAP
+.hword MOVE_BARRAGE
+.hword MOVE_SPIKECANNON
+.hword MOVE_PINMISSILE
+.hword MOVE_FURYATTACK
+.hword MOVE_FURYSWIPES
+.hword MOVE_COMETPUNCH
+.hword MOVE_BONERUSH
+.hword MOVE_BULLETSEED
+.hword MOVE_ARMTHRUST
+.hword MOVE_ICICLESPEAR
+.hword MOVE_ROCKBLAST
+.hword MOVE_TAILSLAP
+.hword MOVE_SCALESHOT
+.hword MOVE_TRIPLEKICK
+.hword MOVE_TRIPLEAXEL
+.hword MOVE_BEATUP
+.hword MOVE_QUICKATTACK
+.hword MOVE_EXTREMESPEED
+.hword MOVE_MACHPUNCH
+.hword MOVE_FAKEOUT
+.hword MOVE_FEINT
+.hword MOVE_AQUAJET
+.hword MOVE_ICESHARD
+.hword MOVE_VACUUMWAVE
+.hword MOVE_BULLETPUNCH
+.hword MOVE_SUCKERPUNCH
+.hword MOVE_SHADOWSNEAK
+.hword MOVE_ACCELEROCK
+.hword MOVE_FIRSTIMPRESSION
+.hword MOVE_ELECTROBALL
+.hword MOVE_GYROBALL
+.hword MOVE_REVERSAL
+.hword MOVE_FLAIL
+.hword MOVE_GRASSKNOT
+.hword MOVE_LOWKICK
+.hword MOVE_HEATCRASH
+.hword MOVE_HEAVYSLAM
+.hword MOVE_FLING
+.hword MOVE_CRUSHGRIP
+.hword MOVE_WATERSPOUT
+.hword MOVE_ERUPTION
+.hword MOVE_DRAGONENERGY
+.hword MOVE_STRUGGLE
+.hword MOVE_TABLES_TERMIN

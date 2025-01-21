@@ -13717,7 +13717,7 @@ const struct Item gItemData[] =
     },
 	{
         .name = {0x6c, 0x78, 0xae, 0x5d, 0x9e, 0xae, 0x5d, 0xa2, 0xff},
-        .itemId = ITEM_FREE_SPACE1,
+        .itemId = ITEM_TERA_ORB,
         .price = 0,
         .holdEffect = 0,
         .holdEffectParam = 0,
@@ -13733,7 +13733,7 @@ const struct Item gItemData[] =
     },
 	{
         .name = {0x6c, 0x78, 0xae, 0x5d, 0x9e, 0xae, 0x5d, 0xa3, 0xff},
-        .itemId = ITEM_FREE_SPACE1,
+        .itemId = ITEM_TERA_ORB,
         .price = 0,
         .holdEffect = 0,
         .holdEffectParam = 0,
@@ -13749,7 +13749,7 @@ const struct Item gItemData[] =
     },
 	{
         .name = {0x6c, 0x78, 0xae, 0x5d, 0x9e, 0xae, 0x5d, 0xa4, 0xff},
-        .itemId = ITEM_FREE_SPACE1,
+        .itemId = ITEM_TERA_ORB,
         .price = 0,
         .holdEffect = 0,
         .holdEffectParam = 0,

@@ -22,6 +22,7 @@
 #include "../include/new/move_tables.h"
 #include "../include/new/stat_buffs.h"
 #include "../include/new/switching.h"
+#include "../include/new/terastal.h"
 
 /*
 battle_script_util.c
@@ -493,24 +494,27 @@ void CopycatFunc(void)
 
 void SetRoostFunc(void)
 {
-	if (gBattleMons[gBankAttacker].type1 == TYPE_FLYING
-	&&  gBattleMons[gBankAttacker].type2 == TYPE_FLYING)
+	if (!IsTerastal(gBankAttacker))
 	{
-		gNewBS->RoostCounter |= gBitTable[gBankAttacker];
-		gBattleMons[gBankAttacker].type1 = TYPE_NORMAL;
-		gBattleMons[gBankAttacker].type2 = TYPE_NORMAL;
-	}
-	else
-	{
-		if (gBattleMons[gBankAttacker].type1 == TYPE_FLYING)
-			gBattleMons[gBankAttacker].type1 = TYPE_ROOSTLESS;
+		if (gBattleMons[gBankAttacker].type1 == TYPE_FLYING
+		&&  gBattleMons[gBankAttacker].type2 == TYPE_FLYING)
+		{
+			gNewBS->RoostCounter |= gBitTable[gBankAttacker];
+			gBattleMons[gBankAttacker].type1 = TYPE_NORMAL;
+			gBattleMons[gBankAttacker].type2 = TYPE_NORMAL;
+		}
+		else
+		{
+			if (gBattleMons[gBankAttacker].type1 == TYPE_FLYING)
+				gBattleMons[gBankAttacker].type1 = TYPE_ROOSTLESS;
 
-		if (gBattleMons[gBankAttacker].type2 == TYPE_FLYING)
-			gBattleMons[gBankAttacker].type2 = TYPE_ROOSTLESS;
-	}
+			if (gBattleMons[gBankAttacker].type2 == TYPE_FLYING)
+				gBattleMons[gBankAttacker].type2 = TYPE_ROOSTLESS;
+		}
 
-	if (gBattleMons[gBankAttacker].type3 == TYPE_FLYING)
-		gBattleMons[gBankAttacker].type3 = TYPE_ROOSTLESS;
+		if (gBattleMons[gBankAttacker].type3 == TYPE_FLYING)
+			gBattleMons[gBankAttacker].type3 = TYPE_ROOSTLESS;
+	}
 }
 
 void CaptivateFunc(void)
@@ -897,6 +901,7 @@ void ChangeTargetTypeFunc(void)
 		case MOVE_SOAK:
 			if (ABILITY(gBankTarget) == ABILITY_MULTITYPE
 			||  ABILITY(gBankTarget) == ABILITY_RKS_SYSTEM
+			||  IsTerastal(gBankTarget)
 			|| (gBattleMons[gBankTarget].type1 == TYPE_WATER &&
 				gBattleMons[gBankTarget].type2 == TYPE_WATER &&
 				gBattleMons[gBankTarget].type3 == TYPE_BLANK))
@@ -914,6 +919,7 @@ void ChangeTargetTypeFunc(void)
 		case MOVE_MAGICPOWDER:
 			if (ABILITY(gBankTarget) == ABILITY_MULTITYPE
 			||  ABILITY(gBankTarget) == ABILITY_RKS_SYSTEM
+			||  IsTerastal(gBankTarget)
 			|| (gBattleMons[gBankTarget].type1 == TYPE_PSYCHIC &&
 				gBattleMons[gBankTarget].type2 == TYPE_PSYCHIC &&
 				gBattleMons[gBankTarget].type3 == TYPE_BLANK))
@@ -1414,14 +1420,17 @@ void ClearDoingPluckItemEffect(void)
 
 void BurnUpFunc(void)
 {
-	if (gBattleMons[gBankAttacker].type1 == TYPE_FIRE)
-		gBattleMons[gBankAttacker].type1 = TYPE_MYSTERY;
+	if (!IsTerastal(gBankAttacker))
+	{
+		if (gBattleMons[gBankAttacker].type1 == TYPE_FIRE)
+			gBattleMons[gBankAttacker].type1 = TYPE_MYSTERY;
 
-	if (gBattleMons[gBankAttacker].type2 == TYPE_FIRE)
-		gBattleMons[gBankAttacker].type2 = TYPE_MYSTERY;
+		if (gBattleMons[gBankAttacker].type2 == TYPE_FIRE)
+			gBattleMons[gBankAttacker].type2 = TYPE_MYSTERY;
 
-	if (gBattleMons[gBankAttacker].type3 == TYPE_FIRE)
-		gBattleMons[gBankAttacker].type3 = TYPE_BLANK;
+		if (gBattleMons[gBankAttacker].type3 == TYPE_FIRE)
+			gBattleMons[gBankAttacker].type3 = TYPE_BLANK;
+	}
 }
 
 void SeedRoomServiceLooper(void)

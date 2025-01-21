@@ -121,7 +121,7 @@ void OpponentHandleChooseMove(void)
 				gChosenMovesByBanks[gActiveBattler] = chosenMove;
 				TryRemoveDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove);
 
-				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
+				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler], gNewBS->terastalData.chosen[gActiveBattler]);
 				TryRechoosePartnerMove(moveInfo->moves[chosenMoveId]);
 				break;
 		}
@@ -139,11 +139,11 @@ void OpponentHandleChooseMove(void)
 		} while (move == MOVE_NONE);
 
 		if (GetBaseMoveTarget(move, gActiveBattler) & (MOVE_TARGET_USER_OR_PARTNER | MOVE_TARGET_USER))
-			EmitMoveChosen(1, chosenMoveId, gActiveBattler, 0, 0, 0, FALSE);
+			EmitMoveChosen(1, chosenMoveId, gActiveBattler, 0, 0, 0, FALSE, FALSE);
 		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-			EmitMoveChosen(1, chosenMoveId, GetBattlerAtPosition(Random() & 2), 0, 0, 0, FALSE);
+			EmitMoveChosen(1, chosenMoveId, GetBattlerAtPosition(Random() & 2), 0, 0, 0, FALSE, FALSE);
 		else
-			EmitMoveChosen(1, chosenMoveId, FOE(gActiveBattler), 0, 0, 0, FALSE);
+			EmitMoveChosen(1, chosenMoveId, FOE(gActiveBattler), 0, 0, 0, FALSE, FALSE);
 
 		OpponentBufferExecCompleted();
 	}

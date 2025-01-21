@@ -882,6 +882,7 @@ struct NewBattleStruct
 	bool8 cottonDownActive : 1;
 	bool8 cramorantTransformed : 1;
 	bool8 activateTemperFlare : 1;
+	bool8 terastalBoost : 1;
 
 	//Other
 	u16 LastUsedMove;
@@ -967,6 +968,14 @@ struct NewBattleStruct
 		u16 turnStartHP;
 		u16 backupRaidMonItem;
 	} dynamaxData;
+
+	struct
+	{
+		u8 chosen[MAX_BATTLERS_COUNT];
+		u8 done[MAX_BATTLERS_COUNT];
+		u8 partyIndex[NUM_BATTLE_SIDES];
+		u8 fainted[MAX_BATTLERS_COUNT];
+	} terastalData;
 
 	struct 
 	{

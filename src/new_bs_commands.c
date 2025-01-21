@@ -576,9 +576,18 @@ void atkFF0E_setcounter(void)
 			gNewBS->BeakBlastByte |= gBitTable[bank];
 			break;
 		case Counters_TarShot:
+			if (IsTerastal(bank))
+			{
+				gBattlescriptCurrInstr = BattleScript_MoveEnd;
+				return;
+			}
+
 			gNewBS->tarShotBits |= gBitTable[bank];
 			break;
 	}
+
+	if (!IsTerastal(bank))
+		gBattlescriptCurrInstr =  BattleScript_MoveEnd;
 
 	gBattlescriptCurrInstr += 4;
 }

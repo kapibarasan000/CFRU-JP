@@ -10,6 +10,7 @@
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/set_z_effect.h"
+#include "../include/new/terastal.h"
 
 extern const u8 Mega_IndicatorTiles[];
 extern const u8 Alpha_IndicatorTiles[];
@@ -26,6 +27,53 @@ extern const u8 Dynamax_TriggerTiles[]; //For some reason this doesn't work
 extern const u8 Dynamax_Trigger_WorkingTiles[]; //This is used as the image until the bug is fixed
 extern const u16 Dynamax_TriggerPal[];
 extern const u8 Raid_ShieldTiles[];
+extern const u8 Terastal_TriggerTiles[];
+extern const u16 Terastal_TriggerPal[];
+extern const u16 Terastal_Trigger_FightingPal[];
+extern const u16 Terastal_Trigger_FlyingPal[];
+extern const u16 Terastal_Trigger_PoisonPal[];
+extern const u16 Terastal_Trigger_GroundPal[];
+extern const u16 Terastal_Trigger_RockPal[];
+extern const u16 Terastal_Trigger_BugPal[];
+extern const u16 Terastal_Trigger_GhostPal[];
+extern const u16 Terastal_Trigger_SteelPal[];
+extern const u16 Terastal_Trigger_FirePal[];
+extern const u16 Terastal_Trigger_WaterPal[];
+extern const u16 Terastal_Trigger_GrassPal[];
+extern const u16 Terastal_Trigger_ElectricPal[];
+extern const u16 Terastal_Trigger_PsychicPal[];
+extern const u16 Terastal_Trigger_IcePal[];
+extern const u16 Terastal_Trigger_DragonPal[];
+extern const u16 Terastal_Trigger_DarkPal[];
+extern const u16 Terastal_Trigger_FairyPal[];
+
+const u16* const Terastal_TriggerPals[] =
+{
+	Terastal_TriggerPal,
+	Terastal_Trigger_FightingPal,
+	Terastal_Trigger_FlyingPal,
+	Terastal_Trigger_PoisonPal,
+	Terastal_Trigger_GroundPal,
+	Terastal_Trigger_RockPal,
+	Terastal_Trigger_BugPal,
+	Terastal_Trigger_GhostPal,
+	Terastal_Trigger_SteelPal,
+	Terastal_TriggerPal,
+	Terastal_Trigger_FirePal,
+	Terastal_Trigger_WaterPal,
+	Terastal_Trigger_GrassPal,
+	Terastal_Trigger_ElectricPal,
+	Terastal_Trigger_PsychicPal,
+	Terastal_Trigger_IcePal,
+	Terastal_Trigger_DragonPal,
+	Terastal_Trigger_DarkPal,
+	Terastal_TriggerPal,
+	Terastal_TriggerPal,
+	Terastal_TriggerPal,
+	Terastal_TriggerPal,
+	Terastal_TriggerPal,
+	Terastal_Trigger_FairyPal,
+};
 
 static bool8 IsIgnoredTriggerColour(u16 colour);
 static struct Sprite* GetHealthboxSprite(u8 bank);
@@ -36,9 +84,11 @@ static void SpriteCB_MegaIndicator(struct Sprite* self);
 static void SpriteCB_ZTrigger(struct Sprite* self);
 static void SpriteCB_DynamaxTrigger(struct Sprite* self);
 static void SpriteCB_RaidShield(struct Sprite* sprite);
+static void SpriteCB_TerastalTrigger(struct Sprite* self);
 static void DestroyMegaTriggers(void);
 static void DestroyZTrigger(void);
 static void DestroyDynamaxTrigger(void);
+static void DestroyTerastalTrigger(void);
 
 enum MegaGraphicsTags
 {
@@ -52,6 +102,7 @@ enum MegaGraphicsTags
 	GFX_TAG_DYNAMAX_INDICATOR,
 	GFX_TAG_DYNAMAX_TRIGGER,
 	GFX_TAG_RAID_SHIELD,
+	GFX_TAG_TERASTAL_TRIGGER,
 };
 
 enum
@@ -79,6 +130,36 @@ static const struct CompressedSpriteSheet sDynamaxIndicatorSpriteSheet = {Dynama
 static const struct CompressedSpriteSheet sDynamaxTriggerSpriteSheet = {Dynamax_Trigger_WorkingTiles, (32 * 32) / 2, GFX_TAG_DYNAMAX_TRIGGER};
 static const struct SpritePalette sDynamaxTriggerPalette = {Dynamax_TriggerPal, GFX_TAG_DYNAMAX_TRIGGER};
 static const struct CompressedSpriteSheet sRaidShieldSpriteSheet = {Raid_ShieldTiles, (16 * 8) / 2, GFX_TAG_RAID_SHIELD};
+
+static const struct CompressedSpriteSheet sTerastalTriggerSpriteSheet = {Terastal_TriggerTiles, (32 * 32) / 2, GFX_TAG_TERASTAL_TRIGGER};
+
+static const struct SpritePalette sTerastalTriggerPalette[NUMBER_OF_MON_TYPES] = 
+{
+	{Terastal_TriggerPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_FightingPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_FlyingPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_PoisonPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_GroundPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_RockPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_BugPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_GhostPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_SteelPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_TriggerPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_FirePal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_WaterPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_GrassPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_ElectricPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_PsychicPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_IcePal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_DragonPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_DarkPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_TriggerPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_TriggerPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_TriggerPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_TriggerPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_TriggerPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_FairyPal, GFX_TAG_TERASTAL_TRIGGER},
+};
 
 static const struct OamData sIndicatorOam =
 {
@@ -234,6 +315,17 @@ const struct SpriteTemplate gRaidShieldSpriteTemplate =
 	.images = NULL,
 	.affineAnims = sSpriteAffineAnimTable_RaidShield,
 	.callback = SpriteCB_RaidShield,
+};
+
+static const struct SpriteTemplate sTerastalTriggerSpriteTemplate =
+{
+	.tileTag = GFX_TAG_TERASTAL_TRIGGER,
+	.paletteTag = GFX_TAG_TERASTAL_TRIGGER,
+	.oam = &sTriggerOam,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_TerastalTrigger,
 };
 
 /* Declare the colours the trigger button doesn't light up */
@@ -631,12 +723,12 @@ static void SpriteCB_DynamaxTrigger(struct Sprite* self)
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 	{
 		if (GetBattlerPosition(TRIGGER_BANK) == B_POSITION_PLAYER_LEFT)
-			xShift = -48; //X Pos = 16
+			xShift = -26; //X Pos = 6
 		else
-			xShift = 10; //X Pos = 74
+			xShift = 10; //X Pos = 42
 	}
 
-	self->pos1.x = 64 + (32 / 2);
+	self->pos1.x = 32 + (32 / 2);
 	self->pos1.y = 80 + (32 / 2);
 	self->pos2.x = xShift;
 	self->pos2.y = self->data[3];
@@ -836,6 +928,87 @@ void LoadMegaGraphics(u8 state)
 	}
 }
 
+static void SpriteCB_TerastalTrigger(struct Sprite* self)
+{
+	s16 xShift = 0;
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		if (GetBattlerPosition(TRIGGER_BANK) == B_POSITION_PLAYER_LEFT)
+			xShift = -26; //X Pos = 38
+		else
+			xShift = 10; //X Pos = 74
+	}
+
+	self->pos1.x = 64 + (32 / 2);
+	self->pos1.y = 80 + (32 / 2);
+	self->pos2.x = xShift;
+	self->pos2.y = self->data[3];
+
+	if (gBattlerControllerFuncs[TRIGGER_BANK] == (void*) (0x0802E1EC | 1) //Old HandleInputChooseMove
+	||  gBattlerControllerFuncs[TRIGGER_BANK] == HandleInputChooseMove
+	|| gBattlerControllerFuncs[TRIGGER_BANK] == HandleMoveSwitching)
+	{
+		struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*) (&gBattleBufferA[TRIGGER_BANK][4]);
+		if (!moveInfo->dynamaxed && !moveInfo->canMegaEvolve && moveInfo->canterastal) //Viewing move that can become Max Move
+		{
+			if (self->data[3] > 0)
+				self->data[3] -= 2;
+			else
+				self->data[3] = 0;
+		}
+		else
+		{
+			if (self->data[3] < 32)
+				self->data[3] += 2;
+			else
+				self->data[3] = 32;
+		}
+	}
+
+	//Dynamax Trigger should recede and destroy itself as long as the game isn't
+	//running one of the two mentioned functions.
+	else if (gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x08032404 | 1)  //PlayerHandleChooseMove
+		  && gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x080323C0 | 1)) //HandleChooseMoveAfterDma3
+	{
+		if (self->data[3] < 32)
+			self->data[3] += 2;
+		else
+		{
+			DestroyTerastalTrigger();
+			return;
+		}
+	}
+
+	if (gNewBS->terastalData.chosen[TRIGGER_BANK])
+		PALETTE_STATE = MegaTriggerLightUp;
+	else
+		PALETTE_STATE = MegaTriggerNormalColour;
+
+	// Only change the palette if the state has changed
+	if (PALETTE_STATE != self->data[2])
+	{
+		u16* pal = &gPlttBufferFaded2[IndexOfSpritePaletteTag(GFX_TAG_TERASTAL_TRIGGER) * 16];
+		u8 i;
+		u8 teratype = GetTeraType(TRIGGER_BANK);
+
+		for(i = 1; i < 16; i++)
+		{
+			if (IsIgnoredTriggerColour(Terastal_TriggerPals[teratype][i])) continue;
+
+			switch(PALETTE_STATE) {
+				case MegaTriggerLightUp:
+					pal[i] = LightUpTriggerSymbol(Terastal_TriggerPals[teratype][i]);
+					break;
+				case MegaTriggerNormalColour:
+					pal[i] = Terastal_TriggerPals[teratype][i];
+					break;
+			}
+		}
+
+		self->data[2] = PALETTE_STATE;
+	}
+}
+
 void CreateMegaIndicatorAfterAnim(void)
 {
 	if (!gNewBS->megaIndicatorObjIds[gActiveBattler] && gActiveBattler < gBattlersCount)
@@ -995,3 +1168,30 @@ void DestroyRaidShieldSprite(void)
 	}
 }
 
+void TryLoadTerastalTrigger(void)
+{
+	u8 spriteId;
+
+	if (gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN))
+		return;
+
+	LoadSpritePalette(&sTerastalTriggerPalette[GetTeraType(gActiveBattler)]);
+	LoadCompressedSpriteSheetUsingHeap(&sTerastalTriggerSpriteSheet);
+
+	spriteId = CreateSprite(&sTerastalTriggerSpriteTemplate, 130, 90, 1);
+	gSprites[spriteId].data[3] = 32;
+	gSprites[spriteId].pos1.y = -32;
+	gSprites[spriteId].data[4] = gActiveBattler;
+}
+
+static void DestroyTerastalTrigger(void)
+{
+	FreeSpritePaletteByTag(GFX_TAG_TERASTAL_TRIGGER);
+	FreeSpriteTilesByTag(GFX_TAG_TERASTAL_TRIGGER);
+
+	for (int i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].template->tileTag == GFX_TAG_TERASTAL_TRIGGER)
+			DestroySprite(&gSprites[i]);
+	}
+}

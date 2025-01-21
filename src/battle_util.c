@@ -17,6 +17,7 @@
 #include "../include/new/mega.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/multi.h"
+#include "../include/new/terastal.h"
 #include "../include/new/util.h"
 
 
@@ -268,6 +269,9 @@ bool8 CheckGrounding(u8 bank)
 		   || gBattleMons[bank].type1 == TYPE_FLYING
 		   || gBattleMons[bank].type2 == TYPE_FLYING)
 				return IN_AIR;
+	
+	else if (GetBattlerTeraType(bank) == TYPE_FLYING)
+		return IN_AIR;
 
 	return GROUNDED;
 }
@@ -290,6 +294,9 @@ bool8 NonInvasiveCheckGrounding(u8 bank)
 		   || gBattleMons[bank].type2 == TYPE_FLYING)
 				return IN_AIR;
 
+	else if (GetBattlerTeraType(bank) == TYPE_FLYING)
+		return IN_AIR;
+
 	return GROUNDED;
 }
 
@@ -306,6 +313,10 @@ bool8 CheckGroundingFromPartyData(struct Pokemon* mon)
 		|| gBaseStats[species].type1 == TYPE_FLYING
 		|| gBaseStats[species].type2 == TYPE_FLYING)
 			return IN_AIR;
+
+	else if (GetBattlerTeraType(GetBankFromPartyData(mon)) == TYPE_FLYING)
+		return IN_AIR;
+
 	return GROUNDED;
 }
 
@@ -374,6 +385,7 @@ bool8 IsOfType(u8 bank, u8 type)
 	u8 type1 = gBattleMons[bank].type1;
 	u8 type2 = gBattleMons[bank].type2;
 	u8 type3 = gBattleMons[bank].type3;
+	u8 teratype = GetBattlerTeraType(bank);
 
 	if (!IS_BLANK_TYPE(type1) && type1 == type)
 		return TRUE;
@@ -382,6 +394,9 @@ bool8 IsOfType(u8 bank, u8 type)
 		return TRUE;
 
 	if (!IS_BLANK_TYPE(type3) && type3 == type)
+		return TRUE;
+
+	if (!IS_BLANK_TYPE(teratype) && teratype == type)
 		return TRUE;
 
 	return FALSE;

@@ -17,6 +17,7 @@
 #include "../include/new/util.h"
 #include "../include/new/item.h"
 #include "../include/new/move_tables.h"
+#include "../include/new/terastal.h"
 
 #include "Tables/type_tables.h"
 
@@ -595,6 +596,7 @@ void atk06_typecalc(void)
 	u8 atkType1 = gBattleMons[gBankAttacker].type1;
 	u8 atkType2 = gBattleMons[gBankAttacker].type2;
 	u8 atkType3 = gBattleMons[gBankAttacker].type3;
+	u8 atkTeraType = GetBattlerTeraType(gBankAttacker);
 	u8 moveTarget = GetBaseMoveTarget(gCurrentMove, gBankAttacker);
 	bool8 calcSpreadMove = IS_DOUBLE_BATTLE && moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL);
 
@@ -619,6 +621,19 @@ void atk06_typecalc(void)
 			//Check Stab
 			if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
 			{
+				if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
+				{
+					gBattleMoveDamage = (gBattleMoveDamage * 225) / 100;
+					gNewBS->terastalBoost = TRUE;
+				}
+				else if (atkAbility == ABILITY_ADAPTABILITY)
+					gBattleMoveDamage *= 2;
+				else
+					gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
+			}
+			else if (atkTeraType == moveType)
+			{
+				gNewBS->terastalBoost = TRUE;
 				if (atkAbility == ABILITY_ADAPTABILITY)
 					gBattleMoveDamage *= 2;
 				else
@@ -820,7 +835,7 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 	u8 moveType;
 	u8 defAbility = ABILITY(bankDef);
 	u8 defEffect = ITEM_EFFECT(bankDef);
-	u8 atkAbility, atkType1, atkType2, atkType3;
+	u8 atkAbility, atkType1, atkType2, atkType3, atkTeraType;
 	u8 flags = 0;
 
 	if (move == MOVE_STRUGGLE)
@@ -832,6 +847,7 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 		atkType1 = GetMonType(monAtk, 0);
 		atkType2 = GetMonType(monAtk, 1);
 		atkType3 = TYPE_BLANK;
+		atkTeraType = GetBattlerTeraType(GetBankFromPartyData(monAtk));
 		moveType = GetMonMoveTypeSpecial(monAtk, move);
 	}
 	else
@@ -840,11 +856,21 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 		atkType1 = gBattleMons[bankAtk].type1;
 		atkType2 = gBattleMons[bankAtk].type2;
 		atkType3 = gBattleMons[bankAtk].type3;
+		atkTeraType = GetBattlerTeraType(bankAtk);
 		moveType = GetMoveTypeSpecial(bankAtk, move);
 	}
 
 	//Check stab
 	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
+	{
+		if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
+			gBattleMoveDamage = udivsi(gBattleMoveDamage * 225, 100);
+		else if (atkAbility == ABILITY_ADAPTABILITY)
+			gBattleMoveDamage *= 2;
+		else
+			gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
+	}
+	else if (atkTeraType == moveType)
 	{
 		if (atkAbility == ABILITY_ADAPTABILITY)
 			gBattleMoveDamage *= 2;
@@ -895,14 +921,23 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 
 	u8 defAbility = GetMonAbility(monDef);
 	u8 defEffect = ItemId_GetHoldEffectParam(monDef->item);
-	u8 defType1 = GetMonType(monDef, 0);
-	u8 defType2 = GetMonType(monDef, 1);
 
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 atkType1 = gBattleMons[bankAtk].type1;
 	u8 atkType2 = gBattleMons[bankAtk].type2;
 	u8 atkType3 = gBattleMons[bankAtk].type3;
-	u8 moveType;
+	u8 atkTeraType = GetBattlerTeraType(bankAtk);
+	u8 moveType, defType1, defType2;
+
+	if (IsTerastal(GetBankFromPartyData(monDef)))
+	{
+		defType1 = defType2 = monDef->teratype;
+	}
+	else
+	{
+		defType1 = GetMonType(monDef, 0);
+		defType2 = GetMonType(monDef, 1);
+	}
 
 	if (move == MOVE_STRUGGLE)
 		return 0;
@@ -911,6 +946,15 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 
 	//Check stab
 	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
+	{
+		if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
+			gBattleMoveDamage = udivsi(gBattleMoveDamage * 225, 100);
+		else if (atkAbility == ABILITY_ADAPTABILITY)
+			gBattleMoveDamage *= 2;
+		else
+			gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
+	}
+	else if (atkTeraType == moveType)
 	{
 		if (atkAbility == ABILITY_ADAPTABILITY)
 			gBattleMoveDamage *= 2;
@@ -957,7 +1001,7 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	u8 atkAbility = GetAIAbility(bankAtk, bankDef, move);
 	u8 defAbility = GetAIAbility(bankDef, bankAtk, IsValidMovePrediction(bankDef, bankAtk));
 	u8 defEffect = ITEM_EFFECT(bankDef);
-	u8 atkType1, atkType2, atkType3, defType1, defType2, defType3;
+	u8 atkType1, atkType2, atkType3, atkTeraType, defType1, defType2, defType3;
 	u8 flags = 0;
 
 	if (move == MOVE_STRUGGLE)
@@ -966,11 +1010,16 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	atkType1 = gBattleMons[bankAtk].type1;
 	atkType2 = gBattleMons[bankAtk].type2;
 	atkType3 = gBattleMons[bankAtk].type3;
+	atkTeraType = GetBattlerTeraType(bankAtk);
 	moveType = GetMoveTypeSpecial(bankAtk, move);
 
-	if (atkAbility == ABILITY_PROTEAN)
+	if (atkAbility == ABILITY_PROTEAN && !IsTerastal(bankAtk))
 		atkType1 = atkType2 = atkType3 = moveType;
 
+	if (IsTerastal(bankDef))
+	{
+		defType1 = defType2 = defType3 = GetTeraType(bankDef);
+	}
 	if (gStatuses3[bankDef] & STATUS3_ILLUSION && gDisableStructs[bankDef].isFirstTurn) //Under illusion and haven't figured it out yet
 	{
 		struct Pokemon* illusionMon = GetIllusionPartyData(bankDef);
@@ -978,23 +1027,33 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 		defAbility = GetMonAbility(illusionMon);
 		defType1 = gBaseStats[fakeSpecies].type1;
 		defType2 = gBaseStats[fakeSpecies].type2;
+		defType3 = gBattleMons[bankDef].type3;
 	}
 	else
 	{
 		defType1 = gBattleMons[bankDef].type1;
 		defType2 = gBattleMons[bankDef].type2;
+		defType3 = gBattleMons[bankDef].type3;
 	}
-	defType3 = gBattleMons[bankDef].type3; //Same type 3 - eg switched in on Forest's curse
 
 	//Check STAB
 	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
 	{
+		if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
+			gBattleMoveDamage = (gBattleMoveDamage * 9) / 2;
+		else if (atkAbility == ABILITY_ADAPTABILITY)
+			gBattleMoveDamage *= 2;
+		else
+			gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
+	}
+	else if (atkTeraType == moveType)
+	{
 		if (atkAbility == ABILITY_ADAPTABILITY)
 			gBattleMoveDamage *= 2;
 		else
-			gBattleMoveDamage = (gBattleMoveDamage * 150) / 100;
+			gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
 	}
-
+	
 	//Check Special Ground Immunities
 	if (moveType == TYPE_GROUND
 	&& !CheckGrounding(bankDef)
@@ -1048,7 +1107,11 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	moveType = GetMoveTypeSpecial(bankAtk, move);
 
 	struct Pokemon* monIllusion = GetIllusionPartyData(bankDef);
-	if (monIllusion != GetBankPartyData(bankDef)) //Under illusion
+	if (IsTerastal(bankDef))
+	{
+		defType1 = defType2 = defType3 = GetTeraType(bankDef);
+	}
+	else if (monIllusion != GetBankPartyData(bankDef)) //Under illusion
 	{
 		defType1 = GetMonType(monIllusion, 0);
 		defType2 = GetMonType(monIllusion, 1);
@@ -1101,6 +1164,9 @@ static void TypeDamageModificationByDefTypes(u8 atkAbility, u8 bankDef, u16 move
 {
 	u8 multiplier1, multiplier2, multiplier3;
 
+	if (IsTerastal(bankDef))
+		defType1 = defType2 = defType3 = GetTeraType(bankDef);
+
 TYPE_LOOP:
 	multiplier1 = gTypeEffectiveness[moveType][defType1];
 	multiplier2 = gTypeEffectiveness[moveType][defType2];
@@ -1126,8 +1192,15 @@ void TypeDamageModificationPartyMon(u8 atkAbility, struct Pokemon* monDef, u16 m
 {
 	u8 defType1, defType2, multiplier1, multiplier2;
 
-	defType1 = GetMonType(monDef, 0);
-	defType2 = GetMonType(monDef, 1);
+	if (IsTerastal(GetBankFromPartyData(monDef)))
+	{
+		defType1 = defType2 = monDef->teratype;
+	}
+	else
+	{
+		defType1 = GetMonType(monDef, 0);
+		defType2 = GetMonType(monDef, 1);
+	}
 
 TYPE_LOOP_AI:
 	multiplier1 = gTypeEffectiveness[moveType][defType1];
@@ -1433,9 +1506,12 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 			u8 atkType1 = gBattleMons[bankAtk].type1;
 			u8 atkType2 = gBattleMons[bankAtk].type2;
 			u8 atkType3 = gBattleMons[bankAtk].type3;
+			u8 atkTeraType = GetBattlerTeraType(bankAtk);
 			if (gNewBS->DancerInProgress)
 			{
-				if (atkType1 != TYPE_MYSTERY && atkType1 != TYPE_ROOSTLESS)
+				if (atkTeraType != TYPE_BLANK)
+					moveType = atkTeraType;
+				else if (atkType1 != TYPE_MYSTERY && atkType1 != TYPE_ROOSTLESS)
 					moveType = atkType1;
 				else if (atkType2 != TYPE_MYSTERY && atkType2 != TYPE_ROOSTLESS)
 					moveType = atkType2;
@@ -1444,7 +1520,9 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 			}
 			else
 			{
-				if (atkType1 != TYPE_MYSTERY && atkType1 != TYPE_ROOSTLESS)
+				if (atkTeraType != TYPE_BLANK)
+					moveType = atkTeraType;
+				else if (atkType1 != TYPE_MYSTERY && atkType1 != TYPE_ROOSTLESS)
 					moveType = atkType1;
 				else if (atkType2 != TYPE_MYSTERY && atkType2 != TYPE_ROOSTLESS)
 					moveType = atkType2;
@@ -1562,7 +1640,10 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 			break;
 
 		case MOVE_REVELATIONDANCE:
-			moveType = GetMonType(mon, 0);
+			if (IsTerastal(GetBankFromPartyData(mon)))
+				moveType = mon->teratype;
+			else
+				moveType = GetMonType(mon, 0);
 			break;
 
 		case MOVE_AURAWHEEL:
@@ -3467,6 +3548,11 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 				power /= 3;
 			break;
 	}
+
+	if (GetBattlerTeraType(bankAtk) == data->moveType 
+	&& power < 60
+	&& !CheckTableForMove(move, gTerastalPowerBoostBannedMoves))
+		power = 60;
 
 	return power;
 }

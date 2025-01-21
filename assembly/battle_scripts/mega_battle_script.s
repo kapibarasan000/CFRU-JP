@@ -13,6 +13,8 @@ mega_battle_scripts.s
 .global BattleScript_MegaWish
 .global BattleScript_UltraBurst
 .global BattleScript_Dynamax
+.global BattleScript_Terastal
+.global BattleScript_TerastalBoost
 
 BattleScript_MegaEvolution:
 	setword BATTLE_STRING_LOADER MegaReactingString
@@ -78,6 +80,28 @@ BattleScript_TryRevertCramorant:
 BattleScript_TryRevertGorgingCramorant:
 	formchange BANK_SCRIPTING SPECIES_CRAMORANT_GORGING SPECIES_CRAMORANT TRUE TRUE FALSE BattleScript_Dynamax_Rejoin
 	goto BattleScript_Dynamax_Rejoin
+
+BattleScript_Terastal:
+	call BS_FLUSH_MESSAGE_BOX
+	playanimation BANK_SCRIPTING ANIM_CALL_BACK_POKEMON
+	waitanimation
+	pause DELAY_1SECOND
+	pause DELAY_HALFSECOND
+	returntoball BANK_SCRIPTING
+	callasm SetAndTransferDontRemoveTransformSpecies
+	callasm BackupScriptingBankMoveSelectionCursor
+	switchinanim BANK_SCRIPTING 0x1 @;Play the switch-in animation
+	waitanimation
+	callasm RestoreScriptingBankMoveSelectionCursor
+	callasm ClearAndTransferDontRemoveTransformSpecies
+	setword BATTLE_STRING_LOADER gText_MonTerastal
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	end3
+
+BattleScript_TerastalBoost:
+	playanimation BANK_SCRIPTING ANIM_TOTEM_BOOST 0x0
+	return
 
 .align 2
 @;FD 00's FD 16 is reacting\nto FD 04's FD 01!

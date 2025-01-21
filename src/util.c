@@ -2,11 +2,13 @@
 #include "../include/random.h"
 #include "../include/constants/abilities.h"
 
+#include "../include/new/battle_util.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/evolution.h"
 #include "../include/new/util.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
+#include "../include/new/terastal.h"
 /*
 util.c
 	general utility functions
@@ -294,8 +296,12 @@ bool8 IsMonOfType(struct Pokemon* mon, u8 type)
 {
 	u8 type1 = GetMonType(mon, 0);
 	u8 type2 = GetMonType(mon, 1);
+	u8 teratype = GetBattlerTeraType(GetBankFromPartyData(mon));
 
-	return type1 == type || type2 == type;
+	if (teratype != TYPE_BLANK)
+		return teratype == type;
+	else
+		return type1 == type || type2 == type;
 }
 
 #define TILE_SIZE 32
