@@ -705,9 +705,6 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 		else
 			gBattleScripting.bank = bank = gBankTarget;
 
-		if (SheerForceCheck() && bankHoldEffect != ITEM_EFFECT_AIR_BALLOON) //Air Balloon still pops
-			break;
-
 		switch (bankHoldEffect) {
 			case ITEM_EFFECT_ROCKY_HELMET:
 				if (TOOK_DAMAGE(bank)
@@ -870,8 +867,6 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 	case ItemEffects_ContactAttacker:
 		//These item effects must explicitly be listed in CMD49.c in order to work!
-		if (!SheerForceCheck() || atkHoldEffect == ITEM_EFFECT_THROAT_SPRAY || atkHoldEffect == ITEM_EFFECT_BLUNDER_POLICY)
-		{
 			switch (atkHoldEffect)
 			{
 				case ITEM_EFFECT_FLINCH:
@@ -883,7 +878,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					&& MOVE_HAD_EFFECT
 					&& (umodsi(Random(), 100)) < bankQuality
 					&& !CheckTableForMove(gCurrentMove, gFlinchChanceMoves)
-					&& gBattleMons[gBankTarget].hp)
+					&& BATTLER_ALIVE(gBankTarget))
 					{
 						gBattleMons[gBankTarget].status2 |= STATUS2_FLINCHED;
 					}
@@ -892,7 +887,9 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					if (gNewBS->totalDamageGiven > 0
 					&& bank != gBankTarget
 					&& BATTLER_ALIVE(bank)
-					&& !BATTLER_MAX_HP(bank))
+					&& !BATTLER_MAX_HP(bank)
+					&& !IsHealBlocked(bank)
+					&& !SheerForceCheck())
 					{
 						if (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2)
 							gNewBS->lessThanHalfHPBeforeShellBell = TRUE; //For Emergency Exit
@@ -918,7 +915,8 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					&& moveEffect != EFFECT_PSYWAVE
 					&& gCurrentMove != MOVE_FINALGAMBIT
 					&& ABILITY(bank) != ABILITY_MAGICGUARD
-					&& BATTLER_ALIVE(bank))
+					&& BATTLER_ALIVE(bank)
+					&& !SheerForceCheck())
 					{
 						gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 10);
 						gNewBS->selfInflictedDamage += gBattleMoveDamage; //For Emergency Exit
@@ -932,12 +930,25 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 					if (SPLIT(gCurrentMove) == SPLIT_STATUS)
 					{
-						if (MOVE_HAD_EFFECT)
+						if (IS_DOUBLE_BATTLE)
+						{
+							if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_SPREAD)
+							{
+								//Check affected at least one target
+								//Assumes the status move doesn't do damage (which it shouldn't)
+								throatSprayWork = (BATTLER_ALIVE(gBankTarget) && !(gNewBS->ResultFlags[gBankTarget] & MOVE_RESULT_NO_EFFECT))
+												|| (BATTLER_ALIVE(PARTNER(gBankTarget)) && !(gNewBS->ResultFlags[PARTNER(gBankTarget)] & MOVE_RESULT_NO_EFFECT));
+
+								if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL)
+									throatSprayWork |= (BATTLER_ALIVE(PARTNER(gBankAttacker)) && !(gNewBS->ResultFlags[PARTNER(gBankAttacker)] & MOVE_RESULT_NO_EFFECT));
+							}
+						}
+						else if (MOVE_HAD_EFFECT)
 							throatSprayWork = TRUE;
 					}
 					else //Damaging move
 					{
-						if (gNewBS->AttackerDidDamageAtLeastOnce && !SheerForceCheck())
+						if (gNewBS->AttackerDidDamageAtLeastOnce)
 							throatSprayWork = TRUE;
 					}
 
@@ -977,7 +988,6 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					gNewBS->activateBlunderPolicy = FALSE;
 					break;
 			}
-		}
 		break;
 	}
 
@@ -1151,6 +1161,7 @@ static u8 KeeMaranagaBerryFunc(u8 bank, u8 stat, u8 split, bool8 doPluck) {
 
 	if (((TOOK_DAMAGE(bank) && CalcMoveSplit(gBankAttacker, gCurrentMove, bank) == split && !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)) || doPluck)
 	&& BATTLER_ALIVE(bank)
+	&& !SheerForceCheck()
 	&& !ChangeStatBuffs(SET_STAT_BUFF_VALUE(buff), stat, MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, 0))
 	{
 		gEffectBank = gBankAttacker;

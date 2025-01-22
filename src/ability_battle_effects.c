@@ -1646,9 +1646,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
 			break;
 		case ABILITYEFFECT_CONTACT: //After being hit by a move. Not necessarilly contact.
-			if (SheerForceCheck() && gLastUsedAbility != ABILITY_ILLUSION) //Sheer Force negates all these abilities
-				break;
-
 			gBattleScripting.bank = bank;
 
 			switch (gLastUsedAbility)
@@ -1660,7 +1657,9 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& SPLIT(move) != SPLIT_STATUS
 				&& !IsOfType(bank, moveType)
 				&& BATTLER_ALIVE(bank)
-				&& gBankAttacker != bank)
+				&& gBankAttacker != bank
+				&& !SheerForceCheck()
+				&& gMultiHitCounter <= 1)
 				{
 					SET_BATTLER_TYPE(bank, moveType);
 					PREPARE_TYPE_BUFFER(gBattleTextBuff1, moveType);
@@ -1951,7 +1950,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& BATTLER_ALIVE(bank)
 				&& gBattleMons[bank].hp < gBattleMons[bank].maxHP / 2
 				&& gBattleMons[bank].hp + gHpDealt > gBattleMons[bank].maxHP / 2 //Hp fell below half
-				&& gBattleMons[bank].statStages[STAT_SPATK - 1] < 12)
+				&& gBattleMons[bank].statStages[STAT_SPATK - 1] < 12
+				&& !SheerForceCheck())
 				{
 					gBattleScripting.statChanger = STAT_SPATK | INCREASE_1;
 					BattleScriptPushCursor();

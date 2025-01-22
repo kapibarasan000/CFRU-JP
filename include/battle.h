@@ -186,6 +186,8 @@ enum
 #define MOVE_TARGET_ALL   			0x20
 #define MOVE_TARGET_OPPONENTS_FIELD 0x40
 
+#define MOVE_TARGET_SPREAD (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)
+
 // defines for the u8 array gTypeEffectiveness
 #define TYPE_EFFECT_ATK_TYPE(i)((gTypeEffectiveness[i + 0]))
 #define TYPE_EFFECT_DEF_TYPE(i)((gTypeEffectiveness[i + 1]))
