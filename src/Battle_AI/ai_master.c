@@ -212,6 +212,7 @@ static bool8 ShouldSwitchIfWonderGuard(void);
 static void CalcMostSuitableMonSwitchIfNecessary(void);
 static void PredictMovesForBanks(void);
 static void RunCalcShouldAIDynamax(void);
+static void RunCalcShouldAITerastal(void);
 static void UpdateStrongestMoves(void);
 static void UpdateBestDoublesKillingMoves(void);
 static u32 GetMaxByteIndexInList(const u8 array[], const u32 size);
@@ -775,6 +776,7 @@ static void CalculateAIPredictions(void)
 		//mgba_printf(MGBA_LOG_WARN, "Calculating Dynamax mon...");
 		RunCalcShouldAIDynamax(); //Allows move predictions to change outcome
 		//mgba_printf(MGBA_LOG_INFO, "Calculating switching...");
+		RunCalcShouldAITerastal();
 
 		gNewBS->calculatedAIPredictions = TRUE;
 
@@ -2638,6 +2640,18 @@ static void RunCalcShouldAIDynamax(void)
 	{
 		for (u8 j = 0; j < gBattlersCount; ++j)
 			CalcShouldAIDynamax(i, j);
+	}
+}
+
+static void RunCalcShouldAITerastal(void)
+{
+	for (u8 i = 0; i < NUM_BATTLE_SIDES; ++i)
+		CalcAITerastalMon(i);
+
+	for (u8 i = 0; i < gBattlersCount; ++i)
+	{
+		for (u8 j = 0; j < gBattlersCount; ++j)
+			CalcShouldAITerastal(i, j);
 	}
 }
 

@@ -21,6 +21,7 @@
 #include "../../include/new/multi.h"
 #include "../../include/new/set_z_effect.h"
 #include "../../include/new/switching.h"
+#include "../../include/new/terastal.h"
 #include "../../include/new/z_move_effects.h"
 
 /*
@@ -2120,6 +2121,28 @@ bool8 DamagingMoveTypeInMoveset(u8 bank, u8 moveType)
 	return FALSE;
 }
 
+bool8 DamagingMoveTypeInMonMoveset(struct Pokemon* mon, u8 moveLimitations, u8 type)
+{
+	u16 move;
+
+	moveLimitations = CheckMoveLimitationsFromParty(mon, 0, moveLimitations);
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (GetMonMoveTypeSpecial(mon, move) == type
+			&&  SPLIT(move) != SPLIT_STATUS)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 bool8 DamagingAllHitMoveTypeInMoveset(u8 bank, u8 moveType)
 {
 	u16 move;
@@ -3389,4 +3412,171 @@ void DecreaseViability(s16* viability, u16 amount)
 		*viability = 0;
 	else
 		*viability -= amount;
+}
+
+void CalcShouldAITerastal(u8 bankAtk, u8 bankDef)
+{
+	gNewBS->ai.terastalPotential[bankAtk][bankDef] = FALSE;
+
+	if (bankAtk != bankDef && CanTerastal(bankAtk))
+	{
+		u8 partnerBank = PARTNER(bankAtk);
+
+		if (BATTLER_SEMI_INVULNERABLE(bankAtk))
+			return;
+
+		if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(partnerBank) && gNewBS->terastalData.chosen[partnerBank])
+			return;
+
+		if (IS_DOUBLE_BATTLE && bankDef == PARTNER(bankAtk))
+			return;
+
+		if (!IsMockBattle() && SIDE(bankAtk) == B_SIDE_PLAYER)
+		{
+			if (IsTagBattle())
+			{
+				if (GetBattlerPosition(bankAtk) == B_POSITION_PLAYER_LEFT)
+					return;
+			}
+			else //Player is in control
+				return;
+		}
+
+		if (gNewBS->ai.terastalMonId[SIDE(bankAtk)] == gBattlerPartyIndexes[bankAtk])
+		{
+			if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE || SIDE(bankAtk) == B_SIDE_PLAYER) //Smart AI or partners only
+			{
+				u16 predictedMove = IsValidMovePrediction(bankAtk, bankDef);
+				if (predictedMove != MOVE_NONE
+				&&  MoveWouldHitFirst(predictedMove, bankAtk, bankDef)
+				&&  MoveKnocksOutXHits(predictedMove, bankAtk, bankDef, 1))
+					return; //Just KO the opponent normally
+
+				if ((IS_SINGLE_BATTLE && ViableMonCountFromBank(bankAtk) > 1)
+				||  (IS_DOUBLE_BATTLE && ViableMonCountFromBank(bankAtk) > 2))
+				{
+					predictedMove = IsValidMovePrediction(bankDef, bankAtk);
+					if (predictedMove != MOVE_NONE
+					&&  MoveWouldHitFirst(predictedMove, bankDef, bankAtk)
+					&&  MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1))
+						return;
+				}
+
+				OnlyBadMovesLeftInMoveset(bankAtk, bankDef); //Force calculation
+			}
+
+			gNewBS->ai.terastalPotential[bankAtk][bankDef] = TRUE;
+		}
+	}
+}
+
+bool8 ShouldAITerastal(u8 bankAtk, u8 bankDef)
+{
+	return gNewBS->ai.terastalPotential[bankAtk][bankDef];
+}
+
+void CalcAITerastalMon(u8 bank)
+{
+	u8 bestMonId = 0xFF;
+
+	if (!gNewBS->terastalData.done[bank])
+	{
+		struct Pokemon* party;
+		u8 bestMonScore, bestStatAmount, firstId, lastId, battlerIn1, battlerIn2, i;
+
+		party = LoadPartyRange(bank, &firstId, &lastId);
+		if (IS_SINGLE_BATTLE)
+			battlerIn1 = battlerIn2 = bank;
+		else
+		{
+			if (gAbsentBattlerFlags & gBitTable[bank])
+				battlerIn1 = battlerIn2 = PARTNER(bank);
+			else if (gAbsentBattlerFlags & gBitTable[PARTNER(bank)])
+				battlerIn1 = battlerIn2 = bank;
+			else
+			{
+				battlerIn1 = bank;
+				battlerIn2 = PARTNER(bank);
+			}
+		}
+
+		for (i = 0, bestMonScore = 0, bestStatAmount = 0; i < PARTY_SIZE; ++i) //Do entire party at once, even for Multi Battles
+		{
+			struct Pokemon* mon = &party[i];
+			u8 updateScore, itemEffect, ability, type1, type2, teraType;
+			u32 bestMonStat, attack, spAttack;
+
+			if (mon->species == SPECIES_NONE
+			|| GetMonData(mon, MON_DATA_HP, NULL) == 0
+			|| GetMonData(mon, MON_DATA_IS_EGG, NULL)
+			|| !MonCanTerastal(mon))
+				continue;
+
+			updateScore = 0;
+			bestMonStat = 0;
+			if (gBattlerPartyIndexes[battlerIn1] == i || gBattlerPartyIndexes[battlerIn2] == i)
+			{
+				u8 checkBank;
+				if (gBattlerPartyIndexes[battlerIn1] == i)
+					checkBank = battlerIn1;
+				else
+					checkBank = battlerIn2;
+				
+				itemEffect = ITEM_EFFECT(checkBank);
+				ability = ABILITY(checkBank);
+				attack = gBattleMons[checkBank].attack;
+				spAttack = gBattleMons[checkBank].spAttack;
+				type1 = GetMonType(mon, 0);
+				type2 = GetMonType(mon, 1);
+				teraType = mon->teratype;
+				APPLY_QUICK_STAT_MOD(attack, STAT_STAGE(checkBank, STAT_STAGE_ATK));
+				APPLY_QUICK_STAT_MOD(spAttack, STAT_STAGE(checkBank, STAT_STAGE_SPATK));
+			}
+			else
+			{
+				itemEffect = GetMonItemEffect(mon);
+				ability = GetMonAbility(mon);
+				attack = mon->attack;
+				spAttack = mon->spAttack;
+				type1 = GetMonType(mon, 0);
+				type2 = GetMonType(mon, 1);
+				teraType = mon->teratype;
+			}
+
+			if (PhysicalMoveInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP))
+			{
+				if (SpecialMoveInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP) && spAttack > attack)
+					bestMonStat = spAttack;
+				else
+					bestMonStat = attack;
+			}
+			else if (SpecialMoveInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP)) //Only set if mon has Special move
+				bestMonStat = spAttack;
+
+			if (MonKnowsMove(mon, MOVE_TERABLAST))
+				updateScore = 4;
+			else if (type1 != teraType && type2 != teraType)
+				updateScore = 3;
+			else if (DamagingMoveTypeInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP, teraType) && (type1 == teraType || type2 == teraType))
+				updateScore = 2;
+			else if (DamagingMoveTypeInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP, teraType))
+				updateScore = 1;
+
+			if (updateScore >= bestMonScore)
+			{
+				if (updateScore == bestMonScore
+				&& bestMonStat <= bestStatAmount)
+					continue; //Stats aren't better so check next mon
+
+				if (bestMonStat > 0) //Mon has attacking moves
+				{
+					bestMonId = i;
+					bestMonScore = updateScore;
+					bestStatAmount = bestMonStat;
+				}
+			}
+		}
+	}
+
+	gNewBS->ai.terastalMonId[SIDE(bank)] = bestMonId;
 }

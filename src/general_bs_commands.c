@@ -379,10 +379,9 @@ void atk09_attackanimation(void)
 	if (gNewBS->terastalBoost)
 	{
 		gBattleScripting.bank = gBankAttacker;
-		BattleScriptPush(gBattlescriptCurrInstr);
-		gBattlescriptCurrInstr = BattleScript_TerastalBoost - 1;
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_TerastalBoost;
 		gNewBS->terastalBoost = FALSE;
-		gBattlescriptCurrInstr++;
 		return;
 	}
 
@@ -1776,7 +1775,8 @@ void atk45_playanimation(void)
 	||  gBattlescriptCurrInstr[2] == B_ANIM_LOAD_ABILITY_POP_UP
 	||  gBattlescriptCurrInstr[2] == B_ANIM_DESTROY_ABILITY_POP_UP
 	||  gBattlescriptCurrInstr[2] == B_ANIM_DYNAMAX_START
-	||  gBattlescriptCurrInstr[2] == B_ANIM_POWDER_EXPLOSION)
+	||  gBattlescriptCurrInstr[2] == B_ANIM_POWDER_EXPLOSION
+	||  gBattlescriptCurrInstr[2] == B_ANIM_TERASTAL)
 	{
 		EmitBattleAnimation(0, gBattlescriptCurrInstr[2], *argumentPtr);
 		MarkBufferBankForExecution(gActiveBattler);
@@ -1857,7 +1857,8 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
 	||  *animationIdPtr == B_ANIM_LOAD_ABILITY_POP_UP
 	||  *animationIdPtr == B_ANIM_DESTROY_ABILITY_POP_UP
 	||  *animationIdPtr == B_ANIM_DYNAMAX_START
-	||  *animationIdPtr == B_ANIM_POWDER_EXPLOSION)
+	||  *animationIdPtr == B_ANIM_POWDER_EXPLOSION
+	||  *animationIdPtr == B_ANIM_TERASTAL)
 	{
 		EmitBattleAnimation(0, *animationIdPtr, *argumentPtr);
 		MarkBufferBankForExecution(gActiveBattler);

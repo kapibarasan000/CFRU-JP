@@ -12,4 +12,4 @@ u16 GetTeraTypeColor(u8 teratype);
 bool8 TerastalEnabled(u8 bank);
 bool8 MonCanTerastal(struct Pokemon* mon);
 bool8 DoesTerastalUsageStopMegaEvolution(u8 bank);
-
+bool8 IsBannedTerastalSpecies(u16 species);

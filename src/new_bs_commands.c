@@ -20,6 +20,7 @@
 #include "../include/new/multi.h"
 #include "../include/new/new_bs_commands.h"
 #include "../include/new/set_effect.h"
+#include "../include/new/terastal.h"
 #include "../include/new/util.h"
 
 /*
@@ -585,10 +586,6 @@ void atkFF0E_setcounter(void)
 			gNewBS->tarShotBits |= gBitTable[bank];
 			break;
 	}
-
-	if (!IsTerastal(bank))
-		gBattlescriptCurrInstr =  BattleScript_MoveEnd;
-
 	gBattlescriptCurrInstr += 4;
 }
 

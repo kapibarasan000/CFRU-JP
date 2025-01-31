@@ -93,6 +93,7 @@ gBattleAnims_General:
 .word ANIM_G_MAX_WILDFIRE
 .word ANIM_G_MAX_CANNONADE
 .word ANIM_G_MAX_VOLCALITH
+.word ANIM_TERASTAL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1052,6 +1053,51 @@ ANIM_G_MAX_VOLCALITH:
 	waitanimation 
 	pokespritefromBG side_target
 	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_TERASTAL:
+	loadparticle ANIM_TAG_TERASTAL_SYMBOL
+	loadparticle ANIM_TAG_WHITE_CIRCLE_OF_LIGHT
+	loadparticle ANIM_TAG_ORBS @Recover
+	pokespritetoBG side_attacker
+	setblends 0x80c
+
+@Recover:
+	soundcomplex 0x85 SOUND_PAN_ATTACKER 0xD 0x3
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x0 0x6 0x0 0xb 0x7fff
+	call RECOVER_LOAD_PARTICLES
+	call RECOVER_LOAD_PARTICLES
+	call RECOVER_LOAD_PARTICLES
+	waitanimation
+	launchtemplate TERASTALSYMBOL 0x82 0x0
+	waitanimation
+
+@CircleThing:
+	playsound2 0xc3 SOUND_PAN_ATTACKER
+	launchtemplate Template_LusterPurgeCircle 0x29 0x4 0x0 0x0 0x0 0x0
+	pause 0x14
+
+@WhiteOutScreen:
+	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x0 0x10 0xffff
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_WHITE_CIRCLE_OF_LIGHT 0x2 0x0 0x10 0xffff
+	waitanimation
+	launchtask AnimTask_BlendParticle 0x5 0x0
+	launchtask AnimTask_ReloadAttackerSprite 0x2 0x0
+	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x10 0x0 0xffff
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x2 0x0 0x0 0x7FFF
+	launchtask AnimTask_screen_shake 0x5 0x3 0x0 0x5 0xe
+	launchtask AnimTask_PlayAttackerCry 0x1 0x2 0x0 0xFF
+	waitanimation
+
+@End:
+	resetblends
+	pokespritefrombg side_attacker
+	endanimation
+
+.align 2
+TERASTALSYMBOL: objtemplate ANIM_TAG_TERASTAL_SYMBOL ANIM_TAG_TERASTAL_SYMBOL 0x8370B28 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B7A95
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

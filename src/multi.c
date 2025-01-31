@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
+#include "../include/random.h"
 
 #include "../include/new/ai_util.h"
 #include "../include/new/ai_master.h"
@@ -409,6 +410,22 @@ static void PlayerPartnerHandleChooseMove(void)
 				gNewBS->ultraData.chosen[gActiveBattler] = TRUE;
 		}
 	}
+	else if (moveInfo->possibleMaxMoves[chosenMoveId] && moveInfo->canterastal)
+	{
+		if (ShouldAIDynamax(gActiveBattler, gBankTarget))
+		{
+			if (ShouldAITerastal(gActiveBattler, gBankTarget) && Random() & 1)
+				gNewBS->terastalData.chosen[gActiveBattler] = TRUE;
+			
+			if (!IsRaidBattle() || gBattleResults.battleTurnCounter > 3 //Give the Player a chance to Dynamax first in a Raid battle
+				|| PlayerHasNoMonsLeftThatCanDynamax()) //Doesn't matter if they have no mons left
+					gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
+		}
+		else if (ShouldAITerastal(gActiveBattler, gBankTarget))
+		{
+			gNewBS->terastalData.chosen[gActiveBattler] = TRUE;
+		}
+	}
 	else if (moveInfo->possibleMaxMoves[chosenMoveId])
 	{
 		if (ShouldAIDynamax(gActiveBattler, gBankTarget))
@@ -417,6 +434,11 @@ static void PlayerPartnerHandleChooseMove(void)
 			|| PlayerHasNoMonsLeftThatCanDynamax()) //Doesn't matter if they have no mons left
 				gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 		}
+	}
+	else if (moveInfo->canterastal)
+	{
+		if (ShouldAITerastal(gActiveBattler, gBankTarget))
+			gNewBS->terastalData.chosen[gActiveBattler] = TRUE;
 	}
 
 	//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.

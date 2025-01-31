@@ -975,7 +975,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				}
 				else if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_LOADED_DICE)
 				{
-					gMultiHitCounter = 5 - (Random() % 2);
+					gMultiHitCounter = 5 - (Random() & 1);
 				}
 				#ifdef SPECIES_ASHGRENINJA
 				else if (ability == ABILITY_BATTLEBOND

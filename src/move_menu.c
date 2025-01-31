@@ -469,6 +469,7 @@ void TriggerTerastal(void)
 		{ // Turn Off
 			PlaySE(3);
 			gNewBS->terastalData.chosen[gActiveBattler] = FALSE;
+			MoveSelectionDisplayMoveType();
 		}
 		else
 		{ // Turn On
@@ -477,6 +478,7 @@ void TriggerTerastal(void)
 
 			PlaySE(2);
 			gNewBS->terastalData.chosen[gActiveBattler] = TRUE;
+			MoveSelectionDisplayMoveType();
 		}
 	}
 }
@@ -508,6 +510,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	tempMoveStruct->dynamaxed = IsDynamaxed(gActiveBattler);
 	tempMoveStruct->dynamaxDone = gNewBS->dynamaxData.used[gActiveBattler];
 	if ((!gNewBS->dynamaxData.used[gActiveBattler] || IsDynamaxed(gActiveBattler))
+	&& !(IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gActiveBattler)) && gNewBS->dynamaxData.toBeUsed[PARTNER(gActiveBattler)]) //Partner didn't already select it
 	&& DynamaxEnabled(gActiveBattler)
 	&& MonCanDynamax(GetBankPartyData(gActiveBattler))
 	&& !BATTLER_SEMI_INVULNERABLE(gActiveBattler)
@@ -592,7 +595,8 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 #ifdef TERASTAL_FEATURE
 	tempMoveStruct->terastalDone = gNewBS->terastalData.done[gActiveBattler];
 	tempMoveStruct->terastalPartyIndex = gNewBS->terastalData.partyIndex[SIDE(gActiveBattler)];
-	if (!gNewBS->terastalData.done[gActiveBattler])
+	if (!gNewBS->terastalData.done[gActiveBattler]
+	&& !(IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gActiveBattler)) && gNewBS->terastalData.chosen[PARTNER(gActiveBattler)]))
 		{
 			if (!BATTLER_SEMI_INVULNERABLE(gActiveBattler)
 			&& TerastalEnabled(gActiveBattler)
@@ -1887,16 +1891,19 @@ void HandleInputChooseAction(void)
 				case 1:
 					gNewBS->megaData.chosen[gActiveBattler] = FALSE;
 					gNewBS->ultraData.chosen[gActiveBattler] = FALSE;
+					gNewBS->terastalData.chosen[gActiveBattler] = FALSE;
 					EmitTwoReturnValues(1, ACTION_USE_ITEM, 0);
 					break;
 				case 2:
 					gNewBS->megaData.chosen[gActiveBattler] = FALSE;
 					gNewBS->ultraData.chosen[gActiveBattler] = FALSE;
+					gNewBS->terastalData.chosen[gActiveBattler] = FALSE;
 					EmitTwoReturnValues(1, ACTION_SWITCH, 0);
 					break;
 				case 3:
 					gNewBS->megaData.chosen[gActiveBattler] = FALSE;
 					gNewBS->ultraData.chosen[gActiveBattler] = FALSE;
+					gNewBS->terastalData.chosen[gActiveBattler] = FALSE;
 
 					if ((IS_DOUBLE_BATTLE)
 					&& GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
@@ -1964,6 +1971,8 @@ void HandleInputChooseAction(void)
 				return;
 
 			PlaySE(SE_SELECT);
+			gNewBS->dynamaxData.toBeUsed[PARTNER(gActiveBattler)] = FALSE; //Cancel's Dynamax if partner selected it
+			gNewBS->terastalData.chosen[PARTNER(gActiveBattler)] = FALSE;
 			EmitTwoReturnValues(1, ACTION_CANCEL_PARTNER, 0);
 			PlayerBufferExecCompleted();
 		}

@@ -75,15 +75,6 @@ static bool8 IsBannedHeldItemForTerastal(u16 item)
 		|| IsPrimalOrb(item);
 }
 
-bool8 CanTerastal(u8 bank)
-{
-	if (!gNewBS->terastalData.done[bank]
-    && !IsBannedHeldItemForTerastal(ITEM(bank)))
-		return TRUE;
-
-	return FALSE;
-}
-
 bool8 IsTerastal(u8 bank)
 {
     if (gNewBS->terastalData.partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]]
@@ -142,17 +133,14 @@ static item_t FindPlayerTeraOrb(void)
 	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
 		return ITEM_TERA_ORB;
 
-	#if (defined UNBOUND && defined VAR_KEYSTONE) //Mega Ring doubles as Dynamax Band in Unbound
-		u16 teraOrb = VarGet(VAR_KEYSTONE);
-		if (teraOrb != ITEM_NONE)
-			return teraOrb;
-	#else
+	if (FlagGet(FLAG_TERASTAL_CHARGE))
+	{
 		for (u8 i = 0; i < ARRAY_COUNT(sTeraOrbTable); ++i)
 		{
 			if (CheckBagHasItem(sTeraOrbTable[i], 1))
 				return sTeraOrbTable[i];
 		}
-	#endif
+	}
 
 	#ifdef DEBUG_TERASTAL
 		return ITEM_TERA_ORB; //Give player Dynamax Band if they have none
@@ -196,21 +184,16 @@ static item_t FindBankTeraOrb(u8 bank)
 
 bool8 TerastalEnabled(u8 bank)
 {
-	if (!FlagGet(FLAG_TERASTAL_DISABLED))
+	if (FindBankTeraOrb(bank) == ITEM_NONE)
 	{
-		if (FindBankTeraOrb(bank) == ITEM_NONE)
-		{
-			#ifdef DEBUG_TERASTAL
-				return TRUE;
-			#else
-				return FALSE;
-			#endif
-		}
-
-		return TRUE;
+		#ifdef DEBUG_TERASTAL
+			return TRUE;
+		#else
+			return FALSE;
+		#endif
 	}
 
-	return FALSE;
+	return TRUE;
 }
 
 bool8 IsBannedTerastalSpecies(u16 species)
@@ -230,21 +213,27 @@ bool8 IsBannedTerastalSpecies(u16 species)
 	return FALSE;
 }
 
-bool8 MonCanTerastal(struct Pokemon* mon)
+bool8 CanTerastal(u8 bank)
 {
-	if (!FlagGet(FLAG_TERASTAL_DISABLED))
-	{
-		u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-		u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
-
-		if (IsBannedTerastalSpecies(species)
-		|| IsBannedHeldItemForTerastal(item))
-			return FALSE;
-
+	u16 species = SPECIES(bank);
+	if (!gNewBS->terastalData.done[bank]
+    && !IsBannedHeldItemForTerastal(ITEM(bank))
+	&& !IsBannedTerastalSpecies(species))
 		return TRUE;
-	}
 
 	return FALSE;
+}
+
+bool8 MonCanTerastal(struct Pokemon* mon)
+{
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+
+	if (IsBannedTerastalSpecies(species)
+	|| IsBannedHeldItemForTerastal(item))
+		return FALSE;
+
+	return TRUE;
 }
 
 bool8 DoesTerastalUsageStopMegaEvolution(u8 bank)

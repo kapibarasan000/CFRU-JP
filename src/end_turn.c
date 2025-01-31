@@ -1619,6 +1619,7 @@ u8 TurnBasedEffects(void)
 						gNewBS->ai.onlyBadMovesLeft[i][j] = 0xFF;
 						gNewBS->ai.shouldFreeChoiceLockWithDynamax[i][j] = FALSE;
 						gNewBS->ai.dynamaxPotential[i][j] = FALSE;
+						gNewBS->ai.terastalPotential[i][j] = FALSE;
 
 						for (int k = 0; k < MAX_MON_MOVES; ++k)
 						{

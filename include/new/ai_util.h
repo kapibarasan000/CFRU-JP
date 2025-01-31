@@ -118,6 +118,9 @@ bool8 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move);
 void CalcAIDynamaxMon(u8 bank);
 void CalcShouldAIDynamax(u8 bankAtk, u8 bankDef);
 bool8 ShouldAIDynamax(u8 bankAtk, u8 bankDef);
+void CalcShouldAITerastal(u8 bankAtk, u8 bankDef);
+bool8 ShouldAITerastal(u8 bankAtk, u8 bankDef);
+void CalcAITerastalMon(u8 bank);
 u8 AdjustMoveLimitationFlagsForAI(u8 bankAtk, u8 bankDef);
 
 void IncreaseViability(s16* viability, u8 amount);

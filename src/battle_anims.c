@@ -4908,6 +4908,7 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 				case B_ANIM_ULTRA_BURST:
 				case B_ANIM_DYNAMAX_START:
 				case B_ANIM_RAID_BATTLE_ENERGY_BURST:
+				case B_ANIM_TERASTAL:
 					goto HIDE_BOXES;
 			}
 		__attribute__ ((fallthrough));
@@ -5242,6 +5243,7 @@ static bool8 ShouldSubstituteRecedeForSpecialBattleAnim(u8 animId)
 		case B_ANIM_ULTRA_BURST:
 		case B_ANIM_DYNAMAX_START:
 		case B_ANIM_RAID_BATTLE_ENERGY_BURST:
+		case B_ANIM_TERASTAL:
 			return TRUE;
 		default:
 			return FALSE;

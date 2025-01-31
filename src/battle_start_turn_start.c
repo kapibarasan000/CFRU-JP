@@ -868,6 +868,7 @@ void RunTurnActionsFunctions(void)
 				{
 					gNewBS->terastalData.chosen[PARTNER(bank)] = FALSE;
 					gNewBS->terastalData.done[PARTNER(bank)] = TRUE;
+					FlagClear(FLAG_TERASTAL_CHARGE);
 				}
 				else
 				{
@@ -875,6 +876,7 @@ void RunTurnActionsFunctions(void)
 					gNewBS->terastalData.done[PARTNER(bank)] = TRUE;
 				}
 
+				gBattleScripting.bank = bank;
 				BattleScriptExecute(BattleScript_Terastal);
 				gCurrentActionFuncId = savedActionFuncId;
 				return;

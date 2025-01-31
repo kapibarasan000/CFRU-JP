@@ -96,6 +96,7 @@ definitions for animation particles
 .equ TORNADO_IMG, TornadoTiles
 .equ STRAIGHT_BEAM_IMG, Straight_BeamTiles
 .equ DREEPY_IMG, Dreepy_MissileTiles
+.equ TERASTAL_SYMBOL_IMG, Terastal_SymbolTiles
 
 @;Palettes
 .equ SWORD_PAL, SwordPal
@@ -194,3 +195,4 @@ definitions for animation particles
 .equ TORNADO_PAL, TornadoPal
 .equ STRAIGHT_BEAM_PAL, Straight_BeamPal
 .equ DREEPY_PAL, Dreepy_MissilePal
+.equ TERASTAL_SYMBOL_PAL, Terastal_SymbolPal

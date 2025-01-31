@@ -1000,6 +1000,8 @@ struct NewBattleStruct
 		bool8 onlyBadMovesLeft[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //onlyBadMovesLeft[bankAtk][bankDef]
 		bool8 shouldFreeChoiceLockWithDynamax[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //shouldFreeChoiceLockWithDynamax[bankAtk][bankDef]
 		bool8 dynamaxPotential[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //dynamaxPotential[bankAtk][bankDef]
+		bool8 terastalPotential[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //terastalPotential[bankAtk][bankDef]
+		u8 terastalMonId[NUM_BATTLE_SIDES]; //terastalMonId[SIDE(bankAtk)]
 		const void* megaPotential[MAX_BATTLERS_COUNT]; //aiMegaPotential[bankAtk] - stores evolution data of attacker
 	} ai;
 };
@@ -1210,6 +1212,7 @@ struct FlingStruct
 #define B_ANIM_G_MAX_WILDFIRE 0x4A
 #define B_ANIM_G_MAX_CANNONADE 0x4B
 #define B_ANIM_G_MAX_VOLCALITH 0x4C
+#define B_ANIM_TERASTAL 0x4D
 
 #define B_ANIM_TRANSFORM_MOVE 0xFF
 

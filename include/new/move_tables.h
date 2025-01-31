@@ -63,3 +63,4 @@ extern const move_t gSpecialAttackPhysicalDamageMoves[];
 extern const move_t gSpecialWholeFieldMoves[];
 extern const move_t gAromaVeilProtectedMoves[];
 extern const move_t gMovesThatLiftProtectTable[];
+extern const move_t gTerastalPowerBoostBannedMoves[];

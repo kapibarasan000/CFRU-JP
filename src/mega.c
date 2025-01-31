@@ -14,6 +14,7 @@
 #include "../include/new/mega_battle_scripts.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/set_z_effect.h"
+#include "../include/new/terastal.h"
 /*
 mega.c
 	functions that support mega evolution logic and execution
@@ -440,7 +441,7 @@ bool8 IsUltraNecrozmaSpecies(u16 species)
 
 bool8 HasMegaSymbol(u8 bank)
 {
-	return IsMega(bank) || IsBluePrimal(bank) || IsRedPrimal(bank) || IsUltraNecrozma(bank);
+	return IsMega(bank) || IsBluePrimal(bank) || IsRedPrimal(bank) || IsUltraNecrozma(bank) || IsTerastal(bank);
 }
 
 const u8* GetTrainerName(u8 bank)

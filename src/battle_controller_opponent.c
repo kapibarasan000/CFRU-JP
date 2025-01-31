@@ -109,10 +109,29 @@ void OpponentHandleChooseMove(void)
 							gNewBS->ultraData.chosen[gActiveBattler] = TRUE;
 					}
 				}
+				else if (moveInfo->possibleMaxMoves[chosenMoveId] && moveInfo->canterastal) //Handles the "Can I Dynamax" checks
+				{
+					if (ShouldAIDynamax(gActiveBattler, gBankTarget))
+					{
+						if (ShouldAITerastal(gActiveBattler, gBankTarget) && Random() & 1)
+							gNewBS->terastalData.chosen[gActiveBattler] = TRUE;
+
+						gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
+					}
+					else if (ShouldAITerastal(gActiveBattler, gBankTarget))
+					{
+						gNewBS->terastalData.chosen[gActiveBattler] = TRUE;
+					}
+				}
 				else if (moveInfo->possibleMaxMoves[chosenMoveId]) //Handles the "Can I Dynamax" checks
 				{
 					if (ShouldAIDynamax(gActiveBattler, gBankTarget))
 						gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
+				}
+				else if (moveInfo->canterastal)
+				{
+					if (ShouldAITerastal(gActiveBattler, gBankTarget))
+						gNewBS->terastalData.chosen[gActiveBattler] = TRUE;
 				}
 
 				//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.

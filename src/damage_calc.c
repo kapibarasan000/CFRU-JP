@@ -626,6 +626,11 @@ void atk06_typecalc(void)
 					gBattleMoveDamage = (gBattleMoveDamage * 225) / 100;
 					gNewBS->terastalBoost = TRUE;
 				}
+				else if (atkTeraType == moveType)
+				{
+					gBattleMoveDamage *= 2;
+					gNewBS->terastalBoost = TRUE;
+				}
 				else if (atkAbility == ABILITY_ADAPTABILITY)
 					gBattleMoveDamage *= 2;
 				else
@@ -949,7 +954,7 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 	{
 		if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
 			gBattleMoveDamage = udivsi(gBattleMoveDamage * 225, 100);
-		else if (atkAbility == ABILITY_ADAPTABILITY)
+		else if (atkAbility == ABILITY_ADAPTABILITY || atkTeraType == moveType)
 			gBattleMoveDamage *= 2;
 		else
 			gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);

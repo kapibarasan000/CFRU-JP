@@ -3582,7 +3582,7 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	SetBoxMonData(boxMon, MON_DATA_POKEBALL, &value);
 	SetBoxMonData(boxMon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
 
-	if (Random() % 2)
+	if (Random() & 1)
 		boxMon->teratype = gBaseStats[species].type1;
 	else
 		boxMon->teratype = gBaseStats[species].type2;

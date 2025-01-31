@@ -83,17 +83,8 @@ BattleScript_TryRevertGorgingCramorant:
 
 BattleScript_Terastal:
 	call BS_FLUSH_MESSAGE_BOX
-	playanimation BANK_SCRIPTING ANIM_CALL_BACK_POKEMON
-	waitanimation
-	pause DELAY_1SECOND
-	pause DELAY_HALFSECOND
-	returntoball BANK_SCRIPTING
-	callasm SetAndTransferDontRemoveTransformSpecies
-	callasm BackupScriptingBankMoveSelectionCursor
-	switchinanim BANK_SCRIPTING 0x1 @;Play the switch-in animation
-	waitanimation
-	callasm RestoreScriptingBankMoveSelectionCursor
-	callasm ClearAndTransferDontRemoveTransformSpecies
+	playanimation BANK_SCRIPTING ANIM_TERASTAL 0x0
+	reloadhealthbar BANK_SCRIPTING
 	setword BATTLE_STRING_LOADER gText_MonTerastal
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -101,6 +92,7 @@ BattleScript_Terastal:
 
 BattleScript_TerastalBoost:
 	playanimation BANK_SCRIPTING ANIM_TOTEM_BOOST 0x0
+	waitanimation
 	return
 
 .align 2
