@@ -140,6 +140,9 @@ enum MegaGraphicsTags
 	GFX_TAG_RAID_SHIELD,
 	GFX_TAG_TERASTAL_TRIGGER,
 	GFX_TAG_TERASTAL_INDICATOR,
+	GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT,
+	GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT,
+	GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT,
 };
 
 enum
@@ -198,7 +201,7 @@ static const struct SpritePalette sTerastalTriggerPalette[NUMBER_OF_MON_TYPES] =
 	{Terastal_Trigger_FairyPal, GFX_TAG_TERASTAL_TRIGGER},
 };
 
-static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet[NUMBER_OF_MON_TYPES] = 
+static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet0[NUMBER_OF_MON_TYPES] = 
 {
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR},
 	{Terastal_Indicator_FightingTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR},
@@ -226,7 +229,99 @@ static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet[NUMBER_O
 	{Terastal_Indicator_FairyTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR},
 };
 
-static const struct SpritePalette sTerastalIndicatorPalette[NUMBER_OF_MON_TYPES] = 
+static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet1[NUMBER_OF_MON_TYPES] = 
+{
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_FightingTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_FlyingTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_PoisonTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_GroundTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_RockTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_BugTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_GhostTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_SteelTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_FireTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_WaterTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_GrassTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_ElectricTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_PsychicTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_IceTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_DragonTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_DarkTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_FairyTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+};
+
+static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet2[NUMBER_OF_MON_TYPES] = 
+{
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_FightingTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_FlyingTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_PoisonTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_GroundTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_RockTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_BugTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_GhostTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_SteelTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_FireTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_WaterTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_GrassTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_ElectricTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_PsychicTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_IceTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_DragonTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_DarkTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_FairyTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+};
+
+static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet3[NUMBER_OF_MON_TYPES] = 
+{
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_FightingTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_FlyingTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_PoisonTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_GroundTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_RockTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_BugTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_GhostTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_SteelTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_FireTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_WaterTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_GrassTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_ElectricTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_PsychicTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_IceTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_DragonTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_DarkTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_FairyTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+};
+
+static const struct CompressedSpriteSheet* sTerastalIndicatorSpriteSheet[] = 
+{
+	sTerastalIndicatorSpriteSheet0,
+	sTerastalIndicatorSpriteSheet1,
+	sTerastalIndicatorSpriteSheet2,
+	sTerastalIndicatorSpriteSheet3,
+};
+
+static const struct SpritePalette sTerastalIndicatorPalette0[NUMBER_OF_MON_TYPES] = 
 {
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR},
 	{Terastal_Indicator_FightingPal, GFX_TAG_TERASTAL_INDICATOR},
@@ -254,6 +349,97 @@ static const struct SpritePalette sTerastalIndicatorPalette[NUMBER_OF_MON_TYPES]
 	{Terastal_Indicator_FairyPal, GFX_TAG_TERASTAL_INDICATOR},
 };
 
+static const struct SpritePalette sTerastalIndicatorPalette1[NUMBER_OF_MON_TYPES] = 
+{
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_FightingPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_FlyingPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_PoisonPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_GroundPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_RockPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_BugPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_GhostPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_SteelPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_FirePal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_WaterPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_GrassPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_ElectricPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_PsychicPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_IcePal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_DragonPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_DarkPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_FairyPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+};
+
+static const struct SpritePalette sTerastalIndicatorPalette2[NUMBER_OF_MON_TYPES] = 
+{
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_FightingPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_FlyingPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_PoisonPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_GroundPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_RockPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_BugPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_GhostPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_SteelPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_FirePal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_WaterPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_GrassPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_ElectricPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_PsychicPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_IcePal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_DragonPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_DarkPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_FairyPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+};
+
+static const struct SpritePalette sTerastalIndicatorPalette3[NUMBER_OF_MON_TYPES] = 
+{
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_FightingPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_FlyingPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_PoisonPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_GroundPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_RockPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_BugPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_GhostPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_SteelPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_FirePal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_WaterPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_GrassPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_ElectricPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_PsychicPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_IcePal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_DragonPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_DarkPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_FairyPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+};
+
+static const struct SpritePalette* sTerastalIndicatorPalette[] = 
+{
+	sTerastalIndicatorPalette0,
+	sTerastalIndicatorPalette1,
+	sTerastalIndicatorPalette2,
+	sTerastalIndicatorPalette3,
+};
 
 static const struct OamData sIndicatorOam =
 {
@@ -422,8 +608,9 @@ static const struct SpriteTemplate sTerastalTriggerSpriteTemplate =
 	.callback = SpriteCB_TerastalTrigger,
 };
 
-static const struct SpriteTemplate sTerastalIndicatorSpriteTemplate =
+static const struct SpriteTemplate sTerastalIndicatorSpriteTemplate[] =
 {
+	{
 	.tileTag = GFX_TAG_TERASTAL_INDICATOR,
 	.paletteTag = GFX_TAG_TERASTAL_INDICATOR,
 	.oam = &sIndicatorOam,
@@ -431,6 +618,34 @@ static const struct SpriteTemplate sTerastalIndicatorSpriteTemplate =
 	.images = NULL,
 	.affineAnims = gDummySpriteAffineAnimTable,
 	.callback = SpriteCB_MegaIndicator,
+	},
+	{
+	.tileTag = GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT,
+	.paletteTag = GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT,
+	.oam = &sIndicatorOam,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_MegaIndicator,
+	},
+	{
+	.tileTag = GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT,
+	.paletteTag = GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT,
+	.oam = &sIndicatorOam,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_MegaIndicator,
+	},
+	{
+	.tileTag = GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT,
+	.paletteTag = GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT,
+	.oam = &sIndicatorOam,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_MegaIndicator,
+	},
 };
 
 /* Declare the colours the trigger button doesn't light up */
@@ -657,6 +872,9 @@ static void SpriteCB_MegaIndicator(struct Sprite* self)
 			break;
 
 		case GFX_TAG_TERASTAL_INDICATOR:
+		case GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT:
+		case GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT:
+		case GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT:
 			if (!IsTerastal(INDICATOR_BANK))
 			{
 				self->invisible = TRUE;
@@ -955,7 +1173,13 @@ void LoadMegaGraphics(u8 state)
 		unusedArg bool8 loadedOmegaGfx = IndexOfSpriteTileTag(GFX_TAG_OMEGA_INDICATOR) != 0xFF;
 		unusedArg bool8 loadedUltraGfx = IndexOfSpriteTileTag(GFX_TAG_ULTRA_INDICATOR) != 0xFF;;
 		unusedArg bool8 loadedDynamaxGfx = IndexOfSpriteTileTag(GFX_TAG_DYNAMAX_INDICATOR) != 0xFF;
-		unusedArg bool8 loadedTerastalGfx = IndexOfSpriteTileTag(GFX_TAG_TERASTAL_INDICATOR) != 0xFF;
+		unusedArg bool8 loadedTerastalGfx[] = 
+		{
+			IndexOfSpriteTileTag(GFX_TAG_TERASTAL_INDICATOR) != 0xFF,
+			IndexOfSpriteTileTag(GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT) != 0xFF,
+			IndexOfSpriteTileTag(GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT) != 0xFF,
+			IndexOfSpriteTileTag(GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT) != 0xFF,
+		};
 
 		// Create a Mega Indicator for every bank
 		for (u8 bank = 0; bank < gBattlersCount; ++bank)
@@ -1033,14 +1257,14 @@ void LoadMegaGraphics(u8 state)
 			}
 			else if (IsTerastal(bank))
 			{
-				if (!loadedTerastalGfx)
+				if (!loadedTerastalGfx[bank])
 				{
-					LoadSpritePalette(&sTerastalIndicatorPalette[GetTeraType(bank)]);
-					LoadCompressedSpriteSheetUsingHeap(&sTerastalIndicatorSpriteSheet[GetTeraType(bank)]);
-					loadedTerastalGfx = TRUE;
+					LoadSpritePalette(&sTerastalIndicatorPalette[bank][GetTeraType(bank)]);
+					LoadCompressedSpriteSheetUsingHeap(&sTerastalIndicatorSpriteSheet[bank][GetTeraType(bank)]);
+					loadedTerastalGfx[bank] = TRUE;
 				}
 
-				spriteId = CreateSprite(&sTerastalIndicatorSpriteTemplate, -10, 0, 1);
+				spriteId = CreateSprite(&sTerastalIndicatorSpriteTemplate[bank], -10, 0, 1);
 				gSprites[spriteId].data[0] = bank;
 				gNewBS->megaIndicatorObjIds[bank] = spriteId + 1;
 			}
