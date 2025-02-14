@@ -153,6 +153,9 @@
 #org @gText_MeteorBeamCharge
 [ATTACKER]に\nうちゅうの ちからが あふれだす！
 
+#org @gText_ElectroShotCharge
+[ATTACKER]は\nでんきを きゅうしゅうした！
+
 #org @gText_PoltergeistWarn
 [TARGET]に\n[LAST_ITEM]が おそいかかる！
 
@@ -161,6 +164,18 @@
 
 #org @gText_CourtChange
 [ATTACKER]は おたがいの\nばの こうかを いれかえた！
+
+#org @gText_ChillyReception
+[ATTACKER]は\nさむい ギャグを かました！
+
+#org @gText_DoubleShockString
+[ATTACKER]は\nでんきを つかいきった！
+
+#org @gText_GigatonHammerNotAllowed
+[CURRENT_MOVE]は 2かい つづけて\nだすことが できない！
+
+#org @gText_ShedTailString
+[ATTACKER]は\nしっぽを きって みがわりにした！
 
 //Status Strings
 
@@ -263,6 +278,15 @@ The sleep clause prevents more\nPokemon from being put to sleep！
 #org @gText_TargetWasTrappedByAttacker
 [TARGET]は\n[ATTACKER]に とじこめられた！
 
+#org @gText_TargetWasSaltcure
+[TARGET]は\nしおづけに なった！
+
+#org @gText_HurtBySaltcure
+[ATTACKER]は しおづけの\nダメージを うけている
+
+#org @gText_TargetWasSyrupy
+[TARGET]は\nあめまみれに なった！
+
 #org @gText_HurtBySeaOfFire
 [ATTACKER]は\nひのうみの ダメージを うけた！
 
@@ -313,6 +337,9 @@ The sleep clause prevents more\nPokemon from being put to sleep！
 
 #org @gText_CouldntFullyProtect
 [TARGET]は こうげきを\nまもりきれずに ダメージを うけた！
+
+#org @gText_BurningBulwarkBRN
+[EFFECT_BANK]は\nやけどを おった！
 
 //Other Battle Features
 

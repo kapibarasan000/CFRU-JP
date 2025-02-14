@@ -308,6 +308,12 @@ void atkFF08_counterclear(void)
 			else
 				failed = TRUE;
 			break;
+		case Counters_GlaiveRush:
+			if (gNewBS->GlaiveRushTimers[bank])
+				gNewBS->GlaiveRushTimers[bank] = 0;
+			else
+				failed = TRUE;
+			break;
 		case Counters_Embargo:
 			if (gNewBS->EmbargoTimers[bank])
 				gNewBS->EmbargoTimers[bank] = 0;
@@ -386,6 +392,12 @@ void atkFF08_counterclear(void)
 			else
 				failed = TRUE;
 			break;
+		case Counters_SyrupBomb:
+			if (gNewBS->SyrupBombTimers[bank])
+				gNewBS->SyrupBombTimers[bank] = 0;
+			else
+				failed = TRUE;
+			break;
 	}
 
 	if (failed)
@@ -459,6 +471,9 @@ void atkFF09_jumpifcounter(void)
 			break;
 		case Counters_TarShot:
 			counter = gNewBS->tarShotBits & gBitTable[bank];
+			break;
+		case Counters_SyrupBomb:
+			counter = gNewBS->SyrupBombTimers[bank];
 			break;
 		default:
 			counter = 0; //Shouldn't happen...
@@ -543,6 +558,9 @@ void atkFF0E_setcounter(void)
 		case Counters_ThroatChop:
 			gNewBS->ThroatChopTimers[bank] = amount;
 			break;
+		case Counters_GlaiveRush:
+			gNewBS->GlaiveRushTimers[bank] = amount;
+			break;
 		case Counters_Embargo:
 			gNewBS->EmbargoTimers[bank] = amount;
 			break;
@@ -584,6 +602,9 @@ void atkFF0E_setcounter(void)
 			}
 
 			gNewBS->tarShotBits |= gBitTable[bank];
+			break;
+		case Counters_SyrupBomb:
+			gNewBS->SyrupBombTimers[bank] = amount;
 			break;
 	}
 	gBattlescriptCurrInstr += 4;
@@ -1006,61 +1027,95 @@ void atkFE_prefaintmoveendeffects(void)
 			break;
 
 		case FAINT_ADVERSE_PROTECTION:
-			if (gProtectStructs[gBankTarget].kingsshield_damage)
+			if (gProtectStructs[gBankAttacker].touchedProtectLike)
 			{
-				gProtectStructs[gBankTarget].kingsshield_damage = 0;
-
-				if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_ATK))
+				if (gProtectStructs[gBankTarget].KingsShield)
 				{
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_KingsShield;
-					effect = TRUE;
-					break;
+					gProtectStructs[gBankAttacker].touchedProtectLike = FALSE;
+
+					if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_ATK))
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_KingsShield;
+						effect = TRUE;
+						break;
+					}
 				}
-			}
 
-			if (gProtectStructs[gBankTarget].spikyshield_damage)
-			{
-				gProtectStructs[gBankTarget].spikyshield_damage = 0;
-
-				if (BATTLER_ALIVE(gBankAttacker) && ABILITY(gBankAttacker) != ABILITY_MAGICGUARD)
+				if (gProtectStructs[gBankTarget].SpikyShield)
 				{
-					gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gBankAttacker) / 8);
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_SpikyShield;
-					effect = TRUE;
-					break;
+					gProtectStructs[gBankAttacker].touchedProtectLike = FALSE;
+
+					if (BATTLER_ALIVE(gBankAttacker) && ABILITY(gBankAttacker) != ABILITY_MAGICGUARD)
+					{
+						gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gBankAttacker) / 8);
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_SpikyShield;
+						effect = TRUE;
+						break;
+					}
 				}
-			}
-	
-			if (gProtectStructs[gBankTarget].banefulbunker_damage)
-			{
-				gProtectStructs[gBankTarget].banefulbunker_damage = 0;
-
-				if (BATTLER_ALIVE(gBankAttacker) && CanBePoisoned(gBankAttacker, gBankTarget, TRUE)) //Target poisons Attacker
+		
+				if (gProtectStructs[gBankTarget].BanefulBunker)
 				{
-					gBattleMons[gBankAttacker].status1 = STATUS_POISON;
-					gEffectBank = gActiveBattler = gBankAttacker;
-					EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gBankAttacker].status1);
-					MarkBufferBankForExecution(gActiveBattler);
+					gProtectStructs[gBankAttacker].touchedProtectLike = FALSE;
 
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_BanefulBunker;
-					effect = TRUE;
-					break;
+					if (BATTLER_ALIVE(gBankAttacker) && CanBePoisoned(gBankAttacker, gBankTarget, TRUE)) //Target poisons Attacker
+					{
+						gBattleMons[gBankAttacker].status1 = STATUS_POISON;
+						gEffectBank = gActiveBattler = gBankAttacker;
+						EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gBankAttacker].status1);
+						MarkBufferBankForExecution(gActiveBattler);
+
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_BanefulBunker;
+						effect = TRUE;
+						break;
+					}
 				}
-			}
 
-			if (gProtectStructs[gBankTarget].obstructDamage)
-			{
-				gProtectStructs[gBankTarget].obstructDamage = FALSE;
-
-				if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_DEF))
+				if (gProtectStructs[gBankTarget].obstruct)
 				{
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_ObstructStatDecrement;
-					effect = TRUE;
-					break;
+					gProtectStructs[gBankAttacker].touchedProtectLike = FALSE;
+
+					if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_DEF))
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_ObstructStatDecrement;
+						effect = TRUE;
+						break;
+					}
+				}
+
+				if (gProtectStructs[gBankTarget].SilkTrap)
+				{
+					gProtectStructs[gBankAttacker].touchedProtectLike = FALSE;
+
+					if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_SPD))
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_SilkTrapStatDecrement;
+						effect = TRUE;
+						break;
+					}
+				}
+
+				if (gProtectStructs[gBankTarget].BurningBulwark)
+				{
+					gProtectStructs[gBankAttacker].touchedProtectLike = FALSE;
+
+					if (BATTLER_ALIVE(gBankAttacker) && CanBeBurned(gBankAttacker, gBankTarget, TRUE)) //Target poisons Attacker
+					{
+						gBattleMons[gBankAttacker].status1 = STATUS_BURN;
+						gEffectBank = gActiveBattler = gBankAttacker;
+						EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gBankAttacker].status1);
+						MarkBufferBankForExecution(gActiveBattler);
+
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_BurningBulwark;
+						effect = TRUE;
+						break;
+					}
 				}
 			}
 	
@@ -1100,7 +1155,7 @@ void atkFE_prefaintmoveendeffects(void)
 			&& MOVE_HAD_EFFECT
 			&& TOOK_DAMAGE(gBankTarget)
 			&& gNewBS->BeakBlastByte & gBitTable[gBankTarget]
-			&& CanBeBurned(gBankAttacker, TRUE))
+			&& CanBeBurned(gBankAttacker, gBankTarget, TRUE))
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_BeakBlastBurn;

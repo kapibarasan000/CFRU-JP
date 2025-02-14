@@ -281,6 +281,7 @@ gMetronomeBannedMoves:
 .hword MOVE_ASTRALBARRAGE
 .hword MOVE_GLACIALLANCE
 .hword MOVE_DARKVOID
+.hword MOVE_CHLOROBLAST
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -388,6 +389,7 @@ gParentalBondBannedMoves:
 .hword MOVE_FLING
 .hword MOVE_SELFDESTRUCT
 .hword MOVE_EXPLOSION
+.hword MOVE_MISTYEXPLOSION
 .hword MOVE_FINALGAMBIT
 .hword MOVE_ENDEAVOR
 .hword MOVE_UPROAR
@@ -438,6 +440,8 @@ gSkyBattleBannedMoves:
 .hword MOVE_LANDSWRATH
 .hword MOVE_PRECIPICEBLADES
 .hword MOVE_PSYCHICTERRAIN
+.hword MOVE_DRUMBEATING
+.hword MOVE_HEADLONGRUSH
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -470,6 +474,7 @@ gRaidBattleBannedRaidMonMoves:
 .hword MOVE_FINALGAMBIT
 .hword MOVE_MINDBLOWN
 .hword MOVE_STEELBEAM
+.hword MOVE_CHLOROBLAST
 .hword MOVE_PAINSPLIT
 .hword MOVE_ENDEAVOR
 .hword MOVE_FOCUSPUNCH @Must be executed as Max Moves b/c intros don't play
@@ -484,6 +489,8 @@ gRaidBattleBannedRaidMonMoves:
 .hword MOVE_BANEFULBUNKER
 .hword MOVE_MATBLOCK
 .hword MOVE_OBSTRUCT
+.hword MOVE_SILKTRAP
+.hword MOVE_BURNINGBULWARK
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -510,7 +517,9 @@ gSheerForceBoostedMoves:
 .hword MOVE_ASTONISH
 .hword MOVE_AURORABEAM
 .hword MOVE_BITE
+.hword MOVE_BITTERMALICE
 .hword MOVE_BLAZEKICK
+.hword MOVE_BLEAKWINDSTORM
 .hword MOVE_BLIZZARD
 .hword MOVE_BLUEFLARE
 .hword MOVE_BODYSLAM
@@ -522,6 +531,7 @@ gSheerForceBoostedMoves:
 .hword MOVE_BUGBUZZ
 .hword MOVE_BULLDOZE
 .hword MOVE_BURNINGJEALOUSY
+.hword MOVE_CEASELESSEDGE
 .hword MOVE_CHARGEBEAM
 .hword MOVE_CHATTER
 .hword MOVE_CLANGOROUS_SOULBLAZE
@@ -532,6 +542,7 @@ gSheerForceBoostedMoves:
 .hword MOVE_CRUSHCLAW
 .hword MOVE_DARKPULSE
 .hword MOVE_DIAMONDSTORM
+.hword MOVE_DIRECLAW
 .hword MOVE_DISCHARGE
 .hword MOVE_DIZZYPUNCH
 .hword MOVE_DOUBLEIRONBASH
@@ -546,6 +557,7 @@ gSheerForceBoostedMoves:
 .hword MOVE_EXTRASENSORY
 .hword MOVE_FAKEOUT
 .hword MOVE_FIERYDANCE
+.hword MOVE_FIERYWRATH
 .hword MOVE_FIREBLAST
 .hword MOVE_FIREFANG
 .hword MOVE_FIRELASH
@@ -589,6 +601,7 @@ gSheerForceBoostedMoves:
 .hword MOVE_MIRRORSHOT
 .hword MOVE_MISTBALL
 .hword MOVE_MOONBLAST
+.hword MOVE_MOUNTAINGALE
 .hword MOVE_MUDBOMB
 .hword MOVE_MUDSHOT
 .hword MOVE_MUDDYWATER
@@ -608,6 +621,7 @@ gSheerForceBoostedMoves:
 .hword MOVE_POWERUPPUNCH
 .hword MOVE_PSYBEAM
 .hword MOVE_PSYCHIC
+.hword MOVE_PSYSHIELDBASH
 .hword MOVE_PYROBALL
 .hword MOVE_RAZORSHELL
 .hword MOVE_RELICSONG
@@ -617,14 +631,15 @@ gSheerForceBoostedMoves:
 .hword MOVE_ROCKTOMB
 .hword MOVE_ROLLINGKICK
 .hword MOVE_SACREDFIRE
+.hword MOVE_SANDSEARSTORM
 .hword MOVE_SCALD
-.hword MOVE_SCALESHOT
 .hword MOVE_SCORCHINGSANDS
 .hword MOVE_SEARINGSHOT
 .hword MOVE_SECRETPOWER
 .hword MOVE_SEEDFLARE
 .hword MOVE_SHADOWBALL
 .hword MOVE_SHADOWBONE
+.hword MOVE_SHELLSIDEARM
 .hword MOVE_SIGNALBEAM
 .hword MOVE_SILVERWIND
 .hword MOVE_SKITTERSMACK
@@ -639,16 +654,19 @@ gSheerForceBoostedMoves:
 .hword MOVE_SPARKLINGARIA
 .hword MOVE_SPIRITBREAK
 .hword MOVE_SPIRITSHACKLE
+.hword MOVE_SPRINGTIDESTORM
 .hword MOVE_STEAMERUPTION
 .hword MOVE_STEAMROLLER
 .hword MOVE_STEELWING
 .hword MOVE_STOKED_SPARKSURFER
 .hword MOVE_STOMP
+.hword MOVE_STONEAXE
 .hword MOVE_STRANGESTEAM
 .hword MOVE_STRUGGLEBUG
 .hword MOVE_THROATCHOP
 .hword MOVE_THUNDER
 .hword MOVE_THUNDERFANG
+.hword MOVE_THUNDEROUSKICK
 .hword MOVE_THUNDERPUNCH
 .hword MOVE_THUNDERSHOCK
 .hword MOVE_THUNDERBOLT
@@ -659,6 +677,7 @@ gSheerForceBoostedMoves:
 .hword MOVE_VOLTTACKLE
 .hword MOVE_WATERPULSE
 .hword MOVE_WATERFALL
+.hword MOVE_WILDBOLTSTORM
 .hword MOVE_ZAPCANNON
 .hword MOVE_ZENHEADBUTT
 .hword MOVE_ZINGZAP
@@ -680,6 +699,9 @@ gRecklessBoostedMoves:
 .hword MOVE_VOLTTACKLE
 .hword MOVE_WOODHAMMER
 .hword MOVE_WILDCHARGE
+.hword MOVE_WAVECRASH
+.hword MOVE_AXEKICK
+.hword MOVE_SUPERCELLSLAM
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -704,6 +726,11 @@ gPunchingMoves:
 .hword MOVE_ICEHAMMER
 .hword MOVE_PLASMAFISTS
 .hword MOVE_DOUBLEIRONBASH
+.hword MOVE_WICKEDBLOW
+.hword MOVE_SURGINGSTRIKES
+.hword MOVE_HEADLONGRUSH
+.hword MOVE_JETPUNCH
+.hword MOVE_RAGEFIST
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -759,6 +786,7 @@ gBallBombMoves:
 .hword MOVE_SEEDBOMB
 .hword MOVE_SHADOWBALL
 .hword MOVE_SLUDGEBOMB
+.hword MOVE_SYRUPBOMB
 .hword MOVE_WEATHERBALL
 .hword MOVE_ZAPCANNON
 .hword MOVE_TABLES_TERMIN
@@ -776,6 +804,8 @@ gDanceMoves:
 .hword MOVE_FIERYDANCE
 .hword MOVE_REVELATIONDANCE
 .hword MOVE_CLANGOROUSSOUL
+.hword MOVE_VICTORYDANCE
+.hword MOVE_AQUASTEP
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -823,6 +853,10 @@ gSoundMoves:
 .hword MOVE_CLANGOROUS_SOULBLAZE
 .hword MOVE_CLANGOROUSSOUL
 .hword MOVE_OVERDRIVE
+.hword MOVE_EERIESPELL
+.hword MOVE_TORCHSONG
+.hword MOVE_ALLURINGVOICE
+.hword MOVE_PSYCHICNOISE
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -878,6 +912,8 @@ gSubstituteBypassMoves:
 .hword MOVE_STICKYWEB
 .hword MOVE_SPIKES
 .hword MOVE_TOXICSPIKES
+.hword MOVE_COACHING
+.hword MOVE_DRAGONCHEER
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -892,6 +928,10 @@ gTypeChangeExceptionMoves:
 .hword MOVE_WEATHERBALL
 .hword MOVE_MULTIATTACK
 .hword MOVE_AURAWHEEL
+.hword MOVE_TERRAINPULSE
+.hword MOVE_RAGINGBULL
+.hword MOVE_TERABLAST
+.hword MOVE_IVYCUDGEL
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -926,6 +966,10 @@ gHighCriticalChanceMoves:
 .hword MOVE_SPACIALREND
 .hword MOVE_DRILLRUN
 .hword MOVE_SNIPESHOT
+.hword MOVE_ESPERWING
+.hword MOVE_TRIPLEARROWS
+.hword MOVE_AQUACUTTER
+.hword MOVE_IVYCUDGEL
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -935,6 +979,7 @@ gAlwaysCriticalMoves:
 .hword MOVE_FROSTBREATH
 .hword MOVE_SURGINGSTRIKES
 .hword MOVE_WICKEDBLOW
+.hword MOVE_FLOWERTRICK
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -976,6 +1021,7 @@ gAlwaysHitWhenMinimizedMoves:
 .hword MOVE_HEAVYSLAM
 .hword MOVE_MALICIOUS_MOONSAULT
 .hword MOVE_DOUBLEIRONBASH
+.hword MOVE_SUPERCELLSLAM
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -986,8 +1032,13 @@ gMoldBreakerMoves:
 .hword MOVE_SUNSTEELSTRIKE
 .hword MOVE_LIGHT_THAT_BURNS_THE_SKY
 .hword MOVE_MENACING_MOONRAZE_MAELSTROM
-
 .hword MOVE_SEARING_SUNRAZE_SMASH
+.hword MOVE_G_MAX_DRUM_SOLO_P
+.hword MOVE_G_MAX_DRUM_SOLO_S
+.hword MOVE_G_MAX_FIREBALL_P
+.hword MOVE_G_MAX_FIREBALL_S
+.hword MOVE_G_MAX_HYDROSNIPE_P
+.hword MOVE_G_MAX_HYDROSNIPE_S
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1021,6 +1072,10 @@ gFlinchChanceMoves:
 .hword MOVE_ICICLECRASH @30
 .hword MOVE_ZINGZAP @30
 .hword MOVE_DOUBLEIRONBASH @30
+.hword MOVE_FIERYWRATH @20
+.hword MOVE_TRIPLEARROWS @30
+.hword MOVE_MOUNTAINGALE @30
+.hword MOVE_UPPERHAND @100
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1035,6 +1090,8 @@ gMovesCanUnfreezeAttacker:
 .hword MOVE_STEAMERUPTION
 .hword MOVE_BURNUP
 .hword MOVE_PYROBALL
+.hword MOVE_HYDROSTEAM
+.hword MOVE_MATCHAGOTCHA
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1043,6 +1100,8 @@ gMovesCanUnfreezeTarget:
 .hword MOVE_SCALD
 .hword MOVE_STEAMERUPTION
 .hword MOVE_SCORCHINGSANDS
+.hword MOVE_HYDROSTEAM
+.hword MOVE_MATCHAGOTCHA
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1083,7 +1142,9 @@ gTwoStrikesMoves:
 .hword MOVE_DUALCHOP
 .hword MOVE_DUALWINGBEAT
 .hword MOVE_GEARGRIND
+.hword MOVE_TACHYONCUTTER
 .hword MOVE_TWINEEDLE
+.hword MOVE_TWINBEAM
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1101,6 +1162,7 @@ gPercent33RecoilMoves:
 .hword MOVE_FLAREBLITZ
 .hword MOVE_BRAVEBIRD
 .hword MOVE_WOODHAMMER
+.hword MOVE_WAVECRASH
 .hword MOVE_TABLES_TERMIN
 
 gPercent50RecoilMoves:
@@ -1132,7 +1194,6 @@ gIgnoreInAirMoves:
 gIgnoreUndergoundMoves:
 .hword MOVE_EARTHQUAKE
 .hword MOVE_MAGNITUDE
-.hword MOVE_FISSURE
 .hword MOVE_TABLES_TERMIN
 
 gIgnoreUnderwaterMoves:
@@ -1143,6 +1204,9 @@ gIgnoreUnderwaterMoves:
 gAlwaysHitInRainMoves:
 .hword MOVE_THUNDER
 .hword MOVE_HURRICANE
+.hword MOVE_BLEAKWINDSTORM
+.hword MOVE_WILDBOLTSTORM
+.hword MOVE_SANDSEARSTORM
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1253,4 +1317,12 @@ gTerastalPowerBoostBannedMoves:
 .hword MOVE_ERUPTION
 .hword MOVE_DRAGONENERGY
 .hword MOVE_STRUGGLE
+.hword MOVE_JETPUNCH
+.hword MOVE_UPPERHAND
+.hword MOVE_THUNDERCLAP
+.hword MOVE_HARDPRESS
+.hword MOVE_TACHYONCUTTER
+.hword MOVE_TWINBEAM
+.hword MOVE_TRIPLEDIVE
+.hword MOVE_POPULATIONBOMB
 .hword MOVE_TABLES_TERMIN

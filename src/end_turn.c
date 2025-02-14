@@ -50,6 +50,8 @@ enum EndTurnEffects
 	ET_Switch_Out_Abilities6,
 	ET_Trap_Damage,
 	ET_Octolock,
+	ET_SyrupBomb,
+	ET_Saltcure,
 	ET_Item_Effects7,
 	ET_Switch_Out_Abilities7,
 	ET_Taunt_Timer,
@@ -157,6 +159,9 @@ u8 TurnBasedEffects(void)
 
 					if(gNewBS->StompingTantrumTimers[i])
 						--gNewBS->StompingTantrumTimers[i];
+
+					if(gNewBS->GlaiveRushTimers[i])
+						--gNewBS->GlaiveRushTimers[i];
 
 					if (gNewBS->StakeoutCounters[i])
 						--gNewBS->StakeoutCounters[i];
@@ -727,6 +732,31 @@ u8 TurnBasedEffects(void)
 				}
 				break;
 
+			case ET_SyrupBomb:
+				if (BATTLER_ALIVE(gActiveBattler) && gNewBS->SyrupBombTimers[gActiveBattler] > 0)
+				{
+					--gNewBS->SyrupBombTimers[gActiveBattler];
+					gBattleScripting.animArg1 = B_ANIM_SYRUPBOMB_END_TURN;
+					gBattlescriptCurrInstr = BattleScript_SyrupBombEndTurn;
+					BattleScriptExecute(gBattlescriptCurrInstr);
+					effect++;
+				}
+				break;
+
+			case ET_Saltcure:
+				if (gNewBS->SaltcureBits & gBitTable[gActiveBattler]
+				&&  BATTLER_ALIVE(gActiveBattler)
+				&&  ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)
+				{
+					gBattleMoveDamage = GetSaltcureDamage(gActiveBattler);
+					gBattleStringLoader = gText_HurtBySaltcure;
+					gBattleScripting.animArg1 = B_ANIM_SALTCURE_END_TURN;
+					BattleScriptExecute(BattleScript_SeaOfFireDamage);
+					effect++;
+				}
+				gNewBS->turnDamageTaken[gActiveBattler] = gBattleMoveDamage; //For Emergency Exit
+				break;
+
 			case ET_Taunt_Timer:
 				if (gDisableStructs[gActiveBattler].tauntTimer > 0 && --gDisableStructs[gActiveBattler].tauntTimer == 0)
 				{
@@ -838,7 +868,7 @@ u8 TurnBasedEffects(void)
 
 					if (!(gStatuses3[gActiveBattler] & STATUS3_YAWN))
 					{
-						if (CanBePutToSleep(gActiveBattler, FALSE))
+						if (CanBePutToSleep(gActiveBattler, gActiveBattler, FALSE))
 						{
 							if (!BATTLER_SEMI_INVULNERABLE(gActiveBattler)) //Semi-Invulnerability is removed when it tries to attack
 								CancelMultiTurnMoves(gActiveBattler);
@@ -1325,7 +1355,7 @@ u8 TurnBasedEffects(void)
 									}
 									break;
 								case ITEM_EFFECT_FLAME_ORB:
-									if (CanBeBurned(gActiveBattler, FALSE))
+									if (CanBeBurned(gActiveBattler, gActiveBattler, FALSE))
 									{
 										gLastUsedItem = ITEM(gActiveBattler);
 										RecordItemEffectBattle(gActiveBattler, itemEffect);
@@ -1748,6 +1778,21 @@ u32 GetTrapDamage(u8 bank)
 		if ((gNewBS->sandblastCentiferno[gActiveBattler] & 2) //Trapped by this move and user held Binding Band
 		|| ITEM_EFFECT(gBattleStruct->wrappedBy[bank]) == ITEM_EFFECT_BINDING_BAND)
 			damage = MathMax(1, GetBaseMaxHP(bank) / 6);
+		else
+			damage = MathMax(1, GetBaseMaxHP(bank) / 8);
+	}
+
+	return damage;
+}
+
+u32 GetSaltcureDamage(u8 bank)
+{
+	u32 damage = 0;
+
+	if (ABILITY(bank) != ABILITY_MAGICGUARD)
+	{
+		if (gNewBS->SaltcureBits & gBitTable[gActiveBattler] && (IsOfType(bank, TYPE_WATER) || IsOfType(bank, TYPE_STEEL)))
+			damage = MathMax(1, GetBaseMaxHP(bank) / 4);
 		else
 			damage = MathMax(1, GetBaseMaxHP(bank) / 8);
 	}

@@ -381,7 +381,7 @@ void atk4D_switchindataupdate(void)
 			gBattleMons[gActiveBattler].defense = attack;
 		}
 	}
-	else
+	else if (gCurrentMove != MOVE_SHEDTAIL)
 		ClearBehindSubstituteBit(gActiveBattler);
 
 	if (!(gStatuses3[gActiveBattler] & STATUS3_LEVITATING))
@@ -1133,6 +1133,7 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->HealBlockTimers[bank] = 0;
 	gNewBS->LaserFocusTimers[bank] = 0;
 	gNewBS->ThroatChopTimers[bank] = 0;
+	gNewBS->GlaiveRushTimers[bank] = 0;
 	gNewBS->StompingTantrumTimers[bank] = 0;
 	gNewBS->MetronomeCounter[bank] = 0;
 	gNewBS->DestinyBondCounters[bank] = 0;
@@ -1151,12 +1152,15 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->chiStrikeCritBoosts[bank] = 0;
 	gNewBS->sandblastCentiferno[bank] = 0;
 	gNewBS->disguisedAs[bank] = 0;
+	gNewBS->SyrupBombTimers[bank] = 0;
 
 	gProtectStructs[bank].KingsShield = 0;	//Necessary because could be sent away with Roar
 	gProtectStructs[bank].SpikyShield = 0;
 	gProtectStructs[bank].BanefulBunker = 0;
 	gProtectStructs[bank].obstruct = 0;
 	gProtectStructs[bank].enduredSturdy = 0;
+	gProtectStructs[bank].SilkTrap = 0;
+	gProtectStructs[bank].BurningBulwark = 0;
 	
 	DestroyMegaIndicator(bank);
 	ClearBattlerAbilityHistory(bank);
@@ -1176,6 +1180,7 @@ void ClearSwitchBits(u8 bank)
 	gNewBS->brokeFreeMessage &= ~(gBitTable[bank]);
 	gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]);
 	gNewBS->devolveForgotMove &= ~(gBitTable[bank]);
+	gNewBS->SaltcureBits &= ~(gBitTable[bank]);
 }
 
 void PartyMenuSwitchingUpdate(void)

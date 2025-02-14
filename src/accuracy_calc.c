@@ -210,7 +210,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 		gNewBS->missStringId[bankDef] = 1;
 		if (contact && set && item)
 		{
-			gProtectStructs[bankDef].kingsshield_damage = 1;
+			gProtectStructs[bankAtk].touchedProtectLike = 1;
 			gBattleCommunication[6] = 1;
 		}
 	}
@@ -220,7 +220,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 		gNewBS->missStringId[bankDef] = 1;
 		if (contact && set && item)
 		{
-			gProtectStructs[bankDef].spikyshield_damage = 1;
+			gProtectStructs[bankAtk].touchedProtectLike = 1;
 			gBattleCommunication[6] = 1;
 		}
 	}
@@ -230,7 +230,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 		gNewBS->missStringId[bankDef] = 1;
 		if (contact && set && item)
 		{
-			gProtectStructs[bankDef].banefulbunker_damage = 1;
+			gProtectStructs[bankAtk].touchedProtectLike = 1;
 			gBattleCommunication[6] = 1;
 		}
 	}
@@ -240,7 +240,27 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 		gNewBS->missStringId[bankDef] = 1;
 		if (contact && set && item)
 		{
-			gProtectStructs[bankDef].obstructDamage = TRUE;
+			gProtectStructs[bankAtk].touchedProtectLike = TRUE;
+			gBattleCommunication[6] = 1;
+		}
+	}
+	else if (gProtectStructs[bankDef].SilkTrap && protectFlag)
+	{
+		effect = 1;
+		gNewBS->missStringId[bankDef] = 1;
+		if (contact && set)
+		{
+			gProtectStructs[bankAtk].touchedProtectLike = TRUE;
+			gBattleCommunication[6] = 1;
+		}
+	}
+	else if (gProtectStructs[bankDef].BurningBulwark && protectFlag)
+	{
+		effect = 1;
+		gNewBS->missStringId[bankDef] = 1;
+		if (contact && set)
+		{
+			gProtectStructs[bankAtk].touchedProtectLike = TRUE;
 			gBattleCommunication[6] = 1;
 		}
 	}
@@ -299,6 +319,7 @@ bool8 DoesProtectionMoveBlockMove(u8 bankAtk, u8 bankDef, u16 atkMove, u16 prote
 
 			case MOVE_KINGSSHIELD:
 			case MOVE_OBSTRUCT:
+			case MOVE_SILKTRAP:
 				return protectFlag && split != SPLIT_STATUS;
 
 			case MOVE_MATBLOCK:
@@ -357,7 +378,9 @@ static bool8 AccuracyCalcHelper(u16 move, u8 bankDef)
 	||   (move == MOVE_TOXIC && IsOfType(gBankAttacker, TYPE_POISON))
 	||   (CheckTableForMove(move, gAlwaysHitWhenMinimizedMoves) && gStatuses3[bankDef] & STATUS3_MINIMIZED)
 	||  ((gStatuses3[bankDef] & STATUS3_TELEKINESIS) && gBattleMoves[move].effect != EFFECT_0HKO)
-	||	 gBattleMoves[move].accuracy == 0)
+	||	 gBattleMoves[move].accuracy == 0
+	||  (gStatuses3[bankDef] & STATUS3_GLAIVERUSH)
+	||  (move == MOVE_TACHYONCUTTER))
 	{
 		//JumpIfMoveFailed(7, move);
 		doneStatus = TRUE;

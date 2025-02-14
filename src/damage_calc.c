@@ -362,7 +362,11 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 	}
 	else if (CheckTableForMove(move, gTwoToFiveStrikesMoves) || gBattleMoves[move].effect == EFFECT_TRIPLE_KICK) //Three hits on average
 	{
-		damage *= 3;
+		if (move == MOVE_POPULATIONBOMB)
+			damage *= 5;
+		else
+			damage *= 3;
+
 		return damage;
 	}
 	else if (CheckTableForMove(move, gTwoStrikesMoves))
@@ -458,7 +462,11 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 	}
 	else if (CheckTableForMove(move, gTwoToFiveStrikesMoves) || gBattleMoves[move].effect == EFFECT_TRIPLE_KICK) //Three hits on average
 	{
-		damage *= 3;
+		if (move == MOVE_POPULATIONBOMB)
+			damage *= 5;
+		else
+			damage *= 3;
+
 		return damage;
 	}
 	else if (CheckTableForMove(move, gTwoStrikesMoves))
@@ -559,7 +567,11 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 	}
 	else if (CheckTableForMove(move, gTwoToFiveStrikesMoves) || gBattleMoves[move].effect == EFFECT_TRIPLE_KICK) //Three hits on average
 	{
-		damage *= 3;
+		if (move == MOVE_POPULATIONBOMB)
+			damage *= 5;
+		else
+			damage *= 3;
+
 		return damage;
 	}
 	else if (CheckTableForMove(move, gTwoStrikesMoves))
@@ -702,7 +714,7 @@ void atk06_typecalc(void)
 				else
 					goto RE_ENTER_TYPE_CHECK;
 			}
-			else if (gCurrentMove == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))
+			else if (gBattleMoves[gCurrentMove].effect == EFFECT_SKY_DROP && IsOfType(bankDef, TYPE_FLYING))
 			{
 				gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 				gLastLandedMoves[bankDef] = 0;
@@ -801,7 +813,7 @@ void atk4A_typecalc2(void)
 		else
 			goto RE_ENTER_TYPE_CHECK_2;
 	}
-	else if (gCurrentMove == MOVE_SKYDROP && IsOfType(gBankTarget, TYPE_FLYING))
+	else if (gBattleMoves[gCurrentMove].effect == EFFECT_SKY_DROP && IsOfType(gBankTarget, TYPE_FLYING))
 	{
 		gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 		gLastLandedMoves[gBankTarget] = 0;
@@ -895,7 +907,7 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if (move == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))
+	else if (gBattleMoves[move].effect == EFFECT_SKY_DROP && IsOfType(bankDef, TYPE_FLYING))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
@@ -980,7 +992,7 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if (move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING))
+	else if (gBattleMoves[move].effect == EFFECT_SKY_DROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
@@ -1071,7 +1083,7 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if (move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
+	else if (gBattleMoves[move].effect == EFFECT_SKY_DROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
@@ -1544,6 +1556,19 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 				moveType = TYPE_DARK;
 			#endif
 			break;
+
+		case MOVE_IVYCUDGEL:
+			#if (defined SPECIES_OGERPON && SPECIES_OGERPON_WELLSPRING_MASK && SPECIES_OGERPON_HEARTHFLAME_MASK && SPECIES_OGERPON_CORNERSTONE_MASK)
+			if (SPECIES(bankAtk) == SPECIES_OGERPON_CORNERSTONE_MASK)
+				moveType = TYPE_ROCK;
+			else if (SPECIES(bankAtk) == SPECIES_OGERPON_WELLSPRING_MASK)
+				moveType = TYPE_WATER;
+			else if (SPECIES(bankAtk) == SPECIES_OGERPON_HEARTHFLAME_MASK)
+				moveType = TYPE_FIRE;
+			else
+				moveType = TYPE_GRASS;
+			#endif
+			break;
 		
 		case MOVE_TERRAINPULSE:
 			switch (gTerrainType) {
@@ -1563,6 +1588,11 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 					moveType = TYPE_NORMAL;
 					break;
 			}
+			break;
+
+		case MOVE_TERABLAST:
+			if (IsTerastal(bankAtk) || gNewBS->terastalData.chosen[bankAtk])
+				moveType = GetTeraType(bankAtk);
 			break;
 	}
 
@@ -1660,6 +1690,19 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 				moveType = TYPE_ELECTRIC;
 			break;
 
+		case MOVE_IVYCUDGEL:
+			#if (defined SPECIES_OGERPON && SPECIES_OGERPON_WELLSPRING_MASK && SPECIES_OGERPON_HEARTHFLAME_MASK && SPECIES_OGERPON_CORNERSTONE_MASK)
+			if (mon->species == SPECIES_OGERPON_CORNERSTONE_MASK)
+				moveType = TYPE_ROCK;
+			else if (mon->species == SPECIES_OGERPON_WELLSPRING_MASK)
+				moveType = TYPE_WATER;
+			else if (mon->species == SPECIES_OGERPON_HEARTHFLAME_MASK)
+				moveType = TYPE_FIRE;
+			else
+				moveType = TYPE_GRASS;
+			#endif
+			break;
+
 		case MOVE_TERRAINPULSE:
 			switch (gTerrainType) {
 				case ELECTRIC_TERRAIN:
@@ -1678,6 +1721,13 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 					moveType = TYPE_NORMAL;
 					break;
 			}
+			break;
+
+		case MOVE_TERABLAST:
+			if (IsTerastal(GetBankFromPartyData(mon)))
+				moveType = mon->teratype;
+			else
+				moveType = TYPE_NORMAL;
 			break;
 	}
 
@@ -2511,6 +2561,10 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	if (!(data->specialFlags & FLAG_AI_CALC) && gProtectStructs[bankAtk].helpingHand)
 		damage = (damage * 15) / 10;
 
+	//Glaive Rush Panalty
+	if (data->defStatus3 & STATUS3_GLAIVERUSH)
+		damage *= 2;
+
 	//Punching Glove Boost
 	if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_PUNCHING_GLOVE && CheckTableForMove(move, gPunchingMoves))
 		damage = (damage * 11) / 10;
@@ -2536,7 +2590,10 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 					damage = (damage * 15) / 10;
 					break;
 				case TYPE_WATER:
-					damage /= 2;
+					if (gCurrentMove == MOVE_HYDROSTEAM)
+						damage = (damage * 15) / 10;
+					else
+						damage /= 2;
 					break;
 			}
 		}
@@ -2765,6 +2822,11 @@ static u16 GetBasePower(struct DamageCalc* data)
 				power *= 2;
 			break;
 
+		case MOVE_FICKLEBEAM:
+			if (Random() % 100 < 30)
+				power *=2;
+			break;
+
 		case MOVE_BRINE:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
 			&& data->defHP < data->defMaxHP / 2)
@@ -2810,6 +2872,13 @@ static u16 GetBasePower(struct DamageCalc* data)
 				power *= 2;
 			break;
 
+		case MOVE_COLLISIONCOURSE:
+		case MOVE_ELECTRODRIFT:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
+			&& data->resultFlags & MOVE_RESULT_SUPER_EFFECTIVE)
+				power *= 4 / 3;
+			break;
+
 		case MOVE_PAYBACK:
 			if (!(data->specialFlags & (FLAG_IGNORE_TARGET | FLAG_CHECKING_FROM_MENU))
 			&& !useMonAtk
@@ -2821,6 +2890,24 @@ static u16 GetBasePower(struct DamageCalc* data)
 		case MOVE_RETALIATE:
 			if (gNewBS->RetaliateCounters[SIDE(bankAtk)]) //Bank should be accurate for party too
 				power *= 2;
+			break;
+
+		case MOVE_LASTRESPECTS:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET))
+			{
+				if (gNewBS->FaintedCounters[SIDE(bankAtk)])
+					power = 50 * (gNewBS->FaintedCounters[SIDE(bankAtk)]);
+			}
+			break;
+
+		case MOVE_PSYBLADE:
+			if (gTerrainType == ELECTRIC_TERRAIN)
+				power = (power * 15) / 10; //Boosts 1.5x in Electric Terrain
+			break;
+
+		case MOVE_RAGEFIST:
+			if (gNewBS->rageFistCounter[SIDE(bankAtk)][gBattlerPartyIndexes[bankAtk]])
+			power = 50 * (gNewBS->rageFistCounter[SIDE(bankAtk)][gBattlerPartyIndexes[bankAtk]]);
 			break;
 
 		case MOVE_ROUND:
@@ -2837,11 +2924,13 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_STOMPINGTANTRUM:
+		case MOVE_TEMPERFLARE:
 			if (!useMonAtk && gNewBS->StompingTantrumTimers[bankAtk])
 				power *= 2;
 			break;
 
 		case MOVE_VENOSHOCK:
+		case MOVE_BARBBARRAGE:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
 			&& data->defStatus1 & STATUS_PSN_ANY)
 				power *= 2;
@@ -2850,6 +2939,12 @@ static u16 GetBasePower(struct DamageCalc* data)
 		case MOVE_WAKEUPSLAP:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
 			&& data->defStatus1 & STATUS_SLEEP)
+				power *= 2;
+			break;
+
+		case MOVE_INFERNALPARADE:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
+			&& data->defStatus1 & STATUS_BURN)
 				power *= 2;
 			break;
 
@@ -3021,6 +3116,11 @@ static u16 GetBasePower(struct DamageCalc* data)
 		case MOVE_WRINGOUT:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET))
 				power = MathMax(1, (data->defHP * 120) / data->defMaxHP);
+			break;
+
+		case MOVE_HARDPRESS:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET))
+				power = MathMax(1, (data->defHP * 100) / data->defMaxHP);
 			break;
 
 		case MOVE_TRUMPCARD: ;

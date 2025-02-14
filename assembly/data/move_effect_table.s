@@ -165,7 +165,7 @@ gBattleScriptsForMoveEffects:
 .word BS_147_Earthquake
 .word BS_148_FutureSight
 .word BS_149_Gust
-.word BS_150_Blank
+.word BS_150_StoneAxe
 .word BS_151_Solarbeam
 .word BS_152_Thunder
 .word BS_153_Teleport
@@ -213,8 +213,8 @@ gBattleScriptsForMoveEffects:
 .word BS_195_Snatch
 .word BS_196_Blank	@was low kick
 .word BS_197_SecretPower
-.word BS_198_Blank	@was 33% recoil
-.word BS_199_Blank	@was teeter dance
+.word BS_198_RaiseUserAtkSpAtk	@was 33% recoil
+.word BS_199_RaiseUserAtkAcc	@was teeter dance
 .word BS_200_Blank	@was blaze kick
 .word BS_201_MudSport
 .word BS_202_Blank	@was poison fang
@@ -257,12 +257,12 @@ gBattleScriptsForMoveEffects:
 .word BS_239_TeamEffectsAndMagnetRise
 .word BS_240_Camouflage
 .word BS_241_FlameBurst
-.word BS_242_LastResortSkyDrop
+.word BS_242_LastResort
 .word BS_243_DamageSetTerrain
 .word BS_244_Blank
 .word BS_245_Poltergeist
-.word BS_246_Blank
-.word BS_247_Blank
+.word BS_246_SkyDrop
+.word BS_247_Glaive_Rush
 .word BS_248_Blank
 .word BS_249_Blank
 .word BS_250_Blank

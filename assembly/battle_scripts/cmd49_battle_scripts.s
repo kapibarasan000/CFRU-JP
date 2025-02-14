@@ -14,7 +14,9 @@ cmd49_battle_scripts.s
 .global BattleScript_KingsShield
 .global BattleScript_SpikyShield
 .global BattleScript_BanefulBunker
+.global BattleScript_BurningBulwark
 .global BattleScript_ObstructStatDecrement
+.global BattleScript_SilkTrapStatDecrement
 .global BattleScript_RageIsBuilding
 .global BattleScript_BeakBlastBurn
 .global BattleScript_Magician
@@ -27,6 +29,7 @@ cmd49_battle_scripts.s
 .global BattleScript_Pickpocket
 .global BattleScript_DancerActivated
 .global BattleScript_MultiHitPrintStrings
+.global BattleScript_MultiHitWaitAttackerSubstitute
 .global BattleScript_ScaleShotBuff
 .global BattleScript_PluckEat
 .global BattleScript_RaidShields
@@ -95,8 +98,24 @@ BattleScript_BanefulBunker:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_BurningBulwark:
+	statusanimation BANK_ATTACKER
+	refreshhpbar BANK_ATTACKER
+	setword BATTLE_STRING_LOADER gText_BurningBulwarkBRN
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_ObstructStatDecrement:
 	setstatchanger STAT_DEF | DECREASE_2
+	goto BattleScript_KingsShieldPostDecrementSet
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SilkTrapStatDecrement:
+	setstatchanger STAT_SPD | DECREASE_1
 	goto BattleScript_KingsShieldPostDecrementSet
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -306,9 +325,17 @@ BattleScript_DancerActivated:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MultiHitPrintStrings:
+	resultmessage
+	waitmessage DELAY_1SECOND
 	copyarray 0x2022A28 MULTIHIT_STRING 0x6
 	printstring 0x22
 	waitmessage DELAY_1SECOND
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MultiHitWaitAttackerSubstitute:
+	pause 0x30 @Wait for the attacker to slide in from the Substitute
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

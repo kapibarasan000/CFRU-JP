@@ -121,11 +121,17 @@ void atk15_seteffectwithchance(void)
 	//}
 	if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || BankSideHasRainbow(gBankAttacker))
 	{
-		PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance * 2;
+		if (gCurrentMove == MOVE_TRIPLEARROWS && gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_FLINCH)
+			PercentChance = 30 * 2;
+		else
+			PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance * 2;
 	}
 	else
 	{
-		PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance;
+		if (gCurrentMove == MOVE_TRIPLEARROWS && gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_FLINCH)
+			PercentChance = 30;
+		else
+			PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance;
 	}
 
 	if (!SheerForceCheck() || (gBattleCommunication[MOVE_EFFECT_BYTE] & 0x3F) == MOVE_EFFECT_RAPIDSPIN)
@@ -233,7 +239,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		switch (sStatusFlagsForMoveEffects[gBattleCommunication[MOVE_EFFECT_BYTE]]) {
 			case STATUS1_SLEEP:
 				// check active uproar
-				if (CanBePutToSleep(gEffectBank, FALSE)) //Flower Veil & Safeguard checked earlier
+				if (CanBePutToSleep(gEffectBank, gBankAttacker, FALSE)) //Flower Veil & Safeguard checked earlier
 				{
 					CancelMultiTurnMoves(gEffectBank);
 					statusChanged = TRUE;
@@ -247,12 +253,12 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 
 			case STATUS1_BURN:
-				if (CanBeBurned(gEffectBank, FALSE)) //Flower Veil & Safeguard checked earlier
+				if (CanBeBurned(gEffectBank, gBankAttacker, FALSE)) //Flower Veil & Safeguard checked earlier
 					statusChanged = TRUE;
 				break;
 
 			case STATUS1_FREEZE:
-				if (CanBeFrozen(gEffectBank, FALSE)) //Flower Veil & Safeguard checked earlier
+				if (CanBeFrozen(gEffectBank, gBankAttacker, FALSE)) //Flower Veil & Safeguard checked earlier
 				{
 					CancelMultiTurnMoves(gEffectBank);
 					statusChanged = TRUE;
@@ -260,7 +266,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 
 			case STATUS1_PARALYSIS:
-				if (CanBeParalyzed(gEffectBank, FALSE)) //Flower Veil & Safeguard checked earlier
+				if (CanBeParalyzed(gEffectBank, gBankAttacker, FALSE)) //Flower Veil & Safeguard checked earlier
 					statusChanged = TRUE;
 				break;
 		}
@@ -327,7 +333,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			switch (gBattleCommunication[MOVE_EFFECT_BYTE])
 			{
 			case MOVE_EFFECT_CONFUSION:
-				if (CanBeConfused(gEffectBank, FALSE)) //Safeguard checked earlier
+				if (CanBeConfused(gEffectBank, gBankAttacker, FALSE)) //Safeguard checked earlier
 				{
 					gBattleMons[gEffectBank].status2 |= (umodsi(Random(), 4)) + 2;
 
@@ -387,7 +393,18 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				}
 				else
 				{
-					gBattleCommunication[MOVE_EFFECT_BYTE] = umodsi(Random(), 3) + 3;
+					gBattleCommunication[MOVE_EFFECT_BYTE] = (Random() % 3);
+
+					if (gCurrentMove == MOVE_DIRECLAW)
+					{
+						gBattleCommunication[MOVE_EFFECT_BYTE] += MOVE_EFFECT_SLEEP; //Sleep, Poison, Paralysis
+						
+						if (gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_BURN)
+							gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS; //Paralyzes, doesn't burn
+					}
+					else
+						gBattleCommunication[MOVE_EFFECT_BYTE] += MOVE_EFFECT_BURN; //Burn, Freeze, Paralysis
+
 					SetMoveEffect(FALSE, 0);
 				}
 				break;
@@ -401,64 +418,78 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 
 			case MOVE_EFFECT_WRAP:
+				if (gCurrentMove == MOVE_SALTCURE && gNewBS->SaltcureBits & gBitTable[gEffectBank])
+				{
+					gBattlescriptCurrInstr++;
+				}
 				if (gBattleMons[gEffectBank].status2 & STATUS2_WRAPPED || gNewBS->secondaryEffectApplied)
 				{
 					gBattlescriptCurrInstr++;
 				}
 				else
 				{
-					u16 trappingMove = gCurrentMove;
-					gNewBS->secondaryEffectApplied = TRUE;
-
-					if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_GRIP_CLAW)
-						gBattleMons[gEffectBank].status2 |= (7 << 0xD);
-					else
-						gBattleMons[gEffectBank].status2 |= ((Random() & 1) + 4) << 0xD;
-
-					//Turn G-Max Moves into their corresponding trapping moves
-					switch (trappingMove) {
-						case MOVE_G_MAX_CENTIFERNO_P:
-						case MOVE_G_MAX_CENTIFERNO_S:
-							trappingMove = MOVE_FIRESPIN;
-							break;
-						case MOVE_G_MAX_SANDBLAST_P:
-						case MOVE_G_MAX_SANDBLAST_S:
-							trappingMove = MOVE_SANDTOMB;
-							break;
-					}
-
-					gBattleStruct->wrappedMove[gEffectBank] = trappingMove;
-					gBattleStruct->wrappedBy[gEffectBank] = gBankAttacker;
-
-					BattleScriptPush(gBattlescriptCurrInstr + 1);
-					gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]];
-
-					for (gBattleCommunication[MULTISTRING_CHOOSER] = 0; ; gBattleCommunication[MULTISTRING_CHOOSER]++)
+					if (gCurrentMove == MOVE_SALTCURE)
 					{
-						if (gBattleCommunication[MULTISTRING_CHOOSER] > 6)
-							break;
-						if (gTrappingMoves[gBattleCommunication[MULTISTRING_CHOOSER]] == trappingMove)
-							break;
+						gNewBS->SaltcureBits |= gBitTable[gEffectBank];
+						BattleScriptPush(gBattlescriptCurrInstr + 1);
+						gBattleStringLoader = gText_TargetWasSaltcure;
+						gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 					}
+					else
+					{
+						u16 trappingMove = gCurrentMove;
+						gNewBS->secondaryEffectApplied = TRUE;
 
-					switch (gCurrentMove) {
-						case MOVE_INFESTATION:
-							gBattleStringLoader = gText_TargetWasInfested;
-							break;
-						case MOVE_SNAPTRAP:
-							gBattleStringLoader = gText_TargetWasCaughtInSnapTrap;
-							break;
-						case MOVE_THUNDERCAGE:
-							gBattleStringLoader = gText_TargetWasTrappedByAttacker;
-							break;
-						case MOVE_G_MAX_CENTIFERNO_P:
-						case MOVE_G_MAX_CENTIFERNO_S:
-						case MOVE_G_MAX_SANDBLAST_P:
-						case MOVE_G_MAX_SANDBLAST_S:
-							gNewBS->sandblastCentiferno[gEffectBank] = 1; //This condition doesn't get removed when the attacker leaves the field
-							if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_GRIP_CLAW)
-								gNewBS->sandblastCentiferno[gEffectBank] |= 2;
-							break;
+						if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_GRIP_CLAW)
+							gBattleMons[gEffectBank].status2 |= (7 << 0xD);
+						else
+							gBattleMons[gEffectBank].status2 |= ((Random() & 1) + 4) << 0xD;
+
+						//Turn G-Max Moves into their corresponding trapping moves
+						switch (trappingMove) {
+							case MOVE_G_MAX_CENTIFERNO_P:
+							case MOVE_G_MAX_CENTIFERNO_S:
+								trappingMove = MOVE_FIRESPIN;
+								break;
+							case MOVE_G_MAX_SANDBLAST_P:
+							case MOVE_G_MAX_SANDBLAST_S:
+								trappingMove = MOVE_SANDTOMB;
+								break;
+						}
+
+						gBattleStruct->wrappedMove[gEffectBank] = trappingMove;
+						gBattleStruct->wrappedBy[gEffectBank] = gBankAttacker;
+
+						BattleScriptPush(gBattlescriptCurrInstr + 1);
+						gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]];
+
+						for (gBattleCommunication[MULTISTRING_CHOOSER] = 0; ; gBattleCommunication[MULTISTRING_CHOOSER]++)
+						{
+							if (gBattleCommunication[MULTISTRING_CHOOSER] > 6)
+								break;
+							if (gTrappingMoves[gBattleCommunication[MULTISTRING_CHOOSER]] == trappingMove)
+								break;
+						}
+
+						switch (gCurrentMove) {
+							case MOVE_INFESTATION:
+								gBattleStringLoader = gText_TargetWasInfested;
+								break;
+							case MOVE_SNAPTRAP:
+								gBattleStringLoader = gText_TargetWasCaughtInSnapTrap;
+								break;
+							case MOVE_THUNDERCAGE:
+								gBattleStringLoader = gText_TargetWasTrappedByAttacker;
+								break;
+							case MOVE_G_MAX_CENTIFERNO_P:
+							case MOVE_G_MAX_CENTIFERNO_S:
+							case MOVE_G_MAX_SANDBLAST_P:
+							case MOVE_G_MAX_SANDBLAST_S:
+								gNewBS->sandblastCentiferno[gEffectBank] = 1; //This condition doesn't get removed when the attacker leaves the field
+								if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_GRIP_CLAW)
+									gNewBS->sandblastCentiferno[gEffectBank] |= 2;
+								break;
+						}
 					}
 				}
 				break;
@@ -661,6 +692,16 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			case MOVE_EFFECT_RAPIDSPIN:
 				BattleScriptPush(gBattlescriptCurrInstr + 1);
 				gBattlescriptCurrInstr = BattleScript_RapidSpinAway;
+				break;
+
+			case MOVE_EFFECT_SYRUP_BOMB:
+				if (gNewBS->SyrupBombTimers[gEffectBank] == 0)
+				{
+					gNewBS->SyrupBombTimers[gEffectBank] = 3;
+					BattleScriptPush(gBattlescriptCurrInstr + 1);
+					gBattleStringLoader = gText_TargetWasSyrupy;
+					gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+				}
 				break;
 
 			case MOVE_EFFECT_ATK_DEF_DOWN: // SuperPower

@@ -1168,6 +1168,78 @@
 #org @DESC_GLACIAL_LANCE
 ふぶきを まとった\nこおりの やりを\nあいてに なげつけて\nこうげきする。
 
+#org @DESC_DIRE_CLAW
+はめつてきなツメで\nこうげきする。あいてを\nどく まひ ねむりの\nいずれかのじょうたいに\nすることが ある。
+
+#org @DESC_PSYSHIELD_BASH
+しねんのエネルギーを\nまといながら あいてに\nぶつかっていく。\nじぶんの ぼうぎょを\nあげる。
+
+#org @DESC_POWER_SHIFT
+じぶんの\nこうげきと ぼうぎょを\nいれかえる。
+
+#org @DESC_STONE_AXE
+いわの おので\nこうげきする。\nばらまかれた いわの\nはへんが あいての\nまわりに うかぶ。
+
+#org @DESC_MYSTICAL_POWER
+ふしぎな ちからを\nほうしゅつして\nこうげきする。\nじぶんの とくこうが\nあがる。
+
+#org @DESC_RAGING_FURY
+2ー3ターンの あいだ\nほのおを はなちながら\nあばれまわる。\nあばれたあとは\nこんらんする。
+
+#org @DESC_WAVE_CRASH
+みずを まといつつ\nぜんしんで あいてに\nぶつかるが じぶんも\nかなりの ダメージを\nうける。
+
+#org @DESC_CHLOROBLAST
+ようりょくそを\nしゅうやくし\nほうしゅつ する。\nじぶんも ダメージを\nうけてしまう。
+
+#org @DESC_MOUNTAIN_GALE
+ひょうざんの ような\nおおきな ひょうかいを\nぶつけて こうげき。\nあいてを ひるませる\nことが ある。
+
+#org @DESC_VICTORY_DANCE
+しょうりを よびこむ\nまいを はげしく\nおどって じぶんの\nこうげきと ぼうぎょと\nすばやさを あげる。
+
+#org @DESC_HEADLONG_RUSH
+ぜんしんぜんれいの\nたいあたりを\nくらわせる。\nじぶんの ぼうぎょと\nとくぼうが さがる。
+
+#org @DESC_BARB_BARRAGE
+むすうの どくばりで\nあいてを どくに\nすることがある。\nあいてが どくだと\nいりょくは 2ばい。
+
+#org @DESC_ESPER_WING
+オーラで きょうかした\nつばさで きりさく。\nきゅうしょに\nあたりやすい。じぶんの\nすばやさを あげる。
+
+#org @DESC_BITTER_MALICE
+せすじが こおるような\nおんねんで こうげき。\nあいての こうげきを\nさげる。
+
+#org @DESC_SHELTER
+ひふを てつの\nたてのように かたく\nすることで じぶんの\nぼうぎょを ぐーんと\nあげる。
+
+#org @DESC_TRIPLE_ARROWS
+3ほんのやで あいての\nぼうぎょを さげたり\nひるませることが\nある。きゅうしょに\nあたりやすい。
+
+#org @DESC_INFERNAL_PARADE
+むすうの ひのたまで\nやけどに することが\nある。あいてが\nじょうたいいじょうだと\nいりょくは 2ばい。
+
+#org @DESC_CEASELESS_EDGE
+かいがらの けんで\nこうげき。かいがらの\nはへんは あいての\nあしもとに まきびし\nとなって ちらばる。
+
+#org @DESC_BLEAKWIND_STORM
+みもこころも ふるえる\nつめたく はげしい\nかぜで こうげきする。\nあいての すばやさを\nさげることが ある。
+
+#org @DESC_WILDBOLT_STORM
+らいうんを よびよせ\nかみなりと かぜで\nはげしく こうげき。\nあいてを まひに\nすることがある。
+
+#org @DESC_SANDSEAR_STORM
+あつく やけた すなと\nきょうれつな かぜで\nこうげきする。\nあいてを やけどに\nすることがある。
+
+#org @DESC_SPRINGTIDE_STORM
+あいぞう いりまじった\nきょうれつな かぜで\nこうげきする。\nあいての こうげきを\nさげることが ある。
+
+#org @DESC_LUNAR_BLESSING
+みかづきに いのりを\nささげて じぶんと\nばにいる みかたの\nHPと じょうたいを\nかいふくする。
+
+#org @DESC_TAKE_HEART
+こころを ふるわせて\nじぶんの じょうたい\nいじょうを なおし\nさらには とくこうと\nとくぼうを あげる。
+
 #org @DESC_MAX_GUARD
 あいての こうげきを\nまったく うけない。\nれんぞくで だすと\nしっぱい しやすい。
 
@@ -1323,3 +1395,210 @@
 
 #org @DESC_G_MAX_RAPID_FLOW
 キョダイマックスした\nウーラオスが\nくりだす こうげき。\nダイウォールを\nむしできる れんげき。
+
+#org @DESC_AQUACUTTER
+かあつ された みずを\nはのように ふんしゃし\nあいてを きりさく。\nきゅうしょに\nあたりやすい。
+
+#org @DESC_AQUASTEP
+みずも したたる\nかろやかな あしどりで\nあいてを ほんろうし\nこうげき。じぶんの\nすばやさを あげる。
+
+#org @DESC_ARMORCANNON
+みずからの ヨロイを\nもえたぎる たまとして\nうちだして こうげき。\nじぶんの ぼうぎょと\nとくぼうが さがる。
+
+#org @DESC_AXEKICK
+けりあげた かかとで\nこうげき。あいてを\nこんらん させることが\nある。はずすと\nダメージを うける。
+
+#org @DESC_BITTERBLADE
+このよへの みれんを\nけんさきに こめて\nきりつける。あたえた\nダメージの はんぶんの\nHPを かいふくする。
+
+#org @DESC_BLAZINGTORQUE
+ー
+
+#org @DESC_CHILLINGWATER
+げんきを うしなわせる\nくらい つめたい\nみずを あびせて\nこうげき。あいての\nこうげきを さげる。
+
+#org @DESC_CHILLYRECEPTION
+ばが こおる ギャグで\n5ターンの あいだ\nゆきを ふらして\nひかえの ポケモンと\nいれかわる。
+
+#org @DESC_COLLISIONCOURSE
+へんけい しながら\nらっかし いにしえの\nだいばくはつを\nおこす。じゃくてんなら\nいりょくが ます。
+
+#org @DESC_COMBATTORQUE
+ー
+
+#org @DESC_COMEUPPANCE
+わざを だすまえに\nさいごに うけた\nわざの ダメージを\nおおきくして だした\nあいてに やりかえす。
+
+#org @DESC_DOODLE
+あいての ほんしつを\nとらえて うつしだし\nじぶんと みかたを\nあいてと おなじ\nとくせいに かえる。
+
+#org @DESC_DOUBLESHOCK
+ぜんしんの でんきを\nすべて はなって\nこうげき。じぶんの\nでんきタイプが\nなくなる。
+
+#org @DESC_ELECTRODRIFT
+へんけい しながら\nそうこうし みちなる\nでんげきで つらぬく。\nじゃくてんをつくと\nいりょくが ます。
+
+#org @DESC_FILLETAWAY
+じぶんの HPを\nけずって じぶんの\nこうげきと とくこうと\nすばやさを ぐーんと\nあげる。
+
+#org @DESC_FLOWERTRICK
+さいくが ある\nはなたばを あいてに\nなげて こうげきする。\nかならず めいちゅうし\nきゅうしょに あたる。
+
+#org @DESC_GIGATONHAMMER
+おおきな ハンマーを\nからだごと ぶんまわし\nこうげきする。\nこのわざは 2かい\nれんぞくで だせない。
+
+#org @DESC_GLAIVERUSH
+わざのあと あいての\nこうげきは かならず\nめいちゅうし うける\nダメージが 2ばいに\nなってしまう。
+
+#org @DESC_HYDROSTEAM
+にえたぎる みずを\nあびせて こうげき。\nひざしが つよいとき\nいりょくが さがらず\nむしろ あがる。
+
+#org @DESC_HYPERDRILL
+とがった ぶいを\nこうそく かいてんさせ\nつらぬく。\nまもるや みきり\nなども むし できる。
+
+#org @DESC_ICESPINNER
+あしに うすい\nこおりを まとい\nクルクルと まわって\nぶつかる。かいてんで\nフィールドを こわす。
+
+#org @DESC_JETPUNCH
+げきりゅうを こぶしに\nまとって めにも\nとまらぬ パンチを\nくりだす。かならず\nせんせい できる。
+
+#org @DESC_KOWTOWCLEAVE
+どげざして あいてを\nゆだんさせて おいて\nきりかかる。\nこうげきは かならず\nめいちゅうする。
+
+#org @DESC_LASTRESPECTS
+なかまの むねんを\nはらすため こうげき。\nたおされた みかたの\nポケモンが おおいほど\nいりょくが ふえる。
+
+#org @DESC_LUMINACRASH
+せいしんに さようする\nきみょうな ひかりを\nはなって こうげき。\nあいての とくぼうを\nがくっと さげる。
+
+#org @DESC_MAGICALTORQUE
+ー
+
+#org @DESC_MAKEITRAIN
+たいりょうの コインを\nぶちまけて こうげき。\nじぶんの とくこうが\nさがる。せんとうごに\nおかねも もらえる。
+
+#org @DESC_MORTALSPIN
+かいてんして あいてを\nこうげきする。\nバインドや トラップを\nふきとばす。あいてを\nどくに する。
+
+#org @DESC_NOXIOUSTORQUE
+ー
+
+#org @DESC_ORDERUP
+いなせな みのこなしで\nこうげき。くちのなかに\nシャリタツが いると\nそのすがたに よって\nのうりょくが あがる。
+
+#org @DESC_POPULATIONBOMB
+なかまが わらわらと\nあつまり れんけいして\nこうげきを あたえる。\n1ー10かいの あいだ\nれんぞくで あたる。
+
+#org @DESC_POUNCE
+あいてに とびついて\nこうげきする。\nあいての すばやさを\nさげる。
+
+#org @DESC_PSYBLADE
+じったいの ない\nやいばで あいてを\nきりさく。\nエレキフィールドのとき\nいりょくが あがる。
+
+#org @DESC_RAGEFIST
+いかりを エネルギーに\nかえて こうげき。\nうけた こうげきの\nかいすうが おおいほど\nいりょくが あがる。
+
+#org @DESC_RAGINGBULL
+いかりくるう うしの\nもうれつな タックル。\nフォルムで タイプが\nかわり ひかりのかべ\nなども はかいできる。
+
+#org @DESC_REVIVALBLESSING
+じあいの こころで\nいのり ひかえにいる\nひんしの ポケモンを\nはんぶんの HPで\nふっかつさせる。
+
+#org @DESC_RUINATION
+はめつてきな\nさいやくを まきおこし\nあいての HPを\nはんぶんに する。
+
+#org @DESC_SALTCURE
+あいてを しおづけに\nして まいターン\nダメージを あたえる。\nはがね みずタイプは\nより くるしむ。
+
+#org @DESC_SHEDTAIL
+じぶんの HPを\nけずって ぶんしんを\nだしたあと もどって\nひかえの ポケモンと\nいれかわる。
+
+#org @DESC_SILKTRAP
+いとの わなを\nはりめぐらせる。\nこうげきを ふせぎ\nふれた あいての\nすばやさを さげる。
+
+#org @DESC_SNOWSCAPE
+5ターンの あいだ\nゆきを ふらせる。\nこおりタイプの\nぼうぎょが あがる。
+
+#org @DESC_SPICYEXTRACT
+とんでもなく からい\nエキスで あいての\nこうげきが ぐーんと\nあがり ぼうぎょが\nがくっと さがる。
+
+#org @DESC_SPINOUT
+あしに ふかを かけて\nはげしく かいてんし\nダメージを あたえる。\nじぶんの すばやさが\nがくっと さがる。
+
+#org @DESC_TERABLAST
+テラスタル していると\nテラスタイプに かわり\nこうげきと とくこうを\nくらべて たかいほうで\nダメージを あたえる。
+
+#org @DESC_TIDYUP
+まきびしや みがわり\nねばねばネット などを\nすべて かたづける。\nじぶんの こうげきと\nすばやさが あがる。
+
+#org @DESC_TORCHSONG
+もえたぎる かえんを\nうたうように ふきつけ\nあいてを こがす。\nじぶんの とくこうを\nあげる。
+
+#org @DESC_TRAILBLAZE
+くさむらから とびだす\nように こうげきする。\nけいかいな あしどりに\nよって じぶんの\nすばやさを あげる。
+
+#org @DESC_TRIPLEDIVE
+いきの あった\nとびこみで あいてに\nみずしぶきを あてる。\n3かい れんぞくで\nダメージを あたえる。
+
+#org @DESC_TWINBEAM
+りょうめから ふしぎな\nこうせんを はなって\nこうげきする。\n2かい れんぞくで\nダメージを あたえる。
+
+#org @DESC_WICKEDTORQUE
+ー
+
+#org @DESC_BLOODMOON
+ちの ように あかい\nまんげつから つよい\nきはくを うちだす。\nこのわざは 2かい\nれんぞくで だせない。
+
+#org @DESC_UPPERHAND
+しょうていを うちこみ\nあいてを ひるませる。\nあいてが だすわざが\nせんせい こうげきで\nないと しっぱいする。
+
+#org @DESC_MATCHAGOTCHA
+かきまぜた おちゃの\nたいほうは あたえた\nダメージの はんぶんを\nかいふくして やけどに\nすることも ある。
+
+#org @DESC_SYRUPBOMB
+ねっとりした\nみずあめで あいてを\nあめまみれ にして\n3ターンのあいだ\nすばやさを さげる。
+
+#org @DESC_IVYCUDGEL
+ツタを まきつけた\nこんぼうで なぐる。\nおめんで タイプが\nかわり きゅうしょに\nあたりやすい。
+
+#org @DESC_ELECTROSHOT
+1ターンめに でんきを\nあつめて とくこうが\nあがり 2ターンめに\nこうあつの でんきを\nはっしゃする。
+
+#org @DESC_TERASTARSTORM
+テラパゴスが\nステラフォルムで\nはなつと すべての\nあいてに ダメージを\nあたえる。
+
+#org @DESC_FICKLEBEAM
+こうせんを はっしゃし\nこうげきする。\nときどき ほんきを\nだして いりょくが\n2ばいに なる。
+
+#org @DESC_BURNINGBULWARK
+あいての こうげきを\nちょうこうねつの\nたいもうで ふせぎ\nふれた あいてに\nやけどを あたえる。
+
+#org @DESC_MIGHTYCLEAVE
+とうぶに ちくせきした\nひかりで きりさく。\nまもりを むしして\nこうげき できる。
+
+#org @DESC_TACHYONCUTTER
+りゅうしの はを\nたてつづけに はなって\nれんぞくで ダメージを\nあたえる。こうげきは\nかならず あたる。
+
+#org @DESC_DRAGONCHEER
+みかたの わざが\nきゅうしょに\nあたりやすくなる。\nドラゴンタイプだと\nより こぶされる。
+
+#org @DESC_MALIGNANTCHAIN
+どくで できた\nくさりを あいてに\nまきつけ どくそを\nながしこむ。もうどくに\nすることが ある。
+
+#org @DESC_THUNDERCLAP
+あいてより さきに\nでんげきを あびせる。\nあいてが だすわざが\nこうげきわざで ないと\nしっぱいする。
+
+#org @DESC_HARDPRESS
+うでや ハサミで\nあっぱくする。\nあいての HPが\nのこっているほど\nいりょくが あがる。
+
+#org @DESC_ALLURINGVOICE
+てんしの ような\nうたごえで こうげき。\nあいての のうりょくが\nあがって いると\nこんらん させる。
+
+#org @DESC_TEMPERFLARE
+やけに なった\nいきおいで こうげき。\nまえの ターンに\nわざを はずしていると\nいりょくが 2ばい。
+
+#org @DESC_SUPERCELLSLAM
+からだを たいでんさせ\nあいてに のしかかる。\nはずすと じぶんが\nダメージを うける。
+
+#org @DESC_PSYCHICNOISE
+ふかいな おんぱを\nあびせて こうげき。\n2ターンの あいだ\nあいての かいふくを\nふうじる。

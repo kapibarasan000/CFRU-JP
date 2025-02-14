@@ -47,6 +47,7 @@ et_battle_scripts.s
 .global BattleScript_FlowerGiftEnd2
 .global BattleScript_MonTookFutureAttack
 .global BattleScript_OctolockTurnDmg
+.global BattleScript_SyrupBombEndTurn
 .global BattleScript_DynamaxEnd
 .global BattleScript_LoseRaidBattle
 .global BattleScript_LoseFrontierRaidBattle
@@ -543,6 +544,21 @@ BattleScript_OctolockTurnDmgPrintSpDefMsg:
 	waitmessage DELAY_1SECOND
 
 BattleScript_OctolockTurnDmgEnd:
+	end2
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SyrupBombEndTurn:
+	playanimation2 BANK_ATTACKER ANIM_ARG_1 0x0
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_SPD, STAT_ANIM_DOWN
+	setstatchanger STAT_SPD | DECREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_NOT_PROTECT_AFFECTED BattleScript_SyrupBombTurnDmgEnd
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_SyrupBombTurnDmgEnd
+	printfromtable 0x83C4548
+	waitmessage DELAY_1SECOND
+
+BattleScript_SyrupBombTurnDmgEnd:
 	end2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

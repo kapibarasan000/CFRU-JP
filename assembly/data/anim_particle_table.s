@@ -384,6 +384,8 @@ animparticle DREEPY_IMG, (32 * 32 * 2) / 2, ANIM_TAG_DREEPY
 animparticle ICE_ROCK_IMG, (64 * 64 * 3) / 2, ANIM_TAG_ICE_ROCK_SINGLE @;For Max Hailstorm in Multi battles
 animparticle STONE_PILLAR_IMG, (64 * 64 * 3) / 2, ANIM_TAG_STONE_PILLAR_MULTI @;For Max Rockfall in Multi battles
 animparticle TERASTAL_SYMBOL_IMG,	0x200,	ANIM_TAG_TERASTAL_SYMBOL
+animparticle OMEGA_SYMBOL_IMG, (32 * 32) / 2, ANIM_TAG_OMEGA_SYMBOL
+animparticle ALPHA_SYMBOL_IMG, (32 * 32) / 2, ANIM_TAG_ALPHA_SYMBOL
 
 gBattleAnimPaletteTable:
 animparticlepal 0x8c028b4,	ANIM_TAG_BONE
@@ -756,3 +758,5 @@ animparticlepal DREEPY_PAL, ANIM_TAG_DREEPY
 animparticlepal ICE_ROCK_PAL, ANIM_TAG_ICE_ROCK_SINGLE
 animparticlepal STONE_PILLAR_PAL, ANIM_TAG_STONE_PILLAR_MULTI
 animparticlepal TERASTAL_SYMBOL_PAL,	ANIM_TAG_TERASTAL_SYMBOL
+animparticlepal OMEGA_SYMBOL_PAL, ANIM_TAG_OMEGA_SYMBOL
+animparticlepal ALPHA_SYMBOL_PAL, ANIM_TAG_ALPHA_SYMBOL

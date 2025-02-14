@@ -159,12 +159,23 @@ BattleScript_AbsorbLiquidOoze:
 .global BS_004_SetBurnChance
 BS_004_SetBurnChance:
 	jumpifmove MOVE_BURNINGJEALOUSY BS_BurningJealousy
+	jumpifmove MOVE_MATCHAGOTCHA MatchaGotchaBS
 	setmoveeffect MOVE_EFFECT_BURN
 	goto BS_STANDARD_HIT
 
 BS_BurningJealousy:
 	callasm TrySetBurningJealousyMoveEffect
 	goto BS_STANDARD_HIT
+
+MatchaGotchaBS:
+	attackcanceler
+	accuracycheck BS_MOVE_MISSED 0x0
+	call STANDARD_DAMAGE
+	setmoveeffect MOVE_EFFECT_BURN
+	seteffectwithchancetarget
+	jumpifmovehadnoeffect BS_MOVE_FAINT
+	negativedamage
+	goto DrainHPBSP2
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -248,34 +259,25 @@ CopycatBS:
 .global BS_010_RaiseUserAtk1
 BS_010_RaiseUserAtk1:
 	setstatchanger STAT_ATK | INCREASE_1
-	jumpifmove MOVE_HONECLAWS HoneClawsBS
 	jumpifnotbattletype BATTLE_DOUBLE BS_BUFF_ATK_STATS
 	jumpifmove MOVE_HOWL HowlBS @;Only difference is that it raises partner's attack in Doubles too
 	goto BS_BUFF_ATK_STATS
 
-HoneClawsBS:
-	attackcanceler
-	attackstring
-	ppreduce
-	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX HoneClaws_Atk
-	jumpifstat BANK_TARGET EQUALS STAT_ACC STAT_MAX 0x81BC5A3
-
-HoneClaws_Atk:
-	attackanimation
-	waitanimation
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_ACC, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	@;setstatchanger STAT_ATK | INCREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN HoneClaws_Acc
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 HoneClaws_Acc
-	printfromtable 0x83C4548
+BattleScript_CantRaiseMultipleStats:
+	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
+	jumpifability BANK_ATTACKER ABILITY_CONTRARY BattleScript_CantLowerMultipleStatsPrintString
+BattleScript_CantRaiseMultipleStatsPrintString:
+	printstring 0x19 @;STRINGID_STATSWONTINCREASE2
 	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 
-HoneClaws_Acc:
-	setstatchanger STAT_ACC | INCREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable 0x83C4548
+BattleScript_CantLowerMultipleStats:
+	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
+	jumpifability BANK_TARGET ABILITY_CONTRARY BattleScript_CantRaiseMultipleStatsPrintString
+BattleScript_CantLowerMultipleStatsPrintString:
+	printstring 0x15D @;STRINGID_STATSWONTDECREASE2
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
@@ -451,161 +453,8 @@ BS_012_RaiseUserSpd1:
 
 .global BS_013_RaiseUserSpAtk1
 BS_013_RaiseUserSpAtk1:
-	attackcanceler
-	attackstring
-	ppreduce
 	setstatchanger STAT_SPATK | INCREASE_1
-	jumpifmove MOVE_GROWTH GrowthBS
-	jumpifmove MOVE_WORKUP WorkUpBS
-	jumpifmove MOVE_ROTOTILLER RototillerBS
-	jumpifmove MOVE_GEARUP GearUpBS
-	goto 0x81BAB5D
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-GrowthBS:
-	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX Growth_RaiseAtk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPATK STAT_MAX 0x81BC5A3
-
-Growth_RaiseAtk:
-	attackanimation
-	waitanimation
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setstatchanger STAT_ATK | INCREASE_1
-	callasm ModifyGrowthInSun
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN Growth_RaiseSpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 Growth_RaiseSpAtk
-	printfromtable 0x83C4548
-	waitmessage DELAY_1SECOND
-
-Growth_RaiseSpAtk:
-	setstatchanger STAT_SPATK | INCREASE_1
-	callasm ModifyGrowthInSun
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable 0x83C4548
-	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-WorkUpBS:
-	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX WorkUp_RaiseAtk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPATK STAT_MAX 0x81BC5A3
-
-WorkUp_RaiseAtk:
-	attackanimation
-	waitanimation
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setstatchanger STAT_ATK | INCREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN WorkUp_RaiseSpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WorkUp_RaiseSpAtk
-	printfromtable 0x83C4548
-	waitmessage DELAY_1SECOND
-
-WorkUp_RaiseSpAtk:
-	setstatchanger STAT_SPATK | INCREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable 0x83C4548
-	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-RototillerBS:
-	pause DELAY_HALFSECOND
-	setbyte BATTLE_COMMUNICATION 0x0
-BattleScript_RototillerLoop:
-	flowershieldlooper 0x0 BattleScript_RototillerStatBoost BattleScript_RototillerDidntWork
-	goto BS_MOVE_END
-
-BattleScript_RototillerStatBoost:
-	jumpifstatcanberaised BANK_TARGET STAT_ATK Rototiller_Atk
-	jumpifstatcanberaised BANK_TARGET STAT_SPATK Rototiller_Atk
-	goto RototillerStatsWontGoHigher
-
-Rototiller_Atk:
-	attackanimation
-	waitanimation
-	setbyte ANIM_TARGETS_HIT 0x1
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setstatchanger STAT_ATK | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR Rototiller_SpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 Rototiller_SpAtk
-	printfromtable 0x83C4548
-	waitmessage DELAY_1SECOND
-	
-Rototiller_SpAtk:
-	setstatchanger STAT_SPATK | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_RototillerLoop
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_RototillerLoop
-	printfromtable 0x83C4548
-	waitmessage DELAY_1SECOND
-	goto BattleScript_RototillerLoop
-
-RototillerStatsWontGoHigher:
-	setbyte MULTISTRING_CHOOSER 0x3
-	swapattackerwithtarget @;So the correct string plays
-	printfromtable gFlowerShieldStringIds
-	swapattackerwithtarget
-	waitmessage DELAY_1SECOND
-	goto BattleScript_RototillerLoop
-
-BattleScript_RototillerDidntWork:
-	printfromtable gFlowerShieldStringIds
-	waitmessage DELAY_1SECOND
-	goto BattleScript_RototillerLoop
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-GearUpBS:
-	pause DELAY_HALFSECOND
-	setbyte BATTLE_COMMUNICATION 0x0
-BattleScript_GearUpLoop:
-	flowershieldlooper 0x1 BattleScript_GearUpStatBoost BattleScript_GearUpDidntWork
-	goto BS_MOVE_END
-
-BattleScript_GearUpStatBoost:
-	jumpifstatcanberaised BANK_TARGET STAT_ATK GearUp_Atk
-	jumpifstatcanberaised BANK_TARGET STAT_SPATK GearUp_Atk
-	goto GearUpStatsWontGoHigher
-
-GearUp_Atk:
-	attackanimation
-	waitanimation
-	setbyte ANIM_TARGETS_HIT 0x1
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setstatchanger STAT_ATK | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR GearUp_SpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GearUp_SpAtk
-	printfromtable 0x83C4548
-	waitmessage DELAY_1SECOND
-	
-GearUp_SpAtk:
-	setstatchanger STAT_SPATK | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_GearUpLoop
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_GearUpLoop
-	printfromtable 0x83C4548
-	waitmessage DELAY_1SECOND
-	goto BattleScript_GearUpLoop
-
-GearUpStatsWontGoHigher:
-	setbyte MULTISTRING_CHOOSER 0x3
-	swapattackerwithtarget @;So the correct string plays
-	printfromtable gFlowerShieldStringIds
-	swapattackerwithtarget
-	waitmessage DELAY_1SECOND
-	goto BattleScript_GearUpLoop
-
-BattleScript_GearUpDidntWork:
-	printfromtable gFlowerShieldStringIds
-	waitmessage DELAY_1SECOND
-	goto BattleScript_GearUpLoop
+	goto BS_BUFF_ATK_STATS
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -998,6 +847,7 @@ BS_032_Recover:
 	jumpifmove MOVE_ROOST RoostBS
 	jumpifmove MOVE_LIFEDEW LifeDewBS
 	jumpifmove MOVE_JUNGLEHEALING JungleHealingBS
+	jumpifmove MOVE_LUNARBLESSING JungleHealingBS
 
 RecoverBS:
 	setdamageasrestorehalfmaxhp 0x81BBD8D BANK_ATTACKER @;BattleScript_AlreadyAtFullHp
@@ -1290,6 +1140,7 @@ BS_045_HighJumpKick:
 	typecalc2
 	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	jumpifmovehadnoeffect HighJumpKickMiss
+	jumpifmove MOVE_AXEKICK AxeKick_BS
 	goto BS_HIT_FROM_ATTACKSTRING
 
 HighJumpKickMiss:
@@ -1308,6 +1159,10 @@ HighJumpKickMiss:
 	faintpokemon BANK_ATTACKER 0x0 0x0
 	orbyte OUTCOME OUTCOME_MISSED
 	goto BS_MOVE_END
+
+AxeKick_BS:
+	setmoveeffect MOVE_EFFECT_CONFUSION
+	goto BS_HIT_FROM_ATTACKSTRING
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1480,8 +1335,40 @@ BS_058_LowerTargetAtk2:
 
 .global BS_059_LowerTargetDef2
 BS_059_LowerTargetDef2:
+	jumpifmove MOVE_SPICYEXTRACT SpicyExtractBS
 	setstatchanger STAT_DEF | DECREASE_2
 	goto 0x81BABCF
+
+SpicyExtractBS:
+    jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+    attackcanceler
+    attackstring
+    ppreduce
+    setbyte ANIM_TARGETS_HIT 0x0
+    setbyte STAT_ANIM_PLAYED 0x0
+    jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX SpicyExtract_RaiseAtk
+    jumpifstat BANK_TARGET GREATERTHAN STAT_DEF STAT_MIN SpicyExtract_RaiseAtk
+    goto FAILED_PRE
+
+SpicyExtract_RaiseAtk:
+    attackanimation
+    waitanimation
+    setbyte ANIM_TARGETS_HIT 0x1 @;Prevent the attack animation from playing again
+    playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES | STAT_ANIM_BY_TWO
+    setstatchanger STAT_ATK | INCREASE_2
+    statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN SpicyExtract_DropDef
+    jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 SpicyExtract_DropDef
+    printfromtable gStatUpStringIds
+    waitmessage DELAY_1SECOND
+
+SpicyExtract_DropDef:
+    playstatchangeanimation BANK_TARGET, STAT_ANIM_DEF, STAT_ANIM_DOWN | STAT_ANIM_IGNORE_ABILITIES | STAT_ANIM_BY_TWO
+    setstatchanger STAT_DEF | DECREASE_2
+    statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+    jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+    printfromtable gStatUpStringIds
+    waitmessage DELAY_1SECOND
+    goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1634,13 +1521,28 @@ BS_068_LowerTargetAtk1Chance:
 .global BS_069_LowerTargetDef1Chance
 BS_069_LowerTargetDef1Chance:
 	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
+	jumpifmove MOVE_TRIPLEARROWS TripleArrowsBS
 	goto BS_STANDARD_HIT
+
+TripleArrowsBS:
+	attackcanceler
+	accuracycheck BS_MOVE_MISSED 0x0
+	call STANDARD_DAMAGE
+	seteffectwithchancetarget
+	setmoveeffect MOVE_EFFECT_FLINCH
+	seteffectwithchancetarget
+	goto BS_MOVE_FAINT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_070_LowerTargetSpd1Chance
 BS_070_LowerTargetSpd1Chance:
+	jumpifmove MOVE_SYRUPBOMB SyrupBombBS
 	setmoveeffect MOVE_EFFECT_SPD_MINUS_1
+	goto BS_STANDARD_HIT
+
+SyrupBombBS:
+	setmoveeffect MOVE_EFFECT_SYRUP_BOMB
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1656,6 +1558,7 @@ BS_071_LowerTargetSpAtk1Chance:
 BS_072_LowerTargetSpDef1Chance:
 	jumpifmove MOVE_ACIDSPRAY AcidSprayBS
 	jumpifmove MOVE_SEEDFLARE AcidSprayBS
+	jumpifmove MOVE_LUMINACRASH AcidSprayBS
 	setmoveeffect MOVE_EFFECT_SP_DEF_MINUS_1
 	goto BS_STANDARD_HIT
 
@@ -1699,6 +1602,7 @@ BattleScript_FirstChargingTurn:
 	jumpifmove MOVE_SHADOWFORCE PrintShadowForceString
 	jumpifmove MOVE_PHANTOMFORCE PrintShadowForceString
 	jumpifmove MOVE_METEORBEAM PrintMeteorBeamString
+	jumpifmove MOVE_ELECTROSHOT PrintElectroShotString
 	copyarray MULTISTRING_CHOOSER TWOTURN_STRINGID 0x1
 	printfromtable 0x83C455C
 	return
@@ -1723,6 +1627,12 @@ PrintShadowForceString:
 
 PrintMeteorBeamString:
 	setword BATTLE_STRING_LOADER gText_MeteorBeamCharge
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+PrintElectroShotString:
+	setword BATTLE_STRING_LOADER gText_ElectroShotCharge
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	return
@@ -1780,7 +1690,12 @@ IceBurnEffectBS:
 
 .global BS_076_SetConfusionChance
 BS_076_SetConfusionChance:
+	jumpifmove MOVE_ALLURINGVOICE AlluringVoice_BS
 	setmoveeffect MOVE_EFFECT_CONFUSION
+	goto BS_STANDARD_HIT
+
+AlluringVoice_BS:
+	callasm TrySetAlluringVoiceMoveEffect
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1800,6 +1715,7 @@ BS_078_Blank:
 
 .global BS_079_Substitute
 BS_079_Substitute:
+	jumpifmove MOVE_SHEDTAIL ShedTailBS
 	attackcanceler
 	ppreduce
 	attackstring
@@ -1809,6 +1725,58 @@ BS_079_Substitute:
 	jumpifbyte NOTEQUALS MULTISTRING_CHOOSER 0x1 0x81BB2CA
 	pause DELAY_HALFSECOND
 	goto 0x81BB2D0
+
+ShedTailBS:
+    ppreduce
+    attackstring
+	callasm FailShedTailIfLowHP
+    waitstateatk
+    jumpifcannotswitch BANK_ATTACKER | ATK4F_DONT_CHECK_STATUSES FAILED_PRE
+    jumpifbehindsubstitute BANK_ATTACKER 0x81BB2DD
+    setsubstituteeffect
+    jumpifbyte NOTEQUALS MULTISTRING_CHOOSER 0x1 BattleScript_SubstituteAnim
+    pause DELAY_HALFSECOND
+    goto 0x81BB2D0
+
+BattleScript_SubstituteAnim:
+    playanimation BANK_TARGET ANIM_SUBSTITUTE2 0x0
+    waitanimation
+	setdamagetobankhealthfraction BANK_ATTACKER 2 0x0 @;50 % of Base Max HP
+    graphicalhpupdate BANK_ATTACKER
+    datahpupdate BANK_ATTACKER
+
+BattleScript_SubstituteString:
+	setword BATTLE_STRING_LOADER gText_ShedTailString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+
+ShedTailSwitchOutBS:
+    jumpifcannotswitch BANK_ATTACKER | ATK4F_DONT_CHECK_STATUSES FAILED_PRE
+    attackanimation
+    waitanimation
+    callasm SetBatonPassSwitchingBit
+    copybyte SWITCHING_BANK USER_BANK
+    copyarray CURRENT_MOVE BACKUP_HWORD 2
+    callasm ClearAttackerDidDamageOnce
+    callasm ClearTargetStatFellThisTurn @;So Eject Pack doesn't activate
+    openpartyscreen BANK_SWITCHING FAILED
+    switchoutabilities BANK_SWITCHING
+    waitstateatk
+    switchhandleorder BANK_SWITCHING 0x2
+    returntoball BANK_SWITCHING
+    callasm TryRemovePrimalWeatherSwitchingBank
+    getswitchedmondata BANK_SWITCHING
+    switchindataupdate BANK_SWITCHING
+    hpthresholds BANK_SWITCHING
+    printstring 0x3
+    switchinanim BANK_SWITCHING 0x1
+    waitstateatk
+    switchineffects BANK_SWITCHING
+    callasm ClearBatonPassSwitchingBit
+    copyarray CURRENT_MOVE BACKUP_HWORD 2
+    playanimation BANK_SWITCHING ANIM_SUBSTITUTE2 0x0
+    waitanimation
+    goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1953,6 +1921,7 @@ BS_088_Psywave:
 BS_089_Counter:
 	attackcanceler
 	jumpifmove MOVE_METALBURST MetalBurstBS
+	jumpifmove MOVE_COMEUPPANCE MetalBurstBS
 	
 CounterBS:
 	counterdamagecalculator FAILED_PRE
@@ -2239,11 +2208,16 @@ BS_104_TripleKick:
 	attackstring
 	ppreduce
 	jumpifmove MOVE_TRIPLEAXEL BS_TripleAxel
+	jumpifmove MOVE_POPULATIONBOMB BS_PopulationBomb
 	addbyte TRIPLE_KICK_POWER 10
 	goto BS_HIT_FROM_DAMAGE_CALC
 
 BS_TripleAxel:
 	addbyte TRIPLE_KICK_POWER 20
+	goto BS_HIT_FROM_DAMAGE_CALC
+
+BS_PopulationBomb:
+	addbyte TRIPLE_KICK_POWER 0
 	goto BS_HIT_FROM_DAMAGE_CALC
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2456,9 +2430,56 @@ BS_115_Sandstorm:
 	attackcanceler
 	attackstringnoprotean
 	ppreduce
+	jumpifweather WEATHER_SANDSTORM_ANY, SandstormSkipPrimalWeatherCheck @;Fails normally
+	tryblockweatherwithprimalweather
+SandstormSkipPrimalWeatherCheck:
 	setsandstorm
 	tryactivateprotean
 	goto BS_MOVE_WEATHER_CHANGE
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_ExtremelyHarshSunlightWasNotLessened:
+	call BattleScript_ExtremelyHarshSunlightWasNotLessenedRet
+	goto BS_MOVE_END
+
+BattleScript_NoReliefFromHeavyRain:
+	call BattleScript_NoReliefFromHeavyRainRet
+	goto BS_MOVE_END
+
+BattleScript_MysteriousAirCurrentBlowsOn:
+	call BattleScript_MysteriousAirCurrentBlowsOnRet
+	goto BS_MOVE_END
+
+.global BattleScript_ExtremelyHarshSunlightWasNotLessenedRet
+.global BattleScript_ExtremelyHarshSunlightWasNotLessenedRetSkipPause
+BattleScript_ExtremelyHarshSunlightWasNotLessenedRet:
+	pause DELAY_HALFSECOND
+BattleScript_ExtremelyHarshSunlightWasNotLessenedRetSkipPause:
+	setword BATTLE_STRING_LOADER gText_HarshSunStopsWeatherChange
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+.global BattleScript_NoReliefFromHeavyRainRet
+.global BattleScript_NoReliefFromHeavyRainRetSkipPause
+BattleScript_NoReliefFromHeavyRainRet:
+	pause DELAY_HALFSECOND
+BattleScript_NoReliefFromHeavyRainRetSkipPause:
+	setword BATTLE_STRING_LOADER gText_HeavyRainStopsWeatherChange
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+.global BattleScript_MysteriousAirCurrentBlowsOnRet
+.global BattleScript_MysteriousAirCurrentBlowsOnRetSkipPause
+BattleScript_MysteriousAirCurrentBlowsOnRet:
+	pause DELAY_HALFSECOND
+BattleScript_MysteriousAirCurrentBlowsOnRetSkipPause:
+	setword BATTLE_STRING_LOADER gText_AirCurrentStopsWeatherChange
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -2621,6 +2642,7 @@ BS_124_Safeguard:
 .global BS_125_BurnUp
 BS_125_BurnUp:
 	attackcanceler
+	jumpifnotmove MOVE_DOUBLESHOCK DoubleShockBS
 	jumpiftype BANK_ATTACKER TYPE_FIRE DoBurnUp
 	goto FAILED_PRE
 
@@ -2640,6 +2662,28 @@ DoBurnUp:
 	waitmessage DELAY_1SECOND
 
 BurnUpEnd:
+	end
+
+DoubleShockBS:
+	jumpiftype BANK_ATTACKER TYPE_ELECTRIC DoDoubleShock
+	goto FAILED_PRE
+
+DoDoubleShock:
+	accuracycheck BS_MOVE_MISSED 0x0
+	call STANDARD_DAMAGE
+	seteffectwithchancetarget
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
+	jumpifmovehadnoeffect BS_MOVE_END
+	setbyte CMD49_STATE 0x0
+	cmd49 0x0 0x0
+	jumpiffainted BANK_ATTACKER DoubleShockEnd	
+	callasm DoubleShockFunc
+	setword BATTLE_STRING_LOADER gText_DoubleShockString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+
+DoubleShockEnd:
 	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2827,6 +2871,8 @@ BS_128_Pursuit:
 .global BattleScript_SideStatusWoreOffRet
 BS_129_RapidSpin:
 	jumpifmove MOVE_DEFOG DefogBS
+	jumpifmove MOVE_MORTALSPIN MortalSpinBS
+	jumpifmove MOVE_TIDYUP TidyUpBS
 	
 RapidSpinBS:
 	setmoveeffect MOVE_EFFECT_RAPIDSPIN | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
@@ -2882,6 +2928,75 @@ BattleScript_SideStatusWoreOffRet:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	return
+
+MortalSpinBS:
+	attackcanceler
+	accuracycheck BS_MOVE_MISSED 0x0
+	setmoveeffect MOVE_EFFECT_RAPIDSPIN | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
+	call STANDARD_DAMAGE
+	seteffectwithchancetarget
+	setmoveeffect MOVE_EFFECT_POISON
+	seteffectwithchancetarget
+	goto BS_MOVE_FAINT
+
+TidyUpBS:
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifbehindsubstitute BANK_TARGET SecondTidyUpCheck_TryFail
+	accuracycheck SecondTidyUpCheck_FailPlayResultMessage 0x0
+	setstatchanger STAT_EVSN | DECREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR SecondTidyUpCheck_TryFail
+	jumpifbyte LESSTHAN MULTISTRING_CHOOSER 0x2 TidyUpLoweredStat
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 SecondTidyUpCheck_TryFail
+	pause DELAY_HALFSECOND
+	printfromtable gStatDownStringIds
+	waitmessage DELAY_1SECOND
+SecondTidyUpCheck:
+	callasm DefogHelperFunc @;Automatically redirects to BattleScript_TidyUpAdditionalEffects if applicable
+	goto BS_MOVE_END
+
+SecondTidyUpCheck_TryFail:
+	setword OUTCOME, OUTCOME_NO_EFFECT
+SecondTidyUpCheck_FailPlayResultMessage:
+	pause 0x20
+	resultmessage
+	waitmessage DELAY_1SECOND
+	goto SecondTidyUpCheck
+
+TidyUpLoweredStat:
+	attackanimation
+	waitanimation
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_SPD, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN TidyUpSpd_Up
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 TidyUpSpd_Up
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+TidyUpSpd_Up:
+	setstatchanger STAT_SPD | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+BattleScript_TidyUpAdditionalEffects_PlayAttackAnim:
+	bicword OUTCOME, OUTCOME_NO_EFFECT
+BattleScript_TidyUpAdditionalEffects:
+	attackanimation @;Should only play after the Second TidyUp Check
+	waitanimation
+	jumpifweather weather_circus SkipRemoveFogBS
+	jumpifweather weather_fog | weather_permament_fog RemoveFogBS
+
+IS_Remove:
+	seteffectprimary
+	playanimation2 BANK_ATTACKER ANIM_ARG_1 0x0
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -2940,6 +3055,9 @@ BS_136_RainDance:
 	attackcanceler
 	attackstringnoprotean
 	ppreduce
+	jumpifweather WEATHER_RAIN_ANY, RainDanceSkipPrimalWeatherCheck @;Fails normally
+	tryblockweatherwithprimalweather
+RainDanceSkipPrimalWeatherCheck:
 	setrain
 	tryactivateprotean
 	goto BS_MOVE_WEATHER_CHANGE
@@ -2951,6 +3069,9 @@ BS_137_SunnyDay:
 	attackcanceler
 	attackstringnoprotean
 	ppreduce
+	jumpifweather WEATHER_SUN_ANY, SunnyDaySkipPrimalWeatherCheck @;Fails normally
+	tryblockweatherwithprimalweather
+SunnyDaySkipPrimalWeatherCheck:
 	setsunny
 	tryactivateprotean
 	goto BS_MOVE_WEATHER_CHANGE
@@ -3082,6 +3203,7 @@ BS_145_SkullBash:
 	setbyte TWOTURN_STRINGID, 0x2
 	call BattleScript_FirstChargingTurn
 	jumpifmove MOVE_METEORBEAM BS_MeteorBeam
+	jumpifmove MOVE_ELECTROSHOT BS_ElectroShot
 	setstatchanger STAT_DEF | INCREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
@@ -3102,6 +3224,23 @@ BS_MeteorBeam:
 	waitmessage DELAY_1SECOND
 	call BattleScript_CheckPowerHerb
 	goto BS_MOVE_END
+
+BS_ElectroShot:
+	setstatchanger STAT_SPATK | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN SkipElectroShotStatBuff
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 SkipElectroShotStatBuff
+	setgraphicalstatchangevalues
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+SkipElectroShotStatBuff:
+	call BattleScript_CheckPowerHerb
+	call BattleScriptCheckRain
+	goto BS_MOVE_END
+
+BattleScriptCheckRain:
+	jumpifweather WEATHER_RAIN_ANY, TwoTurnMovesRaidBossSkipCharge
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -3141,9 +3280,24 @@ BS_149_Gust:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_150_Blank @;Was Stomp
-BS_150_Blank:
-	goto BS_STANDARD_HIT
+.global BS_150_StoneAxe @;Was Stomp
+BS_150_StoneAxe:
+	attackcanceler
+	accuracycheck BS_MOVE_MISSED 0x0
+	call STANDARD_DAMAGE
+	seteffectwithchancetarget
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
+	jumpifmovehadnoeffect BS_MOVE_END
+	setbyte CMD49_STATE 0x0
+	cmd49 0x0 0x0
+	jumpiffainted BANK_ATTACKER StoneAxeEnd
+	setspikes StoneAxeEnd
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+
+StoneAxeEnd:
+	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -3260,7 +3414,6 @@ BS_SecondTurnSemiInvulnerable:
 	setbyte ANIM_TURN, 0x1
 	clearstatus BANK_ATTACKER
 	orword HIT_MARKER HITMARKER_NO_PPDEDUCT
-	jumpifmove MOVE_SKYDROP SkyDropDropBS
 	jumpifnotmove MOVE_BOUNCE BS_SemiInvulnerableTryHit
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 
@@ -3415,12 +3568,30 @@ BS_163_Blank:
 
 .global BS_164_SetHail
 BS_164_SetHail:
+	jumpifmove MOVE_CHILLYRECEPTION ChillyReceptionBS
+HailBS:
 	attackcanceler
 	attackstringnoprotean
 	ppreduce
+	jumpifweather WEATHER_HAIL_ANY, HailSkipPrimalWeatherCheck @;Fails normally
+	tryblockweatherwithprimalweather
+HailSkipPrimalWeatherCheck:
 	sethail
 	tryactivateprotean
-	goto BS_MOVE_WEATHER_CHANGE
+	attackanimation @;Don't use BS_MOVE_WEATHER_CHANGE because of special logic for Ice Face
+	waitanimation
+	printfromtable 0x83C44F4 @;gMoveWeatherChangeStringIds
+	waitmessage DELAY_1SECOND
+	jumpifmovehadnoeffect BS_MOVE_END @;Prevents Ice Face from activatig on fail
+	call BS_WEATHER_FORM_CHANGES
+	jumpifmove MOVE_CHILLYRECEPTION BattleScript_TeleportSwitch
+	goto BS_MOVE_END
+
+ChillyReceptionBS:
+	setword BATTLE_STRING_LOADER gText_ChillyReception
+	printstring 0x184
+	waitmessage DELAY_HALFSECOND
+	goto HailBS
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -3666,6 +3837,7 @@ BS_176_HelpingHand:
 	attackcanceler
 	jumpifmove MOVE_DECORATE BS_Decorate
 	jumpifmove MOVE_COACHING BS_Coaching
+	jumpifmove MOVE_DRAGONCHEER BS_DragonCheer
 	attackstringnoprotean
 	ppreduce
 	sethelpinghand FAILED
@@ -3744,6 +3916,39 @@ BattleScript_CantRaiseMultipleTargetStats:
 	printstring 25 @;STRINGID_STATSWONTINCREASE2
 	waitmessage DELAY_1SECOND
 	swapattackerwithtarget
+	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BS_DragonCheer:
+	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED
+	jumpiffainted BANK_TARGET FAILED
+	jumpifprotectedbycraftyshield BANK_TARGET FAILED
+	attackstring
+	ppreduce
+	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX DragonCheer_ACC
+	jumpifstat BANK_TARGET EQUALS STAT_SPATK STAT_MAX BattleScript_CantRaiseMultipleTargetStats
+
+DragonCheer_ACC:
+	attackanimation
+	waitanimation
+	setbyte STAT_ANIM_PLAYED 0x0
+	jumpiftype BANK_TARGET TYPE_DRAGON DragonCheer_ACC2
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ACC, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ACC | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+DragonCheer_ACC2:
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ACC, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ACC | INCREASE_2
+	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3874,14 +4079,17 @@ AquaRingBS:
 
 .global BS_182_Superpower
 BS_182_Superpower:
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_CLOSECOMBAT CloseCombatBS
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_DRAGONASCENT CloseCombatBS
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_HAMMERARM HammerArmBS
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_ICEHAMMER HammerArmBS
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_CLANGINGSCALES ClangingScalesBS
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_VCREATE VCreateBS
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_HYPERSPACEHOLE HyperspaceHoleBS
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_HYPERSPACEFURY HyperspaceFuryBS
+	jumpifmove MOVE_CLOSECOMBAT CloseCombatBS
+	jumpifmove MOVE_DRAGONASCENT CloseCombatBS
+	jumpifmove MOVE_HEADLONGRUSH CloseCombatBS
+	jumpifmove MOVE_ARMORCANNON CloseCombatBS
+	jumpifmove MOVE_HAMMERARM HammerArmBS
+	jumpifmove MOVE_ICEHAMMER HammerArmBS
+	jumpifmove MOVE_CLANGINGSCALES ClangingScalesBS
+	jumpifmove MOVE_VCREATE VCreateBS
+	jumpifmove MOVE_HYPERSPACEFURY HyperspaceFuryBS
+	jumpifmove MOVE_MAKEITRAIN MakeItRainBS
+	jumpifmove MOVE_SPINOUT SpinOutBS
 	setmoveeffect MOVE_EFFECT_ATK_DEF_DOWN | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
 	goto BS_STANDARD_HIT
 
@@ -3951,16 +4159,39 @@ VC_LowerDef:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-HyperspaceHoleBS:
-	attackcanceler
-	goto FeintSkipBS
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
 HyperspaceFuryBS:
 	attackcanceler
 	setmoveeffect MOVE_EFFECT_DEF_MINUS_1 | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
 	goto FeintSkipBS
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+MakeItRainBS:
+	attackcanceler
+    accuracycheck BS_MOVE_MISSED 0x0
+    call STANDARD_DAMAGE
+    jumpifstat BANK_ATTACKER GREATERTHAN STAT_SPATK STAT_MIN MIT_LowerSpAtk
+    setmoveeffect MOVE_EFFECT_PAYDAY
+    seteffectprimary
+    goto BS_MOVE_END
+
+MIT_LowerSpAtk:
+    setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_SPATK, STAT_ANIM_DOWN | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_SPATK | DECREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_FAINT
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_FAINT
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	setmoveeffect MOVE_EFFECT_PAYDAY
+    seteffectprimary
+    goto BS_MOVE_FAINT
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+SpinOutBS:
+	setmoveeffect MOVE_EFFECT_SPD_MINUS_2 | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
+	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -4087,15 +4318,15 @@ BS_191_SkillSwap:
 	jumpifmove MOVE_ENTRAINMENT EntrainmentBS
 	jumpifmove MOVE_COREENFORCER CoreEnforcerBS
 	jumpifmove MOVE_SIMPLEBEAM SimpleBeamBS
+	jumpifmove MOVE_DOODLE EntrainmentBS
 	
 SkillSwapBS:
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
-	attackstringnoprotean
+	attackstring
 	ppreduce
 	abilityswap FAILED
-	tryactivateprotean
 	attackanimation
 	waitanimation
 	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
@@ -4111,7 +4342,9 @@ SkillSwapBS:
 	printstring 0xB8
 	waitmessage DELAY_1SECOND
 	tryactivateswitchinability BANK_ATTACKER
+	callasm RestoreOriginalAttackerAndTarget
 	tryactivateswitchinability BANK_TARGET
+	callasm RestoreOriginalAttackerAndTarget
 	goto BS_MOVE_END
 
 GastroAcidBS:
@@ -4132,14 +4365,22 @@ GastroAcidBS:
 	call 0x81BD298 @;Try to revert Cherrim and Castform
 	goto BS_MOVE_END
 
-WorrySeedBS:
 EntrainmentBS:
+	attackcanceler
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	accuracycheck BS_MOVE_MISSED 0x0
+	attackstringnoprotean
+	ppreduce
+	goto WorrySeedBS_ChangeAbility
+
+WorrySeedBS:
 SimpleBeamBS:
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstringnoprotean
 	ppreduce
+WorrySeedBS_ChangeAbility:
 	callasm AbilityChangeBSFunc
 	tryactivateprotean
 	attackanimation
@@ -4158,7 +4399,9 @@ SimpleBeamBS:
 	call BattleScript_TryRemoveIllusion
 	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81BD298 @;Try to revert Cherrim and Castform
+	callasm RestoreOriginalAttackerAndTarget
 	tryactivateswitchinability BANK_TARGET
+	callasm RestoreOriginalAttackerAndTarget
 	goto BS_MOVE_END
 
 CoreEnforcerBS:
@@ -4264,15 +4507,169 @@ BS_197_SecretPower:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_198_Blank @;Was 33% Recoil
-BS_198_Blank:
-	goto BS_STANDARD_HIT
+.global BS_198_RaiseUserAtkSpAtk @;Was 33% Recoil
+BS_198_RaiseUserAtkSpAtk:
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifmove MOVE_ROTOTILLER RototillerBS
+	jumpifmove MOVE_GEARUP GearUpBS
+
+@;WorkUpBS
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX WorkUp_RaiseAtk
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPATK STAT_MAX BattleScript_CantRaiseMultipleStats
+
+WorkUp_RaiseAtk:
+	attackanimation
+	waitanimation
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_1
+	callasm ModifyGrowthInSun
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN WorkUp_RaiseSpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WorkUp_RaiseSpAtk
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+WorkUp_RaiseSpAtk:
+	setstatchanger STAT_SPATK | INCREASE_1
+	callasm ModifyGrowthInSun
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+RototillerBS:
+	pause DELAY_HALFSECOND
+	setbyte BATTLE_COMMUNICATION 0x0
+BattleScript_RototillerLoop:
+	flowershieldlooper 0x0 BattleScript_RototillerStatBoost BattleScript_RototillerDidntWork
+	goto BS_MOVE_END
+
+BattleScript_RototillerStatBoost:
+	jumpifstatcanberaised BANK_TARGET STAT_ATK Rototiller_Atk
+	jumpifstatcanberaised BANK_TARGET STAT_SPATK Rototiller_Atk
+	goto RototillerStatsWontGoHigher
+
+Rototiller_Atk:
+	attackanimation
+	waitanimation
+	setbyte ANIM_TARGETS_HIT 0x1
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR Rototiller_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 Rototiller_SpAtk
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	
+Rototiller_SpAtk:
+	setstatchanger STAT_SPATK | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_RototillerLoop
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_RototillerLoop
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	goto BattleScript_RototillerLoop
+
+RototillerStatsWontGoHigher:
+	setbyte MULTISTRING_CHOOSER 0x3
+	swapattackerwithtarget @;So the correct string plays
+	printfromtable gFlowerShieldStringIds
+	swapattackerwithtarget
+	waitmessage DELAY_1SECOND
+	goto BattleScript_RototillerLoop
+
+BattleScript_RototillerDidntWork:
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 4 BattleScript_RototillerDidntWork_ShowAbility
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	goto BattleScript_RototillerLoop
+
+BattleScript_RototillerDidntWork_ShowAbility:
+	call BattleScript_AbilityPopUp
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BattleScript_RototillerLoop
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+GearUpBS:
+	pause DELAY_HALFSECOND
+	setbyte BATTLE_COMMUNICATION 0x0
+BattleScript_GearUpLoop:
+	flowershieldlooper 0x1 BattleScript_GearUpStatBoost BattleScript_GearUpDidntWork
+	goto BS_MOVE_END
+
+BattleScript_GearUpStatBoost:
+	jumpifstatcanberaised BANK_TARGET STAT_ATK GearUp_Atk
+	jumpifstatcanberaised BANK_TARGET STAT_SPATK GearUp_Atk
+	goto GearUpStatsWontGoHigher
+
+GearUp_Atk:
+	attackanimation
+	waitanimation
+	setbyte ANIM_TARGETS_HIT 0x1
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR GearUp_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GearUp_SpAtk
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	
+GearUp_SpAtk:
+	setstatchanger STAT_SPATK | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_GearUpLoop
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_GearUpLoop
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	goto BattleScript_GearUpLoop
+
+GearUpStatsWontGoHigher:
+	setbyte MULTISTRING_CHOOSER 0x3
+	swapattackerwithtarget @;So the correct string plays
+	printfromtable gFlowerShieldStringIds
+	swapattackerwithtarget
+	waitmessage DELAY_1SECOND
+	goto BattleScript_GearUpLoop
+
+BattleScript_GearUpDidntWork:
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	goto BattleScript_GearUpLoop
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_199_Blank @;Was Teeter Dance
-BS_199_Blank:
-	goto BS_STANDARD_HIT
+.global BS_199_RaiseUserAtkAcc @;Was Teeter Dance
+BS_199_RaiseUserAtkAcc:
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX RaiseUserAtkAcc_Atk
+	jumpifstat BANK_TARGET EQUALS STAT_ACC STAT_MAX BattleScript_CantRaiseMultipleStats
+
+RaiseUserAtkAcc_Atk:
+	attackanimation
+	waitanimation
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_ACC, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN RaiseUserAtkAcc_Acc
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 RaiseUserAtkAcc_Acc
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+RaiseUserAtkAcc_Acc:
+	setstatchanger STAT_ACC | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -4486,6 +4883,7 @@ BS_208_BulkUp:
 	attackstring
 	ppreduce
 	jumpifmove MOVE_COIL CoilBS
+	jumpifmove MOVE_VICTORYDANCE VictoryDanceBS
 	
 BulkUpBS:
 	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX BulkUp_Atk
@@ -4543,6 +4941,39 @@ Coil_Acc:
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+VictoryDanceBS: @;Physical Quiver Dance
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX VictoryDance_Atk
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_DEF STAT_MAX VictoryDance_Atk
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
+
+VictoryDance_Atk:
+	attackanimation
+	waitanimation
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_DEF | STAT_ANIM_SPD, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN VictoryDance_Def
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 VictoryDance_Def
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+VictoryDance_Def:
+	setstatchanger STAT_DEF | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN VictoryDance_Speed
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 VictoryDance_Speed
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+VictoryDance_Speed:
+	setstatchanger STAT_SPD | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_209_BadPoisonChance
@@ -4555,33 +4986,49 @@ BS_209_BadPoisonChance:
 .global BS_211_CalmMind
 BS_211_CalmMind:
 	attackcanceler
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_QUIVERDANCE QuiverDanceBS
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_GEOMANCY GeomancyBS
+	jumpifmove MOVE_QUIVERDANCE QuiverDanceBS
+	jumpifmove MOVE_GEOMANCY GeomancyBS
+	jumpifmove MOVE_TAKEHEART TakeHeartBS
 
 CalmMindBS:
 	attackstring
 	ppreduce
+CalmMindBS_CheckStats:
 	jumpifstat BANK_TARGET LESSTHAN STAT_SPATK STAT_MAX CalmMind_SpAtk
-	jumpifstat BANK_TARGET EQUALS STAT_SPDEF STAT_MAX 0x81BC5A3
+	jumpifstat BANK_TARGET EQUALS STAT_SPDEF STAT_MAX BattleScript_CantRaiseMultipleStats
 
 CalmMind_SpAtk:
 	attackanimation
 	waitanimation
+CalmMind_SpAtk_SkipAttackAnim:
 	setbyte STAT_ANIM_PLAYED 0x0
 	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_SPATK | STAT_ANIM_SPDEF, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
 	setstatchanger STAT_SPATK | INCREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN CalmMind_SpDef
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 CalmMind_SpDef
-	printfromtable 0x83C4548
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 
 CalmMind_SpDef:
 	setstatchanger STAT_SPDEF | INCREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable 0x83C4548
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
+
+TakeHeartBS: @;Also heals status conditions
+	attackstring
+	ppreduce
+	cureifburnedparalysedorpoisoned CalmMindBS_CheckStats
+	attackanimation
+	waitanimation
+	printstring 0xA7 @;STRINGID_PKMNSTATUSNORMAL
+	waitmessage DELAY_1SECOND
+	refreshhpbar BANK_ATTACKER
+	jumpifstat BANK_TARGET LESSTHAN STAT_SPATK STAT_MAX CalmMind_SpAtk_SkipAttackAnim
+	jumpifstat BANK_TARGET LESSTHAN STAT_SPDEF STAT_MAX CalmMind_SpAtk_SkipAttackAnim
+	goto BattleScript_CantRaiseMultipleStats
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -4698,12 +5145,13 @@ BS_212_DragonDance:
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_SHIFTGEAR ShiftGearBS
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_SHELLSMASH ShellSmashBS
+	jumpifmove MOVE_SHIFTGEAR ShiftGearBS
+	jumpifmove MOVE_SHELLSMASH ShellSmashBS
+	jumpifmove MOVE_FILLETAWAY FilletAwayBS
 
 DragonDanceBS:
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX DragonDance_Atk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX 0x81BC5A3
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
 
 DragonDance_Atk:
 	attackanimation
@@ -4713,14 +5161,14 @@ DragonDance_Atk:
 	setstatchanger STAT_ATK | INCREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN DragonDance_Spd
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 DragonDance_Spd
-	printfromtable 0x83C4548
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 
 DragonDance_Spd:
 	setstatchanger STAT_SPD | INCREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable 0x83C4548
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
@@ -4728,7 +5176,7 @@ DragonDance_Spd:
 
 ShiftGearBS:
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX ShiftGear_Atk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX 0x81BC5A3
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
 
 ShiftGear_Atk:
 	attackanimation
@@ -4738,14 +5186,14 @@ ShiftGear_Atk:
 	setstatchanger STAT_ATK | INCREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN ShiftGear_Spd
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 ShiftGear_Spd
-	printfromtable 0x83C4548
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 
 ShiftGear_Spd:
 	setstatchanger STAT_SPD | INCREASE_2
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable 0x83C4548
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
@@ -4764,20 +5212,20 @@ ShellSmash_DropDef:
 	setstatchanger STAT_DEF | DECREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN ShellSmash_DropSpDef
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 ShellSmash_DropSpDef
-	printfromtable 0x83C4548
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 
 ShellSmash_DropSpDef:
 	setstatchanger STAT_SPDEF | DECREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN ShellSmash_BoostStats
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 ShellSmash_BoostStats
-	printfromtable 0x83C4548
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 
 ShellSmash_BoostStats:
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX ShellSmash_SharpAtk
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPATK STAT_MAX ShellSmash_SharpAtk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX 0x81BC5A3
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
 
 ShellSmash_SharpAtk:
 	attackanimation
@@ -4787,14 +5235,47 @@ ShellSmash_SharpAtk:
 	setstatchanger STAT_ATK | INCREASE_2
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN ShellSmash_SharpSpAtk
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 ShellSmash_SharpSpAtk
-	printfromtable 0x83C4548
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 
 ShellSmash_SharpSpAtk:
 	setstatchanger STAT_SPATK | INCREASE_2
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN ShiftGear_Spd
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 ShiftGear_Spd
-	printfromtable 0x83C4548
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	goto ShiftGear_Spd
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+FilletAwayBS:
+	callasm FailShedTailIfLowHP
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX FilletAway_HP
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
+
+FilletAway_HP:
+	setdamagetobankhealthfraction BANK_ATTACKER 2 0x0 @;50 % of Base Max HP
+	graphicalhpupdate BANK_ATTACKER
+	datahpupdate BANK_ATTACKER
+	faintpokemon BANK_ATTACKER 0x0 0x0
+	goto FilletAway_Atk
+
+FilletAway_Atk:
+	attackanimation
+	waitanimation
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_SPD, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_2
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN FilletAway_SharpSpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 FilletAway_SharpSpAtk
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+FilletAway_SharpSpAtk:
+	setstatchanger STAT_SPATK | INCREASE_2
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN ShiftGear_Spd
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 ShiftGear_Spd
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	goto ShiftGear_Spd
 
@@ -5094,6 +5575,7 @@ BS_231_AttackBlockers:
 	jumpifmove MOVE_EMBARGO EmbargoBS
 	jumpifmove MOVE_POWDER PowderBS
 	jumpifmove MOVE_TELEKINESIS TelekinesisBS
+	jumpifmove MOVE_PSYCHICNOISE PsychicNoiseBS
 	
 HealBlockBS:
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
@@ -5160,6 +5642,20 @@ ThroatChopBS:
 	seteffectwithchancetarget
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
+	goto BS_MOVE_END
+
+PsychicNoiseBS:
+	jumpifbehindsubstitute BANK_TARGET 0x81BA8E3
+	accuracycheck BS_MOVE_MISSED 0x0
+	call STANDARD_DAMAGE
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
+	jumpiffainted BANK_TARGET BS_MOVE_END
+	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
+	callasm PSHealBlockTimer
+	setword BATTLE_STRING_LOADER HealBlockSetString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -5317,8 +5813,14 @@ InstructBS:
 .global BS_237_SuckerPunch
 BS_237_SuckerPunch:
 	attackcanceler
+	jumpifmove MOVE_UPPERHAND UpperHandBS
 	callasm TrySuckerPunch
 	goto 0x81BA8E3
+
+UpperHandBS:
+	callasm TryUpperHand
+	setmoveeffect MOVE_EFFECT_FLINCH
+	goto BS_STANDARD_HIT
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -5392,49 +5894,20 @@ BS_241_FlameBurst:
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_242_LastResortSkyDrop
-BS_242_LastResortSkyDrop:
+.global BS_242_LastResort
+BS_242_LastResort:
+	jumpifmove MOVE_GIGATONHAMMER GigatonHammerBS
+	jumpifmove MOVE_BLOODMOON GigatonHammerBS
 	jumpifmove MOVE_LASTRESORT LastResortBS
-	jumpifsecondarystatus BANK_ATTACKER STATUS2_MULTIPLETURNS SkyDropDropBS
-	jumpifword ANDS HIT_MARKER HITMARKER_NO_ATTACKSTRING SkyDropDropBS
-	
-	attackcanceler
-	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
-	jumpifspecialstatusflag EQUALS STATUS3_SEMI_INVULNERABLE 0x0 FAILED_PRE
-	jumpifweight BANK_TARGET GREATERTHAN 1999 FAILED_PRE @;199.9 kg
-	accuracycheck BS_MOVE_MISSED 0x0
-	attackstring
-	ppreduce
-	attackanimation
-	waitanimation
-	setsemiinvulnerablebit
-	various BANK_TARGET 0x0 @;Cancel Multi Turn Moves
-	setword BATTLE_STRING_LOADER SkyDropUpString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	orword HIT_MARKER HITMARKER_CHARGING
-	setmoveeffect MOVE_EFFECT_CHARGING | MOVE_EFFECT_AFFECTS_USER
-	seteffectprimary
-	goto BS_MOVE_END
 
-SkyDropDropBS:
-	attackcanceler
-	attackstring
-	pause DELAY_HALFSECOND
-	setmoveeffect MOVE_EFFECT_CHARGING
-	setbyte ANIM_TURN 0x1
-	clearstatus BANK_ATTACKER
-	clearsemiinvulnerablebit
-	makevisible BANK_TARGET
-	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
-	setword BATTLE_STRING_LOADER FreedFromSkyDropString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	goto BS_HIT_FROM_DAMAGE_CALC
-	
 LastResortBS:
 	attackcanceler
 	callasm LastResortFunc
+	goto BS_STANDARD_HIT + 1
+
+GigatonHammerBS:
+	attackcanceler
+    callasm GigatonHammerFunc
 	goto 0x81BA8E3
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -5442,7 +5915,18 @@ LastResortBS:
 .global BS_243_DamageSetTerrain
 BS_243_DamageSetTerrain:
 	attackcanceler
+	jumpifmove MOVE_ICESPINNER IceSpinner_BS
+	callasm TryFailSteelRoller
 	accuracycheck BS_MOVE_MISSED 0x0
+	call STANDARD_DAMAGE
+	jumpifmovehadnoeffect BS_MOVE_FAINT
+	seteffectwithchancetarget
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
+	call BattleScript_SetTerrain
+	goto BS_MOVE_END
+
+IceSpinner_BS:
 	call STANDARD_DAMAGE
 	jumpifmovehadnoeffect BS_MOVE_FAINT
 	seteffectwithchancetarget
@@ -5455,6 +5939,7 @@ BS_243_DamageSetTerrain:
 BattleScript_SetTerrain:
 	setterrain BattleScript_SetTerrainReturn
 	callasm TransferTerrainData
+	waitstateatk
 	playanimation2 BANK_ATTACKER ANIM_ARG_1 0x0
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -5490,15 +5975,54 @@ BS_245_Poltergeist:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_246_Blank
-BS_246_Blank:
-	goto BS_STANDARD_HIT
+.global BS_246_SkyDrop
+BS_246_SkyDrop:
+	attackcanceler
+	jumpifsecondarystatus BANK_ATTACKER STATUS2_MULTIPLETURNS SkyDropDropTurn2
+	jumpifword ANDS HIT_MARKER HITMARKER_NO_ATTACKSTRING SkyDropDropTurn2
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED_PRE
+	jumpiffainted BANK_TARGET FAILED_PRE @;Can't rely on the normal check since this is a two-turn move
+	jumpifweight BANK_TARGET GREATERTHAN 1999 FAILED_PRE @;199.9 kg
+	accuracycheck BS_MOVE_MISSED 0x0
+	attackstring
+	ppreduce
+	attackanimation
+	waitanimation
+	various BANK_TARGET 0x0 @;Cancel Multi Turn Moves
+	setsemiinvulnerablebit
+	setword BATTLE_STRING_LOADER SkyDropUpString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	orword HIT_MARKER HITMARKER_CHARGING
+	setmoveeffect MOVE_EFFECT_CHARGING | MOVE_EFFECT_AFFECTS_USER
+	seteffectprimary
+	goto BS_MOVE_END
+
+SkyDropDropTurn2:
+	attackstring
+	pause DELAY_HALFSECOND
+	setmoveeffect MOVE_EFFECT_CHARGING
+	setbyte ANIM_TURN 0x1
+	clearstatus BANK_ATTACKER
+	clearsemiinvulnerablebit
+	makevisible BANK_TARGET
+	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
+	setword BATTLE_STRING_LOADER FreedFromSkyDropString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_HIT_FROM_DAMAGE_CALC
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_247_Blank
-BS_247_Blank:
-	goto BS_STANDARD_HIT
+.global BS_247_Glaive_Rush
+BS_247_Glaive_Rush:
+	attackcanceler
+	accuracycheck BS_MOVE_MISSED 0x0
+	call STANDARD_DAMAGE
+	jumpifmovehadnoeffect BS_MOVE_FAINT
+	callasm GlaiveRushTimer
+	goto BS_MOVE_FAINT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

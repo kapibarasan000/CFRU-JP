@@ -2231,6 +2231,78 @@ Gのちから
 #org @NAME_GLACIAL_LANCE
 ブリザードランス
 
+#org @NAME_DIRE_CLAW
+フェイタルクロー
+
+#org @NAME_PSYSHIELD_BASH
+バリアーラッシュ
+
+#org @NAME_POWER_SHIFT
+パワーシフト
+
+#org @NAME_STONE_AXE
+がんせきアックス
+
+#org @NAME_MYSTICAL_POWER
+しんぴのちから
+
+#org @NAME_RAGING_FURY
+だいふんげき
+
+#org @NAME_WAVE_CRASH
+ウェーブタックル
+
+#org @NAME_CHLOROBLAST
+クロロブラスト
+
+#org @NAME_MOUNTAIN_GALE
+ひょうざんおろし
+
+#org @NAME_VICTORY_DANCE
+しょうりのまい
+
+#org @NAME_HEADLONG_RUSH
+ぶちかまし
+
+#org @NAME_BARB_BARRAGE
+どくばりセンボン
+
+#org @NAME_ESPER_WING
+オーラウイング
+
+#org @NAME_BITTER_MALICE
+うらみつらみ
+
+#org @NAME_SHELTER
+たてこもる
+
+#org @NAME_TRIPLE_ARROWS
+3ぼんのや
+
+#org @NAME_INFERNAL_PARADE
+ひゃっきやこう
+
+#org @NAME_CEASELESS_EDGE
+ひけん・ちえなみ
+
+#org @NAME_BLEAKWIND_STORM
+こがらしあらし
+
+#org @NAME_WILDBOLT_STORM
+かみなりあらし
+
+#org @NAME_SANDSEAR_STORM
+ねっさのあらし
+
+#org @NAME_SPRINGTIDE_STORM
+はるのあらし
+
+#org @NAME_LUNAR_BLESSING
+みかづきのいのり
+
+#org @NAME_TAKE_HEART
+ブレイブチャージ
+
 #org @Z_Move_1
 ZーMove 1
 
@@ -2698,3 +2770,210 @@ ZーMove 53
 
 #org @NAME_G_MAX_RAPID_FLOW_S
 レンゲキ
+
+#org @NAME_AQUACUTTER
+アクアカッター
+
+#org @NAME_AQUASTEP
+アクアステップ
+
+#org @NAME_ARMORCANNON
+アーマーキャノン
+
+#org @NAME_AXEKICK
+かかとおとし
+
+#org @NAME_BITTERBLADE
+むねんのつるぎ
+
+#org @NAME_BLAZINGTORQUE
+バーンアクセル
+
+#org @NAME_CHILLINGWATER
+ひやみず
+
+#org @NAME_CHILLYRECEPTION
+さむいギャグ
+
+#org @NAME_COLLISIONCOURSE
+アクセルブレイク
+
+#org @NAME_COMBATTORQUE
+ファイトアクセル
+
+#org @NAME_COMEUPPANCE
+ほうふく
+
+#org @NAME_DOODLE
+うつしえ
+
+#org @NAME_DOUBLESHOCK
+でんこうそうげき
+
+#org @NAME_ELECTRODRIFT
+イナズマドライブ
+
+#org @NAME_FILLETAWAY
+みをけずる
+
+#org @NAME_FLOWERTRICK
+トリックフラワー
+
+#org @NAME_GIGATONHAMMER
+デカハンマー
+
+#org @NAME_GLAIVERUSH
+きょけんとつげき
+
+#org @NAME_HYDROSTEAM
+ハイドロスチーム
+
+#org @NAME_HYPERDRILL
+ハイパードリル
+
+#org @NAME_ICESPINNER
+アイススピナー
+
+#org @NAME_JETPUNCH
+ジェットパンチ
+
+#org @NAME_KOWTOWCLEAVE
+ドゲザン
+
+#org @NAME_LASTRESPECTS
+おはかまいり
+
+#org @NAME_LUMINACRASH
+ルミナコリジョン
+
+#org @NAME_MAGICALTORQUE
+マジカルアクセル
+
+#org @NAME_MAKEITRAIN
+ゴールドラッシュ
+
+#org @NAME_MORTALSPIN
+キラースピン
+
+#org @NAME_NOXIOUSTORQUE
+ポイズンアクセル
+
+#org @NAME_ORDERUP
+いっちょうあがり
+
+#org @NAME_POPULATIONBOMB
+ネズミざん
+
+#org @NAME_POUNCE
+とびつく
+
+#org @NAME_PSYBLADE
+サイコブレイド
+
+#org @NAME_RAGEFIST
+ふんどのこぶし
+
+#org @NAME_RAGINGBULL
+レイジングブル
+
+#org @NAME_REVIVALBLESSING
+さいきのいのり
+
+#org @NAME_RUINATION
+カタストロフィ
+
+#org @NAME_SALTCURE
+しおづけ
+
+#org @NAME_SHEDTAIL
+しっぽきり
+
+#org @NAME_SILKTRAP
+スレッドトラップ
+
+#org @NAME_SNOWSCAPE
+ゆきげしき
+
+#org @NAME_SPICYEXTRACT
+ハバネロエキス
+
+#org @NAME_SPINOUT
+ホイールスピン
+
+#org @NAME_TERABLAST
+テラバースト
+
+#org @NAME_TIDYUP
+おかたづけ
+
+#org @NAME_TORCHSONG
+フレアソング
+
+#org @NAME_TRAILBLAZE
+くさわけ
+
+#org @NAME_TRIPLEDIVE
+トリプルダイブ
+
+#org @NAME_TWINBEAM
+ツインビーム
+
+#org @NAME_WICKEDTORQUE
+ダークアクセル
+
+#org @NAME_BLOODMOON
+ブラッドムーン
+
+#org @NAME_UPPERHAND
+はやてがえし
+
+#org @NAME_MATCHAGOTCHA
+シャカシャカほう
+
+#org @NAME_SYRUPBOMB
+みずあめボム
+
+#org @NAME_IVYCUDGEL
+ツタこんぼう
+
+#org @NAME_ELECTROSHOT
+エレクトロビーム
+
+#org @NAME_TERASTARSTORM
+テラクラスター
+
+#org @NAME_FICKLEBEAM
+きまぐレーザー
+
+#org @NAME_BURNINGBULWARK
+かえんのまもり
+
+#org @NAME_MIGHTYCLEAVE
+パワフルエッジ
+
+#org @NAME_TACHYONCUTTER
+タキオンカッター
+
+#org @NAME_DRAGONCHEER
+ドラゴンエール
+
+#org @NAME_MALIGNANTCHAIN
+じゃどくのくさり
+
+#org @NAME_THUNDERCLAP
+じんらい
+
+#org @NAME_HARDPRESS
+ハードプレス
+
+#org @NAME_ALLURINGVOICE
+みわくのボイス
+
+#org @NAME_TEMPERFLARE
+やけっぱち
+
+#org @NAME_SUPERCELLSLAM
+サンダーダイブ
+
+#org @NAME_PSYCHICNOISE
+サイコノイズ

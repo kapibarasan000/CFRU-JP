@@ -209,6 +209,7 @@ TryHandleLaunchBattleTableAnimationHook 8033792 4
 UpdateOamPriorityInAllHealthboxes 8047814 1
 ModifyMegaCryHook 8071732 1
 ScriptCmd_loadspritegfx 0807200C 0
+SetAverageBattlerPositionsHook 8076540 2
 TryStartShinyAnimation 080F2680 2
 ShinyAnimFixHook 080F27DC 2
 SlideMonToOriginalPosHook 08098BC2 0

@@ -52,6 +52,15 @@
 #org @gText_DeltaStream
 なぞの らんきりゅうが\nひこうポケモンを まもる！
 
+#org @gText_HarshSunStopsWeatherChange
+つよい ひざしの\nいきおいは とまらない！
+
+#org @gText_HeavyRainStopsWeatherChange
+つよい あめの\nいきおいは とまらない！
+
+#org @gText_AirCurrentStopsWeatherChange
+なぞの らんきりゅうの\nいきおいは とまらない！
+
 #org @gText_SlowStartEnd
 [SCRIPTING_BANK]は\nちょうしを とりもどした！
 

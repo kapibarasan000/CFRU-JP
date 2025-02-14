@@ -611,7 +611,7 @@ MOVESCR_CHECK_0:
 			}
 
 		AI_CHECK_SLEEP: ;
-			if (!CanBePutToSleep(bankDef, TRUE)
+			if (!CanBePutToSleep(bankDef, bankAtk, TRUE)
 			|| (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 			|| PARTNER_MOVE_EFFECT_IS_STATUS_SAME_TARGET)
 				DECREASE_VIABILITY(10);
@@ -1249,7 +1249,7 @@ MOVESCR_CHECK_0:
 
 		case EFFECT_PARALYZE:
 		AI_PARALYZE_CHECK: ;
-			if (!CanBeParalyzed(bankDef, TRUE)
+			if (!CanBeParalyzed(bankDef, bankAtk, TRUE)
 			|| MoveBlockedBySubstitute(move, bankAtk, bankDef)
 			|| PARTNER_MOVE_EFFECT_IS_STATUS_SAME_TARGET)
 				DECREASE_VIABILITY(10);
@@ -1852,7 +1852,7 @@ MOVESCR_CHECK_0:
 
 		case EFFECT_WILL_O_WISP:
 		AI_BURN_CHECK: ;
-			if (!CanBeBurned(bankDef, TRUE)
+			if (!CanBeBurned(bankDef, bankAtk, TRUE)
 			|| MoveBlockedBySubstitute(move, bankAtk, bankDef)
 			|| PARTNER_MOVE_EFFECT_IS_STATUS_SAME_TARGET)
 				DECREASE_VIABILITY(10);
@@ -2224,7 +2224,12 @@ MOVESCR_CHECK_0:
 					default:
 						if ((STAT_STAGE(bankAtk, STAT_STAGE_SPATK) >= STAT_STAGE_MAX || !SpecialMoveInMoveset(bankAtk))
 						&&  STAT_STAGE(bankAtk, STAT_STAGE_SPDEF) >= STAT_STAGE_MAX)
+						{
+							if (move == MOVE_TAKEHEART && data->atkStatus1 != 0)
+								break; //Can heal status condition
+
 							DECREASE_VIABILITY(10);
+						}
 				}
 			}
 			break;
@@ -2259,6 +2264,7 @@ MOVESCR_CHECK_0:
 
 			switch (move) {
 				case MOVE_POWERTRICK:
+				case MOVE_POWERSHIFT:
 					if (gBattleMons[bankAtk].defense >= gBattleMons[bankAtk].attack && !PhysicalMoveInMoveset(bankAtk))
 						DECREASE_VIABILITY(10);
 					break;
@@ -2460,7 +2466,7 @@ MOVESCR_CHECK_0:
 					goto AI_POISON_CHECK;
 
 				case MOVE_EFFECT_FREEZE:
-					if (!CanBeFrozen(bankDef, TRUE)
+					if (!CanBeFrozen(bankDef, bankAtk, TRUE)
 					 || MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						DECREASE_VIABILITY(10);
 					break;
@@ -2729,23 +2735,22 @@ MOVESCR_CHECK_0:
 				DECREASE_VIABILITY(10);
 			break;
 
-		case EFFECT_LASTRESORT_SKYDROP:
-			switch (move) {
-				case MOVE_LASTRESORT:
-					if (!CanUseLastResort(bankAtk))
-						DECREASE_VIABILITY(10);
-					else
-						goto AI_STANDARD_DAMAGE;
-					break;
+		case EFFECT_LAST_RESORT:
+			if (!CanUseLastResort(bankAtk))
+				DECREASE_VIABILITY(10);
+			else
+				goto AI_STANDARD_DAMAGE;
+			break;
 
-			default: //Sky Drop
-				if (WillFaintFromWeatherSoon(bankAtk)
-				||  MoveBlockedBySubstitute(move, bankAtk, bankDef)
-				||  GetActualSpeciesWeight(data->defSpecies, data->defAbility, data->defItemEffect, bankDef, TRUE) >= 2000) //200.0 kg
-					DECREASE_VIABILITY(10);
-				else
-					goto AI_STANDARD_DAMAGE;
-			}
+		case EFFECT_SKY_DROP:
+			if (WillFaintFromWeatherSoon(bankAtk)
+			||  MoveBlockedBySubstitute(move, bankAtk, bankDef)
+			||  GetActualSpeciesWeight(data->defSpecies, data->defAbility, data->defItemEffect, bankDef, TRUE) >= 2000) //200.0 kg
+				DECREASE_VIABILITY(10);
+			else if (PARTNER_MOVE_EFFECT_IS_SAME)
+				DECREASE_VIABILITY(10); //Don't try to pick up the same target if it won't be there
+			else
+				goto AI_STANDARD_DAMAGE;
 			break;
 
 		case EFFECT_SYNCHRONOISE:

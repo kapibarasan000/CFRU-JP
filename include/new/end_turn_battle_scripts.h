@@ -78,6 +78,7 @@ extern const u8 BattleScript_FaintedMonChooseAnotherRejoin[];
 extern const u8 BattleScript_PrintCustomStringEnd2[];
 extern const u8 BattleScript_MonTookFutureAttack[];
 extern const u8 BattleScript_OctolockTurnDmg[];
+extern const u8 BattleScript_SyrupBombEndTurn[];
 extern const u8 BattleScript_DynamaxEnd[];
 extern const u8 BattleScript_LoseRaidBattle[];
 
@@ -98,3 +99,4 @@ extern const u8 gText_HurtByGMaxCannonade[];
 extern const u8 gText_GMaxCannonadeEnded[];
 extern const u8 gText_HurtByGMaxVolcalith[];
 extern const u8 gText_GMaxVolcalithEnded[];
+extern const u8 gText_HurtBySaltcure[];

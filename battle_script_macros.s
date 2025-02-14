@@ -10,6 +10,7 @@
 .equ BS_MOVE_MISSED_PAUSE, 0x81BA91C
 .equ BS_BUFF_ATK_STATS, 0x81BAB5A
 .equ BS_MOVE_WEATHER_CHANGE, 0x81BB9D0
+.equ BS_WEATHER_FORM_CHANGES, 0x81BD298
 .equ BS_FLUSH_MSGBOX, 0x81BD664
 .equ BS_HIT_FROM_ATTACKSTRING, 0x81BA8EA
 .equ BS_HIT_FROM_DAMAGE_CALC, 0x81BA8EC
@@ -17,6 +18,10 @@
 .equ BS_STANDARD_HIT, 0x81BA8E2
 .equ BS_FLUSH_MESSAGE_BOX, 0x81BD664
 .equ BattleScript_AllStatsUp, 0x81BCD11
+
+@String Tables
+.equ gStatUpStringIds, 0x83C4548
+.equ gStatDownStringIds, 0x83C4554
 
 @Banks
 .equ BANK_TARGET, 0
@@ -1788,3 +1793,9 @@
 	.macro waitfanfare battler:req
 	various \battler, VARIOUS_WAIT_FANFARE
 	.endm
+
+.macro tryblockweatherwithprimalweather suffix
+	jumpifweather weather_harsh_sun, BattleScript_ExtremelyHarshSunlightWasNotLessened\suffix 
+	jumpifweather weather_heavy_rain, BattleScript_NoReliefFromHeavyRain\suffix
+	jumpifweather weather_air_current, BattleScript_MysteriousAirCurrentBlowsOn\suffix
+.endm

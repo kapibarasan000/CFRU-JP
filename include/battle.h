@@ -385,14 +385,14 @@ struct ProtectStruct
     u32 palaceUnableToUseMove : 1;	// 0x10 //May be implemented...
     u32 flag_x20 : 1;           	// 0x20
     u32 obstruct : 1;           	// 0x40
-    u32 obstructDamage : 1;         // 0x80
+    u32 SilkTrap : 1;               // 0x80
     /* field_3 */
     u32 KingsShield : 1;
     u32 SpikyShield : 1;
 	u32 BanefulBunker : 1;
-    u32 kingsshield_damage : 1;
-    u32 spikyshield_damage : 1;
-    u32 banefulbunker_damage : 1;
+    u32 BurningBulwark : 1;
+    u32 unused : 1;
+    u32 touchedProtectLike:1;
     u32 enduredSturdy : 1;
     u32 Field3 : 1;
 
@@ -727,6 +727,7 @@ struct NewBattleStruct
 	u8 maxWildfireTimers[NUM_BATTLE_SIDES];
 	u8 maxCannonadeTimers[NUM_BATTLE_SIDES];
 	u8 maxVolcalithTimers[NUM_BATTLE_SIDES];
+	u8 FaintedCounters[NUM_BATTLE_SIDES];
 	u8 ragePowdered;
 
 	//Personal Counters
@@ -764,7 +765,9 @@ struct NewBattleStruct
 	u8 chiStrikeCritBoosts[MAX_BATTLERS_COUNT]; //~0x2017A4B
 	u8 sandblastCentiferno[MAX_BATTLERS_COUNT]; //Records if any banks are trapped by G-Max Centiferno or G-Max Sandblast
 	u8 disguisedAs[MAX_BATTLERS_COUNT]; //The party index + 1 the mon with Illusion is disguised as
-	u8 SaltcureTimers[MAX_BATTLERS_COUNT];
+	u8 GlaiveRushTimers[MAX_BATTLERS_COUNT];
+	u8 rageFistCounter[NUM_BATTLE_SIDES][PARTY_SIZE];
+	u8 SyrupBombTimers[MAX_BATTLERS_COUNT];
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -788,6 +791,7 @@ struct NewBattleStruct
 	u8 doSwitchInEffects;
 	u8 devolveForgotMove;
 	u8 hiddenAnimBattlerSprites;
+	u8 SaltcureBits;
 
 	//Bit Fields for Party
 	u8 BelchCounters;
@@ -1213,6 +1217,9 @@ struct FlingStruct
 #define B_ANIM_G_MAX_CANNONADE 0x4B
 #define B_ANIM_G_MAX_VOLCALITH 0x4C
 #define B_ANIM_TERASTAL 0x4D
+#define B_ANIM_SUBSTITUTE2 0x4E
+#define B_ANIM_SALTCURE_END_TURN 0x4F
+#define B_ANIM_SYRUPBOMB_END_TURN 0x50
 
 #define B_ANIM_TRANSFORM_MOVE 0xFF
 

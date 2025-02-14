@@ -566,7 +566,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 										break;
 									goto DEFAULT_CHECK;
 								case EFFECT_CONFUSE_HIT:
-									if (CALC && CanBeConfused(bankDef, TRUE))
+									if (CALC && CanBeConfused(currTarget, bankAtk, TRUE))
 										break;
 									goto DEFAULT_CHECK;
 								case EFFECT_SPEED_UP_1_HIT:
@@ -1524,6 +1524,10 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, unusedArg u8 bankDef, u16 move)
 				case MOVE_DETECT:
 				case MOVE_SPIKYSHIELD:
 				case MOVE_KINGSSHIELD:
+				case MOVE_BANEFULBUNKER:
+				case MOVE_OBSTRUCT:
+				case MOVE_SILKTRAP:
+				case MOVE_BURNINGBULWARK:
 					return TRUE; //Delay Mega Evolution if using Protect for Speed Boost benefits
 			}
 			break;
@@ -1546,13 +1550,13 @@ bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk)
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
 	u8 defAbility = ABILITY(bankDef);
 
-	return !CanBePutToSleep(bankDef, TRUE)
+	return !CanBePutToSleep(bankDef, bankAtk, TRUE)
 		|| gStatuses3[bankDef] & STATUS3_YAWN
 		|| defItemEffect == ITEM_EFFECT_CURE_SLP
 		|| defItemEffect == ITEM_EFFECT_CURE_STATUS
 		|| defAbility == ABILITY_EARLYBIRD
 		|| defAbility == ABILITY_SHEDSKIN
-		|| (defAbility == ABILITY_SYNCHRONIZE && CanBePutToSleep(bankAtk, TRUE))
+		|| (defAbility == ABILITY_SYNCHRONIZE && CanBePutToSleep(bankAtk, bankDef, TRUE))
 		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER);
 }
@@ -1602,12 +1606,12 @@ bool8 BadIdeaToParalyze(u8 bankDef, u8 bankAtk)
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
 	u8 defAbility = ABILITY(bankDef);
 
-	return !CanBeParalyzed(bankDef, TRUE)
+	return !CanBeParalyzed(bankDef, bankAtk, TRUE)
 	   ||  defItemEffect == ITEM_EFFECT_CURE_PAR
 	   ||  defItemEffect == ITEM_EFFECT_CURE_STATUS
 	   ||  defAbility == ABILITY_SHEDSKIN
 	   ||  defAbility == ABILITY_QUICKFEET
-	   || (defAbility == ABILITY_SYNCHRONIZE && CanBeParalyzed(bankAtk, TRUE) && !GoodIdeaToParalyzeSelf(bankAtk))
+	   || (defAbility == ABILITY_SYNCHRONIZE && CanBeParalyzed(bankAtk, bankDef, TRUE) && !GoodIdeaToParalyzeSelf(bankAtk))
 	   || (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
 	   || (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
 	   || (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
@@ -1621,7 +1625,7 @@ bool8 GoodIdeaToParalyzeSelf(u8 bankAtk)
 {
 	u8 atkAbility = ABILITY(bankAtk);
 
-	return CanBeParalyzed(bankAtk, FALSE)
+	return CanBeParalyzed(bankAtk, bankAtk, FALSE)
 		&&  (atkAbility == ABILITY_MARVELSCALE
 		 ||  atkAbility == ABILITY_QUICKFEET
 		 || (atkAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankAtk))
@@ -1634,13 +1638,13 @@ bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk)
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
 	u8 defAbility = ABILITY(bankDef);
 
-	return !CanBeBurned(bankDef, TRUE)
+	return !CanBeBurned(bankDef, bankAtk, TRUE)
 		||  defItemEffect == ITEM_EFFECT_CURE_BRN
 		||  defItemEffect == ITEM_EFFECT_CURE_STATUS
 		||  defAbility == ABILITY_SHEDSKIN
 		||  defAbility == ABILITY_MAGICGUARD
 		||  defAbility == ABILITY_QUICKFEET
-		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeBurned(bankAtk, TRUE) && !GoodIdeaToBurnSelf(bankAtk))
+		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeBurned(bankAtk, bankDef, TRUE) && !GoodIdeaToBurnSelf(bankAtk))
 		|| (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
 		|| (defAbility == ABILITY_FLAREBOOST && SpecialMoveInMoveset(bankDef))
@@ -1655,7 +1659,7 @@ bool8 GoodIdeaToBurnSelf(u8 bankAtk)
 {
 	u8 atkAbility = ABILITY(bankAtk);
 
-	return CanBeBurned(bankAtk, FALSE)
+	return CanBeBurned(bankAtk, bankAtk, FALSE)
 		&&  (atkAbility == ABILITY_QUICKFEET
 		 ||  atkAbility == ABILITY_HEATPROOF
 		 ||  atkAbility == ABILITY_MAGICGUARD
@@ -1670,10 +1674,10 @@ bool8 BadIdeaToFreeze(u8 bankDef, u8 bankAtk)
 	u8 defAbility = ABILITY(bankDef);
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
 
-	return !CanBeFrozen(bankDef, TRUE)
+	return !CanBeFrozen(bankDef, bankAtk, TRUE)
 		|| defItemEffect != ITEM_EFFECT_CURE_FRZ
 		|| defItemEffect != ITEM_EFFECT_CURE_STATUS
-		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeFrozen(bankAtk, TRUE))
+		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeFrozen(bankAtk, bankDef, TRUE))
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef)) //Don't waste a one-time freeze
 		|| UnfreezingMoveInMoveset(bankDef);
 }
@@ -2047,6 +2051,10 @@ bool8 HasProtectionMoveInMoveset(u8 bank, u8 checkType)
 					case MOVE_PROTECT:
 					case MOVE_SPIKYSHIELD:
 					case MOVE_KINGSSHIELD:
+					case MOVE_BANEFULBUNKER:
+					case MOVE_OBSTRUCT:
+					case MOVE_SILKTRAP:
+					case MOVE_BURNINGBULWARK:
 						return TRUE;
 
 					case MOVE_QUICKGUARD:
@@ -2796,7 +2804,7 @@ u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef)
 			//TODO AI
 			break;
 		case MAX_EFFECT_PARALYZE_FOES:
-			if (CanBeParalyzed(bankDef, TRUE))
+			if (CanBeParalyzed(bankDef, bankAtk, TRUE))
 				moveEffect = EFFECT_PARALYZE;
 			break;
 		case MAX_EFFECT_POISON_FOES:
@@ -2805,7 +2813,7 @@ u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef)
 			break;
 		case MAX_EFFECT_CONFUSE_FOES_PAY_DAY:
 		case MAX_EFFECT_CONFUSE_FOES:
-			if (CanBeConfused(bankDef, TRUE))
+			if (CanBeConfused(bankDef, bankAtk, TRUE))
 				moveEffect = EFFECT_CONFUSE;
 			break;
 
@@ -2875,7 +2883,7 @@ u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef)
 			break;
 
 		case MAX_EFFECT_YAWN_FOE:
-			if (CanBePutToSleep(bankDef, TRUE) && !(gStatuses3[bankDef] & STATUS3_YAWN))
+			if (CanBePutToSleep(bankDef, bankAtk, TRUE) && !(gStatuses3[bankDef] & STATUS3_YAWN))
 				moveEffect = EFFECT_YAWN;
 			break;
 
@@ -3061,7 +3069,7 @@ bool8 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 				return FALSE; //Don't waste a Z-Move busting Eiscue's Ice Face
 			#endif
 
-			if (defMovePrediction == MOVE_PROTECT || defMovePrediction == MOVE_KINGSSHIELD || defMovePrediction == MOVE_SPIKYSHIELD || defMovePrediction == MOVE_OBSTRUCT
+			if (defMovePrediction == MOVE_PROTECT || defMovePrediction == MOVE_KINGSSHIELD || defMovePrediction == MOVE_SPIKYSHIELD || defMovePrediction == MOVE_OBSTRUCT || defMovePrediction == MOVE_SILKTRAP
 			|| (IsDynamaxed(bankDef) && SPLIT(defMovePrediction) == SPLIT_STATUS))
 				return FALSE; //Don't waste a Z-Move on a Protect
 
@@ -3087,7 +3095,7 @@ bool8 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 				case EFFECT_SKY_ATTACK:
 				case EFFECT_SKULL_BASH:
 				case EFFECT_SOLARBEAM:
-				case EFFECT_LASTRESORT_SKYDROP:
+				case EFFECT_SKY_DROP:
 					return TRUE;
 			}
 

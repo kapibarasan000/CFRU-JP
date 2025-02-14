@@ -1446,7 +1446,7 @@ static bool8 IsYawned(void)
 {
 	if (ABILITY(gActiveBattler) != ABILITY_NATURALCURE
 	&& gStatuses3[gActiveBattler] & STATUS3_YAWN
-	&& CanBePutToSleep(gActiveBattler, FALSE) //Could have been yawned and then afflicted with another status condition
+	&& CanBePutToSleep(gActiveBattler, gActiveBattler, FALSE) //Could have been yawned and then afflicted with another status condition
 	&& gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 4)
 	{
 		u8 battlerIn1, battlerIn2;
@@ -1737,7 +1737,7 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 				switch (gBattleMoves[move].effect) {
 					case EFFECT_SLEEP:
 					case EFFECT_YAWN:
-						if (CanBePutToSleep(bankDef, TRUE))
+						if (CanBePutToSleep(bankDef, bankAtk, TRUE))
 							return FALSE;
 						break;
 					case EFFECT_ROAR:
@@ -1752,17 +1752,17 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 						break;
 					case EFFECT_WILL_O_WISP:
 					BRN_CHECK:
-						if (CanBeBurned(bankDef, TRUE))
+						if (CanBeBurned(bankDef, bankAtk, TRUE))
 							return FALSE;
 						break;
 					case EFFECT_CONFUSE:
 					case EFFECT_SWAGGER:
 					case EFFECT_FLATTER:
-						if (CanBeConfused(bankDef, TRUE))
+						if (CanBeConfused(bankDef, bankAtk, TRUE))
 							return FALSE;
 						break;
 					case EFFECT_PARALYZE:
-						if (CanBeParalyzed(bankDef, TRUE))
+						if (CanBeParalyzed(bankDef, bankAtk, TRUE))
 							return FALSE;
 						break;
 					case EFFECT_LEECH_SEED:

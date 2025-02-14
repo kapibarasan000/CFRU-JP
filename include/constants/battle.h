@@ -143,6 +143,7 @@
 #define STATUS3_IMPRISONED       		0x2000
 #define STATUS3_GRUDGE                  0x4000
 #define STATUS3_CANT_SCORE_A_CRIT       0x8000
+#define STATUS3_GLAIVERUSH      		0x10000
 //#define STATUS3_MUDSPORT                0x10000
 //#define STATUS3_WATERSPORT              0x20000
 #define STATUS3_UNDERWATER              0x40000
@@ -281,7 +282,7 @@
 #define MOVE_EFFECT_RAPIDSPIN           0x23
 #define MOVE_EFFECT_REMOVE_PARALYSIS    0x24
 #define MOVE_EFFECT_ATK_DEF_DOWN        0x25
-#define MOVE_EFFECT_BLANK_26           	0x26 //Was recoil 33
+#define MOVE_EFFECT_SYRUP_BOMB          0x26 //Was recoil 33
 #define MOVE_EFFECT_ATK_PLUS_2          0x27
 #define MOVE_EFFECT_DEF_PLUS_2          0x28
 #define MOVE_EFFECT_SPD_PLUS_2          0x29

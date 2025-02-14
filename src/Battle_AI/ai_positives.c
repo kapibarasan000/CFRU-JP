@@ -438,6 +438,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			{
 				if (MoveInMoveset(MOVE_VENOSHOCK, bankAtk)
 				||  MoveInMoveset(MOVE_HEX, bankAtk)
+				||  MoveInMoveset(MOVE_BARBBARRAGE, bankAtk)
 				||  MoveInMoveset(MOVE_VENOMDRENCH, bankAtk)
 				||  atkAbility == ABILITY_MERCILESS)
 					INCREASE_STATUS_VIABILITY(2);
@@ -452,7 +453,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_REST:
-			if (!(CanBePutToSleep(bankAtk, FALSE)))
+			if (!(CanBePutToSleep(bankAtk, bankAtk, FALSE)))
 				break;
 			else if (data->atkItemEffect == ITEM_EFFECT_CURE_SLP
 			|| data->atkItemEffect == ITEM_EFFECT_CURE_STATUS
@@ -507,7 +508,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_CONFUSE:
 		AI_CONFUSE_CHECK:
-			if (CanBeConfused(bankDef, TRUE)
+			if (CanBeConfused(bankDef, bankAtk, TRUE)
 			&&  data->defItemEffect != ITEM_EFFECT_CURE_CONFUSION
 			&&  data->defItemEffect != ITEM_EFFECT_CURE_STATUS)
 			{
@@ -1003,6 +1004,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				case MOVE_G_MAX_STONESURGE_S:
 				case MOVE_G_MAX_STEELSURGE_P:
 				case MOVE_G_MAX_STEELSURGE_S:
+				case MOVE_STONEAXE:
 					for (i = 0; i < PARTY_SIZE; ++i)
 					{
 						if (GetMonData(&defParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
@@ -1517,6 +1519,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				}
 				else if (MoveInMoveset(MOVE_HEX, bankAtk)
 				|| MoveInMoveset(MOVE_HEX, data->bankAtkPartner)
+				|| MoveInMoveset(MOVE_INFERNALPARADE, bankAtk)
 				|| PhysicalMoveInMoveset(bankDef))
 					INCREASE_STATUS_VIABILITY(2);
 				else
@@ -1946,6 +1949,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					break;
 
 				case MOVE_POWERTRICK:
+				case MOVE_POWERSHIFT:
 					if (!(data->atkStatus3 & STATUS3_POWER_TRICK))
 					{
 						if (data->atkDefense > data->atkAttack && PhysicalMoveInMoveset(bankAtk))
@@ -2324,20 +2328,17 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}
 			break;
 
-		case EFFECT_LASTRESORT_SKYDROP:
-			if (move == MOVE_SKYDROP)
+		case EFFECT_SKY_DROP:
+			if (IS_SINGLE_BATTLE)
 			{
-				if (IS_SINGLE_BATTLE)
-				{
-					if (IsClassSweeper(class)
-					&& IsTakingSecondaryDamage(bankDef))
-						INCREASE_VIABILITY(3); //Past strongest move
-				}
-				else //Double Battle
-				{
-					if (IsTakingSecondaryDamage(bankDef))
-						IncreaseDoublesDamageViabilityToScore(&viability, class, 5, bankAtk, bankDef);
-				}
+				if (IsClassSweeper(class)
+				&& IsTakingSecondaryDamage(bankDef))
+					INCREASE_VIABILITY(3); //Past strongest move
+			}
+			else //Double Battle
+			{
+				if (IsTakingSecondaryDamage(bankDef))
+					IncreaseDoublesDamageViabilityToScore(&viability, class, 5, bankAtk, bankDef);
 			}
 			break;
 	}

@@ -53,7 +53,6 @@ enum
 //They are done here if they didn't activate before.
 
 	ATK49_UNDO_SKY_DROP,
-	ATK49_UNDO_SKY_DROP_2,
 	ATK49_ATTACKER_INVISIBLE,
 	ATK49_TARGET_INVISIBLE,
 	ATK49_ATTACKER_VISIBLE,
@@ -190,61 +189,94 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 
 		case ATK49_ADVERSE_PROTECTION:
-			if (gProtectStructs[gBankTarget].kingsshield_damage)
+			if (gProtectStructs[gBankAttacker].touchedProtectLike)
 			{
-				gProtectStructs[gBankTarget].kingsshield_damage = 0;
-
-				if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_ATK))
+				if (gProtectStructs[gBankTarget].KingsShield)
 				{
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_KingsShield;
-					effect = TRUE;
-					break;
+					gProtectStructs[gBankAttacker].touchedProtectLike = FALSE;
+
+					if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_ATK))
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_KingsShield;
+						effect = TRUE;
+						break;
+					}
 				}
-			}
 
-			if (gProtectStructs[gBankTarget].spikyshield_damage)
-			{
-				gProtectStructs[gBankTarget].spikyshield_damage = 0;
-
-				if (BATTLER_ALIVE(gBankAttacker) && ABILITY(gBankAttacker) != ABILITY_MAGICGUARD)
+				if (gProtectStructs[gBankTarget].SpikyShield)
 				{
-					gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gBankAttacker) / 8);
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_SpikyShield;
-					effect = TRUE;
-					break;
+					gProtectStructs[gBankAttacker].touchedProtectLike = FALSE;
+
+					if (BATTLER_ALIVE(gBankAttacker) && ABILITY(gBankAttacker) != ABILITY_MAGICGUARD)
+					{
+						gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gBankAttacker) / 8);
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_SpikyShield;
+						effect = TRUE;
+						break;
+					}
 				}
-			}
 
-			if (gProtectStructs[gBankTarget].banefulbunker_damage)
-			{
-				gProtectStructs[gBankTarget].banefulbunker_damage = 0;
-
-				if (BATTLER_ALIVE(gBankAttacker) && CanBePoisoned(gBankAttacker, gBankTarget, TRUE)) //Target poisons Attacker
+				if (gProtectStructs[gBankTarget].BanefulBunker)
 				{
-					gBattleMons[gBankAttacker].status1 = STATUS_POISON;
-					gEffectBank = gActiveBattler = gBankAttacker;
-					EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gBankAttacker].status1);
-					MarkBufferBankForExecution(gActiveBattler);
+					gProtectStructs[gBankAttacker].touchedProtectLike = FALSE;
 
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_BanefulBunker;
-					effect = TRUE;
-					break;
+					if (BATTLER_ALIVE(gBankAttacker) && CanBePoisoned(gBankAttacker, gBankTarget, TRUE)) //Target poisons Attacker
+					{
+						gBattleMons[gBankAttacker].status1 = STATUS_POISON;
+						gEffectBank = gActiveBattler = gBankAttacker;
+						EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gBankAttacker].status1);
+						MarkBufferBankForExecution(gActiveBattler);
+
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_BanefulBunker;
+						effect = TRUE;
+						break;
+					}
 				}
-			}
 
-			if (gProtectStructs[gBankTarget].obstructDamage)
-			{
-				gProtectStructs[gBankTarget].obstructDamage = FALSE;
-
-				if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_DEF))
+				if (gProtectStructs[gBankTarget].obstruct)
 				{
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_ObstructStatDecrement;
-					effect = TRUE;
-					break;
+					gProtectStructs[gBankAttacker].touchedProtectLike = FALSE;
+
+					if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_DEF))
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_ObstructStatDecrement;
+						effect = TRUE;
+						break;
+					}
+				}
+				if (gProtectStructs[gBankTarget].SilkTrap)
+				{
+					gProtectStructs[gBankAttacker].touchedProtectLike = FALSE;
+
+					if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_SPD))
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_SilkTrapStatDecrement;
+						effect = TRUE;
+						break;
+					}
+				}
+
+				if (gProtectStructs[gBankTarget].BurningBulwark)
+				{
+					gProtectStructs[gBankAttacker].touchedProtectLike = FALSE;
+
+					if (BATTLER_ALIVE(gBankAttacker) && CanBeBurned(gBankAttacker, gBankTarget, TRUE)) //Target poisons Attacker
+					{
+						gBattleMons[gBankAttacker].status1 = STATUS_BURN;
+						gEffectBank = gActiveBattler = gBankAttacker;
+						EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gBankAttacker].status1);
+						MarkBufferBankForExecution(gActiveBattler);
+
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_BurningBulwark;
+						effect = TRUE;
+						break;
+					}
 				}
 			}
 
@@ -283,7 +315,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& MOVE_HAD_EFFECT
 			&& TOOK_DAMAGE(gBankTarget)
 			&& gNewBS->BeakBlastByte & gBitTable[gBankTarget]
-			&& CanBeBurned(gBankAttacker, TRUE))
+			&& CanBeBurned(gBankAttacker, gBankTarget, TRUE))
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_BeakBlastBurn;
@@ -325,50 +357,20 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 //From here on are always done in CMD49
 
-		case ATK49_UNDO_SKY_DROP: ; //One of the mons in the air died
-			u8 bankToFree;
-
-			for (i = 0; i < gBattlersCount; ++i)
-			{
-				if (gBattleMons[i].hp == 0)
-				{
-					if (gStatuses3[gNewBS->skyDropAttackersTarget[gBankTarget]] & STATUS3_SKY_DROP_TARGET
-					&&  gNewBS->skyDropTargetsAttacker[gNewBS->skyDropAttackersTarget[gBankTarget]] == gBankTarget)
-					{
-						bankToFree = gNewBS->skyDropAttackersTarget[i];
-						gNewBS->skyDropAttackersTarget[i] = 0;
-						gNewBS->skyDropTargetsAttacker[bankToFree] = 0;
-
-						//A message is only printed when the target is freed.
-						gBattleScripting.bank = bankToFree;
-						gBattleStringLoader = FreedFromSkyDropString;
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_PrintCustomString;
-						effect = TRUE;
-
-						gActiveBattler = bankToFree;
-						EmitSpriteInvisibility(0, FALSE);
-						MarkBufferBankForExecution(gActiveBattler);
-					}
-					else
-						continue;
-
-					gStatuses3[i] &= ~(STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET | STATUS3_IN_AIR);
-					gStatuses3[bankToFree] &= ~(STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET | STATUS3_IN_AIR);
-					break;
-				}
-			}
-
-			gBattleScripting.atk49_state++;
-			break;
-
-		case ATK49_UNDO_SKY_DROP_2: //The attacker can no longer attack while in the air due to paralysis etc.
-			if (gCurrentMove == MOVE_SKYDROP
+		case ATK49_UNDO_SKY_DROP: //The attacker can no longer attack while in the air due to paralysis etc.
+			if (gBattleMoves[gCurrentMove].effect == EFFECT_SKY_DROP
 			&& gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE
 			&& gStatuses3[gBankAttacker] & STATUS3_SKY_DROP_ATTACKER)
 			{
+				gBankTarget = gNewBS->skyDropAttackersTarget[gBankAttacker];
 				gStatuses3[gBankAttacker] &= ~STATUS3_SKY_DROP_ATTACKER;
 				gStatuses3[gBankTarget] &= ~STATUS3_SKY_DROP_TARGET;
+				gNewBS->skyDropAttackersTarget[gBankAttacker] = 0;
+				gNewBS->skyDropTargetsAttacker[gBankTarget] = 0;
+				gActiveBattler = gBankTarget;
+				EmitSpriteInvisibility(0, FALSE);
+				MarkBufferBankForExecution(gActiveBattler);
+
 				gBattleScripting.bank = gBankTarget;
 				gBattleStringLoader = FreedFromSkyDropString;
 				BattleScriptPushCursor();
@@ -710,6 +712,17 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_MultiHitPrintStrings;
+
+						if (gBattleSpritesDataPtr->bankData[gBankAttacker].behindSubstitute
+						&& gBattleSpritesDataPtr->bankData[gBankAttacker].substituteOffScreen)
+						{
+							//Show the Substitute sprite again since it normally only reappears if the multi-hit move was completed fully
+							gBattleSpritesDataPtr->bankData[gBankAttacker].substituteOffScreen = FALSE;
+							InitAndLaunchSpecialAnimation(gBankAttacker, gBankAttacker, gBankAttacker, B_ANIM_MON_TO_SUBSTITUTE); //Slide in before the strings print
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_MultiHitWaitAttackerSubstitute;
+						}
+						
 						effect = 1;
 					}
 				}

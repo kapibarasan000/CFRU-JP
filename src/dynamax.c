@@ -1174,7 +1174,7 @@ void atkFF2F_setmaxmoveeffect(void)
 
 		case MAX_EFFECT_YAWN_FOE:
 			if (BATTLER_ALIVE(gBankTarget)
-			&& CanBeYawned(gBankTarget)
+			&& CanBeYawned(gBankTarget, gBankAttacker)
 			&& !(gStatuses3[gBankTarget] & STATUS3_YAWN)
 			&& (Random() & 1) == 0) //50 % chance target is put to sleep
 			{
@@ -1198,7 +1198,7 @@ void atkFF2F_setmaxmoveeffect(void)
 
 		case MAX_EFFECT_CONFUSE_FOES:
 			if ((BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
-			&&  (CanBeConfused(gBankTarget, TRUE) || (IS_DOUBLE_BATTLE && CanBeConfused(PARTNER(gBankTarget), TRUE)))) //Is it worth it to push the script
+			&&  (CanBeConfused(gBankTarget, gBankAttacker, TRUE) || (IS_DOUBLE_BATTLE && CanBeConfused(PARTNER(gBankTarget), gBankAttacker, TRUE)))) //Is it worth it to push the script
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MaxMoveConfuseFoes;
@@ -1253,7 +1253,7 @@ void PickRandomGMaxBefuddleEffect(void)
 
 	switch (gBattleCommunication[MOVE_EFFECT_BYTE]) {
 		case MOVE_EFFECT_SLEEP:
-			if (CanBePutToSleep(gBankTarget, TRUE))
+			if (CanBePutToSleep(gBankTarget, gBankAttacker, TRUE))
 				gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
 			break;
 		case MOVE_EFFECT_POISON:
@@ -1262,7 +1262,7 @@ void PickRandomGMaxBefuddleEffect(void)
 			break;
 		case MOVE_EFFECT_BURN: //Gets changed to Paralysis
 			gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
-			if (CanBeParalyzed(gBankTarget, TRUE))
+			if (CanBeParalyzed(gBankTarget, gBankAttacker, TRUE))
 				gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
 			break;
 	}
@@ -1271,7 +1271,7 @@ void PickRandomGMaxBefuddleEffect(void)
 void SetGMaxVoltCrashEffect(void)
 {
 	gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
-	if (CanBeParalyzed(gBankTarget, TRUE))
+	if (CanBeParalyzed(gBankTarget, gBankAttacker, TRUE))
 		gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
 }
 
@@ -1300,7 +1300,7 @@ void PickRandomGMaxStunshockEffect(void)
 	else
 	{
 		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
-		if (CanBeParalyzed(gBankTarget, TRUE))
+		if (CanBeParalyzed(gBankTarget, gBankAttacker, TRUE))
 			gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
 	}
 }
@@ -1308,7 +1308,7 @@ void PickRandomGMaxStunshockEffect(void)
 void SetGMaxSmiteEffect(void)
 {
 	gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_CONFUSION;
-	if (CanBeConfused(gBankTarget, TRUE))
+	if (CanBeConfused(gBankTarget, gBankAttacker, TRUE))
 		gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
 }
 

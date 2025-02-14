@@ -1035,9 +1035,6 @@ const u8* GetAbilityName(const u8 ability)
 {
 	const u8* ptr = gAbilityNames[ability];
 
-	if (ptr[3] == 0x8 || ptr[3] == 0x9) //Expanded Ability Names
-		ptr = T1_READ_PTR(ptr);
-
 	return ptr;
 }
 

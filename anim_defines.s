@@ -13,6 +13,8 @@
 
 @For launchtemplate
 .equ TEMPLATE_ATTACKER, 0x0
+.equ TEMPLATE_ABOVE, 0x20
+.equ TEMPLATE_BELOW, 0x40 @;Appears underneath the sprite
 .equ TEMPLATE_TARGET, 0x80
 
 @background IDs
@@ -91,6 +93,7 @@
 .equ BG_HYPER_BEAM, 0x49
 .equ BG_DYNAMAX_CANNON, 0x4A
 .equ BG_AURA_SPHERE, 0x4B
+.equ BG_CHLOROBLAST, 0x4C
 
 @pals for pal fading tasks
 .equ PAL_BG, 0x1
@@ -283,12 +286,12 @@
 .byte \anim1BArg6
 .endm
 
-.macro soundcomplex anim1Carg1 anim1Carg2 anim1Carg3 anim1Carg4
+.macro soundcomplex songId panning lengthOfOne numTimes
 .byte 0x1C
-.hword \anim1Carg1
-.byte \anim1Carg2
-.byte \anim1Carg3
-.byte \anim1Carg4
+.hword \songId
+.byte \panning
+.byte \lengthOfOne
+.byte \numTimes
 .endm
 
 .macro playsoundwait anim1Darg1 anim1Darg2 anim1Darg3
@@ -520,6 +523,8 @@
 .equ Template_LusterPurgeHits, 0x83AF194
 .equ Template_Leer, 0x83C4DC4
 .equ Template_MiniFirePlume, 0x83AED1C
+.equ Template_FireSpin, 0x83AE97C
+.equ Template_WillOWispFire, 0x83AD428
 .equ Template_Pal_Fade, 0x83AF068
 .equ Template_SlideMonToOffset, 0x839D3A4
 .equ Template_SlideMonToOriginalPos, 0x839D38C
@@ -570,6 +575,7 @@
 .equ Template_EyeSparkle, 0x83AB840
 .equ Template_MegaPunchKick, 0x83ADD04
 .equ Template_ComplexPaletteBlend, 0x83AF080
+.equ Template_KnockOffStrike, 0x83C55F8
 .equ Template_ThinRingShrinking, 0x83AB60C
 .equ Template_FlyBallUp, 0x83AE0FC
 .equ Template_IngrainRoot, 0x83AA308
@@ -578,6 +584,12 @@
 .equ Template_SwirlingSnowball, 0x83AD954
 .equ Template_FlatterSpotlight, 0x83C5234
 .equ Template_Whirlpool, 0x83AE964
+.equ Template_SlashSlice, 0x83AAAE8
+.equ Template_Moon, 0x83AAC78
+.equ Template_MoonlightSparkle, 0x83AACA8
+.equ Template_DragonDanceOrb, 0x83AED8C
+.equ Template_SwordsDanceBlade, 0x83AB13C
+.equ Template_GrowingChargeOrb, 0x83AD718
 
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075541
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075599
@@ -1066,3 +1078,18 @@ waitbgfadein
 .equ ANIM_TAG_ICE_ROCK_SINGLE, 0x287E
 .equ ANIM_TAG_STONE_PILLAR_MULTI, 0x287F
 .equ ANIM_TAG_TERASTAL_SYMBOL, 0x2880
+.equ ANIM_TAG_OMEGA_SYMBOL, 0x2881
+.equ ANIM_TAG_ALPHA_SYMBOL, 0x2882
+
+.equ Template_ElectricStatic, 0x83AD748
+.equ Template_Sparkle, 0x83AE3E8
+.equ Template_Temp27AB_G, 0x83AD0B4
+.equ Template_SpotlightTarget, 0x83C5234
+.equ Template_ElectricSparkPlayer2, 0x83AD5B4
+.equ AnimTask_GetWeather, 0x80E54C7
+.equ AnimTask_FadeWhiteOrBlack, 0x80BBDF9
+.equ AnimTask_PlayUserCry, 0x80DE31B
+.equ Template_GraySmoke, 0x83AABEC
+.equ CoinSound, 0xA7
+.equ SparksSound, 0x70
+.equ ThunderSound, 0xD6

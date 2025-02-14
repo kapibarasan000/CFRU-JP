@@ -739,7 +739,10 @@ static void MoveSelectionDisplayMoveType(void)
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
 	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
-		moveType = moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]];
+		if (moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] == MOVE_TERABLAST && gNewBS->terastalData.chosen[gActiveBattler])
+			moveType = GetTeraType(gActiveBattler);
+		else
+			moveType = moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]];
 	#else
 		if (!moveInfo->dynamaxed)
 			moveType = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].type;
@@ -752,30 +755,51 @@ static void MoveSelectionDisplayMoveType(void)
 		if (!(gBattleTypeFlags & BATTLE_TYPE_LINK) && !IS_GHOST_BATTLE) //Don't use this feature in link battles or battles against Ghosts
 		{
 			u8 stab = 0;
+			u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
 			const u16* palPtr = gUserInterfaceGfx_TypeHighlightingPal;
-			if (SPLIT(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]) != SPLIT_STATUS
+			if (SPLIT(move) != SPLIT_STATUS
 			&&	(moveType == moveInfo->monType1
 			  || moveType == moveInfo->monType2
 			  || moveType == moveInfo->monType3
-			  || moveType == GetBattlerTeraType(gActiveBattler)))
+			  || (moveType == GetTeraType(gActiveBattler) && (IsTerastal(gActiveBattler) || gNewBS->terastalData.chosen[gActiveBattler]))))
 			{
 				stab = 2;
 			}
 
+			u8 foePosition;
 			u8 moveResult = 0;
 			if (IS_SINGLE_BATTLE)
-				moveResult = moveInfo->moveResults[GetBattlerPosition(FOE(gActiveBattler))][gMoveSelectionCursor[gActiveBattler]];
+			{
+				foePosition = GetBattlerPosition(FOE(gActiveBattler));
+			}
 			else if (gBattlerControllerFuncs[gActiveBattler] == HandleInputChooseTarget)
-				moveResult = moveInfo->moveResults[GetBattlerPosition(gMultiUsePlayerCursor)][gMoveSelectionCursor[gActiveBattler]];
+			{
+				foePosition = GetBattlerPosition(gMultiUsePlayerCursor);
+			}
 			else if (CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, FOE(gActiveBattler)) <= 1) //Only 1 enemy left
 			{
 				u8 bankDef = FOE(gActiveBattler);
 				if (!BATTLER_ALIVE(bankDef))
 					bankDef = PARTNER(bankDef);
 
-				moveResult = moveInfo->moveResults[GetBattlerPosition(bankDef)][gMoveSelectionCursor[gActiveBattler]];
+				foePosition = GetBattlerPosition(bankDef);
+			}
+			else
+				goto SKIP_LOAD_MOVE_RESULT;
+
+			if (move == MOVE_TERABLAST && gNewBS->terastalData.chosen[gActiveBattler])
+			{
+				moveResult = VisualTypeCalc(move, gActiveBattler, foePosition);
+				if (!(moveResult & MOVE_RESULT_NO_EFFECT)
+				&& (CheckTableForMoveEffect(move, gMoveEffectsThatIgnoreWeaknessResistance) || gBattleMoves[move].effect == EFFECT_0HKO))
+					moveResult = 0;
+			}
+			else
+			{
+				moveResult = moveInfo->moveResults[foePosition][gMoveSelectionCursor[gActiveBattler]];
 			}
 
+			SKIP_LOAD_MOVE_RESULT:
 			if (moveResult & MOVE_RESULT_SUPER_EFFECTIVE)
 			{
 				gPlttBufferUnfaded[88] = palPtr[SUPER_EFFECTIVE_COLOURS + stab + 0];
@@ -1767,6 +1791,20 @@ u8 TrySetCantSelectMoveBattleScript(void)
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingMoveWithNoPP;
 		++limitations;
 	}
+	else if(move == MOVE_GIGATONHAMMER && gLastUsedMoves[gActiveBattler] == MOVE_GIGATONHAMMER)
+    {
+        gCurrentMove = MOVE_GIGATONHAMMER;
+        //gLastUsedItem = ITEM(gActiveBattler);
+        gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedGigatonHammer;
+        ++limitations;
+    }
+	else if(move == MOVE_BLOODMOON && gLastUsedMoves[gActiveBattler] == MOVE_BLOODMOON)
+    {
+        gCurrentMove = MOVE_BLOODMOON;
+        //gLastUsedItem = ITEM(gActiveBattler);
+        gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedGigatonHammer;
+        ++limitations;
+    }
 	
 	if (limitations != 0)
 	{

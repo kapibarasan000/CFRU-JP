@@ -91,16 +91,18 @@ void RemoveScreensFromSide(const u8 side);
 
 void ClearBankStatus(u8 bank);
 bool8 DoesSleepClausePrevent(u8 bank);
-bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil);
-bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil);
-bool8 CanBeYawned(u8 bank);
+bool8 CanBeGeneralStatused(u8 bankDef, u8 defAbility, u8 atkAbility, bool8 checkFlowerVeil);
+bool8 CanBePutToSleep(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil);
+bool8 CanBeYawned(u8 bankDef, u8 bankAtk);
 bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil);
-bool8 CanBeParalyzed(u8 bank, bool8 checkFlowerVeil);
-bool8 CanBeBurned(u8 bank, bool8 checkFlowerVeil);
-bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil);
-bool8 CanBeConfused(u8 bank, u8 checkSafeguard);
+bool8 CanBeParalyzed(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil);
+bool8 CanBeBurned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil);
+bool8 CanBeFrozen(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil);
+bool8 CanBeConfused(u8 bankDef, u8 bankAtk, u8 checkSafeguard);
 bool8 CanBeTormented(u8 bank);
 bool8 CanBeInfatuated(u8 bankDef, u8 bankAtk);
+bool8 IsTargetAbilityIgnored(u8 defAbility, u8 atkAbility, u16 move);
+bool8 IsTargetAbilityIgnoredNoMove(u8 defAbility, u8 atkAbility);
 
 bool8 IsTrickRoomActive(void);
 bool8 IsMagicRoomActive(void);

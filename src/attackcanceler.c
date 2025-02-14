@@ -254,6 +254,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		case CANCELLER_FLAGS: // flags clear
 			gBattleMons[gBankAttacker].status2 &= ~(STATUS2_DESTINY_BOND);
 			gStatuses3[gBankAttacker] &= ~(STATUS3_GRUDGE);
+			gStatuses3[gBankAttacker] &= ~(STATUS3_GLAIVERUSH);
 			gBattleScripting.tripleKickPower = 0;
 			gNewBS->ai.zMoveHelper = 0;
 			gBattleStruct->atkCancellerTracker++;
@@ -965,27 +966,21 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			{
 				u8 ability = ABILITY(gBankAttacker);
 
-				if (gCurrentMove == MOVE_SURGINGSTRIKES)
-				{
-					gMultiHitCounter = 3;
-				}
-				else if (ability == ABILITY_SKILLLINK)
+				if (ability == ABILITY_SKILLLINK)
 				{
 					gMultiHitCounter = 5;
 				}
-				else if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_LOADED_DICE)
-				{
-					gMultiHitCounter = 5 - (Random() & 1);
-				}
-				#ifdef SPECIES_ASHGRENINJA
 				else if (ability == ABILITY_BATTLEBOND
 				&& gCurrentMove == MOVE_WATERSHURIKEN
 				&& SPECIES(gBankAttacker) == SPECIES_ASHGRENINJA)
 				{
 					gMultiHitCounter = 3;
 				}
+				else if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_LOADED_DICE)
+				{
+					gMultiHitCounter = 5 - (Random() & 1);
+				}
 				else
-				#endif
 				{
 					gMultiHitCounter = Random() & 3;
 					if (gMultiHitCounter > 1)
@@ -1011,8 +1006,19 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			}
 			else if (gBattleMoves[gCurrentMove].effect == EFFECT_TRIPLE_KICK)
 			{
-				gMultiHitCounter = 3;
-				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting.multihitString, 1, 0)
+				if (gCurrentMove == MOVE_POPULATIONBOMB)
+				{
+					if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_LOADED_DICE)
+						gMultiHitCounter = 10 - (Random() & 6);
+					else
+						gMultiHitCounter = 10;
+				}
+				else
+				{
+					gMultiHitCounter = 3;
+				}
+				
+				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting.multihitString, 2, 0)
 			}
 			else if (gBattleMoves[gCurrentMove].effect == EFFECT_BEAT_UP)
 			{
@@ -1033,6 +1039,11 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				}
 
 				gBattleCommunication[0] = 0; //For later
+				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting.multihitString, 1, 0)
+			}
+			else if (gCurrentMove == MOVE_SURGINGSTRIKES || gCurrentMove == MOVE_TRIPLEDIVE)
+			{
+				gMultiHitCounter = 3;
 				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting.multihitString, 1, 0)
 			}
 
@@ -1247,7 +1258,7 @@ static u8 IsMonDisobedient(void)
 		obedienceLevel = gBattleMons[gBankAttacker].level - obedienceLevel;
 
 		calc = (Random() & 255);
-		if (calc < obedienceLevel && CanBePutToSleep(gBankAttacker, FALSE))
+		if (calc < obedienceLevel && CanBePutToSleep(gBankAttacker, gBankAttacker, FALSE))
 		{
 			// try putting asleep
 			int i;

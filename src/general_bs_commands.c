@@ -389,7 +389,10 @@ void atk09_attackanimation(void)
 	if (IsDoubleSpreadMove())
 		resultFlags = UpdateEffectivenessResultFlagsForDoubleSpreadMoves(resultFlags);
 
-	if (((gHitMarker & HITMARKER_NO_ANIMATIONS) && (gCurrentMove != MOVE_TRANSFORM && gCurrentMove != MOVE_SUBSTITUTE))
+	if (((gHitMarker & HITMARKER_NO_ANIMATIONS)
+	 && (move != MOVE_TRANSFORM && move != MOVE_SUBSTITUTE
+	  && move != MOVE_ELECTRICTERRAIN && move != MOVE_PSYCHICTERRAIN
+	  && move != MOVE_MISTYTERRAIN && move != MOVE_GRASSYTERRAIN && move != MOVE_SHEDTAIL)) //Terrain animations always need to play and reload BG
 	|| gNewBS->tempIgnoreAnimations)
 	{
 		if (!(resultFlags & MOVE_RESULT_NO_EFFECT))
@@ -932,6 +935,15 @@ void atk0F_resultmessage(void)
 	{
 		gNewBS->MetronomeCounter[gBankAttacker] = 0;
 
+		if (gMultiHitCounter && gMultiHitCounter < gBattleScripting.multihitString[4])
+        {
+            gMultiHitCounter = 0;
+            gMoveResultFlags &= ~MOVE_RESULT_MISSED;
+            BattleScriptPushCursor();
+            gBattlescriptCurrInstr = BattleScript_MultiHitPrintStrings;
+            return;
+        }
+
 		if (gNewBS->missStringId[gBankTarget] == 3 || gNewBS->missStringId[gBankTarget] == 4) //Levitate + Wonder Guard
 		{
 			BattleScriptPush(gBattlescriptCurrInstr + 1);
@@ -1334,6 +1346,7 @@ void atk1B_cleareffectsonfaint(void) {
 				gBattleMons[gActiveBattler].status1 = 0;
 				EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 0x4, &gBattleMons[gActiveBattler].status1);
 				MarkBufferBankForExecution(gActiveBattler);
+				++gNewBS->FaintedCounters[SIDE(gActiveBattler)];
 				if (IsTerastal(gActiveBattler))
 					gNewBS->terastalData.fainted[gActiveBattler] = 1;
 
@@ -2138,7 +2151,10 @@ void atk77_setprotect(void) {
 		case MOVE_MATBLOCK:
 		case MOVE_QUICKGUARD:
 		case MOVE_WIDEGUARD:
+		case MOVE_OBSTRUCT:
 		case MOVE_MAX_GUARD:
+		case MOVE_SILKTRAP:
+		case MOVE_BURNINGBULWARK:
 			break;
 		default:
 			gDisableStructs[gBankAttacker].protectUses = 0;
@@ -2209,6 +2225,16 @@ void atk77_setprotect(void) {
 			case MOVE_ENDURE:
 				gProtectStructs[gBankAttacker].endured = 1;
 				gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+				break;
+
+			case MOVE_SILKTRAP:
+				gProtectStructs[gBankAttacker].SilkTrap = 1;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+				break;
+
+			case MOVE_BURNINGBULWARK:
+				gProtectStructs[gBankAttacker].BurningBulwark = 1;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 				break;
 
 			default:
@@ -3740,6 +3766,7 @@ void atkB0_trysetspikes(void)
 		case MOVE_STEALTHROCK:
 		case MOVE_G_MAX_STONESURGE_P:
 		case MOVE_G_MAX_STONESURGE_S:
+		case MOVE_STONEAXE:
 			if (gSideTimers[defSide].srAmount)
 			{
 				gSpecialStatuses[gBankAttacker].ppNotAffectedByPressure = 1;

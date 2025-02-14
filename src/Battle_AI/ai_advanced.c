@@ -888,7 +888,7 @@ static bool8 BankHoldingUsefulItemToProtectFor(u8 bank)
 		return TRUE;
 
 	if (itemEffect == ITEM_EFFECT_FLAME_ORB
-	&& CanBeBurned(bank, FALSE)
+	&& CanBeBurned(bank, bank, FALSE)
 	&& (ability == ABILITY_GUTS
 	 || ability == ABILITY_FLAREBOOST
 	 || ability == ABILITY_MAGICGUARD
@@ -1724,7 +1724,7 @@ static bool8 ShouldUseSubstitute(u8 bankAtk, u8 bankDef)
 
 	if (defPrediction != MOVE_NONE)
 	{
-		if (MoveWouldHitFirst(MOVE_SUBSTITUTE, bankAtk, bankDef)) //Attacker goes first
+		if (MoveWouldHitFirst(MOVE_SUBSTITUTE || MOVE_SHEDTAIL, bankAtk, bankDef)) //Attacker goes first
 		{
 			if (GetFinalAIMoveDamage(defPrediction, bankDef, bankAtk, 1, NULL) < MathMax(1, gBattleMons[bankAtk].maxHP / 4))
 				return TRUE;
