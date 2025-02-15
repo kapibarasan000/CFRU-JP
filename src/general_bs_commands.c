@@ -3222,6 +3222,7 @@ void TransformPokemon(u8 bankAtk, u8 bankDef)
 	}
 	
 	gNewBS->chiStrikeCritBoosts[bankAtk] = gNewBS->chiStrikeCritBoosts[bankDef];
+	gNewBS->DragonCheerRanks[bankAtk] = gNewBS->DragonCheerRanks[bankDef];
 
 	gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 	gBattleSpritesDataPtr->bankData[bankAtk].transformSpecies = species;
@@ -4158,6 +4159,7 @@ void atkBD_copyfoestats(void) //Psych up
 		gBattleMons[gBankAttacker].status2 &= ~STATUS2_FOCUS_ENERGY; //Remove old boost if had
 		gBattleMons[gBankAttacker].status2 |= (gBattleMons[gBankTarget].status2 & STATUS2_FOCUS_ENERGY); //Give boost if opponent has
 		gNewBS->chiStrikeCritBoosts[gBankAttacker] = gNewBS->chiStrikeCritBoosts[gBankTarget];
+		gNewBS->DragonCheerRanks[gBankAttacker] = gNewBS->DragonCheerRanks[gBankTarget];
 		gBattlescriptCurrInstr += 5;
 	}
 }

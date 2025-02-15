@@ -110,7 +110,7 @@ void atk04_critcalc(void)
 		}
 		else 
 		{
-			critChance  = 2 * ((gBattleMons[gBankAttacker].status2 & STATUS2_FOCUS_ENERGY) != 0)
+			critChance  = GetCriticalRank(gBankAttacker)
 						+ gNewBS->chiStrikeCritBoosts[gBankAttacker]
 						+ (CheckTableForMove(gCurrentMove, gHighCriticalChanceMoves))
 						+ (atkEffect == ITEM_EFFECT_SCOPE_LENS)
@@ -151,7 +151,6 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 	u8 atkAbility;
 	u8 defAbility;
 	u16 atkSpecies;
-	u32 atkStatus2;
 	u32 defStatus1;
 
 	u8 atkEffect = 0;
@@ -162,14 +161,12 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 			atkAbility = GetMonAbility(monAtk);
 			atkSpecies = monAtk->species;
 			atkEffect = GetMonItemEffect(monAtk);
-			atkStatus2 = 0;
 	}
 	else
 	{
 		atkAbility = ABILITY(bankAtk);
 		atkEffect = ITEM_EFFECT(bankAtk);
 		atkSpecies = gBattleMons[bankAtk].species;
-		atkStatus2 = gBattleMons[bankAtk].status2;
 	}
 
 	if (monDef != NULL)
@@ -195,7 +192,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 		return TRUE;
 
 	else {
-		critChance  = 2 * ((atkStatus2 & STATUS2_FOCUS_ENERGY) != 0)
+		critChance  = GetCriticalRank(bankAtk)
 					+ gNewBS->chiStrikeCritBoosts[bankAtk]
 					+ (CheckTableForMove(move, gHighCriticalChanceMoves))
 					+ (atkEffect == ITEM_EFFECT_SCOPE_LENS)

@@ -3921,33 +3921,12 @@ BattleScript_CantRaiseMultipleTargetStats:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BS_DragonCheer:
-	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED
-	jumpiffainted BANK_TARGET FAILED
-	jumpifprotectedbycraftyshield BANK_TARGET FAILED
+	callasm DragonCheerFunc
 	attackstring
 	ppreduce
-	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX DragonCheer_ACC
-	jumpifstat BANK_TARGET EQUALS STAT_SPATK STAT_MAX BattleScript_CantRaiseMultipleTargetStats
-
-DragonCheer_ACC:
 	attackanimation
 	waitanimation
-	setbyte STAT_ANIM_PLAYED 0x0
-	jumpiftype BANK_TARGET TYPE_DRAGON DragonCheer_ACC2
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ACC, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setstatchanger STAT_ACC | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable gStatUpStringIds
-	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
-
-DragonCheer_ACC2:
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ACC, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setstatchanger STAT_ACC | INCREASE_2
-	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable gStatUpStringIds
+	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 

@@ -135,6 +135,7 @@ bool8 CantScoreACrit(u8 bank, struct Pokemon* mon);
 u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg);
 u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck);
 void EmitDataTransfer(u8 bufferId, void* dst, u16 size, void* data);
+u8 GetCriticalRank(u8 bank);
 
 //Functions Hooked In
 void ClearTemporarySpeciesSpriteData(u8 bank, bool8 dontClearSubstitute);

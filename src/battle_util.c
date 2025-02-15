@@ -1981,3 +1981,16 @@ u16 TryFixDynamaxTransformSpecies(u8 bank, u16 species)
 	return species;
 }
 
+u8 GetCriticalRank(u8 bank)
+{
+	u8 rank = 0;
+	if (gBattleMons[bank].status2 & STATUS2_FOCUS_ENERGY)
+	{
+		if (gNewBS->DragonCheerRanks[bank] == 1)
+			rank = 1;
+		else
+			rank = 2;
+	}
+
+	return rank;
+}

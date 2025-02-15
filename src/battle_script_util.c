@@ -2381,3 +2381,27 @@ void TryFailJungleHealing(void)
 	if (ShouldJungleHealingFail(gBankAttacker))
 		gBattlescriptCurrInstr = BattleScript_LifeDewFail - 5;
 }
+
+void DragonCheerFunc(void)
+{
+	u8 bank = PARTNER(gBankAttacker);
+
+	if (IS_DOUBLE_BATTLE 
+	&& !(gBattleMons[bank].status2 & STATUS2_FOCUS_ENERGY)
+	&& !(gStatuses3[bank] & STATUS3_SEMI_INVULNERABLE))
+	{
+		gBattleMons[bank].status2 |= STATUS2_FOCUS_ENERGY;
+
+		if (IsOfType(bank, TYPE_DRAGON))
+			gNewBS->DragonCheerRanks[bank] = 2;
+		else
+			gNewBS->DragonCheerRanks[bank] = 1;
+
+		gBattleScripting.bank = bank;
+		gBattleStringLoader = gText_DragonCheerString;
+	}
+	else
+	{
+		gBattlescriptCurrInstr = BattleScript_ButItFailedAttackstring - 5;
+	}
+}

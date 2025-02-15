@@ -768,6 +768,7 @@ struct NewBattleStruct
 	u8 GlaiveRushTimers[MAX_BATTLERS_COUNT];
 	u8 rageFistCounter[NUM_BATTLE_SIDES][PARTY_SIZE];
 	u8 SyrupBombTimers[MAX_BATTLERS_COUNT];
+	u8 DragonCheerRanks[MAX_BATTLERS_COUNT];
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;

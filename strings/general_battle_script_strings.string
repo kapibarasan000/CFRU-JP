@@ -341,6 +341,9 @@ The sleep clause prevents more\nPokemon from being put to sleep！
 #org @gText_BurningBulwarkBRN
 [EFFECT_BANK]は\nやけどを おった！
 
+#org @gText_DragonCheerString
+[SCRIPTING_BANK]は\nはりきっている！
+
 //Other Battle Features
 
 #org @gText_Devolved

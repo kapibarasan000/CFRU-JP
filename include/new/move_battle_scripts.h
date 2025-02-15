@@ -170,6 +170,7 @@ extern const u8 SpikesLayString[];
 extern const u8 StealthRockLayString[];
 extern const u8 ToxicSpikesLayString[];
 extern const u8 StickyWebLayString[];
+extern const u8 gText_DragonCheerString[];
 
 extern const u8 ElectricTerrainSetString[];
 extern const u8 GrassyTerrainSetString[];

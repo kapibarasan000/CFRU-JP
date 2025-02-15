@@ -141,3 +141,4 @@ bool8 ShouldJungleHealingFail(u8 bankAtk);
 void GlaiveRushTimer(void);
 void FailShedTailIfLowHP(void);
 void TrySetAlluringVoiceMoveEffect(void);
+void DragonCheerFunc(void);
