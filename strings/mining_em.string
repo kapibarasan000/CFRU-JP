@@ -1,0 +1,20 @@
+#org @gText_UndergroundMining_Offer
+かべが すこし もりあがっている\nほってみますか？
+
+#org @gText_UndergroundMining_DisplayPossiblePrizes
+かべのなかに おおきな はんのうを\n[BUFFER1]つ かくにん！
+
+#org @gText_UndergroundMining_WallCollapsed
+かべが くずれて しまった！
+
+#org @gText_UndergroundMining_GotAllItems
+すべての かせきを ほりだした！
+
+#org @gText_UndergroundMining_FoundItem
+[BUFFER1]を\nてにいれた！
+
+#org @gText_UndergroundMining_NoSpace
+[BUFFER1]を\nてにいれた！\pざんねん！\nふくろが いっぱいだ！
+
+#org @gText_UndergroundMining_ToolSwapInstructions
+[L_BUTTON][R_BUTTON]

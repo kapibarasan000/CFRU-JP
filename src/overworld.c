@@ -2136,6 +2136,7 @@ void FollowHiddenGrottoWarp(void)
 
 void PrepMiningWarp(void)
 {
+	#ifdef MB_UNDERGROUND_MINING 
 	s8 warpEventId;
 	struct MapPosition position;
 
@@ -2143,12 +2144,19 @@ void PrepMiningWarp(void)
 	gSpecialVar_LastResult = FALSE;
 	warpEventId = GetWarpEventAtMapPosition(&gMapHeader, &position);
 
-	if (warpEventId != -1)
+	if (GetPlayerFacing() == DIR_NORTH && warpEventId != -1) //Collapsed doorways are always to north - prevents issues with standing on other warps
 	{
 		StoreInitialPlayerAvatarState();
 		SetupWarp(&gMapHeader, warpEventId, &position);
-		gSpecialVar_LastResult = TRUE;
+
+		if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
+		{
+			gSpecialVar_LastResult = 0xFF;
+		}
+		else
+			gSpecialVar_LastResult = TRUE;
 	}
+	#endif
 }
 
 static bool8 MetatileBehavior_IsClimbableLadder(unusedArg u8 behaviour)

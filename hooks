@@ -648,3 +648,5 @@ ActivateMGBAPrint 81C7740 0
 FixInstantTextOptionSpeed 08002D0C 0
 RunTextPrintersForInstantTextHook 08002DD2 0
 #endif
+
+PrepMiningWarp 0801D01C 0

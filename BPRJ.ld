@@ -206,7 +206,7 @@ gLoadPointer = 0x03000f14;
 sScriptContext2Enabled = 0x3000F28;
 
 /* Text RAM */
-gTextflags = 0x3003E90;
+gTextFlags = 0x3003E90;
 
 /* Save RAM */
 gSaveDataBuffer = 0x020399B0;
@@ -1845,3 +1845,11 @@ DMA0_SRC = 0x40000B0;
 DMA0_DST = 0x40000B4;
 DMA0_CNT_L = 0x40000B8;
 DMA0_CNT_H = 0x40000BA;
+
+/* Mining Funcs */
+
+AddTextPrinterParameterized3 = 0x812ED24 | 1;
+gOamData_AffineOff_ObjNormal_32x32 = 0x8370A08;
+gOamData_AffineOff_ObjNormal_64x64 = 0x8370A10;
+gOamData_AffineOff_ObjNormal_64x32 = 0x8370A30;
+gOamData_AffineOff_ObjNormal_32x64 = 0x8370A50;

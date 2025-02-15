@@ -153,6 +153,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define MB_LOCKED_DOOR 0xA4 //The tile behaviour byte for doors that are locked and cannot be opened
 #define MB_ROCK_CLIMB_WALL 0xA5 //The tile behaviour byte that can be climbed up using Rock Climb
 #define MB_LAVA 0xA6 //The tile beahviour byte that can be lava surfed on. Comment out to remove Lava Surf
+#define MB_UNDERGROUND_MINING 0xA7
 
 #define MAP_PLAYER_HOME ((4 << 8) | 0) //The map bank and map number of the player's home
 
@@ -318,6 +319,9 @@ enum //These vars need to be one after the other (hence the enum)
 #define OKAY_WITH_AI_SUICIDE //The AI is allowed to use self-destructing moves
 //#define HEALTHBAR_TYPE_ICONS //Pokemon types will always be shown next to the healthbar
 #define EXPANDED_NEW_ITEMS //Expands items table and add new items util gen 9.
+
+//Save stuff
+#define VAR_R_BUTTON_MODE 0x5150
 
 /* DexNav Options */
 //See "include/new/dexnav_config.h"
