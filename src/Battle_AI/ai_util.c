@@ -307,12 +307,18 @@ bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 		moveEffect = gBattleMoves[currMove].effect;
 
 		if (!(gBitTable[i] & moveLimitations)
-		&& CheckContact(currMove, bankAtk)
+		&& CheckContact(currMove, bankAtk, bankDef)
 		&& moveEffect != EFFECT_RECHARGE
 		&& moveEffect != EFFECT_COUNTER
 		&& moveEffect != EFFECT_MIRROR_COAT
 		&& moveEffect != EFFECT_BURN_UP
 		&& moveEffect != EFFECT_FAKE_OUT
+		&& moveEffect != EFFECT_SOLARBEAM
+		&& moveEffect != EFFECT_SEMI_INVULNERABLE
+		&& moveEffect != EFFECT_SKY_ATTACK
+		&& moveEffect != EFFECT_RAZOR_WIND
+		&& moveEffect != EFFECT_SKULL_BASH
+		&& moveEffect != EFFECT_FUTURE_SIGHT
 		&& moveEffect != EFFECT_0HKO) //Don't use these move effects on partner
 		{
 			currAcc = AccuracyCalc(currMove, bankAtk, bankDef);
@@ -2455,7 +2461,7 @@ bool8 ContactMovesThatAffectTargetInMoveset(u8 bankAtk, u8 bankDef)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (CheckContact(move, bankAtk)
+			if (CheckContact(move, bankAtk, bankDef)
 			&& !(AI_SpecialTypeCalc(move, bankDef, bankAtk) & MOVE_RESULT_NO_EFFECT))
 				return TRUE;
 		}

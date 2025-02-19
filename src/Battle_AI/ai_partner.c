@@ -195,7 +195,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				||  atkAbility == ABILITY_SLOWSTART
 				||  atkAbility == ABILITY_DEFEATIST)
 				{
-					if (CheckContact(move, bankAtk) //Mummy will transfer
+					if (CheckContact(move, bankAtk, bankAtkPartner) //Mummy will transfer
 					&& !PARTNER_MOVE_EFFECT_IS_SKILL_SWAP
 					&& atkPartnerItemEffect != ITEM_EFFECT_PROTECTIVE_PADS
 					&& !(TypeCalc(move, bankAtk, bankAtkPartner, NULL, FALSE) & MOVE_RESULT_NO_EFFECT) //Move has effect

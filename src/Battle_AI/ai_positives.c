@@ -597,9 +597,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				else //Double Battle
 				{
 					if (defAbility != ABILITY_CONTRARY
-					&& defAbility != ABILITY_CLEARBODY
-					//&& defAbility != ABILITY_WHITESMOKE
-					&& defAbility != ABILITY_FULLMETALBODY
+					&& !IsClearBodyAbility(defAbility)
 					&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET
 					&& STAT_STAGE(bankDef, STAT_STAGE_SPEED) > 0)
 						IncreaseViabilityForSpeedControl(&viability, class, bankAtk, bankDef);
@@ -2120,6 +2118,12 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					||  atkAbility == ABILITY_MOTORDRIVE
 					||  atkAbility == ABILITY_LIGHTNINGROD)
 					 && GetMoveTypeSpecial(bankDef, predictedMove) == TYPE_NORMAL)
+						INCREASE_STATUS_VIABILITY(2);
+					break;
+
+				case MOVE_COURTCHANGE:
+					if (SIDE(bankAtk) != SIDE(bankDef)
+					&& ShouldCourtChange(bankAtk, bankDef) && !ShouldCourtChange(bankDef, bankAtk)) //Only swap field effects if you won't get anything negative
 						INCREASE_STATUS_VIABILITY(2);
 					break;
 			}

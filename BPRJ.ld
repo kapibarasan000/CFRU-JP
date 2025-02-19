@@ -26,6 +26,7 @@ sSavedWildDataMapNum = 0x203DFFD;
 gLastDexNavSpecies = 0x203DFFE;
 gMultiChoice = 0x203E000;
 gPartyPresetTeamIndices = 0x203E038;
+gScored3CritsInBattle = 0x203E03E;
 ExtensionState = 0x3000F28;
 sRtc = 0x3005ED8;
 gClock = 0x3005EF0;
@@ -468,6 +469,7 @@ MonKnowsMove = 0x812640C | 1;
 GetPartyIdFromBattlePartyId = 0x8128968 | 1;
 
 /* Battle Setup Functions */
+BattleMainCB2 = 0x80109C0 | 1;
 HandleOpponentPokeSlide = 0x80115B4 | 1;
 SetEnemyElevation = 0x8075C38 | 1;
 OpponentHandleIntroTrainerBallThrow = 0x80383EC | 1;
@@ -712,6 +714,7 @@ AnimSpinningKickOrPunchFinish = 0x80B1FE4 | 1;
 SpriteCB_SpiderWeb = 0x80B5581 | 1;
 SpriteCB_AnimMissileArcStep = 0x80B57D0 | 1;
 UnpackSelectedBattleAnimPalettes = 0x80BACD4 | 1;
+AnimHitSplatOnMonEdge = 0x80BB988 | 1;
 SpriteCB_80BBA7C = 0x80BBA7C | 1;
 StartBlendAnimSpriteColor = 0x80BBD0C | 1;
 SetAnimBgAttribute = 0x80BD4B8 | 1;
@@ -766,7 +769,8 @@ RemoveEggFromDayCare = 0x8045534 | 1;
 //DetermineEggSpeciesAndParentSlots = 0x80455C4 | 1;
 //SetInitialEggData = 0x80457B4 | 1;
 ShouldEggHatch = 0x804594C | 1;
-GetDaycareCompatibilityScore = 0x8045AE0 | 1;
+EggGroupsOverlap = 0x8045AB0 | 1;
+//GetDaycareCompatibilityScore = 0x8045AE0 | 1;
 
 /* Pokemon Storage Functions */
 ZeroBoxMonData = 0x803D0E8 | 1;

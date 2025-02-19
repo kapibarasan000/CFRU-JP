@@ -305,6 +305,7 @@ HowlTryPartnerBS:
 	callasm SetTargetPartner
 	jumpifbehindsubstitute BANK_TARGET BS_MOVE_END
 	jumpiffainted BANK_TARGET BS_MOVE_END
+	jumpifability BANK_TARGET ABILITY_SOUNDPROOF BattleScript_ProtectedByAbility
 	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
 	jumpifbyte NOTEQUALS MULTISTRING_CHOOSER 0x2 HowlSecondAttackAnimation
 	pause DELAY_HALFSECOND
@@ -336,7 +337,6 @@ BS_011_RaiseUserDef1:
 	setstatchanger STAT_DEF | INCREASE_1
 	jumpifmove MOVE_FLOWERSHIELD FlowerShieldBS
 	jumpifmove MOVE_MAGNETICFLUX MagneticFluxBS
-	jumpifmove MOVE_AROMATICMIST RaiseUserDef1_AromaticMist
 	goto 0x81BAB5D
 
 FlowerShieldBS:
@@ -418,30 +418,6 @@ BattleScript_MagneticFluxDidntWork:
 	waitmessage DELAY_1SECOND
 	goto BattleScript_MagneticFluxLoop
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-RaiseUserDef1_AromaticMist:
-	jumpifbyte NOTANDS BATTLE_TYPE BATTLE_DOUBLE FAILED
-	callasm SetTargetPartner
-	jumpifspecialstatusflag EQUALS STATUS3_SEMI_INVULNERABLE 0x0 FAILED
-	jumpiffainted BANK_TARGET FAILED
-	jumpifprotectedbycraftyshield BANK_TARGET FAILED
-	setbyte STAT_ANIM_PLAYED 0x0
-	jumpifstatcanberaised BANK_TARGET STAT_SPDEF AromaticMistRaiseSpDef
-	goto FAILED
-	
-AromaticMistRaiseSpDef:
-	attackanimation
-	waitanimation
-	setstatchanger STAT_SPDEF | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR FAILED
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 FAILED
-	setgraphicalstatchangevalues
-	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83C4548
-	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
-
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_012_RaiseUserSpd1
@@ -460,8 +436,36 @@ BS_013_RaiseUserSpAtk1:
 
 .global BS_014_RaiseUserSpDef1
 BS_014_RaiseUserSpDef1:
+	attackcanceler
+	attackstring
+	ppreduce
 	setstatchanger STAT_SPDEF | INCREASE_1
-	goto BS_BUFF_ATK_STATS
+	jumpifmove MOVE_AROMATICMIST AromaticMistBS
+	goto 0x81BAB5D
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+AromaticMistBS:
+	jumpifbyte NOTANDS BATTLE_TYPE BATTLE_DOUBLE FAILED
+	callasm SetTargetPartner
+	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED
+	jumpiffainted BANK_TARGET FAILED
+	jumpifprotectedbycraftyshield BANK_TARGET FAILED
+	setbyte STAT_ANIM_PLAYED 0x0
+	jumpifstatcanberaised BANK_TARGET STAT_SPDEF AromaticMistRaiseSpDef
+	goto FAILED
+	
+AromaticMistRaiseSpDef:
+	attackanimation
+	waitanimation
+	setstatchanger STAT_SPDEF | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR FAILED
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 FAILED
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -2313,10 +2317,19 @@ BS_108_Minimize:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-/*
 .global BS_109_Curse
 BS_109_Curse:
-*/
+	attackcanceler
+	attackstring @;So Protean activates first
+	jumpiftype2 BANK_ATTACKER, TYPE_GHOST, BattleScript_GhostCurse
+	goto 0x81BB712 @;PP Reduce
+
+BattleScript_GhostCurse:
+	jumpifbytenotequal USER_BANK, TARGET_BANK, BattleScript_DoGhostCurse
+	getmovetarget BANK_ATTACKER
+
+BattleScript_DoGhostCurse:
+	goto 0x81BB794 @;PP Reduce
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -5478,7 +5491,7 @@ BS_228_FieldEffects:
 	attackcanceler
 	attackstring
 	ppreduce
-	callasm DoFieldEffect
+	callasm DoBattleFieldEffect
 	attackanimation
 	waitanimation
 	printstring 0x184

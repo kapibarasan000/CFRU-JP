@@ -19,6 +19,7 @@ void UpdateBurmy(void);
 species_t GetMiniorCoreFromPersonality(u32 personality);
 species_t GetMiniorCoreSpecies(struct Pokemon* mon);
 void TryCrownZacianZamazenta(struct Pokemon* party);
+void TrySetCorrectToxtricityForm(struct BoxPokemon* mon);
 void HoldItemFormChange(struct Pokemon* mon, u16 item);
 void HoopaShayminPCRevertCheck(struct Pokemon* mon, bool8 recalcStats);
 
@@ -27,3 +28,4 @@ void HandleFormChange(void);
 
 //Exported Structs
 extern const species_t gMiniorCores[];
+extern const u16 gTypeToSilvallyForm[];

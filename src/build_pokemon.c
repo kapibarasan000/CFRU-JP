@@ -172,6 +172,7 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder);
 static void TryShuffleMovesForCamomons(struct Pokemon* party, u8 tier, u16 trainerId);
 static u8 GetPartyIdFromPartyData(struct Pokemon* mon);
 static u8 GetHighestMonLevel(const struct Pokemon* const party);
+static void CheckShinyMon(struct Pokemon* mon);
 
 #ifdef OPEN_WORLD_TRAINERS
 
@@ -3451,62 +3452,87 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, u32 cus
 	return sentToPc;
 }
 
-u32 CheckShinyMon(struct Pokemon* mon)
+static void CheckShinyMon(struct Pokemon* mon)
 {
-	u16 chance = 0;
-	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
+	bool8 forceShiny = FALSE;
+	u32 otId = GetMonData(mon, MON_DATA_OT_ID, NULL);
 
 	#ifdef FLAG_SHINY_CREATION
 	if (FlagGet(FLAG_SHINY_CREATION))
 	{
-		chance = 4097;
+		forceShiny = TRUE;
 	}
 	else
 	#endif
 	{
 		#ifdef ITEM_SHINY_CHARM
 		if (CheckBagHasItem(ITEM_SHINY_CHARM, 1) > 0)
-			chance = 3; //Tries an extra two times
-		#endif
-
-		if (gFishingByte) //Currently fishing
-			chance += (1 + 2 * MathMin(gFishingStreak, 20)); //Tries an extra 2 times per Pokemon in the streak up to 41 times
-	}
-
-	if (RandRange(0, 4097) < chance)		//Nominal 1/4096
-	{
-		//Force shiny
-		u32 otId = GetMonData(mon, MON_DATA_OT_ID, NULL);
-		u16 sid = HIHALF(otId);
-		u16 tid = LOHALF(otId);
-
-		u8 shinyRange = RandRange(0,8);
-		u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-		u8 ability = personality & 1;
-		u8 nature = GetNatureFromPersonality(personality);
-		u8 gender = GetGenderFromSpeciesAndPersonality(species, personality);
-		u8 letter = GetUnownLetterFromPersonality(personality);
-		bool8 abilityMatters = !mon->hiddenAbility;
-
-		do
 		{
-			personality = Random32();
-			personality = (((shinyRange ^ (sid ^ tid)) ^ LOHALF(personality)) << 16) | LOHALF(personality);
-
-			if (abilityMatters)
-			{
-				personality &= ~(1);
-				personality |= ability; //Either 0 or 1
-			}
-		} while (GetNatureFromPersonality(personality) != nature || GetGenderFromSpeciesAndPersonality(species, personality) != gender
-		#ifdef SPECIES_UNOWN
-		|| (species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter)
+			//Try an extra 2 times to generate shiny personality
+			if (IsShinyOtIdPersonality(otId, Random32())
+			||  IsShinyOtIdPersonality(otId, Random32()))
+				forceShiny = TRUE;
+		}
 		#endif
-		); //Keep all other values the same
+
+		if (!forceShiny && gFishingByte) //Currently fishing
+		{
+			u32 i, numTries; //Tries an extra 2 times per Pokemon in the streak up to 40 times
+
+			for (i = 0, numTries = 2 * MathMin(gFishingStreak, 20); i < numTries; ++i)
+			{
+				if (IsShinyOtIdPersonality(otId, Random32()))
+				{
+					forceShiny = TRUE;
+					break;
+				}
+			}
+		}
 	}
 
-	return personality;
-};
+	if (forceShiny)
+		ForceMonShiny(mon);
+}
+
+void ForceMonShiny(struct Pokemon* mon)
+{
+	if (IsMonShiny(mon))
+		return;
+
+	u32 trainerId = GetMonData(mon, MON_DATA_OT_ID, NULL);
+	u16 sid = HIHALF(trainerId);
+	u16 tid = LOHALF(trainerId);
+
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
+	u8 ability = personality & 1;
+	u8 nature = GetNatureFromPersonality(personality);
+	bool8 abilityMatters = !mon->hiddenAbility;
+	u8 gender = GetGenderFromSpeciesAndPersonality(species, personality);
+	u8 letter = GetUnownLetterFromPersonality(personality);
+	bool8 isMinior = IsMinior(species);
+	u16 miniorCore = GetMiniorCoreFromPersonality(personality);
+
+	do
+	{
+		personality = Random32();
+
+		u8 shinyRange = Random() % SHINY_ODDS;
+		personality = (((shinyRange ^ (sid ^ tid)) ^ LOHALF(personality)) << 16) | LOHALF(personality);
+
+		if (abilityMatters)
+		{
+			personality &= ~(1);
+			personality |= ability; //Either 0 or 1
+		}
+
+	} while (GetNatureFromPersonality(personality) != nature || GetGenderFromSpeciesAndPersonality(species, personality) != gender
+	|| (species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter)
+	|| (isMinior && GetMiniorCoreFromPersonality(personality) != miniorCore));
+
+	SetMonData(mon, MON_DATA_PERSONALITY, &personality);
+	CalculateMonStats(mon);
+}
  
 void TryRandomizeSpecies(unusedArg u16* species)
 {
@@ -3535,10 +3561,8 @@ u16 GetRandomizedSpecies(u16 species)
 
 void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, bool8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId)
 {
-	int i;
+	u32 i, personality, value;
 	u8 speciesName[POKEMON_NAME_LENGTH + 1];
-	u32 personality;
-	u32 value;
 
 	TryRandomizeSpecies(&species);
 
@@ -3553,12 +3577,10 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	//Determine original trainer ID
 	if (otIdType == OT_ID_RANDOM_NO_SHINY) //Pokemon cannot be shiny
 	{
-		u32 shinyValue;
 		do
 		{
 			value = Random32();
-			shinyValue = HIHALF(value) ^ LOHALF(value) ^ HIHALF(personality) ^ LOHALF(personality);
-		} while (shinyValue < 8);
+		} while (IsShinyOtIdPersonality(value, personality));
 	}
 	else if (otIdType == OT_ID_PRESET) //Pokemon has a preset OT ID
 		value = fixedOtId;
@@ -3598,33 +3620,77 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	else
 	{
 		u32 iv;
+		u8 numPerfectStats = 0;
+		bool8 perfectStats[NUM_STATS] = {0};
+
+		//HP, Attack, Defense
 		value = Random();
 
+		//HP IV
 		iv = value & 0x1F;
 		SetBoxMonData(boxMon, MON_DATA_HP_IV, &iv);
+		if (iv >= 31)
+		{
+			++numPerfectStats;
+			perfectStats[STAT_HP] = TRUE;
+		}
+
+		//Attack IV
 		iv = (value & 0x3E0) >> 5;
 		SetBoxMonData(boxMon, MON_DATA_ATK_IV, &iv);
+		if (iv >= 31)
+		{
+			++numPerfectStats;
+			perfectStats[STAT_ATK] = TRUE;
+		}
+
+		//Defense IV
 		iv = (value & 0x7C00) >> 10;
 		SetBoxMonData(boxMon, MON_DATA_DEF_IV, &iv);
+		if (iv >= 31)
+		{
+			++numPerfectStats;
+			perfectStats[STAT_DEF] = TRUE;
+		}
 
+		//Speed, Sp. Atk, Sp. Def
 		value = Random();
 
+		//Speed IV
 		iv = value & 0x1F;
 		SetBoxMonData(boxMon, MON_DATA_SPEED_IV, &iv);
+		if (iv >= 31)
+		{
+			++numPerfectStats;
+			perfectStats[STAT_SPEED] = TRUE;
+		}
+
+		//Sp. Atk IV
 		iv = (value & 0x3E0) >> 5;
 		SetBoxMonData(boxMon, MON_DATA_SPATK_IV, &iv);
+		if (iv >= 31)
+		{
+			++numPerfectStats;
+			perfectStats[STAT_SPATK] = TRUE;
+		}
+
+		//Sp. Def IV
 		iv = (value & 0x7C00) >> 10;
 		SetBoxMonData(boxMon, MON_DATA_SPDEF_IV, &iv);
+		if (iv >= 31)
+		{
+			++numPerfectStats;
+			perfectStats[STAT_SPDEF] = TRUE;
+		}
 
 		#ifdef CREATE_WITH_X_PERFECT_IVS
 		{
 			if (CheckTableForSpecies(species, gSetPerfectXIvList))
 			{
-				u8 numPerfectStats = 0;
 				u8 perfect = 31;
-				bool8 perfectStats[NUM_STATS] = {0};
+				u8 perfectStatCount = MathMin(CREATE_WITH_X_PERFECT_IVS, NUM_STATS); //Error prevention
 
-				while (numPerfectStats < MathMin(CREATE_WITH_X_PERFECT_IVS, NUM_STATS)) //Error prevention
+				while (numPerfectStats < perfectStatCount) //Harder to get more than 3 perfect since perfect stats from before are already taken into account
 				{
 					u8 statId = Random() % NUM_STATS;
 					if (!perfectStats[statId]) //Must be unique
@@ -3640,14 +3706,13 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	}
 
 	((struct Pokemon*) boxMon)->hiddenAbility = FALSE; //Set base hidden ability to 0
+	SetBoxMonData(boxMon, MON_DATA_PERSONALITY, &personality);
 
 	if (otIdType != OT_ID_RANDOM_NO_SHINY) //Pokemon can be shiny
-	{
-		personality = CheckShinyMon((struct Pokemon*) boxMon);	//Shiny charm
-		SetBoxMonData(boxMon, MON_DATA_PERSONALITY, &personality);
-	}
+		CheckShinyMon((struct Pokemon*) boxMon); //Activate Shiny Charm or fishing chain
 
 	GiveBoxMonInitialMoveset(boxMon);
+	TrySetCorrectToxtricityForm(boxMon);
 }
 
 void CreateMonWithNatureLetter(struct Pokemon* mon, u16 species, u8 level, u8 fixedIV, u8 nature, u8 letter)

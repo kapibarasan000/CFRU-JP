@@ -13,6 +13,7 @@
 #include "../include/new/dynamax.h"
 #include "../include/new/end_battle.h"
 #include "../include/new/end_battle_battle_scripts.h"
+#include "../include/new/evolution.h"
 #include "../include/new/form_change.h"
 #include "../include/new/util.h"
 #include "../include/new/mega.h"
@@ -701,7 +702,9 @@ static void EndSkyBattlePartyRestore(void)
 
 static void EndBattleFlagClear(void)
 {
-	for (u32 i = 0; i < ARRAY_COUNT(gEndBattleFlagClearTable); ++i)
+	u32 i;
+
+	for (i = 0; i < ARRAY_COUNT(gEndBattleFlagClearTable); ++i)
 		FlagClear(gEndBattleFlagClearTable[i]);
 
 	#ifdef VAR_STATUS_INDUCER
@@ -717,6 +720,18 @@ static void EndBattleFlagClear(void)
 			VarSet(VAR_STATUS_INDUCER, status | (amount << 8));
 	}
 	#endif
+
+	//Handle Sirfetch'd Evolution
+	gScored3CritsInBattle = 0;
+	for (i = 0; i < PARTY_SIZE; ++i)
+	{
+		if (gNewBS->criticalHitsThisBattle[i] >= 3)
+		{
+			gScored3CritsInBattle |= gBitTable[i];
+			if (EvolvesViaScoring3Crits(&gPlayerParty[i]))
+				gLeveledUpInBattle |= gBitTable[i];
+		}
+	}
 
 	//Reset Totem Vars
 	VarSet(VAR_TOTEM + 0, 0);	//Bank B_POSITION_PLAYER_LEFT's Stat

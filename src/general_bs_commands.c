@@ -841,6 +841,7 @@ void atk0D_critmessage(void)
 	
 		if (stringId != 0)
 		{
+			++gNewBS->criticalHitsThisBattle[gBattlerPartyIndexes[gBankAttacker]];
 			PrepareStringBattle(stringId, gBankAttacker);
 			gBattleCommunication[MSG_DISPLAY] = 1;
 		}
@@ -3768,7 +3769,7 @@ void atkB0_trysetspikes(void)
 		case MOVE_G_MAX_STONESURGE_P:
 		case MOVE_G_MAX_STONESURGE_S:
 		case MOVE_STONEAXE:
-			if (gSideTimers[defSide].srAmount)
+			if (gSideTimers[defSide].srAmount || SheerForceCheck())
 			{
 				gSpecialStatuses[gBankAttacker].ppNotAffectedByPressure = 1;
 				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
@@ -3807,6 +3808,7 @@ void atkB0_trysetspikes(void)
 			{
 				gSideStatuses[defSide] |= SIDE_STATUS_SPIKES;
 				gSideTimers[defSide].stickyWeb = 1;
+				gSideTimers[defSide].stickyWebBank = gBankAttacker; //Used by Court Change
 				gBattlescriptCurrInstr += 5;
 				stringcase = 3;
 			}
@@ -3828,7 +3830,7 @@ void atkB0_trysetspikes(void)
 			break;
 
 		default:
-			if (gSideTimers[defSide].spikesAmount >= 3)
+			if (gSideTimers[defSide].spikesAmount >= 3 || SheerForceCheck())
 			{
 				gSpecialStatuses[gBankAttacker].ppNotAffectedByPressure = 1;
 				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
@@ -3843,6 +3845,12 @@ void atkB0_trysetspikes(void)
 
 	if (stringcase != 0xFF)
 		gBattleStringLoader = (u8*) sEntryHazardsStrings[stringcase];
+}
+
+void atkB1_setforesight(void)
+{
+	gBattleMons[gBattlerTarget].status2 |= STATUS2_FORESIGHT;
+	++gBattlescriptCurrInstr;
 }
 
 void atkB2_trysetperishsong(void)
@@ -4625,11 +4633,8 @@ void atkD2_tryswapitems(void) { //Trick
 			EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gBankTarget].item);
 			MarkBufferBankForExecution(gBankTarget);
 
-			gBattleStruct->choicedMove[gBankTarget] = 0;
-			gBattleStruct->choicedMove[gBankTarget] = 0;
-
-			gBattleStruct->choicedMove[gBankAttacker] = 0;
-			gBattleStruct->choicedMove[gBankAttacker] = 0;
+			gBattleStruct->choicedMove[gBankTarget] = MOVE_NONE;
+			gBattleStruct->choicedMove[gBankAttacker] = MOVE_NONE;
 
 			gBattlescriptCurrInstr += 5;
 

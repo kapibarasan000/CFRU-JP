@@ -2,6 +2,8 @@
 #include "defines_battle.h"
 #include "../include/battle.h"
 #include "../include/field_weather.h"
+#include "../include/field_player_avatar.h"
+#include "../include/fieldmap.h"
 #include "../include/overworld.h"
 #include "../include/constants/hold_effects.h"
 #include "../include/constants/items.h"
@@ -11,6 +13,7 @@
 
 #include "../include/new/dns.h"
 #include "../include/new/evolution.h"
+#include "../include/new/form_change.h"
 /*
 evolution.c
 	handles old and new evolution methods
@@ -18,7 +21,7 @@ evolution.c
 
 u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 {
-	int i, j;
+	u32 i, j;
 	u16 targetSpecies = 0;
 	u32 personality = mon->personality;
 	u16 species = mon->species;
@@ -34,7 +37,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 
 	switch (type)
 	{
-	case 0:
+	case EVO_MODE_NORMAL:
 		level = mon->level;
 		friendship = mon->friendship;
 
@@ -117,6 +120,9 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					break;
 
 				case EVO_MOVE_TYPE:	// expanded for custom evolutions of any move type
+					if (gEvolutionTable[species][i].unknown && friendship < 220) //Needs High Friendship & Move Type
+						break;
+
 					// move type to know in param
 					for (j = 0; j < MAX_MON_MOVES; ++j)
 					{
@@ -209,8 +215,19 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					}
 					#endif
 					break;
+				
+				case EVO_MOVE_MALE:
+					if (GetMonGender(mon) != MON_MALE)
+						break;
+					goto REGULAR_EVO_MOVE;
+				
+				case EVO_MOVE_FEMALE:
+					if (GetMonGender(mon) != MON_FEMALE)
+						break;
+					//Fallthrough
 
 				case EVO_MOVE:
+				REGULAR_EVO_MOVE:
 					for (j = 0; j < MAX_MON_MOVES; ++j)
 					{
 						if (gEvolutionTable[species][i].param == mon->moves[j])
@@ -249,11 +266,64 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 				case EVO_FLAG_SET:
 					if (FlagGet(gEvolutionTable[species][i].param))
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+
+				case EVO_CRITICAL_HIT:
+					if (gMain.callback2 == BattleMainCB2) //Only after battles
+					{
+						for (j = 0; j < PARTY_SIZE; ++j)
+						{
+							if (mon == &gPlayerParty[j] || mon == &gEnemyParty[j]) //Get the correct mon id
+							{
+								if (gScored3CritsInBattle & gBitTable[j])
+									targetSpecies = gEvolutionTable[species][i].targetSpecies;
+								break;
+							}
+						}
+					}
+					break;
+
+				case EVO_NATURE_HIGH:
+					if (level >= gEvolutionTable[species][i].param
+					&& HasHighNature(mon))
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+
+				case EVO_NATURE_LOW:
+					if (level >= gEvolutionTable[species][i].param
+					&& !HasHighNature(mon))
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+
+				//case EVO_DAMAGE_LOCATION:
+
+				case EVO_LEVEL_HOLD_ITEM: //Level up to level while holding item
+					if (level >= gEvolutionTable[species][i].param && heldItem == gEvolutionTable[species][i].unknown)
+					{
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+						#ifdef EVO_HOLD_ITEM_REMOVAL
+							FlagSet(FLAG_REMOVE_EVO_ITEM);
+						#endif
+					}
+					break;
 			}
 		}
+
+		#ifdef SPECIES_SILVALLY
+		if (targetSpecies == SPECIES_SILVALLY
+		&& ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL)) == ITEM_EFFECT_MEMORY
+		&& (!mon->hiddenAbility || gBaseStats[SPECIES_SILVALLY].hiddenAbility == ABILITY_NONE)) //Ensure the new mon will have RKS System
+		{
+			//Evolve into the Silvally of the correct type
+			u8 type = ItemId_GetHoldEffectParam(GetMonData(mon, MON_DATA_HELD_ITEM, NULL));
+			if (gTypeToSilvallyForm[type] != SPECIES_NONE)
+				targetSpecies = gTypeToSilvallyForm[type];
+		}
+		#endif
+
 		break;
 
-	case 1:
+	case EVO_MODE_TRADE:
 		for (i = 0; i < EVOS_PER_MON; ++i)
 		{
 			switch (gEvolutionTable[species][i].method)
@@ -275,17 +345,44 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 		}
 		break;
 
-	case 2:
-	case 3:	// using items
+	case EVO_MODE_ITEM_USE:
+	case EVO_MODE_ITEM_CHECK:	// using items
 		for (i = 0; i < EVOS_PER_MON; ++i)
 		{
-			if (gEvolutionTable[species][i].method == EVO_ITEM
+			if ((gEvolutionTable[species][i].method == EVO_ITEM
+			 || gEvolutionTable[species][i].method == EVO_ITEM_LOCATION
+			 || gEvolutionTable[species][i].method == EVO_ITEM_HOLD_ITEM
+			 || gEvolutionTable[species][i].method == EVO_ITEM_NIGHT)
 			 && gEvolutionTable[species][i].param == evolutionItem)
 			{
 				if (evolutionItem == ITEM_DAWN_STONE && GetMonGender(mon) != gEvolutionTable[species][i].unknown)
-					break;
+					continue;
+
+				if (gEvolutionTable[species][i].method == EVO_ITEM_LOCATION)
+				{
+					s16 x, y, behaviour;
+					PlayerGetDestCoords(&x, &y);
+					behaviour = MapGridGetMetatileBehaviorAt(x, y);
+
+					if (behaviour != gEvolutionTable[species][i].unknown) //Not standing on the correct kind of tile
+						continue;				
+				}
+				else if (gEvolutionTable[species][i].method == EVO_ITEM_HOLD_ITEM)
+				{
+					if (heldItem != gEvolutionTable[species][i].unknown) //Not holding the correct item
+						continue;
+
+					#ifdef EVO_HOLD_ITEM_REMOVAL
+					FlagSet(FLAG_REMOVE_EVO_ITEM);
+					#endif
+				}
+				else if (gEvolutionTable[species][i].method == EVO_ITEM_NIGHT)
+				{
+					if (!IsNightTime())
+						continue;
+				}
+
 				targetSpecies = gEvolutionTable[species][i].targetSpecies;
-				break;
 			}
 		}
 		break;
@@ -440,4 +537,43 @@ u16 GetMonDevolution(struct Pokemon* mon)
 	}
 
 	return SPECIES_NONE;
+}
+
+bool8 HasHighNature(struct Pokemon* mon)
+{
+	switch (GetNature(mon))
+	{
+		case NATURE_HARDY:
+		case NATURE_BRAVE:
+		case NATURE_ADAMANT:
+		case NATURE_NAUGHTY:
+		case NATURE_DOCILE:
+		case NATURE_IMPISH:
+		case NATURE_LAX:
+		case NATURE_HASTY:
+		case NATURE_JOLLY:
+		case NATURE_NAIVE:
+		case NATURE_RASH:
+		case NATURE_SASSY:
+		case NATURE_QUIRKY:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 EvolvesViaScoring3Crits(struct Pokemon* mon)
+{
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	const struct Evolution* evolutions = gEvolutionTable[species];
+
+	for (u32 i = 0; i < EVOS_PER_MON; ++i)
+	{
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_CRITICAL_HIT)
+			return TRUE;
+	}
+
+	return FALSE;
 }

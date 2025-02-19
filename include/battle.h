@@ -443,7 +443,8 @@ struct SideTimer
 			 u8 tspikesAmount : 2;
 			 u8 srAmount : 1;
 			 u8 stickyWeb : 1;
-    /*0x0B*/ u8 steelsurge: 1;
+    		 u8 steelsurge: 1;
+	/*0x0B*/ u8 stickyWebBank;
 };
 
 extern struct SideTimer gSideTimers[];
@@ -1326,6 +1327,7 @@ void ApplyPlayerChosenFrameToBattleMenu(void);
 bool8 LoadChosenBattleElement(u8 caseId);
 void DrawMainBattleBackground(void);
 void task00_0800F0B0(u8 taskId);
+void __attribute__((long_call)) BattleMainCB2(void);
 
 enum BackSprites
 {

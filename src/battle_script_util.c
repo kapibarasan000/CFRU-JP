@@ -15,6 +15,7 @@
 #include "../include/new/daycare.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/end_battle.h"
+#include "../include/new/end_turn_battle_scripts.h"
 #include "../include/new/util.h"
 #include "../include/new/item.h"
 #include "../include/new/item_battle_scripts.h"
@@ -721,14 +722,16 @@ static void SwapVanillaSideTimers(void)
 	SwapBytes(&gSideTimers[B_SIDE_PLAYER].followmeTarget, &gSideTimers[B_SIDE_OPPONENT].followmeTarget);
 }
 
-void DoFieldEffect(void)
+void DoBattleFieldEffect(void)
 {
+	u32 i;
+
 	if (IsAnyMaxMove(gCurrentMove)
 	&& gBattleMoves[gCurrentMove].z_move_effect == MAX_EFFECT_GRAVITY)
 	{
 		if (!IsGravityActive())
 		{
-			for (int i = 0; i < gBattlersCount; ++i)
+			for (i = 0; i < gBattlersCount; ++i)
 			{
 				if (!CheckGrounding(i))
 					gNewBS->targetsToBringDown |= gBitTable[i];
@@ -1795,7 +1798,6 @@ void TryToStopNewMonFromSwitchingInAfterSRHurt(void)
 	gNewBS->switchInEffectsState = 0;
 }
 
-extern u8 BattleScript_HandleFaintedMonDoublesSwitchInEffects[];
 void ClearSwitchInEffectsState(void)
 {
 	if (!gNewBS->endTurnDone)
@@ -2404,4 +2406,10 @@ void DragonCheerFunc(void)
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailedAttackstring - 5;
 	}
+}
+
+void SkipUseNextPkmnPromptIfCantRun(void)
+{
+	if (AreAllKindsOfRunningPrevented())
+		gBattlescriptCurrInstr = BattleScript_FaintedMonTryChooseAnother - 5;
 }

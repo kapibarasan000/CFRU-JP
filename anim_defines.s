@@ -428,14 +428,14 @@
 .equ AnimTask_HardwarePaletteFade, 0x80BBDF9
 .equ AnimTask_screen_shake, 0x80BA775
 .equ AnimTask_prepare_moving_psychicBG, 0x80DF6D9
-.equ AnimTask_arg7_is_target_player, 0x80DFA9D
+.equ AnimTask_IsTargetPlayerSide, 0x80DFA9D
 .equ AnimTask_arg7_is_attacker_opponent, 0x80BCBE1
 .equ AnimTask_arg7_is_in_contests, 0x80BD2ED
 .equ AnimTask_IsTargetSameSide, 0x80BD351
 .equ AnimTask_scroll_background, 0x80BCAED
 .equ AnimTask_steel_sprite, 0x80B99AD
 .equ AnimTask_surf_wave, 0x80AC64D
-.equ AnimTask_splash_down, 0x80A95F9
+.equ AnimTask_Splash, 0x80A95F9
 .equ AnimTask_create_haze, 0x80B0DA5
 .equ AnimTask_SwaggerBulkUp, 0x80A9775
 .equ AnimTask_flash_anim, 0x80BC921
@@ -590,6 +590,8 @@
 .equ Template_DragonDanceOrb, 0x83AED8C
 .equ Template_SwordsDanceBlade, 0x83AB13C
 .equ Template_GrowingChargeOrb, 0x83AD718
+.equ Template_LockOnTarget, 0x83AAA5C
+.equ Template_LockOnMoveTarget, 0x83AAA74
 
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075541
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075599
@@ -672,6 +674,8 @@
 
 .equ SET_PSYCHIC_BG, 0x81B9977
 .equ UNSET_SCROLLING_BG, 0x81B9983
+.equ SET_SKY_BG, 0x81B998B
+.equ UNSET_SKY_BG, 0x81B99BB
 .equ BURN_CHANCE_ANIM, 0x81B490C
 .equ FREEZE_CHANCE_ANIM, 0x81B93C6
 .equ FREEZE_CHANCE_ANIM_DOUBLES, 0x81B944A
@@ -698,6 +702,7 @@
 .equ EMBER_FIRE_HIT, 0x81ABC91
 .equ DRAGON_CLAW_FIRE_SPIRAL, 0x81B7169
 .equ PSYBEAM_RINGS, 0x81B4D90
+.equ SONIC_BOOM_PROJECTILE, 0x81ABECE
 
 @supercommands
 

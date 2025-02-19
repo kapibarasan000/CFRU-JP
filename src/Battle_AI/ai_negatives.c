@@ -30,6 +30,8 @@ ai_negatives.c
 	All possible subtractions to an AIs move viability.
 */
 
+#define GOOD_AI (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE)
+
 #define TARGETING_PARTNER (bankDef == bankAtkPartner)
 #define PARTNER_MOVE_EFFECT_IS_SAME (IS_DOUBLE_BATTLE \
 									&& gBattleMoves[move].effect == gBattleMoves[partnerMove].effect \
@@ -1891,7 +1893,7 @@ MOVESCR_CHECK_0:
 		case EFFECT_FOCUS_PUNCH: ;
 			switch (move) {
 				case MOVE_SHELLTRAP: ;
-					if (!CheckContact(predictedMove, bankDef))
+					if (!CheckContact(predictedMove, bankDef, bankAtk))
 						DECREASE_VIABILITY(10); //Probably better not to use it
 					break;
 
@@ -2445,6 +2447,15 @@ MOVESCR_CHECK_0:
 
 				case MOVE_PLASMAFISTS:
 					goto AI_STANDARD_DAMAGE;
+
+				case MOVE_COURTCHANGE:
+					if (PARTNER_MOVE_IS_SAME_NO_TARGET
+					|| SIDE(bankDef) == SIDE(bankAtk)) //Never try to use when considering mon on attacker's side
+						DECREASE_VIABILITY(10);
+					else if (GOOD_AI
+					&& (!ShouldCourtChange(bankAtk, bankDef) || ShouldCourtChange(bankDef, bankAtk))) //No benefit to attacker or benefit to foe
+						DECREASE_VIABILITY(10); //Only ever Court Change when it's a good idea to
+					break;
 			}
 			break;
 

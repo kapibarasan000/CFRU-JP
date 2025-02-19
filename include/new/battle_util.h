@@ -2,6 +2,7 @@
 
 #include "../global.h"
 #include "../pokemon.h"
+#include "ability_util.h"
 
 /**
  * \file battle_util.h
@@ -32,8 +33,9 @@ bool8 NonInvasiveCheckGrounding(u8 bank);
 bool8 CheckGroundingFromPartyData(struct Pokemon* mon);
 u8 ViableMonCountFromBank(u8 bank);
 u8 ViableMonCountFromBankLoadPartyRange(u8 bank);
-bool8 CheckContact(u16 move, u8 bank);
+bool8 CheckContact(u16 move, u8 bankAtk, u8 bankDef);
 bool8 CheckContactByMon(u16 move, struct Pokemon* mon);
+bool8 IsContactMove(u16 move, u8 bankAtk, u8 bankDef);
 bool8 CheckHealingMove(u16 move);
 bool8 CheckSoundMove(u16 move);
 bool8 SheerForceCheck(void);

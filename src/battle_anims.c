@@ -91,6 +91,18 @@ const union AnimCmd *const gAnimCmdPowerWhip[] =
 	sAnimCmdPowerWhipOnOpponent,
 };
 
+//Psyshock//
+static const union AnimCmd sAnimCmdPsyshockOrb[] =
+{
+	ANIMCMD_FRAME(8, 1),
+	ANIMCMD_END,
+};
+
+const union AnimCmd *const gAnimCmdTable_PsyshockOrb[] =
+{
+	sAnimCmdPsyshockOrb,
+};
+
 static const union AnimCmd sAnimCmdQuickGuardLeft[] =
 {
 	ANIMCMD_END,
@@ -565,17 +577,6 @@ const struct OamData sDracoMeteorTailOAM =
 	.priority = 2,
 };
 
-static const union AffineAnimCmd sSpriteAffineAnim_SearingShotRock[] =
-{
-	AFFINEANIMCMD_FRAME(8, 8, 9, 15),
-	AFFINEANIMCMD_FRAME(-8, -8, 9, 15),
-	AFFINEANIMCMD_END,
-};
-
-const union AffineAnimCmd* const gSpriteAffineAnimTable_SearingShotRock[] =
-{
-	sSpriteAffineAnim_SearingShotRock,
-};
 
 static const union AffineAnimCmd sSpriteAffineAnim_JudgmentBall[] =
 {
@@ -909,30 +910,32 @@ static void AnimTask_DynamaxGrowthStep(u8 taskId);
 bank_t LoadBattleAnimTarget(u8 arg)
 {
 	u8 battler;
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+
+	if (IS_DOUBLE_BATTLE)
 	{
 		switch (gBattleAnimArgs[arg]) {
-			case 0:
+			case ANIM_ATTACKER:
 				battler = gBattleAnimAttacker;
 				break;
 			default:
 				battler = gBattleAnimTarget;
 				break;
-			case 2:
+			case ANIM_ATK_PARTNER:
 				battler = PARTNER(gBattleAnimAttacker);
 				break;
-			case 3:
+			case ANIM_DEF_PARTNER:
 				battler = PARTNER(gBattleAnimTarget);
 				break;
 		}
 	}
 	else
 	{
-		if (gBattleAnimArgs[arg] == 0)
+		if (gBattleAnimArgs[arg] == ANIM_ATTACKER || gBattleAnimArgs[arg] == ANIM_ATK_PARTNER)
 			battler = gBattleAnimAttacker;
 		else
 			battler = gBattleAnimTarget;
 	}
+
 	return battler;
 }
 
@@ -1633,23 +1636,6 @@ static void InitSpritePosToGivenTargetRespectPicOffsets(struct Sprite* sprite, u
 	sprite->pos2.y = gBattleAnimArgs[1];
 }
 
-void SpriteCB_SearingShotRock(struct Sprite* sprite)
-{
-	u8 target = LoadBattleAnimTarget(4);
-
-	if (!IsBattlerSpriteVisible(target))
-		DestroyAnimSprite(sprite);
-	else
-	{
-		InitSpritePosToGivenTarget(sprite, target);
-
-		StartSpriteAnim(sprite, gBattleAnimArgs[2]);
-		sprite->data[0] = gBattleAnimArgs[3];
-
-		sprite->callback = WaitAnimForDuration;
-		StoreSpriteCallbackInData6(sprite, AnimSpinningKickOrPunchFinish);
-	}
-}
 
 void SpriteCB_CoreEnforcerHits(struct Sprite* sprite)
 {
@@ -2303,7 +2289,7 @@ void SpriteCB_PyroBallLaunch(struct Sprite* sprite)
 {
 	InitSpritePositionForPyroBall(sprite);
 
-	if (SIDE(gBattleAnimAttacker))
+	if (SIDE(gBattleAnimAttacker) == B_SIDE_OPPONENT)
 		gBattleAnimArgs[2] = -gBattleAnimArgs[2];
 
 	sprite->data[0] = gBattleAnimArgs[4];
@@ -2373,6 +2359,19 @@ void SpriteCB_ShellSideArmBlast(struct Sprite* sprite)
 {
 	StartSpriteAnim(sprite, 2);
 	sprite->callback = (void*) (0x80B68FC | 1); //AnimShadowBall
+}
+
+//Focus Blast//
+#define AnimSuperpowerOrb_Step ((void*) (0x80B23DC | 1))
+void SpriteCB_FocusBlastOrb(struct Sprite* sprite)
+{
+	sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2);
+	sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
+    sprite->data[0] = 0;
+    sprite->data[1] = 12;
+    sprite->data[2] = 8;
+	sprite->data[7] = gBattleAnimTarget;
+    sprite->callback = AnimSuperpowerOrb_Step;
 }
 
 //Skitter Smack//
@@ -2597,7 +2596,10 @@ void SpriteCB_FallingObject(struct Sprite *sprite)
 {
 	u8 target = LoadBattleAnimTarget(3);
 
-	if (!IsBattlerSpriteVisible(target))
+	if (IS_SINGLE_BATTLE
+	&& (gBattleAnimArgs[3] == ANIM_ATK_PARTNER || gBattleAnimArgs[3] == ANIM_DEF_PARTNER)) //These targets don't exist and LoadBattleAnimTarget will treat as user
+		DestroyAnimSprite(sprite);
+	else if (!IsBattlerSpriteVisible(target))
 		DestroyAnimSprite(sprite);
 	else
 	{
@@ -2991,7 +2993,7 @@ void SpriteCB_AnimSpriteOnSelectedMonPos(struct Sprite *sprite)
 			DestroyAnimSprite(sprite);
 		else
 		{
-			InitSpritePosToGivenTarget(sprite, target);
+			InitSpritePosToGivenTargetRespectPicOffsets(sprite, target);
 			sprite->data[0]++;
 		}
 	}
@@ -3494,16 +3496,25 @@ void SpriteCB_BlockXOnTarget(struct Sprite *sprite)
 void AnimTask_TargetedLightning(u8 taskId)
 {
 	struct Task *task = &gTasks[taskId];
-	u8 target = LoadBattleAnimTarget(0);
 
-	if (!IsBattlerSpriteVisible(target))
+	switch (task->data[0])
 	{
-		DestroyAnimVisualTask(taskId);
-		return;
-	}
+		case 0: ;
+			u8 target = LoadBattleAnimTarget(0);
 
-	switch (task->data[0]) {
-		case 0:
+			if (IS_SINGLE_BATTLE
+			&& (gBattleAnimArgs[0] == ANIM_ATK_PARTNER || gBattleAnimArgs[0] == ANIM_DEF_PARTNER)) //These targets don't exist and LoadBattleAnimTarget will treat as user
+			{
+				DestroyAnimVisualTask(taskId);
+				return;
+			}
+
+			if (!IsBattlerSpriteVisible(target))
+			{
+				DestroyAnimVisualTask(taskId);
+				return;
+			}
+
 			task->data[15] = GetBattlerSpriteCoord(target, BATTLER_COORD_Y) + 32;
 			task->data[14] = task->data[15];
 			while (task->data[14] > 16)
@@ -3643,7 +3654,10 @@ void SpriteCB_TargetedFireSpread(struct Sprite *sprite)
 {
 	u8 target = LoadBattleAnimTarget(5);
 	
-	if (!IsBattlerSpriteVisible(target))
+	if (IS_SINGLE_BATTLE
+	&& (gBattleAnimArgs[5] == ANIM_ATK_PARTNER || gBattleAnimArgs[5] == ANIM_DEF_PARTNER)) //These targets don't exist and LoadBattleAnimTarget will treat as partner
+		DestroyAnimSprite(sprite);
+	else if (!IsBattlerSpriteVisible(target))
 		DestroyAnimSprite(sprite);
 	else
 	{
@@ -3659,6 +3673,81 @@ void SpriteCB_TargetedFireSpread(struct Sprite *sprite)
 		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 	}
 }
+
+
+//Struggle Bug//
+
+//Creates the hit splat for Struggle Bug
+void SpriteCB_HitSplatOnMonEdgeDoubles(struct Sprite *sprite)
+{	
+	u8 target = LoadBattleAnimTarget(0);
+
+	if (!IsBattlerSpriteVisible(target))
+		DestroyAnimSprite(sprite);
+	else
+	{
+		sprite->data[0] = gBattlerSpriteIds[target];
+		sprite->pos1.x = gSprites[sprite->data[0]].pos1.x + gSprites[sprite->data[0]].pos2.x;
+		sprite->pos1.y = gSprites[sprite->data[0]].pos1.y + gSprites[sprite->data[0]].pos2.y;
+		sprite->pos2.x = gBattleAnimArgs[1];
+		sprite->pos2.y = gBattleAnimArgs[2];
+		StartSpriteAffineAnim(sprite, gBattleAnimArgs[3]);
+		StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
+		sprite->callback = RunStoredCallbackWhenAffineAnimEnds;
+	}
+}
+
+
+//Volt Switch//
+
+//Launches the projectiles for Volt Switch
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: target x pixel offset
+//arg 3: target y pixel offset
+//arg 4: duration
+//arg 5: wave amplitude
+static void SpriteCB_VoltSwitch_Step(struct Sprite* sprite);
+void SpriteCB_VoltSwitch(struct Sprite* sprite)
+{
+	InitSpritePosToAnimAttacker(sprite, 0);
+
+	if (SIDE(gBattleAnimAttacker) == B_SIDE_OPPONENT)
+		gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+	else
+		sprite->pos1.y += 10; //Move slightly down
+
+	sprite->data[0] = gBattleAnimArgs[4];
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[2]; //Target X
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3]; //Target Y
+	sprite->data[5] = gBattleAnimArgs[5];
+	InitAnimArcTranslation(sprite);
+
+	sprite->callback = SpriteCB_VoltSwitch_Step;
+}
+
+static void SpriteCB_VoltSwitch_Step(struct Sprite* sprite)
+{
+	sprite->invisible = FALSE;
+
+	if (TranslateAnimHorizontalArc(sprite))
+	{
+		//Merge coords into one
+		sprite->pos1.x += sprite->pos2.x;
+		sprite->pos1.y += sprite->pos2.y;
+		sprite->pos2.x = 0;
+		sprite->pos2.y = 0;
+
+		//Come straight back to the attacker
+		sprite->data[0] = 0x14; //Duration
+		sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2);
+		sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
+
+		sprite->callback = StartAnimLinearTranslation;
+		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+	}
+}
+
 
 //Court Change//
 const struct OamData gCourtChangeBallOam =
@@ -4301,6 +4390,19 @@ static const union AnimCmd sAnimCmdFlippedX[] =
 const union AnimCmd *const gAnimCmdTable_FlippedX[] =
 {
 	sAnimCmdFlippedX,
+};
+
+
+//Searing Shot//
+static const union AffineAnimCmd sSpriteAffineAnim_SearingShotFlyingFlame[] =
+{
+	AFFINEANIMCMD_FRAME(16, 16, 20, 16), //Double in size and spin
+	AFFINEANIMCMD_END
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_SearingShotFlyingFlame[] =
+{
+	sSpriteAffineAnim_SearingShotFlyingFlame,
 };
 
 

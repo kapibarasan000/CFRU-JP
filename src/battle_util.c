@@ -342,14 +342,11 @@ u8 ViableMonCountFromBankLoadPartyRange(u8 bank)
 	return count;
 }
 
-bool8 CheckContact(u16 move, u8 bank)
+bool8 CheckContact(u16 move, u8 bankAtk, u8 bankDef)
 {
-	if (move == MOVE_SHELLSIDEARM && bank != gBankTarget)
-		return gNewBS->shellSideArmSplit[bank][gBankTarget] == SPLIT_PHYSICAL; //Calculated in advance
-
-	if (!(gBattleMoves[move].flags & FLAG_MAKES_CONTACT)
-	|| (ITEM_EFFECT(bank) == ITEM_EFFECT_PUNCHING_GLOVE && CheckTableForMove(move, gPunchingMoves))
-	|| ABILITY(bank) == ABILITY_LONGREACH)
+	if (!IsContactMove(move, bankAtk, bankDef)
+	|| (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_PUNCHING_GLOVE && CheckTableForMove(move, gPunchingMoves))
+	|| ABILITY(bankAtk) == ABILITY_LONGREACH)
 		return FALSE;
 
 	return TRUE;
@@ -363,6 +360,14 @@ bool8 CheckContactByMon(u16 move, struct Pokemon* mon)
 		return FALSE;
 
 	return TRUE;
+}
+
+bool8 IsContactMove(u16 move, u8 bankAtk, u8 bankDef)
+{
+	if (move == MOVE_SHELLSIDEARM && bankAtk != bankDef)
+		return gNewBS->shellSideArmSplit[bankAtk][bankDef] == SPLIT_PHYSICAL; //Calculated in advance
+	else
+		return gBattleMoves[move].flags & FLAG_MAKES_CONTACT;
 }
 
 bool8 CheckHealingMove(move_t move)

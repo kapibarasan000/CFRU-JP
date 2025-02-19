@@ -172,7 +172,7 @@
 [ATTACKER]は\nでんきを つかいきった！
 
 #org @gText_GigatonHammerNotAllowed
-[CURRENT_MOVE]は 2かい つづけて\nだすことが できない！
+[CURRENT_MOVE]は 2かい つづけて\nだすことが できない！\p
 
 #org @gText_ShedTailString
 [ATTACKER]は\nしっぽを きって みがわりにした！

@@ -30,7 +30,6 @@ void SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles(struct Sprite* sprit
 void SpriteCB_SpriteToCentreOfSide(struct Sprite* sprite);
 void SpriteCB_RandomCentredHits(struct Sprite* sprite);
 void SpriteCB_CentredElectricity(struct Sprite* sprite);
-void SpriteCB_SearingShotRock(struct Sprite* sprite);
 void SpriteCB_CoreEnforcerHits(struct Sprite* sprite);
 void SpriteCB_CoreEnforcerBeam(struct Sprite* sprite);
 void CoreEnforcerLoadBeamTarget(struct Sprite* sprite);

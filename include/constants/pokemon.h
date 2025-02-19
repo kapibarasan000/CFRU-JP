@@ -45,6 +45,8 @@
 #define EGG_GROUP_DRAGON 14
 #define EGG_GROUP_UNDISCOVERED 15
 
+#define EGG_GROUPS_PER_MON 2
+
 // Pokemon natures
 #define NATURE_HARDY 0
 #define NATURE_LONELY 1
@@ -94,3 +96,13 @@
 #define FRIENDSHIP_EVENT_FAINT_OUTSIDE_BATTLE 0x7
 #define FRIENDSHIP_EVENT_FAINT_LARGE          0x8
 
+#define EVO_MODE_NORMAL     0
+#define EVO_MODE_TRADE      1
+#define EVO_MODE_ITEM_USE   2
+#define EVO_MODE_ITEM_CHECK 3 // If an Everstone is being held, still want to show that the stone *could* be used on that Pokémon to evolve
+
+#define SHINY_ODDS 8 // Actual probability is SHINY_ODDS/65536
+
+// Learning moves
+#define MON_ALREADY_KNOWS_MOVE 0xFFFE
+#define MON_HAS_MAX_MOVES      0xFFFF

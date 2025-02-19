@@ -173,7 +173,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						break;
 
 					case ABILITY_POISONTOUCH:
-						if (CheckContact(gCurrentMove, gBankAttacker)
+						if (CheckContact(gCurrentMove, gBankAttacker, gBankTarget)
 						&& ABILITY(gBankTarget) != ABILITY_SHIELDDUST
 						&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
 						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
@@ -310,7 +310,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 
 		case ATK49_BEAK_BLAST_BURN:
-			if (CheckContact(gCurrentMove, gBankAttacker)
+			if (CheckContact(gCurrentMove, gBankAttacker, gBankTarget)
 			&& ITEM_EFFECT(gBankAttacker) != ITEM_EFFECT_PROTECTIVE_PADS
 			&& MOVE_HAD_EFFECT
 			&& TOOK_DAMAGE(gBankTarget)
@@ -440,7 +440,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_CHOICE_MOVE: // update choice band move
 			if (arg1 != ARG_IN_FUTURE_ATTACK && !IsDynamaxed(gBankAttacker))
 			{
-				if (gChosenMove != MOVE_STRUGGLE)
+				u16 moveToChoice = (arg1 == ARG_IN_PURSUIT) ? gCurrentMove : gChosenMove;
+
+				if (moveToChoice != MOVE_STRUGGLE)
 				{
 					if (gHitMarker & HITMARKER_OBEYS)
 					{
@@ -448,13 +450,15 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						{
 							if (*choicedMoveAtk == 0 || *choicedMoveAtk == 0xFFFF)
 							{
-								if (gChosenMove == MOVE_BATONPASS && !(gMoveResultFlags & MOVE_RESULT_FAILED))
+								if ((moveToChoice == MOVE_BATONPASS && !(gMoveResultFlags & MOVE_RESULT_FAILED))
+								|| (gBattleMoves[moveToChoice].effect == EFFECT_TRICK
+								 && MOVE_HAD_EFFECT && ABILITY(gBankAttacker) != ABILITY_GORILLATACTICS)) //Used Trick to obtain a Choice item - don't lock into move
 								{
 									gBattleScripting.atk49_state++;
 									break;
 								}
 
-								*choicedMoveAtk = gChosenMove;
+								*choicedMoveAtk = moveToChoice;
 							}
 						}
 						else //This should remove the choice lock glitch
@@ -1362,7 +1366,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				&&  TOOK_DAMAGE(bank)
 				&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 				&&  gBattleMons[bank].hp != 0
-				&&  CheckContact(gCurrentMove, gBankAttacker)
+				&&  CheckContact(gCurrentMove, gBankAttacker, bank)
 				&&  ITEM(gBankAttacker) != ITEM_NONE
 				&&  ITEM(bank) == ITEM_NONE
 				&& (ABILITY(gBankAttacker) != ABILITY_STICKYHOLD || !BATTLER_ALIVE(gBankAttacker)))

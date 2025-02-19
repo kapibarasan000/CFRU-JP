@@ -1810,7 +1810,7 @@ void AdjustDamage(bool8 checkFalseSwipe)
 		if ((gNewBS->zMoveData.active || IsAnyMaxMove(gCurrentMove))
 		&& !IsDynamaxed(bankDef)
 		&& ProtectsAgainstZMoves(gCurrentMove, gBankAttacker, bankDef))
-			damage = (damage  * 25) / 100;
+			damage = max(1, (damage  * 25) / 100);
 
 		if (MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bankDef))
 			goto END;
@@ -2296,7 +2296,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		//0.75x Decrement
 		#ifdef PORTAL_POWER
 			if ((useMonAtk && !CheckContactByMon(move, data->monAtk))
-			|| (!useMonAtk && !CheckContact(move, bankAtk)))
+			|| (!useMonAtk && !CheckContact(move, bankAtk, bankDef)))
 			{
 				attack = (attack * 75) / 100;
 				spAttack = (spAttack * 75) / 100;
@@ -2666,7 +2666,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				damage *= 2;
 
 			if ((useMonAtk && CheckContactByMon(move, data->monAtk))
-			|| (!useMonAtk && CheckContact(move, bankAtk)))
+			|| (!useMonAtk && CheckContact(move, bankAtk, bankDef)))
 				damage /= 2;
 			break;
 
@@ -3431,7 +3431,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 
 		case ABILITY_TOUGHCLAWS:
 		//1.3x Boost
-			if (gBattleMoves[move].flags & FLAG_MAKES_CONTACT
+			if (IsContactMove(move, bankAtk, bankDef)
 			&& !(data->atkItemEffect == ITEM_EFFECT_PUNCHING_GLOVE && CheckTableForMove(move, gPunchingMoves)))
 				power = (power * 13) / 10;
 			break;

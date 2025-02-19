@@ -310,7 +310,6 @@ MainMenuRTCWarningHook2 800C1A4 1
 CalculateMonStatsNew 803DBE8 1
 SetMonHeldItemHook 803FE78 2
 GetMonAbility 804042C 1
-DaycareInheritHiddenAbility 80456DA 0
 RandomlyGivePartyPokerus 8043124 1
 UpdatePartyPokerusTime 80431F4 1
 PartySpreadPokerus 80431FC 1
@@ -483,6 +482,8 @@ TriggerPendingDaycareEgg 08044FB4 1
 FlameBodyMagmaArmorEggHook 08045924 1
 CreateHatchedMon 08046184 2
 OvalCharmHook 080458A8 1
+DaycareInheritHiddenAbility 80456DA 0
+GetDaycareCompatibilityScore 8045AE0 1
 
 ##Shiny Charm
 CreateBoxMonHook 803D23E 0

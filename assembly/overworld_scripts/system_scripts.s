@@ -34,7 +34,6 @@ SystemScript_DisableAutoRun:
 	sound 0x3
 	msgboxsign
 	msgbox gText_AutoRunDisable MSG_SIGN
-	checksound
 	releaseall
 	end
 

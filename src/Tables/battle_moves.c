@@ -10360,7 +10360,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_AROMATICMIST] =
 	{
-		.effect = EFFECT_DEFENSE_UP,
+		.effect = EFFECT_SPECIAL_DEFENSE_UP,
 		.power = 0,
 		.type = TYPE_FAIRY,
 		.accuracy = 0,
