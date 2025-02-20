@@ -896,7 +896,7 @@ void PrintTmPriceOrPurchased(u8 windowId, u16 item, u8 y)
 	#ifdef REUSABLE_TMS
 		if (GetPocketByItemId(item) == POCKET_TM_CASE && CheckBagHasItem(item, 1))
 		{
-			BuyMenuPrint(windowId, 0, gText_Purchased, 0x60, y, 0, 0, 0xFF, 1);
+			BuyMenuPrint(windowId, 0, gText_Purchased, 0x58, y, 0, 0, 0xFF, 1);
 			return;
 		}
 	#endif
@@ -908,7 +908,7 @@ void PrintTmPriceOrPurchased(u8 windowId, u16 item, u8 y)
 		*loc++ = 0;
 	
 	StringExpandPlaceholders(loc, (void*) 0x83DDDAB);
-	BuyMenuPrint(windowId, 0, gStringVar4, 0x60, y, 0, 0, 0xFF, 1);
+	BuyMenuPrint(windowId, 0, gStringVar4, 0x58, y, 0, 0, 0xFF, 1);
 }
 
 u8 CheckSingleBagTm(unusedArg u16 item)

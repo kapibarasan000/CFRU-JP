@@ -48,6 +48,7 @@ ReshowBattleScreenMonSpriteHook1 807746A 0
 ReshowBattleScreenMonSpriteHook2 8077662 0
 ReshowBattleScreenHealthboxSpriteHook 807789C 0
 BattleUseFunc_PokeDoll 80A32D0 1
+LastUsedBallOverrideHook 8032460 0
 
 HandleInputChooseAction 0802DC14 0
 SwitchMoveDataHook 802E76C 0

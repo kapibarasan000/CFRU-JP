@@ -9,6 +9,7 @@
 #include "../include/new/ai_util.h"
 #include "../include/new/battle_indicators.h"
 #include "../include/new/battle_util.h"
+#include "../include/new/catching.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/general_bs_commands.h"
@@ -1898,6 +1899,10 @@ void PlayerHandleChooseAction(void)
 	else
 		BattleStringExpandPlaceholdersToDisplayedString(gText_WhatWillPkmnDo);
 	BattlePutTextOnWindow(gDisplayedStringBattle, 1);
+
+	#ifdef LAST_USED_BALL_TRIGGER
+	TryLoadLastUsedBallTrigger();
+	#endif
 }
 
 void HandleInputChooseAction(void)
@@ -2018,6 +2023,30 @@ void HandleInputChooseAction(void)
 	else if (gMain.newKeys & START_BUTTON)
 	{
 		SwapHpBarsWithHpText();
+	}
+	else if (gMain.newKeys & L_BUTTON)
+	{
+		#ifdef LAST_USED_BALL_TRIGGER
+		if (!CantLoadLastBallTrigger()) //Can use last ball
+		{
+			if (IsPlayerPartyAndPokemonStorageFull())
+				PlaySE(SE_ERROR);
+			else
+			{
+				PlaySE(SE_SELECT);
+				gSpecialVar_ItemId = GetLastUsedBall();
+				RemoveBagItem(gSpecialVar_ItemId, 1);
+				gNewBS->usedLastBall = TRUE;
+				gNewBS->megaData.chosen[gActiveBattler] = FALSE;
+				gNewBS->ultraData.chosen[gActiveBattler] = FALSE;
+				gNewBS->terastalData.chosen[gActiveBattler] = FALSE;
+				EmitTwoReturnValues(1, ACTION_USE_ITEM, 0);
+				PlayerBufferExecCompleted();
+			}
+			
+			return; //The Team Preview trigger check is unimportant
+		}
+		#endif
 	}
 }
 

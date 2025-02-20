@@ -19,6 +19,9 @@ void TryLoadMegaTriggers(void);
 void TryLoadZTrigger(void);
 void TryLoadDynamaxTrigger(void);
 void TryLoadTerastalTrigger(void);
+void TryLoadLastUsedBallTrigger(void);
+u16 GetLastUsedBall(void);
+bool8 CantLoadLastBallTrigger(void);
 void DestroyRaidShieldSprite(void);
 
 //Exported Data Structures

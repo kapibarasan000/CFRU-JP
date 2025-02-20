@@ -142,6 +142,7 @@
 
 #define gExpandedFlags ((u8*) 0x0203B0E8)
 #define gExpandedVars ((u16*) (0x0203B0E8 + 0x200))
+extern u16 gLastUsedBall;
 
 //FREE: 0x203B6EC
 #define gPcSelectionTracker ((u8* 0x203B724)	// state tracker for pc selection
