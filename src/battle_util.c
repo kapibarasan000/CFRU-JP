@@ -1247,7 +1247,7 @@ bool8 IsMoveAffectedByParentalBond(u16 move, u8 bankAtk)
 
 u8 CalcMoveSplit(u8 bankAtk, u16 move, u8 bankDef)
 {
-	if ((CheckTableForMove(move, gMovesThatChangePhysicality) || (move == MOVE_TERABLAST && IsTerastal(bankAtk)))
+	if ((CheckTableForMove(move, gMovesThatChangePhysicality) || (move == MOVE_TERABLAST && CanTeraBlastTypeChange(bankAtk)))
 	&&  SPLIT(move) != SPLIT_STATUS)
 	{
 		u32 attack = gBattleMons[bankAtk].attack;

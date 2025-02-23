@@ -185,14 +185,11 @@ The Shadow
 #org @gText_NoMiss
 ー
 
-#org @gText_Physical
-ぶつり
+#org @gText_Contact
+せっしょく
 
-#org @gText_Special
-とくしゅ
-
-#org @gText_Status
-へんか
+#org @gText_NoContact
+ひせっしょく
 
 #org @gText_ResetStats
 さがった のうりょくを もどす

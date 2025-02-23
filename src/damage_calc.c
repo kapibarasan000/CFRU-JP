@@ -1588,7 +1588,7 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 			break;
 
 		case MOVE_TERABLAST:
-			if (IsTerastal(bankAtk) || gNewBS->terastalData.chosen[bankAtk])
+			if (CanTeraBlastTypeChange(bankAtk))
 				moveType = GetTeraType(bankAtk);
 			break;
 	}

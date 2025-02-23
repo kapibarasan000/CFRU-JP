@@ -113,9 +113,13 @@ struct ChooseMoveStruct
 //New Data - Old data is memcpy so don't touch
 	u8 moveTypes[MAX_MON_MOVES];
 	u8 moveResults[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
+    u8 zMoveResults[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
 	u16 movePowers[MAX_MON_MOVES];
 	u16 moveAcc[MAX_MON_MOVES];
+    u8 moveSplit[MAX_MON_MOVES];
+    bool8 makesContact[MAX_MON_MOVES];
 	u8 monType3;
+    u8 monTeraType;
 	bool8 canMegaEvolve;
 	u8 megaVariance;
 	bool8 zMoveUsed : 1;

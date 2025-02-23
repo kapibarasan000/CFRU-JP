@@ -1269,3 +1269,26 @@ LastUsedBallOverrideHook:
 LastUsedBallOverrideHook_SkipBag: @Skips the palette fade to bag
 	ldr r0, =0x80324A4 | 1
 	bx r0
+
+.pool
+MoveSelectionWindowCursorPos:
+	mov r1, #0x1
+	add r2, r3, #0x0
+	and r2, r1
+	mov r0, #0x9
+	mul r2, r0
+	add r2, #0x1
+	ldr r0, =0x803015C | 1
+	bx r0
+
+.pool
+MoveSelectionWindowCursorPos2:
+	mov r1, #0x1
+	add r2, r3, #0x0
+	and r2, r1
+	mov r0, #0x9
+	mul r2, r0
+	add r2, #0x1
+	ldr r0, =0x803019C | 1
+	bx r0
+	

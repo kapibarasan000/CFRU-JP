@@ -77,6 +77,8 @@ BattleStringExpandPlaceholders 80D88A8 2
 DisplayStatStageMessage 80D94DA 0
 BufferMaxMoveNameBattle 80D954A 0
 ExpandedAbilityNamesBattle2 80D9660 0
+MoveSelectionWindowCursorPos 8030152 1
+MoveSelectionWindowCursorPos2 8030192 1
 
 ##Multi Hooks
 MultiEnemyPokeballReadoutHook 8048688 0
@@ -113,6 +115,7 @@ BattleAI_HandleItemUseBeforeAISetup 080C7EF0 0
 ##Mega Hooks
 MegaRetrieveDataHook 80140E0 0
 HandleInputChooseMove 802E1EC 0
+MoveSelectionDisplayMoveEffectiveness 8030024 0
 InitMoveSelectionsVarsAndStrings 08032428 0
 PlayerHandleStatusIconUpdateHook 8032790 1
 OpponentHandleStatusIconUpdateHook 80380E0 1
