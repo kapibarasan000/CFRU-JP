@@ -9,7 +9,6 @@
 .global TagTeamExecutionCompleteHook
 .global TagTeamPokeballReadoutHook
 .global TagTeamPartnerSendoutPokemonHook
-.global TagTeamThrowPokeballHook
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -105,13 +104,4 @@ TagTeamPartnerSendoutPokemonHook:
 	bl IsMultiBattle
 	ldr r1, =0x8012F80 | 1
 	bx r1
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-@;0x80336A0 with r0
-TagTeamThrowPokeballHook:
-	bl IsMultiBattle
-	ldr r1, =0x8032E1C | 1
-	bx r1
-
 

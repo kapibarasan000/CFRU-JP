@@ -86,19 +86,17 @@ MultiInitPokemonOrderHook 800D2C4 0
 MultiBattleAddSecondOpponentHook 8012B28 0
 BattleIntroOpponent1SendsOutMonAnimation 8012DC8 0
 MultiMoneyCalcHook 80250F4 2
-MultiTrainersSendOutHook2 8038560 1
-MultiTrainersSendOutHook4 8035614 0
-MultiTrainersSendOutGameCrashingFix 80353A4 0
 IsMultiBattle 8120210 0
 PartnerSetupHook 800CE7C 0
 DisplayPartnerNameInPartyMenuHook 8128420 0
 TagTeamPartnerSendoutPokemonHook 8012F78 0
-TagTeamThrowPokeballHook 8032E14 0
 TagTeamPokeballReadoutHook 80485AC 1
 SetNewPartySelectTarget2 81208E8 2
 PlayerHandleDrawTrainerPic 80319F0 0
 PlayerHandleTrainerSlide 8031B9C 0
 TagTeamBackspritePalHook 8032CA4 0
+Task_PlayerStartSendOutAnim 8032DD4 1
+Task_OpponentStartSendOutAnim 8038530 1
 
 ##AI Hooks
 AIHandleItemUseHook 800CCF0 0
@@ -201,6 +199,7 @@ LoadMaxNumPokemonChooseBattleTowerStringHook 8124960 0
 CursorCb_Enter 8124930 1
 IsMonAllowedInBattleTower 8127E88 1
 Task_ClosePartyMenuAfterText 8125F20 1
+PartyMenuAfterCancelLearnMoveHook 8126836 1
 CanPokemonSelectedBeEnteredInBattleTower 8127F30 0
 ExpandedAbilityNamesSummaryScreen 8136EFA 1
 FieldMoveBadgeHook 8124F80 0

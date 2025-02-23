@@ -966,7 +966,7 @@ void LoadShinyStarsSpriteTiles(void)
 void TryStartShinyAnimation(u8 battler, unusedArg struct Pokemon* mon)
 {
 	u8 taskId1, taskId2;
-	gBattleSpritesDataPtr->healthBoxesData[battler].flag_x80 = 1;
+	gBattleSpritesDataPtr->healthBoxesData[battler].triedShinyMonAnim = TRUE;
 
 	if (IsBattlerSpriteVisible(battler) && IsMonShiny(GetIllusionPartyData(battler)))
 	{
@@ -980,7 +980,7 @@ void TryStartShinyAnimation(u8 battler, unusedArg struct Pokemon* mon)
 		return;
 	}
 
-	gBattleSpritesDataPtr->healthBoxesData[battler].field_1_x1 = 1;
+	gBattleSpritesDataPtr->healthBoxesData[battler].finishedShinyMonAnim = TRUE;
 }
 
 void AnimTask_TechnoBlast(u8 taskId)

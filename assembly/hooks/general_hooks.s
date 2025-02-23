@@ -127,6 +127,13 @@ PartyMenuSwitchingHook:
 	bx r0
 
 .pool
+@0x8126836 with r1
+PartyMenuAfterCancelLearnMoveHook:
+	bl InitPartyMenuAfterCancellingLearnMove
+	ldr r0, =0x812684A | 1
+	bx r0
+
+.pool
 @0x80EFEE4 with r0
 CriticalCaptureAnimHook:
 	push {r1}
@@ -1291,4 +1298,3 @@ MoveSelectionWindowCursorPos2:
 	add r2, #0x1
 	ldr r0, =0x803019C | 1
 	bx r0
-	

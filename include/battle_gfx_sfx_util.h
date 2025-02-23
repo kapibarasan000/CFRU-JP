@@ -4,6 +4,7 @@
 
 void __attribute__((long_call)) InitAndLaunchSpecialAnimation(u8 activeBank, u8 atkBank, u8 defBank, u8 tableId);
 void __attribute__((long_call)) ClearBehindSubstituteBit(u8 bank);
+void __attribute__((long_call)) SetBattlerShadowSpriteCallback(u8 battlerId, u16 species);
 
 /*
 void __attribute__((long_call)) AllocateBattleSpritesData(void);

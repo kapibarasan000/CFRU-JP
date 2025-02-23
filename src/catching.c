@@ -74,7 +74,7 @@ void atkEF_handleballthrow(void)
 	if (ballType != BALL_TYPE_QUICK_BALL //Useless to offer to player after initial use
 	|| gBattleResults.battleTurnCounter > 0) //Unless the player explictly chose it after the first turn
 		gLastUsedBall = gLastUsedItem;
-		
+
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
 		#ifdef FLAG_CATCH_TRAINERS_POKEMON
@@ -673,7 +673,7 @@ void AnimTask_ThrowBall(u8 taskId)
 	gSprites[spriteId].data[1] = GetBattlerSpriteCoord(gBattleAnimTarget, 0);
 	gSprites[spriteId].data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, 1) - 16;
 	gSprites[spriteId].callback = (void*) 0x80F0821;
-	gBattleSpritesDataPtr->animationData->field_9_x2 = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].invisible;
+	gBattleSpritesDataPtr->animationData->wildMonInvisible = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].invisible;
 	gTasks[taskId].data[0] = spriteId;
 	gTasks[taskId].func = (void*) 0x80F05F9;
 }
