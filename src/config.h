@@ -254,6 +254,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define REPLACE_ASH_WEATHER_WITH_WHITE_SANDSTORM //Replaces the falling ash weather effect with a white version of the sandstorm weather effect
 #define ONLY_CHECK_ITEM_FOR_HM_USAGE //Allows HMs to be used if the HM is the Bag, and as long as there is a Pokemon in the party that can learn the HM
 //#define FADE_NPCS_IN_FOG //Blends the NPC palettes in foggy weather to create the illusion that they're under the fog. Breaks FR Pokemon Tower healing zone
+#define FRIENDSHIP_HEART_ON_SUMMARY_SCREEN //Creates a heart sprite on the summary screen if the current Pokemon has max Friendship (position requires adjusting)
 #define POKEMON_NAME_6
 
 /*===== Misc Battle Effect Options =====*/

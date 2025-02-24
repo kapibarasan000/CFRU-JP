@@ -104,8 +104,11 @@ species_t GetMegaSpecies(unusedArg u16 species, unusedArg u16 item, unusedArg co
 	const struct Evolution* evolutions = gEvolutionTable[species];
 	int i, j;
 
-	for (i = 0; i < EVOS_PER_MON; ++i) {
-		if (evolutions[i].method == EVO_MEGA)
+	for (i = 0; i < EVOS_PER_MON; ++i) 
+	{
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_MEGA)
 		{
 			//Ignore reversion information
 			if (evolutions[i].param == 0) continue;
@@ -163,15 +166,17 @@ const u8* DoMegaEvolution(u8 bank)
 
 	if (evolutions != NULL)
 	{
-		u16 species = mon->species;
+		gNewBS->backupAbility = ABILITY(bank); //So Abilities like Delta Stream & Neutralizing Gas are removed properly
+
 		DoFormChange(bank, evolutions->targetSpecies, TRUE, TRUE, TRUE);
 
 		gBattleScripting.bank = bank;
 		gLastUsedItem = mon->item;
 
 		//[BUFFER][00]'s [LAST_ITEM]\nis reacting to [PLAYER_NAME]'s [BUFFER][01]!
-		PREPARE_SPECIES_BUFFER(gBattleTextBuff1, species);
+		PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, bank, gBattlerPartyIndexes[bank]);
 		PREPARE_ITEM_BUFFER(gBattleTextBuff2, FindBankKeystone(bank));
+		PREPARE_SPECIES_BUFFER(gBattleTextBuff3, SPECIES(bank));
 
 		if (evolutions->unknown == MEGA_VARIANT_WISH)
 			return BattleScript_MegaWish;
@@ -228,7 +233,9 @@ void TryRevertMega(pokemon_t* mon)
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_MEGA && evolutions[i].param == 0)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_MEGA && evolutions[i].param == 0)
 		{
 			mon->species = evolutions[i].targetSpecies;
 			CalculateMonStats(mon);
@@ -378,7 +385,9 @@ bool8 IsMegaSpecies(u16 species)
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_MEGA
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_MEGA
 		&& (evolutions[i].unknown == MEGA_VARIANT_STANDARD || evolutions[i].unknown == MEGA_VARIANT_WISH)
 		&& evolutions[i].param == 0)
 			return TRUE;
@@ -432,7 +441,9 @@ bool8 IsUltraNecrozmaSpecies(u16 species)
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_ULTRA_BURST && evolutions[i].param == 0)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_ULTRA_BURST && evolutions[i].param == 0)
 			return TRUE;
 	}
 

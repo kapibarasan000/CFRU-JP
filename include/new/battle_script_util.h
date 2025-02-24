@@ -131,6 +131,7 @@ void SetAttackerAndSwitchingBankToOpponent0(void);
 void SetSwitchingBankSwitchingCooldownTo2(void);
 void FaintedBankNameInBuff1(void);
 void SetCorrectTeleportBattleScript(void);
+void ClearStatBuffEffectNotProtectAffected(void);
 void TryFailPoltergeist(void);
 void TryFailCorrosiveGas(void);
 void CorrodeItem(void);

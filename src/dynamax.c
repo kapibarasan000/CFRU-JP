@@ -40,9 +40,12 @@ dynamax.c
 #define FIRST_RAID_BATTLE_FLAG 0x1800
 
 #define GFX_TAG_GIGANTAMAX_ICON 0x2715 //Some battle tag
+#define GFX_TAG_MAX_FRIENDSHIP_ICON 0x2716 //Some battle tag
 
 extern const u8 GigantamaxSummaryScreenIconTiles[];
 extern const u16 GigantamaxSummaryScreenIconPal[];
+extern const u8 MaxFriendshipSummaryScreenIconTiles[];
+extern const u16 MaxFriendshipSummaryScreenIconPal[];
 
 //This file's functions:
 static bool8 IsBannedHeldItemForDynamax(u16 item);
@@ -167,6 +170,17 @@ static const struct OamData sGigantamaxIconOam =
 	.priority = 0, //Above all
 };
 
+#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+static const struct OamData sMaxFriendshipIconOam =
+{
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(8x8),
+	.size = SPRITE_SIZE(8x8),
+	.priority = 0, //Above all
+};
+#endif
+
 static const struct SpriteTemplate sSummaryScreenGigantamaxIconTemplate =
 {
 	.tileTag = GFX_TAG_GIGANTAMAX_ICON,
@@ -178,8 +192,25 @@ static const struct SpriteTemplate sSummaryScreenGigantamaxIconTemplate =
 	.callback = SpriteCallbackDummy,
 };
 
+#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+static const struct SpriteTemplate sSummaryScreenMaxFriendshipIconTemplate =
+{
+	.tileTag = GFX_TAG_MAX_FRIENDSHIP_ICON,
+	.paletteTag = GFX_TAG_MAX_FRIENDSHIP_ICON,
+	.oam = &sMaxFriendshipIconOam,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCallbackDummy,
+};
+#endif
+
 static const struct CompressedSpriteSheet   sSummaryScreenGigantamaxIconSpriteSheet =	{GigantamaxSummaryScreenIconTiles, (16 * 16) / 2, GFX_TAG_GIGANTAMAX_ICON};
 static const struct SpritePalette sSummaryScreenGigantamaxIconSpritePalette =	{GigantamaxSummaryScreenIconPal, GFX_TAG_GIGANTAMAX_ICON};
+#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+static const struct CompressedSpriteSheet sSummaryScreenMaxFriendshipIconSpriteSheet = {MaxFriendshipSummaryScreenIconTiles, (8 * 8 * 5) / 2, GFX_TAG_MAX_FRIENDSHIP_ICON};
+static const struct SpritePalette sSummaryScreenMaxFriendshipIconSpritePalette =       {MaxFriendshipSummaryScreenIconPal, GFX_TAG_MAX_FRIENDSHIP_ICON};
+#endif
 
 species_t GetDynamaxSpecies(unusedArg u8 bank, unusedArg bool8 checkGMaxInstead)
 {
@@ -350,7 +381,9 @@ u16 GetGigantamaxSpecies(u16 species, bool8 canGigantamax)
 	{
 		for (i = 0; i < EVOS_PER_MON; ++i)
 		{
-			if (evolutions[i].method == EVO_GIGANTAMAX)
+			if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+				break; //Break now to save time
+			else if (evolutions[i].method == EVO_GIGANTAMAX)
 			{
 				//Ignore reversion information
 				if (evolutions[i].param == 0) continue;
@@ -370,7 +403,9 @@ u16 GetGigantamaxBaseForm(u16 species)
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == 0)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == 0)
 			return evolutions[i].targetSpecies;
 	}
 
@@ -496,7 +531,9 @@ bool8 IsGigantamaxSpecies(u16 species)
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == 0)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == 0)
 			return TRUE;
 	}
 
@@ -721,7 +758,17 @@ u8 GetMonDynamaxHPBoost(unusedArg struct Pokemon* mon)
 
 u8 GetRaidBattleHPBoost(void)
 {
-	return 4;
+	switch (gRaidBattleStars)
+	{
+		case 1:
+		case 2:
+			return 2;
+		case 3:
+		case 4:
+			return 3;
+		default:
+			return 4;
+	}
 }
 
 bool8 IsAnyMaxMove(u16 move)
@@ -1243,12 +1290,14 @@ void SetMaxMoveStatRaiseEffect(void)
 {
 	u8 statId = (gBattleMoves[gCurrentMove].z_move_effect - MAX_EFFECT_RAISE_TEAM_ATTACK);
 	gBattleCommunication[MOVE_EFFECT_BYTE] = (MOVE_EFFECT_ATK_PLUS_1 + statId) | MOVE_EFFECT_AFFECTS_USER;
+	gNewBS->statBuffEffectNotProtectAffected = TRUE;
 }
 
 void SetMaxMoveStatLowerEffect(void)
 {
 	u8 statId = (gBattleMoves[gCurrentMove].z_move_effect - MAX_EFFECT_LOWER_ATTACK);
 	gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_ATK_MINUS_1 + statId;
+	gNewBS->statBuffEffectNotProtectAffected = TRUE;
 }
 
 void PickRandomGMaxBefuddleEffect(void)
@@ -1427,36 +1476,94 @@ bool8 ProtectedByMaxGuard(u8 bankDef, u16 move)
 void CreateSummaryScreenGigantamaxIcon(void)
 {
 	//Base the position of the icon off of where the Poke Ball sprite is
-	struct Sprite* ballSprite = &gSprites[sMonSummaryScreen->caughtBallSpriteId];
+	struct Sprite* ballSprite = &gSprites[sMonSummaryScreen->ballIconSpriteId];
 
 	if (sMonSummaryScreen->currentMon.gigantamax)
 	{
 		LoadCompressedSpriteSheetUsingHeap(&sSummaryScreenGigantamaxIconSpriteSheet);
-		LoadSpritePalette(&sSummaryScreenGigantamaxIconSpritePalette);
-		ballSprite->data[0] = CreateSprite(&sSummaryScreenGigantamaxIconTemplate, ballSprite->pos1.x - 18, ballSprite->pos1.y, 0);
+		LoadPalette(sSummaryScreenGigantamaxIconSpritePalette.data, (15 * 16) + 0x100, 32); //Load into last sprite palette slot
+		ballSprite->data[0] = CreateSprite(&sSummaryScreenGigantamaxIconTemplate, ballSprite->pos1.x - 32, ballSprite->pos1.y, 0);
+		if (ballSprite->data[0] < MAX_SPRITES)
+			gSprites[ballSprite->data[0]].oam.paletteNum = 15; //Make sure it points to the right palette num
 	}
 	else
 		ballSprite->data[0] = MAX_SPRITES; //No icon
+
+	#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+	u8 friendship = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_FRIENDSHIP, NULL);
+	if (friendship >= 80)
+	{
+		LoadCompressedSpriteSheetUsingHeap(&sSummaryScreenMaxFriendshipIconSpriteSheet);
+		LoadSpritePalette(&sSummaryScreenMaxFriendshipIconSpritePalette);
+
+		#ifdef UNBOUND
+		s16 x = ballSprite->pos1.x - 78;
+		s16 y = ballSprite->pos1.y - 12;
+		#else
+		s16 x = ballSprite->pos1.x - 12;
+		s16 y = ballSprite->pos1.y + 2;
+		#endif
+
+		ballSprite->data[1] = CreateSprite(&sSummaryScreenMaxFriendshipIconTemplate, x, y, 0);
+		if (ballSprite->data[1] < MAX_SPRITES)
+		{
+			u16 imageNum = 0;
+
+			//Adjust heart colour based on how much friendship
+			switch (friendship)
+			{
+				case 80 ... 129:
+					imageNum = 4;
+					break;
+				case 130 ... 179:
+					imageNum = 3;
+					break;
+				case 180 ... 219:
+					imageNum = 2;
+					break;
+				case 220 ... 254:
+					imageNum = 1;
+					break;
+			}
+
+			gSprites[ballSprite->data[1]].oam.tileNum += (imageNum * (8 / 8) * (8 / 8));
+		}
+	}
+	else
+		ballSprite->data[1] = MAX_SPRITES; //No icon
+	#endif
 }
 
 void SummaryScreen_ChangeCaughtBallSpriteVisibility(u8 invisible)
 {
-	u8 ballSpriteId = sMonSummaryScreen->caughtBallSpriteId;
-	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[0];
+	u8 ballSpriteId = sMonSummaryScreen->ballIconSpriteId;
+	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->ballIconSpriteId].data[0];
+	unusedArg u8 maxFriendshipIconSpriteId = gSprites[sMonSummaryScreen->ballIconSpriteId].data[1];
 
     gSprites[ballSpriteId].invisible = invisible;
 	if (gigantamaxIconSpriteId != MAX_SPRITES)
 		gSprites[gigantamaxIconSpriteId].invisible = invisible;
+
+	#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+	if (maxFriendshipIconSpriteId != MAX_SPRITES)
+		gSprites[maxFriendshipIconSpriteId].invisible = invisible;
+	#endif
 }
 
 void SummaryScreen_DestroyCaughtBallSprite(void)
 {
-	u8 ballSpriteId = sMonSummaryScreen->caughtBallSpriteId;
-	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[0];
+	u8 ballSpriteId = sMonSummaryScreen->ballIconSpriteId;
+	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->ballIconSpriteId].data[0];
+	unusedArg u8 maxFriendshipIconSpriteId = gSprites[sMonSummaryScreen->ballIconSpriteId].data[1];
 
     DestroySpriteAndFreeResources(&gSprites[ballSpriteId]);
 	if (gigantamaxIconSpriteId != MAX_SPRITES)
 		DestroySpriteAndFreeResources(&gSprites[gigantamaxIconSpriteId]);
+
+	#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+	if (maxFriendshipIconSpriteId != MAX_SPRITES)
+		DestroySpriteAndFreeResources(&gSprites[maxFriendshipIconSpriteId]);
+	#endif
 }
 
 //The following functions relate to raid battles:
@@ -1539,8 +1646,11 @@ u16 GetNextRaidShieldHP(u8 bank)
 		prevCutOff = cutOff;
 		cutOff = (gBattleMons[bank].maxHP / healthRatio) * i;
 
-		if (i == healthRatio)
-			cutOff = gBattleMons[bank].maxHP; //Fix Math Errors
+		if (i == healthRatio) //Last loop iteration
+			return prevCutOff; //Can never have cut off at full HP
+
+		if (gBattleMons[bank].hp == cutOff && gNewBS->dynamaxData.turnStartHP != cutOff) //Fix multi-hit moves
+			return cutOff;
 
 		if (gBattleMons[bank].hp > prevCutOff && gBattleMons[bank].hp <= cutOff)
 			return prevCutOff;
@@ -1939,9 +2049,9 @@ void sp11B_AllRaidBattlesCompleted(void)
 
 	for (u32 i = 0; i < KANTO_MAPSEC_COUNT; ++i)
 	{
-		if (gRaidsByMapSection[i] != NULL)
+		for (u32 j = 0; j < RAID_STAR_COUNT; ++j)
 		{
-			if (!FlagGet(FIRST_RAID_BATTLE_FLAG + i))
+			if (gRaidsByMapSection[i][j].data != NULL && !FlagGet(FIRST_RAID_BATTLE_FLAG + i))
 				return;
 		}
 	}

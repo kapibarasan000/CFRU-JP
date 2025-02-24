@@ -64,7 +64,7 @@ struct PokemonSummaryScreenData
     u8 ALIGNED(4) unk3000[7];
 
     u8 ALIGNED(4) unk3008;
-    u8 ALIGNED(4) caughtBallSpriteId;
+    u8 ALIGNED(4) ballIconSpriteId;
     u8 ALIGNED(4) unk3010;
     u8 ALIGNED(4) unk3014;
 

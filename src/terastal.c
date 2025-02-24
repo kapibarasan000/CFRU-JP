@@ -184,6 +184,9 @@ static item_t FindBankTeraOrb(u8 bank)
 
 bool8 TerastalEnabled(u8 bank)
 {
+	if (gBattleTypeFlags & (BATTLE_TYPE_LINK))
+		return TRUE;
+	
 	if (FindBankTeraOrb(bank) == ITEM_NONE)
 	{
 		#ifdef DEBUG_TERASTAL

@@ -2324,6 +2324,11 @@ void TrySetAlluringVoiceMoveEffect(void)
 		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_CONFUSION;
 }
 
+void ClearStatBuffEffectNotProtectAffected(void)
+{
+	gNewBS->statBuffEffectNotProtectAffected = FALSE;
+}
+
 void TryFailPoltergeist(void)
 {
 	u16 item = ITEM(gBankTarget);
