@@ -3517,7 +3517,7 @@ void CalcAITerastalMon(u8 bank)
 		for (i = 0, bestMonScore = 0, bestStatAmount = 0; i < PARTY_SIZE; ++i) //Do entire party at once, even for Multi Battles
 		{
 			struct Pokemon* mon = &party[i];
-			u8 updateScore, itemEffect, ability, type1, type2, teraType;
+			u8 updateScore, type1, type2, teraType;
 			u32 bestMonStat, attack, spAttack;
 
 			if (mon->species == SPECIES_NONE
@@ -3536,8 +3536,6 @@ void CalcAITerastalMon(u8 bank)
 				else
 					checkBank = battlerIn2;
 				
-				itemEffect = ITEM_EFFECT(checkBank);
-				ability = ABILITY(checkBank);
 				attack = gBattleMons[checkBank].attack;
 				spAttack = gBattleMons[checkBank].spAttack;
 				type1 = GetMonType(mon, 0);
@@ -3548,8 +3546,6 @@ void CalcAITerastalMon(u8 bank)
 			}
 			else
 			{
-				itemEffect = GetMonItemEffect(mon);
-				ability = GetMonAbility(mon);
 				attack = mon->attack;
 				spAttack = mon->spAttack;
 				type1 = GetMonType(mon, 0);

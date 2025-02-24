@@ -866,11 +866,19 @@ void RunTurnActionsFunctions(void)
 
 				if (SIDE(bank) == B_SIDE_PLAYER)
 				{
-					gNewBS->terastalData.chosen[PARTNER(bank)] = FALSE;
-					gNewBS->terastalData.done[PARTNER(bank)] = TRUE;
-					FlagClear(FLAG_TERASTAL_CHARGE);
+					if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+					{
+						if (GetBattlerPosition(bank) == B_POSITION_PLAYER_LEFT)
+							FlagClear(FLAG_TERASTAL_CHARGE);
+					}
+					else
+					{
+						gNewBS->terastalData.chosen[PARTNER(bank)] = FALSE;
+						gNewBS->terastalData.done[PARTNER(bank)] = TRUE;
+						FlagClear(FLAG_TERASTAL_CHARGE);
+					}
 				}
-				else
+				else if (!(gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
 				{
 					gNewBS->terastalData.chosen[PARTNER(bank)] = FALSE;
 					gNewBS->terastalData.done[PARTNER(bank)] = TRUE;

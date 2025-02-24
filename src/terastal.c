@@ -77,9 +77,14 @@ static bool8 IsBannedHeldItemForTerastal(u16 item)
 
 bool8 IsTerastal(u8 bank)
 {
-    if (gNewBS->terastalData.partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]]
-    && !gNewBS->terastalData.fainted[bank])
-        return TRUE;
+    if (gNewBS->terastalData.partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
+	{
+		if ((SIDE(bank) == B_SIDE_PLAYER && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+		||  (SIDE(bank) == B_SIDE_OPPONENT && gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
+			return !gNewBS->terastalData.fainted[bank];
+		else
+			return !gNewBS->terastalData.fainted[bank] && !gNewBS->terastalData.fainted[PARTNER(bank)];
+	}
 
     return FALSE;
 }
@@ -186,7 +191,7 @@ bool8 TerastalEnabled(u8 bank)
 {
 	if (gBattleTypeFlags & (BATTLE_TYPE_LINK))
 		return TRUE;
-	
+
 	if (FindBankTeraOrb(bank) == ITEM_NONE)
 	{
 		#ifdef DEBUG_TERASTAL
