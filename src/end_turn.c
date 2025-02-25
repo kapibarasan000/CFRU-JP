@@ -49,11 +49,15 @@ enum EndTurnEffects
 	ET_Item_Effects6,
 	ET_Switch_Out_Abilities6,
 	ET_Trap_Damage,
-	ET_Octolock,
-	ET_SyrupBomb,
-	ET_Saltcure,
 	ET_Item_Effects7,
 	ET_Switch_Out_Abilities7,
+	ET_Octolock,
+	ET_Item_Effects8,
+	ET_SyrupBomb,
+	ET_Item_Effects9,
+	ET_Saltcure,
+	ET_Item_Effects10,
+	ET_Switch_Out_Abilities8,
 	ET_Taunt_Timer,
 	ET_Encore_Timer,
 	ET_Disable_Timer,
@@ -64,7 +68,7 @@ enum EndTurnEffects
 	ET_Heal_Block_Timer,
 	ET_Embargo_Timer,
 	ET_Yawn,
-	ET_Item_Effects8,
+	ET_Item_Effects11,
 	ET_Perish_Song,
 	ET_Roost,
 	ET_Reflect,
@@ -572,6 +576,9 @@ u8 TurnBasedEffects(void)
 			case ET_Item_Effects6:
 			case ET_Item_Effects7:
 			case ET_Item_Effects8:
+			case ET_Item_Effects9:
+			case ET_Item_Effects10:
+			case ET_Item_Effects11:
 				if (BATTLER_ALIVE(gActiveBattler))
 				{
 					if (ItemBattleEffects(ItemEffects_EndTurn, gActiveBattler, FALSE, FALSE))
@@ -586,6 +593,7 @@ u8 TurnBasedEffects(void)
 			case ET_Switch_Out_Abilities5:
 			case ET_Switch_Out_Abilities6:
 			case ET_Switch_Out_Abilities7:
+			case ET_Switch_Out_Abilities8:
 				if (BATTLER_ALIVE(gActiveBattler))
 				{
 					switch(ABILITY(gActiveBattler)) {

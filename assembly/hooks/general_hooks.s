@@ -300,6 +300,18 @@ LinkBattleSaveHook:
 	bx r1
 
 .pool
+@0x805415E with r0
+LinkTradeSaveHook:
+	bl SaveDataAfterLinkTrade
+	ldr r1, =gMain
+	mov r2, #0x87
+	lsl r2, #0x3
+	add r1, r2
+	mov r2, #0x0
+	ldr r3, =0x8053A34 | 1
+	bx r3
+
+.pool
 @0x8054A60 with r0
 NewGameSaveClearHook:
 	push {r4-r6, lr}
@@ -1297,4 +1309,30 @@ MoveSelectionWindowCursorPos2:
 	mul r2, r0
 	add r2, #0x1
 	ldr r0, =0x803019C | 1
+	bx r0
+
+.pool
+@0x8055140 with r0
+LoadMapFromCameraTransition_DNSFixHook1:
+	ldr r0, =gMapHeader
+	ldr r0, [r0] @Map Layout (Footer)
+	str r0, [sp] @Save for next hook
+
+	@Call normal functions and return
+	ldr r0, =Overworld_TryMapConnectionMusicTransition
+	bl bxr0
+	ldr r0, =ApplyCurrentWarp
+	bl bxr0
+	ldr r0, =0x8055148 | 1
+	bx r0
+
+bxr0:
+	bx r0
+
+.pool
+@0x8055184 with r0
+LoadMapFromCameraTransition_DNSFixHook2:
+	ldr r0, [sp] @Old map header - saved above in Hook1
+	bl TryLoadTileset2OnCameraTransition
+	ldr r0, =0x80551A2 | 1
 	bx r0

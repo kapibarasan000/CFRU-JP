@@ -14,6 +14,7 @@
 #include "../include/new/ability_tables.h"
 #include "../include/new/accuracy_calc.h"
 #include "../include/new/attackcanceler.h"
+#include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_terrain.h"
@@ -977,7 +978,7 @@ void atk0F_resultmessage(void)
 				else
 					gBattleStringLoader = gText_SuperEffectiveTarget;
 			}
-			else
+			else if (gMultiHitCounter <= 1 || !BATTLER_ALIVE(gBankTarget)) //Only print once after multi-hit moves - always when KOing
 				stringId = STRINGID_SUPEREFFECTIVE;
 			break;
 
@@ -995,7 +996,7 @@ void atk0F_resultmessage(void)
 				else
 					gBattleStringLoader = gText_NotVeryEffectiveTarget;
 			}
-			else
+			else if (gMultiHitCounter <= 1 || !BATTLER_ALIVE(gBankTarget)) //Only print once after multi-hit moves - always when KOing
 				stringId = STRINGID_NOTVERYEFFECTIVE;
 			break;
 
@@ -1430,7 +1431,73 @@ void atk1B_cleareffectsonfaint(void) {
 				if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
 					return;
 
+				mon = GetBankPartyData(gActiveBattler); //Mon gets overwritten by Neutralizing Gas for some reason
 				++gNewBS->faintEffectsState;
+			__attribute__ ((fallthrough));
+
+			case Faint_SkyDrop:
+				++gNewBS->faintEffectsState;
+				u32 status3;
+				u8 bankToFree;
+
+				//Determine if this mon was active in a Sky Drop
+				for (bankToFree = 0, status3 = 0; bankToFree < gBattlersCount; ++bankToFree)
+				{
+					if (gStatuses3[bankToFree] & STATUS3_SKY_DROP_ATTACKER)
+					{
+						if (gNewBS->skyDropAttackersTarget[bankToFree] == gActiveBattler)
+						{
+							status3 = STATUS3_SKY_DROP_TARGET; //The fainted bank was a target of Sky Drop
+							break;
+						}
+					}
+					else if (gStatuses3[bankToFree] & STATUS3_SKY_DROP_TARGET)
+					{
+						if (gNewBS->skyDropTargetsAttacker[bankToFree] == gActiveBattler)
+						{
+							status3 = STATUS3_SKY_DROP_ATTACKER; //The fainted bank was a user of Sky Drop
+							break;
+						}
+					}
+				}
+
+				if (status3 & STATUS3_SKY_DROP_ANY) //The fainted bank was active in a Sky Drop
+				{
+					if (status3 & STATUS3_SKY_DROP_ATTACKER) //The fainted bank was the user of a Sky Drop
+					{
+						//So free the Pokemon it had held up in the air
+						gNewBS->skyDropAttackersTarget[gActiveBattler] = 0;
+						gNewBS->skyDropTargetsAttacker[bankToFree] = 0;
+
+						//A message is only printed when the target is freed.
+						gBattleScripting.bank = bankToFree;
+						gBattleStringLoader = FreedFromSkyDropString;
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+
+						gActiveBattler = bankToFree;
+						EmitSpriteInvisibility(0, FALSE);
+						MarkBufferBankForExecution(gActiveBattler);
+					}
+					else if (status3 & STATUS3_SKY_DROP_TARGET) //The fainted bank was the target of a Sky Drop
+					{
+						//So free the Pokemon that was holding it in the air
+						CancelMultiTurnMoves(bankToFree);
+						gNewBS->skyDropAttackersTarget[bankToFree] = 0;
+						gNewBS->skyDropTargetsAttacker[gActiveBattler] = 0;
+						gNewBS->NoMoreMovingThisTurn |= gBitTable[bankToFree]; //So it doesn't try using Sky Drop again
+						gActiveBattler = bankToFree;
+						EmitSpriteInvisibility(0, FALSE);
+						MarkBufferBankForExecution(gActiveBattler);
+					}
+					else
+						goto END_SKY_DROP_CHECK;
+
+					gStatuses3[gActiveBattler] &= ~(STATUS3_SKY_DROP_ANY | STATUS3_IN_AIR);
+					gStatuses3[bankToFree] &= ~(STATUS3_SKY_DROP_ANY | STATUS3_IN_AIR);
+					return;
+				}
+				END_SKY_DROP_CHECK: ;
 			__attribute__ ((fallthrough));
 
 			case Faint_RaidBattle:
@@ -1510,6 +1577,7 @@ void atk1B_cleareffectsonfaint(void) {
 				if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE)) == (BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE) //Double Gym battle
 				&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER))
 				&& gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_LEADER
+				&& SIDE(gActiveBattler) == B_SIDE_OPPONENT //Enemy mon fainted
 				&& ViableMonCount(gEnemyParty) <= 1)
 				{
 					PlayBGM(BGM_BATTLE_GYM_LEADER_LAST_POKEMON);
@@ -2006,8 +2074,11 @@ static void UpdateMoveStartValuesForCalledMove(void)
 	gNewBS->calculatedSpreadMoveAccuracy = FALSE;
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 
-	if (GetBaseMoveTarget(gCurrentMove, gBankAttacker) & MOVE_TARGET_USER)
+	u8 moveTarget = GetBaseMoveTarget(gCurrentMove, gBankAttacker);
+	if (moveTarget & MOVE_TARGET_USER)
 		gBankTarget = gBankAttacker;
+	else if (IS_DOUBLE_BATTLE && moveTarget & MOVE_TARGET_ALL)
+		DetermineFirstMultiTarget();
 }
 
 static void TryUpdateCalledMoveWithZMove(void)

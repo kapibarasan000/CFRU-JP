@@ -20,7 +20,7 @@ enum
     SAVE_HALL_OF_FAME_ERASE_BEFORE, // unused
 };
 
-struct SaveSectionLocation
+struct SaveBlockChunk
 {
     void* data;
     u16 size;
@@ -31,7 +31,7 @@ struct SaveSection
     u8 data[0xFF4];
     u16 id;
     u16 checksum;
-    u32 security;
+    u32 signature;
     u32 counter;
 }; // size is 0x1000
 
@@ -39,7 +39,7 @@ struct SaveSection
 struct UnkSaveSection
 {
     u8 data[0xFF4];
-    u32 security;
+    u32 signature;
 }; // size is 0xFF8
 
 struct SaveSectionOffset
@@ -48,11 +48,13 @@ struct SaveSectionOffset
     u16 size;
 };
 
-extern struct SaveSectionLocation gRamSaveSectionLocations[0xE];
+extern struct SaveBlockChunk gRamSaveSectionLocations[0xE];
 
 #define UNKNOWN_CHECK_VALUE 0x8012025
 
 #define NUM_SECTORS_PER_SAVE_SLOT 14  // Number of sectors occupied by a save slot
+#define SECTOR_SAVE1(n)  (n)
+#define SECTOR_SAVE2(n)  ((n) + NUM_SECTORS_PER_SAVE_SLOT)
 #define SECTOR_ID_HOF_1 28
 #define SECTOR_ID_HOF_2 29
 #define SECTORS_COUNT 32
@@ -86,7 +88,8 @@ extern u16 gUnknown_30053E8;
 extern u16 gSaveUnusedVar;
 extern u16 gSaveFileStatus;
 extern void (*gGameContinueCallback)(void);
-extern u16 gUnknown_3005470;
+extern struct SaveBlockChunk gRamSaveSectionLocations[0xE];
+extern u16 gSaveSucceeded;
 
 extern struct SaveSection gSaveDataBuffer;
 
@@ -94,7 +97,7 @@ void __attribute__((long_call)) SaveSerializedGame(void);
 void __attribute__((long_call)) UpdateSaveAddresses(void);
 u16 __attribute__((long_call)) CalculateSaveChecksum(void* data, u16 size);
 u8 __attribute__((long_call)) TryWriteSector(u8 sector, u8 *data);
-u8 __attribute__((long_call)) SaveWriteToFlash(u16 chunkId, const struct SaveSectionLocation *chunks);
+u8 SaveWriteToFlash(u16 chunkId, const struct SaveBlockChunk *chunks);
 u8 __attribute__((long_call)) DoReadFlashWholeSection(u8 sector, struct SaveSection *section);
 u8 __attribute__((long_call)) SaveLoadGameData(u8 a1);
 u8 __attribute__((long_call)) TrySavingData(u8 saveType);

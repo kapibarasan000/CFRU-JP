@@ -298,7 +298,10 @@ SetFoughtRoamerInactive 8142740 1
 ##Save Expansion Hooks
 HandleWriteSector 80DA858 2
 HandleLoadSector 80DAE3C 2
+GetSaveValidStatus 80DAEF4 1
+TryLoadSaveSector 80DB108 3
 HandleSavingData 80DB230 1
+LinkTradeSaveHook 8053A22 0
 LinkBattleSaveHook 806F44C 0
 NewGameSaveClearHook 8054324 0
 ExpandedVarsHook 806DC48 1
@@ -322,6 +325,8 @@ RandomizerShowPokepicHook 809CD34 3
 
 ##DNS
 TransferPlttBuffer 806FC18 0
+LoadMapFromCameraTransition_DNSFixHook1 8055140 0
+LoadMapFromCameraTransition_DNSFixHook2 8055184 0
 DNSCreateBuyMenuHook 809A6A0 0
 DNSEndBuyMenuHook 809BA68 1
 
