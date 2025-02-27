@@ -70,8 +70,6 @@ static void TryLoadTypeIcons(void);
 static void SpriteCB_CamomonsTypeIcon(struct Sprite* sprite);
 static void TriggerTerastal(void);
 
-const u8 gText_EmptyString[] = {EOS};
-
 static const struct Coords16 sTypeIconPositions[][/*IS_SINGLE_BATTLE*/2] =
 {
 #ifndef UNBOUND //MODIFY THIS
@@ -199,6 +197,7 @@ void InitMoveSelectionsVarsAndStrings(void)
 	MoveSelectionDisplayMoveNames();
 	gMultiUsePlayerCursor = 0xFF;
 	MoveSelectionCreateCursorAt(gMoveSelectionCursor[gActiveBattler], 0);
+	MoveSelectionDisplayPpString();
 	MoveSelectionDisplayPpNumber();
 	MoveSelectionDisplayMoveType();
 	MoveSelectionDisplayMoveEffectiveness();
@@ -781,6 +780,7 @@ static void MoveSelectionDisplayMoveType(void)
 void MoveSelectionDisplayMoveEffectiveness(void)
 {
 	u8 *txtPtr, moveType, split;
+	const u8* string;
 	bool8 stab = FALSE;
 	u8 stabPalIndex = 5 * 0x10 + 6;
 	u8 palIndex = stabPalIndex + 2;
@@ -843,37 +843,48 @@ void MoveSelectionDisplayMoveEffectiveness(void)
 		{
 			gPlttBufferUnfaded[palIndex + 0] = palPtr[NO_EFFECT_COLOURS + 0]; //No STAB for moves with no effect
 			gPlttBufferUnfaded[palIndex + 1] = palPtr[NO_EFFECT_COLOURS + 1];
+			string = gText_BattleUI_NoEffect;
 			stab = FALSE; //No STAB on a move that does no damage
 		}
 		else if (moveResult & MOVE_RESULT_SUPER_EFFECTIVE)
 		{
 			gPlttBufferUnfaded[palIndex + 0] = palPtr[SUPER_EFFECTIVE_COLOURS + 0];
 			gPlttBufferUnfaded[palIndex + 1] = palPtr[SUPER_EFFECTIVE_COLOURS + 1];
+			string = gText_BattleUI_SuperEffective;
 		}
 		else if (moveResult & MOVE_RESULT_NOT_VERY_EFFECTIVE)
 		{
 			gPlttBufferUnfaded[palIndex + 0] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + 0];
 			gPlttBufferUnfaded[palIndex + 1] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + 1];
+			string = gText_BattleUI_NotVeryEffective;
 		}
 		else //Nothing special about move
 		{
 			gPlttBufferUnfaded[palIndex + 0] = palPtr[REGULAR_COLOURS + 0];
 			gPlttBufferUnfaded[palIndex + 1] = palPtr[REGULAR_COLOURS + 1];
+			string = StringNull;
 		}
 	}
 	else
+		string = StringNull;
+	#else
+		string = gText_PP;
 	#endif
 
 	txtPtr = gDisplayedStringBattle;
 	*txtPtr++ = EXT_CTRL_CODE_BEGIN;
 	*txtPtr++ = 6;
 	*txtPtr++ = 1;
+	#ifdef DISPLAY_EFFECTIVENESS_ON_MENU
 	txtPtr = StringCopy(txtPtr, sText_StabMoveInterfaceType);
+	#endif
+	txtPtr = StringCopy(txtPtr, string);
 
 	if (stab)
 	{
 		gPlttBufferUnfaded[stabPalIndex + 0] = RGB(27, 27, 27); //Copy over PP colours so it's unaffected by low PP
 		gPlttBufferUnfaded[stabPalIndex + 1] = RGB(4, 4, 4);
+		StringCopy(txtPtr, gText_BattleUI_STAB);
 	}
 
     BattlePutTextOnWindow(gDisplayedStringBattle, 7);
@@ -1944,7 +1955,6 @@ void PlayerHandleChooseAction(void)
 	else
 		BattleStringExpandPlaceholdersToDisplayedString(gText_WhatWillPkmnDo);
 	BattlePutTextOnWindow(gDisplayedStringBattle, 1);
-	BattlePutTextOnWindow(gText_EmptyString, 0); //Wipes the old string
 
 	#ifdef LAST_USED_BALL_TRIGGER
 	TryLoadLastUsedBallTrigger();

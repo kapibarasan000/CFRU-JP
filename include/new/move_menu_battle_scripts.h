@@ -25,6 +25,11 @@ extern const u8 BattleScript_SelectingNotAllowedGigatonHammer[];
 
 //Strings
 extern const u8 StringNull[];
+extern const u8 gText_BattleUI_SuperEffective[];
+extern const u8 gText_BattleUI_NotVeryEffective[];
+extern const u8 gText_BattleUI_NoEffect[];
+extern const u8 gText_BattleUI_STAB[];
+extern const u8 gText_PP[];
 extern const u8 gText_Power[];
 extern const u8 gText_Acc[];
 extern const u8 gText_NoMiss[];

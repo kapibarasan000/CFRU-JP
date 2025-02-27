@@ -937,7 +937,7 @@ void atk0F_resultmessage(void)
 	{
 		gNewBS->MetronomeCounter[gBankAttacker] = 0;
 
-		if (gMultiHitCounter && gMultiHitCounter < gBattleScripting.multihitString[4])
+		if (gMultiHitCounter && gBattleScripting.multihitString[4])
         {
             gMultiHitCounter = 0;
             gMoveResultFlags &= ~MOVE_RESULT_MISSED;

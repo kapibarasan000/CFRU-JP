@@ -173,6 +173,21 @@ The Shadow
 がくしゅうそうちで\nそれぞれ けいけんちを もらった！
 
 //Other
+#org @gText_BattleUI_SuperEffective
+[F9][15]
+
+#org @gText_BattleUI_NotVeryEffective
+[F9][16]
+
+#org @gText_BattleUI_NoEffect
+*
+
+#org @gText_BattleUI_STAB
+[MAIN_COLOUR][07][SHADOW_COLOUR][06][F9][04]
+
+#org @gText_PP
+PP 
+
 #org @gText_Power
 いりょく:
 
