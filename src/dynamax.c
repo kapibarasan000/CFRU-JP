@@ -1592,6 +1592,14 @@ bool8 HasRaidShields(u8 bank)
 		&& gNewBS->dynamaxData.raidShieldsUp;
 }
 
+u8 GetNumRaidShieldsUp(void)
+{
+	if (gNewBS->dynamaxData.raidShieldsUp)
+		return gNewBS->dynamaxData.shieldCount - gNewBS->dynamaxData.shieldsDestroyed;
+
+	return 0;
+}
+
 static u8 GetRaidShieldHealthRatio(u8 bank)
 {
 	switch (gBattleMons[bank].level) {

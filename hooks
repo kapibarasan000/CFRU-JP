@@ -257,11 +257,13 @@ DoubleWildDexHook2 802D2FC 0
 ##Illusion Hooks
 BattleLoadOpponentMonSpriteGfxHook 8033AA0 2
 BattleLoadPlayerMonSpriteGfxHook 8033C18 2
+ShadowIllusionHook 8034E80 2
 UpdateNickForIllusionHook 8048CCC 2
 UpdatePokeBallForIllusionHook 804A198 1
-UpdateCryForOpponentIllusionHook 804AA9E 0
-UpdateCryForPlayerIllusionHook 804AAC8 0
+UpdateCryForIllusionHook 804AADC 0
+LaunchBattleAnimationIllusionHook 8071DA8 1
 UpdateAltitudeForIllusionHook 8073D3C 2
+UpdateElevationForIllusionHook 8073EF4 2
 GetBattlerYDeltaFromSpriteId 8075C90 1
 GetBattlerSpriteCoordAttrPlayerIllusionHook 80762F4 0
 GetBattlerSpriteCoordAttrEnemyIllusionHook 80763B2 0

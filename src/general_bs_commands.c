@@ -97,7 +97,8 @@ bool8 TryActivateGemBattlescript(void)
 	&&  ITEM_QUALITY(gBankAttacker) == gBattleStruct->dynamicMoveType
 	&&  SPLIT(gCurrentMove) != SPLIT_STATUS
 	&& !(gMoveResultFlags & (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))
-	&& !(TypeCalc(gCurrentMove, gBankAttacker, gBankTarget, GetBankPartyData(gBankAttacker), 0) & (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))
+	&& !ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE)
+	&& !DoesTargetHaveAbilityImmunity()
 	&& gBattleMoves[gCurrentMove].effect != EFFECT_PLEDGE
 	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2)
 	{

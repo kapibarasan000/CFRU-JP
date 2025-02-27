@@ -30,7 +30,6 @@ attackcanceler.c
 //This file's functions:
 static u8 AtkCanceller_UnableToUseMove(void);
 static u8 IsMonDisobedient(void);
-static bool8 DoesTargetHaveAbilityImmunity(void);
 
 void atk00_attackcanceler(void)
 {
@@ -1307,7 +1306,7 @@ bool8 TargetFullyImmuneToCurrMove(u8 bankDef)
 }
 
 //For Dragon Darts
-static bool8 DoesTargetHaveAbilityImmunity(void)
+bool8 DoesTargetHaveAbilityImmunity(void)
 {
 	BattleScriptPushCursor(); //Backup the current script
 
@@ -1318,5 +1317,6 @@ static bool8 DoesTargetHaveAbilityImmunity(void)
 		return TRUE;
 	}
 
+	BattleScriptPop(); //Restore the original script
 	return FALSE;
 }
