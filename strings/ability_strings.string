@@ -38,7 +38,10 @@
 よちむで\n[BUFFER][00]を よみとった！
 
 #org @gText_FriskActivate
-[SCRIPTING_BANK]は [TARGET]の\n[LAST_ITEM]を おみとおしだ！
+[SCRIPTING_BANK]は [EFFECT_BANK]の\n[LAST_ITEM]を おみとおしだ！
+
+#org @gText_ItIsHailing
+あられが ふっている
 
 #org @gText_FogIsDeep
 きりが ふかい
@@ -51,6 +54,9 @@
 
 #org @gText_DeltaStream
 なぞの らんきりゅうが\nひこうポケモンを まもる！
+
+#org @gText_StrongWindsWeakenedAttack
+なぞの らんきりゅうが\nこうげきを よわめた！
 
 #org @gText_HarshSunStopsWeatherChange
 つよい ひざしの\nいきおいは とまらない！

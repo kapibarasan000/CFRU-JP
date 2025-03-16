@@ -54,6 +54,11 @@ void SetAttackerPartner(void)
 	gBankAttacker = PARTNER(gBankAttacker);
 }
 
+void SetScriptingBankPartner(void)
+{
+	gBattleScripting.bank = PARTNER(gBattleScripting.bank);
+}
+
 bool8 CheckCraftyShield(u8 bank)
 {
 	if (gSideStatuses[SIDE(bank)] & SIDE_STATUS_CRAFTY_SHIELD)
@@ -441,7 +446,7 @@ void BelchFunction(void)
 	if (IsRaidBattle() && gBankAttacker == BANK_RAID_BOSS)
 		return; //Raid bosses can always use Belch
 
-	if (!(gNewBS->BelchCounters & gBitTable[gBattlerPartyIndexes[gBankAttacker]]))
+	if (!(gNewBS->canBelch[SIDE(gBankAttacker)] & gBitTable[gBattlerPartyIndexes[gBankAttacker]]))
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
 }
 
@@ -1908,6 +1913,11 @@ void RestoreOriginalAttackerAndTarget(void)
 {
 	gBankAttacker = gNewBS->originalAttackerBackup;
 	gBankTarget = gNewBS->originalTargetBackup;
+}
+
+void RestoreOriginalTargetResultFlags(void)
+{
+	gMoveResultFlags = gNewBS->ResultFlags[gBankTarget];
 }
 
 void SetBatonPassSwitchingBit(void)

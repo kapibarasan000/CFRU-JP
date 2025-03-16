@@ -11,10 +11,13 @@ extern const u8 BattleScript_OverworldWeatherStarts[];
 extern const u8 BattleScript_NewWeatherAbilityActivates[];
 extern const u8 BattleScript_NewWeatherAbilityActivatesCall[];
 extern const u8 BattleScript_AirLock[];
+extern const u8 BattleScript_WeatherAbilityBlockedByPrimalWeather[];
+extern const u8 BattleScript_WeatherAbilityBlockedByPrimalWeatherRet[];
 extern const u8 BattleScript_IntimidateActivatesEnd3[];
 extern const u8 BattleScript_TraceActivates[];
 extern const u8 BattleScript_Frisk[];
 extern const u8 BattleScript_FriskEnd[];
+extern const u8 BattleScript_PastelVeil[];
 extern const u8 BattleScript_SwitchInAbilityMsg[];
 extern const u8 BattleScript_End3[];
 extern const u8 BattleScript_AbilityCuredStatus[];
@@ -64,6 +67,7 @@ extern const u8 BattleScript_IllusionBroken[];
 extern const u8 BattleScript_SynchronizeActivates[];
 extern const u8 BattleScript_ObliviousPrevents[];
 extern const u8 BattleScript_CastformChange[];
+extern const u8 BattleScript_CottonDownActivates[];
 extern const u8 BattleScript_PerishBody[];
 extern const u8 BattleScript_PerishBodyReturn[];
 
@@ -81,6 +85,7 @@ extern const u8 BattleScript_SoulHeart[];
 extern const u8 BattleScript_IllusionBrokenFaint[];
 extern const u8 BattleScript_TeamProtectedByFlowerVeil[];
 extern const u8 BattleScript_TeamProtectedBySweetVeil[];
+extern const u8 BattleScript_TeamProtectedByPastelVeil[];
 extern const u8 BattleScript_TargetStayedAwakeUsingAbility[];
 extern const u8 BattleScript_ProtectedByAbility[];
 extern const u8 BattleScript_SturdyPreventsOHKO[];
@@ -106,6 +111,7 @@ extern const u8 BattleScript_AbilityPopUp[];
 extern const u8 BattleScript_AbilityPopUpRevert[];
 
 //Strings
+extern const u8 gText_ItIsHailing[];
 extern const u8 gText_FogIsDeep[];
 extern const u8 gText_SnowWarningActivate[];
 extern const u8 gText_PrimordialSeaActivate[];

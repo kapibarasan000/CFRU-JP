@@ -497,7 +497,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& ABILITY(gBankTarget) != ABILITY_STICKYHOLD
 			&& (!BATTLER_ALIVE(gBankTarget) || !(ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_JABOCA_ROWAP_BERRY && ITEM_QUALITY(gBankTarget) == CalcMoveSplit(gBankAttacker, gCurrentMove, gBankTarget))))
 			{
-				gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[gBankAttacker]];
+				gNewBS->canBelch[SIDE(gBankAttacker)] |= gBitTable[gBattlerPartyIndexes[gBankAttacker]];
 
 				gLastUsedItem = gBattleMons[gBankTarget].item;
 				gBattleMons[gBankTarget].item = 0;
@@ -1474,6 +1474,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->MeFirstByte = FALSE;
 			gNewBS->GemHelper = FALSE;
 			gNewBS->breakDisguiseSpecialDmg = FALSE;
+			gNewBS->printedStrongWindsWeakenedAttack = FALSE;
 			gBattleScripting.atk49_state++;
 			break;
 

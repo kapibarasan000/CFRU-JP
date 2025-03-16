@@ -71,6 +71,16 @@ BattleScript_TeamProtectedByFlowerVeil:
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 
+.global BattleScript_TeamProtectedByPastelVeil
+BattleScript_TeamProtectedByPastelVeil:
+	pause 0x10
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_PastelVeilProtects
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BS_MOVE_END
+
 .global BattleScript_ProtectedByAbility
 BattleScript_ProtectedByAbility:
 	pause 0x10
@@ -1068,13 +1078,22 @@ BS_037_SetRest:
 BS_038_OHK0:
 	attackcanceler
 	accuracycheck FAILED 0xFFFF
+	jumpifability BANK_TARGET, ABILITY_STURDY, BattleScript_SturdyPreventsOHKO
+	typecalc2
+	tryko OHKOMoveFail
 	attackstring
 	ppreduce
-	typecalc2
 	jumpifmovehadnoeffect BS_HIT_FROM_ATTACKANIMATION
-	tryko 0x81BAEAD
 	trysetdestinybondtohappen
 	goto BS_HIT_FROM_ATTACKANIMATION
+
+OHKOMoveFail:
+	attackstring
+	ppreduce
+	pause DELAY_HALFSECOND
+	printfromtable 0x83C45A0
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

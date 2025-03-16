@@ -13,6 +13,9 @@ ability_battle_scripts.s
 .global BattleScript_NewWeatherAbilityActivates
 .global BattleScript_NewWeatherAbilityActivatesCall
 .global BattleScript_AirLock
+.global BattleScript_WeatherAbilityBlockedByPrimalWeather
+.global BattleScript_WeatherAbilityBlockedByPrimalWeatherRet
+.global BattleScript_StrongWindsWeakenedttack
 .global BattleScript_IntimidateActivatesEnd3
 .global BattleScript_TraceActivates
 .global BattleScript_Frisk
@@ -86,6 +89,7 @@ ability_battle_scripts.s
 .global BattleScript_AbilityNoSpecificStatLoss
 .global BattleScript_MirrorArmorReflectsIntimidate
 .global BattleScript_CastformChange
+.global BattleScript_CottonDownActivates
 .global BattleScript_PerishBody
 .global BattleScript_SturdyPreventsOHKO
 .global BattleScript_StickyHoldActivates
@@ -132,6 +136,31 @@ BattleScript_AirLock:
 	call BattleScript_AbilityPopUpRevert
 	call 0x81BD298 @;BattleScript_WeatherFormChanges
 	end3
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_WeatherAbilityBlockedByPrimalWeather:
+	call BattleScript_WeatherAbilityBlockedByPrimalWeatherRet
+	end3
+
+BattleScript_WeatherAbilityBlockedByPrimalWeatherRet:
+	call BattleScript_AbilityPopUp
+	call BattleScript_TryBlockWeatherWithPrimalWeatherRetSkipPause
+	call BattleScript_AbilityPopUpRevert
+	return
+
+BattleScript_TryBlockWeatherWithPrimalWeatherRetSkipPause:
+	tryblockweatherwithprimalweather RetSkipPause
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_StrongWindsWeakenedttack:
+	pause DELAY_HALFSECOND
+	setword BATTLE_STRING_LOADER gText_StrongWindsWeakenedAttack
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -218,6 +247,30 @@ BattleScript_Frisk:
 BattleScript_FriskEnd:
 	call BattleScript_AbilityPopUpRevert
 	end3	
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BattleScript_PastelVeil
+BattleScript_PastelVeil:
+	call BattleScript_AbilityPopUp
+	call BattleScript_PastelVeil_TryHeal @;Check User
+	callasm SetScriptingBankPartner @;Swap banks
+	call BattleScript_PastelVeil_TryHeal @;Check Partner
+	callasm SetScriptingBankPartner @;Revert
+	call BattleScript_AbilityPopUpRevert
+	end3
+
+BattleScript_PastelVeil_TryHeal:
+	jumpiffainted BANK_SCRIPTING .LReturn
+	jumpifstatus BANK_SCRIPTING STATUS_POISON_ANY BattleScript_PastelVeil_Heal
+	return
+
+BattleScript_PastelVeil_Heal:
+	cureprimarystatus BANK_SCRIPTING .LReturn
+	printstring 0x164 @;STRINGID_PKMNSXCUREDITSYPROBLEM
+	waitmessage DELAY_1SECOND
+	refreshhpbar BANK_SCRIPTING
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -444,44 +497,20 @@ MoodyRegularP2:
 
 BattleScript_BadDreams:
 	call BattleScript_AbilityPopUp
-	setbyte SEED_HELPER 0x0
-	jumpifbyte ANDS USER_BANK 0x1 BadDreams_OpponentSidePlayer1
+	call BattleScript_BadDreams_TryHurt
+	callasm SetTargetFoePartner
+	call BattleScript_BadDreams_TryHurt
+	callasm TryHideActiveAbilityPopUps
+	end3
 
-BadDreams_PlayerSideOpponent1:
-	setbyte TARGET_BANK 0x1
-	jumpifstatus BANK_TARGET STATUS_SLEEP BadDreams_callhurt
-	jumpifability BANK_TARGET ABILITY_COMATOSE BadDreams_callhurt
-	addbyte SEED_HELPER 0x1
-BadDreams_PlayerSideOpponent2:
-	jumpifbyte NOTEQUALS NUM_POKEMON 0x4 BadDreams_end @not double battle
-	setbyte TARGET_BANK 0x3
-	jumpifstatus BANK_TARGET STATUS_SLEEP BadDreams_callhurt
-	jumpifability BANK_TARGET ABILITY_COMATOSE BadDreams_callhurt
-	goto BadDreams_end
+BattleScript_BadDreams_TryHurt:
+	jumpifstatus BANK_TARGET STATUS_SLEEP BattleScript_BadDreams_Hurt
+	jumpifability BANK_TARGET ABILITY_COMATOSE BattleScript_BadDreams_Hurt
+	return
 
-BadDreams_OpponentSidePlayer1:
-	setbyte SEED_HELPER 0x2
-	setbyte TARGET_BANK 0x0
-	jumpifstatus BANK_TARGET STATUS_SLEEP BadDreams_callhurt
-	jumpifability BANK_TARGET ABILITY_COMATOSE BadDreams_callhurt
-	addbyte SEED_HELPER 0x1
-	BadDreams_OpponentSidePlayer2:
-	jumpifbyte NOTEQUALS NUM_POKEMON 0x4 BadDreams_end @not double battle
-	setbyte TARGET_BANK 0x2
-	jumpifstatus BANK_TARGET STATUS_SLEEP BadDreams_callhurt
-	jumpifability BANK_TARGET ABILITY_COMATOSE BadDreams_callhurt
-	goto BadDreams_end
-
-BadDreams_callhurt:
-	call BadDreams_hurt
-	jumpifbyte EQUALS SEED_HELPER 0x1 BadDreams_PlayerSideOpponent2
-	jumpifbyte EQUALS SEED_HELPER 0x2 BadDreams_end
-	jumpifbyte EQUALS SEED_HELPER 0x3 BadDreams_OpponentSidePlayer2
-	jumpifbyte EQUALS SEED_HELPER 0x4 BadDreams_end
-	goto BadDreams_end
-
-BadDreams_hurt:
-	jumpifability BANK_TARGET ABILITY_MAGICGUARD BadDreams_return
+BattleScript_BadDreams_Hurt:
+	jumpiffainted BANK_TARGET .LReturn
+	jumpifability BANK_TARGET ABILITY_MAGICGUARD .LReturn
 	setdamagetobankhealthfraction BANK_TARGET 8 0x0 @;1/8 of base HP
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_TARGET
@@ -490,14 +519,8 @@ BadDreams_hurt:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_TARGET 0x0 0x0
-	BadDreams_return:
-	addbyte SEED_HELPER 0x1
+.LReturn:
 	return
-
-BadDreams_end:
-	setbyte SEED_HELPER 0x0
-	callasm TryHideActiveAbilityPopUps
-	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -544,7 +567,7 @@ BattleScript_EmergencyExitEnd3:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_AttackerCantUseMove:
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
@@ -552,6 +575,7 @@ BattleScript_AttackerCantUseMove:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	orword HIT_MARKER, HITMARKER_UNABLE_TO_USE_MOVE
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -559,21 +583,29 @@ BattleScript_AttackerCantUseMove:
 BattleScript_FlashFireBoost_PPLoss:
 	ppreduce
 BattleScript_FlashFireBoost:
-	attackstring
+	call BattleScript_AttackstringBackupScriptingBank
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
 	callasm ApplyFlashFireBoost
 	printfromtable gFlashFireStringIds
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 	goto BS_MOVE_END
+
+.global BattleScript_AttackstringBackupScriptingBank
+BattleScript_AttackstringBackupScriptingBank:
+	copybyte FORM_COUNTER, BATTLE_SCRIPTING_BANK @;Backup in case of Protean
+	attackstring
+	copybyte BATTLE_SCRIPTING_BANK, FORM_COUNTER
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoveHPDrain_PPLoss:
 	ppreduce
 BattleScript_MoveHPDrain:
-	attackstring
+	call BattleScript_AttackstringBackupScriptingBank
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
 	playanimation BANK_TARGET ANIM_HEALING_SPARKLES 0x0
@@ -582,20 +614,20 @@ BattleScript_MoveHPDrain:
 	datahpupdate BANK_TARGET
 	printstring 0x4B @;STRINGID_PKMNREGAINEDHEALTH
 	waitmessage DELAY_1SECOND
-	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 	call BattleScript_AbilityPopUpRevert
+	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 	goto BS_MOVE_END
 
 BattleScript_MonMadeMoveUseless_PPLoss:
 	ppreduce
 BattleScript_MonMadeMoveUseless:
-	orbyte OUTCOME OUTCOME_NOT_AFFECTED
-	attackstring
+	call BattleScript_AttackstringBackupScriptingBank
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
 	printstring 0x1B @;STRINGID_ITDOESNTAFFECT
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -604,7 +636,7 @@ BattleScript_MoveStatDrain_PPLoss:
 	ppreduce
 BattleScript_MoveStatDrain:
 	orbyte OUTCOME OUTCOME_NOT_AFFECTED
-	attackstring
+	call BattleScript_AttackstringBackupScriptingBank
 	pause DELAY_HALFSECOND
 	call BattleScript_TargetAbilityStatRaise
 	goto BS_MOVE_END
@@ -689,7 +721,7 @@ WeakArmorModDef:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WeakArmorModSpd
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83C4554
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 	
 WeakArmorModSpd:
@@ -699,10 +731,11 @@ WeakArmorModSpd:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WeakArmorRevertPopUp
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83C4548
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	
 WeakArmorRevertPopUp:
+	bicword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
 	call BattleScript_AbilityPopUpRevert
 
 WeakArmorReturn:
@@ -758,7 +791,13 @@ BattleScript_WanderingSpiritActivates:
 	printstring 0xB8
 	waitmessage DELAY_1SECOND
 	tryactivateswitchinability BANK_ATTACKER
+	swapattackerwithtarget
+	callasm RestoreOriginalAttackerAndTarget
+	swapattackerwithtarget
 	tryactivateswitchinability BANK_TARGET
+	swapattackerwithtarget
+	callasm RestoreOriginalAttackerAndTarget
+	return
 
 BattleScript_WanderingSpiritActivatesReturn:
 	swapattackerwithtarget
@@ -798,9 +837,9 @@ BattleScript_IllusionBroken:
 BattleScript_IllusionBrokenFaint:
 	callasm TransferIllusionBroken
 	call BattleScript_AbilityPopUp
-	reloadhealthbar BANK_TARGET
+	reloadhealthbar BANK_SCRIPTING
 	callasm CycleScriptingBankHealthBetween0And1
-	playanimation BANK_TARGET ANIM_TRANSFORM 0x0
+	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
 	callasm CycleScriptingBankHealthBetween0And1
 	setword BATTLE_STRING_LOADER IllusionWoreOffString
 	printstring 0x184
@@ -1126,6 +1165,43 @@ CastformChangeSkipAbilityPopUp:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_CottonDownActivates:
+	call BattleScript_AbilityPopUp
+	setbyte TARGET_BANK 0x0
+
+BS_CottonDownActivatesLoop:
+	setstatchanger STAT_SPD | DECREASE_1
+	trygetcottondowntarget BattleScript_CottonDownActivatesReturn
+	statbuffchange STAT_TARGET | STAT_NOT_PROTECT_AFFECTED | STAT_BS_PTR CottonDownActivatesLoopIncrement
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_CottonDownPrevented
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatDownStringIds
+	waitmessage DELAY_1SECOND
+	goto CottonDownActivatesLoopIncrement
+
+BattleScript_CottonDownPrevented:
+	pause DELAY_HALFSECOND
+	printfromtable gStatDownStringIds
+	waitmessage DELAY_1SECOND
+
+CottonDownActivatesLoopIncrement:
+	jumpifword NOTANDS BATTLE_TYPE BATTLE_DOUBLE BattleScript_CottonDownActivatesReturn
+	addbyte TARGET_BANK 0x1
+	trygetcottondowntarget BattleScript_CottonDownActivatesReturn
+	callasm TryReactiveIntimidatePopUp
+	goto BS_CottonDownActivatesLoop
+
+BattleScript_CottonDownActivatesReturn:
+	callasm TryRemoveIntimidateAbilityPopUp @;In case the battle scripting bank is changed
+	callasm RemoveIntimidateActive
+	callasm RemoveCottonDownActive
+	callasm RestoreOriginalAttackerAndTarget
+	callasm RestoreOriginalTargetResultFlags
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_PerishBody:
 	callasm ActivatePerishBody
 	call BattleScript_AbilityPopUp
@@ -1142,7 +1218,11 @@ BattleScript_PerishBodyReturn:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SturdyPreventsOHKO:
+	orword OUTCOME, OUTCOME_NOT_AFFECTED
+	attackstring
+	ppreduce
 	pause 0x10
+	copybyte BATTLE_SCRIPTING_BANK, TARGET_BANK
 	call BattleScript_AbilityPopUp
 	printstring 0x1B @;STRINGID_ITDOESNTAFFECT
 	waitmessage DELAY_1SECOND
@@ -1162,7 +1242,7 @@ BattleScript_StickyHoldActivates:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_DampStopsExplosion:
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
@@ -1175,7 +1255,7 @@ BattleScript_DampStopsExplosion:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_TookAttack:
-	attackstring
+	call BattleScript_AttackstringBackupScriptingBank
 	pause 0x10
 	call BattleScript_AbilityPopUp
 	printstring 0x14E @;STRINGID_PKMNSXTOOKATTACK

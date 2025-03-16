@@ -1869,14 +1869,24 @@ void atkFF2C_trysetpoison(void)
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
-	//Put Pastel Veil here
+	else if (ABILITY(bank) == ABILITY_PASTELVEIL)
+	{
+		gBattleScripting.bank = bank;
+		gBattlescriptCurrInstr = BattleScript_ProtectedByAbility; //Official SwSh string and not "protected by Pastel Veil"
+		return;
+	}
 	else if (IsOfType(bank, TYPE_GRASS) && IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
 	{
 		gBattleScripting.bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
-	//Put Pastel Veil here
+	else if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_PASTELVEIL)
+	{
+		gBattleScripting.bank = PARTNER(bank);
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedByPastelVeil;
+		return;
+	}
 
 	if (!fail)
 	{
@@ -2031,4 +2041,21 @@ void atkFF35_jumpifmaxchistrikecapped(void)
 		gBattlescriptCurrInstr = ptr;
 	else
 		gBattlescriptCurrInstr += 6;
+}
+
+//atkFF36_trygetcottondowntarget FAIL_ADDRESS
+void atkFF36_trygetcottondowntarget(void)
+{
+	for (; gBankTarget < gBattlersCount; ++gBankTarget)
+	{
+		if (gBankTarget == gBankAttacker)
+			continue;
+		if (!(gAbsentBattlerFlags & gBitTable[gBankTarget]) && BATTLER_ALIVE(gBankTarget))
+			break;
+	}
+
+	if (gBankTarget >= gBattlersCount)
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	else
+		gBattlescriptCurrInstr += 5;
 }

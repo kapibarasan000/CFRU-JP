@@ -47,7 +47,7 @@ BattleScript_PrintCustomString:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MagicBounce:
-	attackstring
+	call BattleScript_AttackstringBackupScriptingBank
 	ppreduce
 	pause 0x10
 	call BattleScript_AbilityPopUp
@@ -55,7 +55,7 @@ BattleScript_MagicBounce:
 	printstring 0x184
 	waitmessage DELAY_1SECOND	
 	call BattleScript_AbilityPopUpRevert
-	orword 0x2023D30 0x800C00
+	orword HIT_MARKER, HITMARKER_ATTACKSTRING_PRINTED | HITMARKER_NO_PPDEDUCT | HITMARKER_x800000
 	various BANK_ATTACKER 0x1
 	return
 
@@ -240,6 +240,7 @@ BattleScript_ZMoveActivateDamaging:
 BattleScript_TryRemoveIllusion:
 	jumpifspecialstatusflag BANK_SCRIPTING STATUS3_ILLUSION 0x1 RemoveIllusionReturn
 	@;remove illusion counter
+	call BS_FLUSH_MESSAGE_BOX
 	clearspecialstatusbit BANK_SCRIPTING STATUS3_ILLUSION
 	callasm ClearScriptingBankDisguisedAs
 	reloadhealthbar BANK_SCRIPTING

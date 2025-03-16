@@ -12,6 +12,7 @@
 void SetTargetPartner(void);
 void SetTargetFoePartner(void);
 void SetAttackerPartner(void);
+void SetScriptingBankPartner(void);
 bool8 CheckCraftyShield(u8 bank);
 void LiftProtectTarget(void);
 void IncreaseNimbleCounter(void);
@@ -97,6 +98,7 @@ void TryLoadSecondFriskTargetDoubles(void);
 void BackupSwitchingBank(void);
 void RestoreAllOriginalMoveData(void);
 void RestoreOriginalAttackerAndTarget(void);
+void RestoreOriginalTargetResultFlags(void);
 void SetBatonPassSwitchingBit(void);
 void ClearBatonPassSwitchingBit(void);
 void ReturnOpponentMon2(void);

@@ -2019,7 +2019,7 @@ MOVESCR_CHECK_0:
 		case EFFECT_RECYCLE:
 			if (move == MOVE_BELCH)
 			{
-				if (!(gNewBS->BelchCounters & gBitTable[gBattlerPartyIndexes[bankAtk]]))
+				if (!(gNewBS->canBelch[SIDE(bankAtk)] & gBitTable[gBattlerPartyIndexes[bankAtk]]))
 					DECREASE_VIABILITY(10);
 				else
 					goto AI_STANDARD_DAMAGE;

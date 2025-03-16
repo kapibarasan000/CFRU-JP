@@ -11,3 +11,4 @@
 bool8 IsClearBodyAbility(u8 ability);
 bool8 AbilityBlocksIntimidate(u8 ability);
 bool8 AbilityPreventsLoweringStat(u8 ability, u8 statId);
+bool8 IsAffectedByBadDreams(u8 bank);

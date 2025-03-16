@@ -47,3 +47,10 @@ bool8 AbilityPreventsLoweringStat(u8 ability, u8 statId)
 	}
 }
 
+bool8 IsAffectedByBadDreams(u8 bank)
+{
+	return BATTLER_ALIVE(bank)
+		&& (gBattleMons[bank].status1 & STATUS_SLEEP
+		 || ABILITY(FOE(bank)) == ABILITY_COMATOSE)
+		&& ABILITY(bank) != ABILITY_MAGICGUARD;
+}

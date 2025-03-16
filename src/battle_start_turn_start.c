@@ -996,6 +996,7 @@ void HandleAction_UseMove(void)
 	gNewBS->DancerInProgress = FALSE;
 	gNewBS->MoveBounceInProgress = FALSE;
 	gNewBS->breakDisguiseSpecialDmg = FALSE;
+	gNewBS->printedStrongWindsWeakenedAttack = FALSE;
 	gNewBS->cramorantTransformed = FALSE;
 	gNewBS->zMoveData.active = FALSE;
 	gNewBS->batonPassing = FALSE;

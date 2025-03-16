@@ -407,7 +407,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			}
 			return STAT_CHANGE_DIDNT_WORK;
 		}
-		else if (ability == ABILITY_MIRRORARMOR && gNewBS->intimidateActive && !certain)
+		else if (ability == ABILITY_MIRRORARMOR && (IsIntimidateActive() || IsCottonDownActive()) && !certain)
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{

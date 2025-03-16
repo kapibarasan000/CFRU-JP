@@ -61,6 +61,8 @@ tables:
 }
 
 //This file's functions:
+static bool8 ProcessPreAttackAnimationFuncs(void);
+static bool8 TryStrongWindsWeakenAttack(u8 bank);
 static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags);
 static bool8 IsSingleTargetOfDoublesSpreadMove(void);
 static bool8 IsDoubleSpreadMove(void);
@@ -231,16 +233,93 @@ void atk03_ppreduce(void) {
 	gBattlescriptCurrInstr++;
 }
 
+static bool8 ProcessPreAttackAnimationFuncs(void)
+{
+	if (IsDoubleSpreadMove())
+	{
+		if (!gNewBS->printedStrongWindsWeakenedAttack)
+		{
+			for (u8 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+			{
+				if (!BATTLER_ALIVE(bankDef) || bankDef == gBankAttacker
+				|| (bankDef == PARTNER(gBankAttacker) && !(GetBaseMoveTarget(gCurrentMove, gBankAttacker) & MOVE_TARGET_ALL))
+				|| (gNewBS->noResultString[bankDef] && gNewBS->noResultString[bankDef] != 2))
+					continue; //Don't bother with this target
+
+				if (TryStrongWindsWeakenAttack(bankDef))
+					return TRUE;
+			}
+		}
+
+		for (u8 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+		{
+			if (!BATTLER_ALIVE(bankDef) || bankDef == gBankAttacker
+			|| (bankDef == PARTNER(gBankAttacker) && !(GetBaseMoveTarget(gCurrentMove, gBankAttacker) & MOVE_TARGET_ALL))
+			|| (gNewBS->noResultString[bankDef] && gNewBS->noResultString[bankDef] != 2))
+				continue; //Don't bother with this target
+
+			if (TryActivateWeakenessBerry(bankDef, gNewBS->ResultFlags[bankDef]))
+			{
+				gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
+				return TRUE;
+			}
+		}
+	}
+	else //Single Target Move
+	{
+		if (TryStrongWindsWeakenAttack(gBankTarget))
+			return TRUE;
+
+		if (TryActivateWeakenessBerry(gBankTarget, gMoveResultFlags))
+		{
+			gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
+			return TRUE;
+		}
+	}
+
+	if (gNewBS->terastalBoost)
+	{
+		gBattleScripting.bank = gBankAttacker;
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_TerastalBoost;
+		gNewBS->terastalBoost = FALSE;
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static bool8 TryStrongWindsWeakenAttack(u8 bankDef)
+{
+	//Delta Stream indicates that it weakens all attacks that would normally be super-effective against
+	//Flying-type Pokemon, even if the attack wouldn't normally be super effective
+	if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL
+	&& SPLIT(gCurrentMove) != SPLIT_STATUS
+	&& IsOfType(bankDef, TYPE_FLYING)
+	&& gTypeEffectiveness[gBattleStruct->dynamicMoveType][TYPE_FLYING] == TYPE_MUL_SUPER_EFFECTIVE
+	&& WEATHER_HAS_EFFECT
+	&& !gNewBS->printedStrongWindsWeakenedAttack) //Already checked before in doubles but not in singles
+	{
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_StrongWindsWeakenedttack;
+		gNewBS->printedStrongWindsWeakenedAttack = TRUE;
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags)
 {
 	if (ITEM_EFFECT(bank) == ITEM_EFFECT_WEAKNESS_BERRY && !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0))
 	{
 		if ((resultFlags & MOVE_RESULT_SUPER_EFFECTIVE && ITEM_QUALITY(bank) == gBattleStruct->dynamicMoveType && !DoesBankNegateDamage(bank, gCurrentMove))
-		||  (ITEM_QUALITY(bank) == TYPE_NORMAL && gBattleStruct->dynamicMoveType == TYPE_NORMAL)) //Chilan Berry
+		||  (SPLIT(gCurrentMove) != SPLIT_STATUS && ITEM_QUALITY(bank) == TYPE_NORMAL && gBattleStruct->dynamicMoveType == TYPE_NORMAL)) //Chilan Berry
 		{
 			gLastUsedItem = ITEM(bank);
 			gBattleScripting.bank = bank;
 			BattleScriptPushCursor();
+			gNewBS->canBelch[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
 			gBattlescriptCurrInstr = BattleScript_WeaknessBerryActivate - 5;
 			return TRUE;
 		}
@@ -326,7 +405,9 @@ void atk09_attackanimation(void)
 	bool8 cramorantTransform = FALSE;
 	u16 move = gCurrentMove;
 
-	if (gBattleExecBuffer) return;
+	if (gBattleExecBuffer
+	|| ProcessPreAttackAnimationFuncs())
+		return;
 
 #if (defined SPECIES_CRAMORANT && defined SPECIES_CRAMORANT_GORGING && defined SPECIES_CRAMORANT_GULPING)
 	if ((move == MOVE_SURF || move == MOVE_DIVE)
@@ -352,40 +433,6 @@ void atk09_attackanimation(void)
 		}
 	}
 	#endif
-
-	if (IsDoubleSpreadMove())
-	{
-		for (u8 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
-		{
-			if (!BATTLER_ALIVE(bankDef) || bankDef == gBankAttacker
-			|| (bankDef == PARTNER(gBankAttacker) && !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL))
-			|| (gNewBS->noResultString[bankDef] && gNewBS->noResultString[bankDef] != 2))
-				continue; //Don't bother with this target
-
-			if (TryActivateWeakenessBerry(bankDef, gNewBS->ResultFlags[bankDef]))
-			{
-				gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
-				return;
-			}
-		}
-	}
-	else //Single Target Move
-	{
-		if (TryActivateWeakenessBerry(gBankTarget, gMoveResultFlags))
-		{
-			gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
-			return;
-		}
-	}
-	
-	if (gNewBS->terastalBoost)
-	{
-		gBattleScripting.bank = gBankAttacker;
-		BattleScriptPushCursor();
-		gBattlescriptCurrInstr = BattleScript_TerastalBoost;
-		gNewBS->terastalBoost = FALSE;
-		return;
-	}
 
 	u8 resultFlags = gMoveResultFlags;
 	if (IsDoubleSpreadMove())
