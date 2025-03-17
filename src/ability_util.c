@@ -54,3 +54,15 @@ bool8 IsAffectedByBadDreams(u8 bank)
 		 || ABILITY(FOE(bank)) == ABILITY_COMATOSE)
 		&& ABILITY(bank) != ABILITY_MAGICGUARD;
 }
+
+bool8 IsUnnerveAbility(u8 ability)
+{
+	return ability == ABILITY_UNNERVE
+		#ifdef ABILITY_ASONE_GRIM
+		|| ability == ABILITY_ASONE_GRIM
+		#endif
+		#ifdef ABILITY_ASONE_CHILLING
+		|| ability == ABILITY_ASONE_CHILLING
+		#endif
+		;
+}

@@ -27,6 +27,7 @@ MegaAnimBS:
 	setword BATTLE_STRING_LOADER MegaEvolutionCompleteString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	callasm TryRemovePrimalWeatherAfterTransformation
 	end3
 
 BattleScript_MegaWish:
@@ -44,6 +45,7 @@ BattleScript_UltraBurst:
 	setword BATTLE_STRING_LOADER UltraBurstCompleteString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	callasm TryRemovePrimalWeatherAfterTransformation
 	end3
 
 BattleScript_Dynamax:

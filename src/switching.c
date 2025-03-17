@@ -59,7 +59,7 @@ enum SwitchInStates
 
 //This file's functions:
 static bool8 TryRemovePrimalWeather(u8 bank, u8 ability);
-static bool8 TryRemoveNeutralizingGas(u8 ability);
+static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability, bool8 leftField);
 static bool8 TryRemoveUnnerve(u8 bank);
 static bool8 TryActivateFlowerGift(u8 leavingBank);
 static bool8 TryDoForceSwitchOut(void);
@@ -127,10 +127,10 @@ void atkE2_switchoutabilities(void)
 	}
 }
 
-bool8 HandleSpecialSwitchOutAbilities(u8 bank, u8 ability)
+bool8 HandleSpecialSwitchOutAbilities(u8 bank, u8 ability, bool8 leftField)
 {
 	return TryRemovePrimalWeather(bank, ability)
-		|| TryRemoveNeutralizingGas(ability)
+		|| TryRemoveNeutralizingGas(bank, ability, leftField)
 		|| TryRemoveUnnerve(bank)
 		|| TryActivateFlowerGift(bank);
 }
@@ -159,7 +159,7 @@ static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 		for (i = 0; i < gBattlersCount; ++i)
 		{
 			if (i == bank) continue;
-			if (ABILITY(i) == ability) break;
+			if (BATTLER_ALIVE(i) && ABILITY(i) == ability) break;
 		}
 
 		if (i == gBattlersCount)
@@ -175,7 +175,7 @@ static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 	return FALSE;
 }
 
-static bool8 TryRemoveNeutralizingGas(u8 ability)
+static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability, bool8 leftField)
 {
 	if (ability == ABILITY_NEUTRALIZINGGAS)
 	{
@@ -185,8 +185,14 @@ static bool8 TryRemoveNeutralizingGas(u8 ability)
 			gBattleStringLoader = gText_NeutralizingGasEnd;
 			gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 			gNewBS->printedNeutralizingGasOverMsg = TRUE;
+			gNewBS->dontActivateMoldBreakersAnymoreThisTurn = TRUE;
+			gNewBS->backupBattlerPosition = gBattlerPositions[bank];
+			gBattlerPositions[bank] = 0xFF; //So there are no issues with animations like Drought - will still cause problem in Link Battles
 			return TRUE;
 		}
+
+		if (leftField)
+			gBattleMons[bank].hp = 0; //So Switch-In Abilities like Intimidate don't affect the mon that's now gone
 
 		for (int i = 0; i < gBattlersCount; ++i)
 		{
@@ -200,15 +206,10 @@ static bool8 TryRemoveNeutralizingGas(u8 ability)
 				gDisableStructs[gBankTarget].truantCounter = 0;
 
 				//Some abilities don't reactivate
-				switch (ability) {
-					case ABILITY_UNNERVE:
-						break;
-					case ABILITY_IMPOSTER: //Never gets another chance
-						gStatuses3[bank] |= STATUS3_SWITCH_IN_ABILITY_DONE;
-						break;
-					default:
-						gStatuses3[bank] &= ~STATUS3_SWITCH_IN_ABILITY_DONE;
-				}
+				if (IsUnnerveAbility(ability) || ability == ABILITY_IMPOSTER) //Never gets another chance
+					gStatuses3[bank] |= STATUS3_SWITCH_IN_ABILITY_DONE;
+				else
+					gStatuses3[bank] &= ~STATUS3_SWITCH_IN_ABILITY_DONE;
 
 				if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0))
 					return TRUE;
@@ -216,7 +217,12 @@ static bool8 TryRemoveNeutralizingGas(u8 ability)
 		}
 	}
 
-	gNewBS->printedNeutralizingGasOverMsg = FALSE; //Reset for next time
+	if (gNewBS->printedNeutralizingGasOverMsg)
+	{
+		gBattlerPositions[bank] = gNewBS->backupBattlerPosition;
+		gNewBS->printedNeutralizingGasOverMsg = FALSE; //Reset for next time
+	}
+
 	return FALSE;
 }
 
@@ -224,8 +230,9 @@ static bool8 TryRemoveUnnerve(u8 bank)
 {
 	u8 side = SIDE(bank);
 	bool8 ret = FALSE;
+	u8 ability = ABILITY(bank);
 
-	if (ABILITY(bank) == ABILITY_UNNERVE)
+	if (IsUnnerveAbility(ability))
 	{
 		*GetAbilityLocation(bank) = ABILITY_NONE; //Temporarily remove Unnerve so Berries can activate
 
@@ -245,7 +252,7 @@ static bool8 TryRemoveUnnerve(u8 bank)
 			}
 		}
 
-		*GetAbilityLocation(bank) = ABILITY_UNNERVE; //Restore Unnerve so loop can continue when we return to this function
+		*GetAbilityLocation(bank) = ability; //Restore Unnerve so loop can continue when we return to this function
 	}
 
 	return ret;
@@ -288,7 +295,7 @@ void atk61_drawpartystatussummary(void)
 		RestoreOriginalAttackerAndTarget(); //I'm not sure if this function is even necessary anymore, but I'd rather not remove it and cause bugs
 	gNewBS->skipBankStatAnim = gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
-	if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
+	if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler), TRUE))
 		return;
 
 	gNewBS->skipBankStatAnim = 0xFF; //No longer needed
@@ -820,6 +827,16 @@ void atk52_switchineffects(void)
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_TotemRet;
 				gBankAttacker = gBattleScripting.bank = gActiveBattler;
+				gBattleScripting.statAnimPlayed = FALSE;
+				++gNewBS->switchInEffectsState;
+				return;
+			}
+			else if (totemBoostType == TOTEM_MULTI_BOOST)
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_TotemMultiBoostRet;
+				gBankAttacker = gBattleScripting.bank = gActiveBattler;
+				gBattleScripting.statAnimPlayed = FALSE;
 				++gNewBS->switchInEffectsState;
 				return;
 			}
@@ -828,6 +845,8 @@ void atk52_switchineffects(void)
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_TotemOmniboostRet;
 				gBankAttacker = gBattleScripting.bank = gActiveBattler;
+				gBattleScripting.statAnimPlayed = FALSE;
+				GiveOmniboost(gBankAttacker);
 				++gNewBS->switchInEffectsState;
 				return;
 			}
@@ -999,18 +1018,19 @@ void atk8F_forcerandomswitch(void)
 				while (i == battler1PartyId
 					|| i == battler2PartyId
 					|| !MON_CAN_BATTLE(&party[i]));
-			}
-			gBattleStruct->monToSwitchIntoId[bankDef] = i;
 
-			if (!IsLinkDoubleBattle() && !IsTagBattle())
-				SwitchPartyOrder(bankDef);
-			else if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_FRONTIER))
-			{
-				SwitchPartyOrderLinkMulti(bankDef, i, 0);
-				SwitchPartyOrderLinkMulti(PARTNER(bankDef), i, 1);
+				gBattleStruct->monToSwitchIntoId[bankDef] = i;
+
+				if (!IsLinkDoubleBattle() && !IsTagBattle())
+					SwitchPartyOrder(bankDef);
+				else if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_FRONTIER))
+				{
+					SwitchPartyOrderLinkMulti(bankDef, i, 0);
+					SwitchPartyOrderLinkMulti(PARTNER(bankDef), i, 1);
+				}
+				else if (IsTagBattle())
+					SwitchPartyOrderInGameMulti(bankDef, i);
 			}
-			else if (IsTagBattle())
-				SwitchPartyOrderInGameMulti(bankDef, i);
 		}
 	}
 	else //Regular Wild Battle
@@ -1028,34 +1048,33 @@ static bool8 TryDoForceSwitchOut(void)
 		return FALSE;
 	}
 
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER)) //Wild
 	{
-		gBankSwitching = bankDef;
-		gBattleStruct->switchoutPartyIndex[bankDef] = gBattlerPartyIndexes[bankDef];
-		gBattlescriptCurrInstr = BattleScript_SuccessForceOut;
-		return TRUE;
+		if (IS_DOUBLE_BATTLE)
+		{
+			if (SIDE(bankDef) == B_SIDE_OPPONENT)
+			{
+				//Roar always fails in Wild Double Battles if used on a wild mon
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+				return FALSE;
+			}
+		}
+		else //Single Battle
+		{
+			if (AreAllKindsOfRunningPrevented() || IsRaidBattle())
+			{
+				//Roar always fails if running is impossible
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+				return FALSE;
+			}
+			else if (gBattleMons[bankAtk].level < gBattleMons[bankDef].level)
+			{
+				//Pokemon using Roar must be of higher level to end the battle in a Single battle
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+				return FALSE;
+			}
+		}
 	}
-
-	//If Wild Battle
-	else if (gBattleMons[bankAtk].level < gBattleMons[bankDef].level)
-	{
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
-		return FALSE;
-	}
-
-	//Roar always fails in Wild Double Battles if used on the wild mon
-	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && SIDE(bankDef) == B_SIDE_OPPONENT)
-	{
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
-		return FALSE;
-	}
-	
-	//Roar always fails in wild boss battles
-	else if (AreAllKindsOfRunningPrevented())
-	{
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
-		return FALSE;
-	}	
 
 	gBankSwitching = bankDef;
 	gBattleStruct->switchoutPartyIndex[bankDef] = gBattlerPartyIndexes[bankDef];
@@ -1074,7 +1093,7 @@ static void SwitchPartyOrderInGameMulti(u8 bank, u8 monToSwitchIntoId)
 		for (i = 0; i < 3; i++)
 			gBattlePartyCurrentOrder[i] = gBattleStruct->field_60[0][i];
 
-		SwitchPartyMonSlots(GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[bank]), GetPartyIdFromBattlePartyId(monToSwitchIntoId));
+		SwitchPartyMonSlots(GetBattlePartyIdFromPartyId(gBattlerPartyIndexes[bank]), GetBattlePartyIdFromPartyId(monToSwitchIntoId));
 
 		for (i = 0; i < 3; i++)
 			gBattleStruct->field_60[0][i] = gBattlePartyCurrentOrder[i];

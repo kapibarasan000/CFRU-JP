@@ -16,6 +16,7 @@
 #include "../include/new/dynamax.h"
 #include "../include/new/end_battle.h"
 #include "../include/new/end_turn_battle_scripts.h"
+#include "../include/new/frontier.h"
 #include "../include/new/util.h"
 #include "../include/new/item.h"
 #include "../include/new/item_battle_scripts.h"
@@ -214,6 +215,27 @@ void ToggleSpectralThiefByte(void)
 	gNewBS->SpectralThiefActive ^= TRUE;
 }
 
+void ToggleTotemOmniboostByte(void)
+{
+	gNewBS->totemOmniboostActive ^= TRUE;
+}
+
+void LoadTotemMultiBoostSecondStat(void)
+{
+	u16 val = VarGet(VAR_TOTEM + PARTNER(gBankAttacker));
+	u16 stat = val & 0x7;
+	u8 raiseAmount = val & ~(0xF);
+
+	if (InBattleSands()
+	#ifdef FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST
+	|| FlagGet(FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST)
+	#endif
+	)
+		VarSet(VAR_TOTEM + PARTNER(gBankAttacker), 0); //Only first Pokemon gets boost in battle sands
+
+	gBattleScripting.statChanger = stat | raiseAmount;
+}
+
 void CheeckPouchFunc(void)
 {
 	u8 bank = gBattleScripting.bank;
@@ -246,7 +268,6 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 	}
 }
 
-
 void MoldBreakerRestoreAbilitiesOnForceSwitchIn(void)
 {
 	if (gNewBS->DisabledMoldBreakerAbilities[gBankSwitching])
@@ -254,6 +275,11 @@ void MoldBreakerRestoreAbilitiesOnForceSwitchIn(void)
 		gBattleMons[gBankSwitching].ability = gNewBS->DisabledMoldBreakerAbilities[gBankSwitching];
 		gNewBS->DisabledMoldBreakerAbilities[gBankSwitching] = 0;
 	}
+}
+
+void SetDynamicTypeForPursuitSwitch(void)
+{
+	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
 }
 
 void TrainerSlideOut(void)
@@ -1826,7 +1852,7 @@ void TryRemovePrimalWeatherOnPivot(void)
 {
 	RestoreOriginalAttackerAndTarget();
 	gNewBS->skipBankStatAnim = gBankAttacker; //Helps with Neutralizing Gas and Intimidate
-	if (HandleSpecialSwitchOutAbilities(gBankAttacker, ABILITY(gBankAttacker)))
+	if (HandleSpecialSwitchOutAbilities(gBankAttacker, ABILITY(gBankAttacker), TRUE))
 		gBattlescriptCurrInstr -= 5;
 	else
 		gNewBS->skipBankStatAnim = 0xFF; //No longer needed
@@ -1836,7 +1862,7 @@ void TryRemovePrimalWeatherSwitchingBank(void)
 {
 	RestoreOriginalAttackerAndTarget();
 	gNewBS->skipBankStatAnim = gBankSwitching; //Helps with Neutralizing Gas and Intimidate
-	if (HandleSpecialSwitchOutAbilities(gBankSwitching, ABILITY(gBankSwitching)))
+	if (HandleSpecialSwitchOutAbilities(gBankSwitching, ABILITY(gBankSwitching), TRUE))
 		gBattlescriptCurrInstr -= 5;
 	else
 		gNewBS->skipBankStatAnim = 0xFF; //No longer needed
@@ -1845,7 +1871,13 @@ void TryRemovePrimalWeatherSwitchingBank(void)
 void TryRemovePrimalWeatherAfterAbilityChange(void)
 {
 	RestoreOriginalAttackerAndTarget();
-	if (HandleSpecialSwitchOutAbilities(gBankTarget, gNewBS->backupAbility))
+	if (HandleSpecialSwitchOutAbilities(gBankTarget, gNewBS->backupAbility, FALSE))
+		gBattlescriptCurrInstr -= 5;
+}
+
+void TryRemovePrimalWeatherAfterTransformation(void)
+{
+	if (HandleSpecialSwitchOutAbilities(gBankAttacker, gNewBS->backupAbility, FALSE))
 		gBattlescriptCurrInstr -= 5;
 }
 
@@ -2129,12 +2161,27 @@ void SetScriptingBankToItsPartner(void)
 	gBattleScripting.bank = PARTNER(gBattleScripting.bank);
 }
 
+void IncrementBattleTurnCounter(void)
+{
+	++gBattleResults.battleTurnCounter;
+}
+
 void TryFailLifeDew(void)
 {
 	if (!IS_DOUBLE_BATTLE || !BATTLER_ALIVE(PARTNER(gBankAttacker)))
 		gBattlescriptCurrInstr = RecoverBS - 5;
 	else if (BATTLER_MAX_HP(gBankAttacker) && BATTLER_MAX_HP(PARTNER(gBankAttacker)))
 		gBattlescriptCurrInstr = BattleScript_LifeDewFail - 5;
+}
+
+void SetStickyWebActive(void)
+{
+	gNewBS->stickyWebActive = TRUE;
+}
+
+void ClearStickyWebActive(void)
+{
+	gNewBS->stickyWebActive = FALSE;
 }
 
 void ChooseTargetForMirrorArmorStickyWeb(void)
@@ -2334,6 +2381,19 @@ void TrySetAlluringVoiceMoveEffect(void)
 		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_CONFUSION;
 }
 
+void HandleIllusionShiftSwitch(void)
+{
+	u8 monId, firstMonId, lastMonId;
+	struct Pokemon* party = LoadPartyRange(gBankFainted, &firstMonId, &lastMonId);
+	monId = gBattleStruct->monToSwitchIntoId[gBankFainted];
+
+	if (GetMonAbility(&party[monId]) == ABILITY_ILLUSION)
+	{
+		monId = GetIllusionPartyNumberForShiftSwitch(party, monId, firstMonId, lastMonId);
+		PREPARE_MON_NICK_BUFFER(gBattleTextBuff2, gBankFainted, monId);
+	}
+}
+
 void ClearStatBuffEffectNotProtectAffected(void)
 {
 	gNewBS->statBuffEffectNotProtectAffected = FALSE;
@@ -2369,6 +2429,19 @@ void TryFailSteelRoller(void)
 {
 	if (gCurrentMove == MOVE_STEELROLLER && gTerrainType == 0)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2; //From attackstring
+}
+
+void TrySkipBattleNicknameOffer(void)
+{
+	#ifdef FLAG_DONT_OFFER_NICKNAMES_BATTLE
+	if (FlagGet(FLAG_DONT_OFFER_NICKNAMES_BATTLE))
+	{
+		if (CalculatePlayerPartyCount() >= PARTY_SIZE || IsTagBattle())
+			gBattlescriptCurrInstr = BattleScript_CaughtPokemonSkipNicknameFullParty - 5;
+		else
+			gBattlescriptCurrInstr = BattleScript_CaughtPokemonSkipNickname - 5;
+	}
+	#endif
 }
 
 void TrySetBurningJealousyMoveEffect(void)

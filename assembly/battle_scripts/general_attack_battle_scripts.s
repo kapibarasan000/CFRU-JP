@@ -1345,6 +1345,8 @@ BS_057_Transform:
 	waitanimation
 	printfromtable 0x83C4580
 	waitmessage DELAY_1SECOND
+	callasm TryRemovePrimalWeatherAfterTransformation
+	call 0x81BD298 @;Try to revert Cherrim and Castform
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -51,6 +51,7 @@ static const u16 sCriticalHitChances[] =
 #define FLAG_CONFUSION_DAMAGE 0x2
 #define FLAG_CHECKING_FROM_MENU 0x4
 #define FLAG_AI_CALC 0x8
+#define FLAG_FUTURE_SIGHT_DAMAGE 0x10
 
 //This file's functions:
 static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, struct Pokemon* monDef);
@@ -269,12 +270,39 @@ void atk05_damagecalc(void)
 	++gBattlescriptCurrInstr;
 }
 
+static bool8 IsFutureSightAttackerOnField(u8 bankDef, u8 possibleUser)
+{
+	u8 monIndexAttacker = gWishFutureKnock.futureSightPartyIndex[bankDef];
+
+	if (BATTLER_ALIVE(possibleUser) && gBattlerPartyIndexes[possibleUser] == monIndexAttacker)
+		return TRUE;
+
+	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(possibleUser)) && gBattlerPartyIndexes[PARTNER(possibleUser)] == monIndexAttacker)
+		return TRUE;
+
+	return FALSE;
+}
+
+static struct Pokemon* GetFutureSightMon(u8 bankDef, u8 bankAtk)
+{
+	u8 monId = gWishFutureKnock.futureSightPartyIndex[bankDef];
+	return SIDE(bankAtk) == B_SIDE_PLAYER ? &gPlayerParty[monId] : &gEnemyParty[monId];
+}
+
 void FutureSightDamageCalc(void)
 {
 	struct DamageCalc data = {0};
 	data.bankAtk = gBankAttacker;
 	data.bankDef = gBankTarget;
 	data.move = gCurrentMove;
+	data.specialFlags |= FLAG_FUTURE_SIGHT_DAMAGE;
+
+	if (!IsFutureSightAttackerOnField(gBankTarget, gBankAttacker))
+	{
+		//Uses the data from the party if the user of Future Sight switched out
+		data.monAtk = GetFutureSightMon(gBankTarget, gBankAttacker);
+	}
+
 	gBattleMoveDamage = (CalculateBaseDamage(&data) * gCritMultiplier) / BASE_CRIT_MULTIPLIER;
 	gNewBS->DamageTaken[gBankTarget] = gBattleMoveDamage;
 }
@@ -978,7 +1006,7 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 
 	//Check Special Ground Immunities
 	if (moveType == TYPE_GROUND
-	&& !CheckGroundingFromPartyData(monDef)
+	&& !CheckMonGrounding(monDef)
 	&& ((defAbility == ABILITY_LEVITATE && NO_MOLD_BREAKERS(atkAbility, move)) || (defEffect == ITEM_EFFECT_AIR_BALLOON && defAbility != ABILITY_KLUTZ))
 	&& move != MOVE_THOUSANDARROWS)
 	{
@@ -1169,6 +1197,38 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	return flags;
 }
 
+void FutureSightTypeCalc(void)
+{
+	struct Pokemon* futureSightMon;
+	u8 backupType1, backupType2, backupType3;
+	bool8 futureSightMonInParty = !IsFutureSightAttackerOnField(gBankTarget, gBankAttacker);
+
+	if (futureSightMonInParty)
+	{
+		//Backup attacker types
+		backupType1 = gBattleMons[gBankAttacker].type1;
+		backupType2 = gBattleMons[gBankAttacker].type2;
+		backupType3 = gBattleMons[gBankAttacker].type3;
+
+		//Replace with party mon types
+		futureSightMon = GetFutureSightMon(gBankTarget, gBankAttacker);
+		gBattleMons[gBankAttacker].type1 = GetMonType(futureSightMon, 0); //Helps get STAB if necessary
+		gBattleMons[gBankAttacker].type2 = GetMonType(futureSightMon, 1);
+		gBattleMons[gBankAttacker].type3 = TYPE_BLANK;
+	}
+
+	atk06_typecalc();
+	--gBattlescriptCurrInstr; //Offset the addition in the type calc function
+
+	if (futureSightMonInParty)
+	{
+		//Restore attacker types
+		gBattleMons[gBankAttacker].type1 = backupType1;
+		gBattleMons[gBankAttacker].type2 = backupType2;
+		gBattleMons[gBankAttacker].type3 = backupType3;
+	}
+}
+
 void TypeDamageModification(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags)
 {
 	return TypeDamageModificationByDefTypes(atkAbility, bankDef, move, moveType, flags, gBattleMons[bankDef].type1, gBattleMons[bankDef].type2, gBattleMons[bankDef].type3);
@@ -1278,7 +1338,7 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 		if (multiplier == TYPE_MUL_NO_EFFECT && GetMonItemEffect(monDef) == ITEM_EFFECT_RING_TARGET)
 			multiplier = TYPE_MUL_NORMAL;
 		else if (multiplier == TYPE_MUL_NO_EFFECT && moveType == TYPE_GROUND
-		&& (CheckGroundingFromPartyData(monDef) || move == MOVE_THOUSANDARROWS))
+		&& (CheckMonGrounding(monDef) || move == MOVE_THOUSANDARROWS))
 			multiplier = TYPE_MUL_NORMAL;
 	}
 	else
@@ -1919,20 +1979,57 @@ void PopulateDamageCalcStructWithBaseAttackerData(struct DamageCalc* data)
 
 	if (useMonAtk)
 	{
+		u8 side = SIDE(bankAtk);
 		struct Pokemon* monAtk = data->monAtk;
 
-		data->atkSpecies = monAtk->species;
-		data->atkAbility = GetMonAbility(monAtk);
+		if (!(data->specialFlags & FLAG_FUTURE_SIGHT_DAMAGE)) //Ignores Abilities and held items if mon who used Future Sight isn't on the field
+		{
+			data->atkAbility = GetMonAbilityAfterTrace(monAtk, FOE(side));
+			data->atkItemEffect = GetMonItemEffect(monAtk);
+			data->atkItem = monAtk->item;
+			data->atkItemQuality = ItemId_GetHoldEffectParam(monAtk->item);
+			
+			if (data->atkAbility == ABILITY_IMPOSTER && ImposterWorks(bankAtk, TRUE))
+			{
+				data->atkImposter = TRUE;
+				data->atkImposterBank = GetImposterBank(bankAtk);
+				data->atkIsGrounded = CheckGrounding(data->atkImposterBank);
+			}
+			else
+				data->atkIsGrounded = CheckMonGrounding(monAtk); //Set later on for an imposter mon
+		}
+
 		data->atkPartnerAbility = ABILITY_NONE;
-		data->atkItemEffect = GetMonItemEffect(monAtk);
-		data->atkItem = monAtk->item;
-		data->atkItemQuality = ItemId_GetHoldEffectParam(monAtk->item);
 		data->atkHP = monAtk->hp;
 		data->atkMaxHP = monAtk->maxHP;
-		data->atkSpeed = SpeedCalcMon(SIDE(bankAtk), monAtk);
-		data->atkStatus1 = monAtk->condition;
 		data->atkStatus3 = 0;
-		data->atkIsGrounded = CheckGroundingFromPartyData(monAtk);
+
+		if (data->atkImposter) //Would only be set in a non-Future Sight damage calc
+		{
+			u8 imposterBank = data->atkImposterBank;
+			data->atkAbility = ABILITY(imposterBank);
+			data->atkSpecies = SPECIES(imposterBank);
+			data->atkSpeed = SpeedCalc(imposterBank);
+		}
+		else
+		{
+			data->atkSpecies = monAtk->species;
+			data->atkSpeed = SpeedCalcMon(side, monAtk);
+		}
+
+		data->atkStatus1 = monAtk->condition;
+		if (data->atkStatus1 == 0 && !(data->specialFlags & FLAG_FUTURE_SIGHT_DAMAGE))
+		{
+			if (gSideTimers[side].tspikesAmount > 0
+			&& data->atkIsGrounded
+			&& !IsMonOfType(monAtk, TYPE_POISON)
+			&& data->atkItemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS //Affected by hazards
+			&& !BankSideHasSafeguard(bankAtk)
+			&& CanPartyMonBePoisoned(monAtk))
+				data->atkStatus1 = STATUS1_POISON; //Will be poisoned - relevant for Facade
+			//else //TO-DO Flame Orb when switching in
+			//	data->atkStatus1 = GetMonPotentialStatus1(monAtk, data->atkItemEffect);
+		}
 	}
 	else //Load from bank
 	{
@@ -1977,7 +2074,7 @@ void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data)
 		data->defStatus1 = monDef->condition;
 		data->defStatus3 = 0;
 		data->defSideStatus = gSideStatuses[SIDE(bankDef)];
-		data->defIsGrounded = CheckGroundingFromPartyData(monDef);
+		data->defIsGrounded = CheckMonGrounding(monDef);
 
 		data->defBuff = 0;
 		data->spDefBuff = 0;
@@ -3609,34 +3706,37 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 	#endif
 
 	//Terrain Checks
-	switch (gTerrainType) {
-		case ELECTRIC_TERRAIN:
-		//1.5x Boost
-			if (data->atkIsGrounded && data->moveType == TYPE_ELECTRIC)
-				power = (power * TERRAIN_BOOST) / 10;
-			break;
+	if (!useMonAtk || !(data->specialFlags & FLAG_FUTURE_SIGHT_DAMAGE)) //Future Sight mon in back of party isn't affected by Terrain
+	{
+		switch (gTerrainType) {
+			case ELECTRIC_TERRAIN:
+			//1.5x Boost
+				if (data->atkIsGrounded && data->moveType == TYPE_ELECTRIC)
+					power = (power * TERRAIN_BOOST) / 10;
+				break;
 
-		case GRASSY_TERRAIN:
-		//1.5x / 0.5 Boost
-			if (data->atkIsGrounded && data->moveType == TYPE_GRASS)
-				power = (power * TERRAIN_BOOST) / 10;
+			case GRASSY_TERRAIN:
+			//1.5x / 0.5 Boost
+				if (data->atkIsGrounded && data->moveType == TYPE_GRASS)
+					power = (power * TERRAIN_BOOST) / 10;
 
-			if ((move == MOVE_MAGNITUDE || move == MOVE_EARTHQUAKE || move == MOVE_BULLDOZE)
-			&& !(data->defStatus3 & STATUS3_SEMI_INVULNERABLE))
-				power /= 2;
-			break;
+				if ((move == MOVE_MAGNITUDE || move == MOVE_EARTHQUAKE || move == MOVE_BULLDOZE)
+				&& !(data->defStatus3 & STATUS3_SEMI_INVULNERABLE))
+					power /= 2;
+				break;
 
-		case MISTY_TERRAIN:
-		//0.5x Boost
-			if (data->defIsGrounded && data->moveType == TYPE_DRAGON)
-				power /= 2;
-			break;
+			case MISTY_TERRAIN:
+			//0.5x Boost
+				if (data->defIsGrounded && data->moveType == TYPE_DRAGON)
+					power /= 2;
+				break;
 
-		case PSYCHIC_TERRAIN:
-		//1.5x Boost
-			if (data->atkIsGrounded && data->moveType == TYPE_PSYCHIC)
-				power = (power * TERRAIN_BOOST) / 10;
-			break;
+			case PSYCHIC_TERRAIN:
+			//1.5x Boost
+				if (data->atkIsGrounded && data->moveType == TYPE_PSYCHIC)
+					power = (power * TERRAIN_BOOST) / 10;
+				break;
+		}
 	}
 
 	//Sport Checks

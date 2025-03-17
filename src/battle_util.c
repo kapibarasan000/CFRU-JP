@@ -300,7 +300,7 @@ bool8 NonInvasiveCheckGrounding(u8 bank)
 	return GROUNDED;
 }
 
-bool8 CheckGroundingFromPartyData(struct Pokemon* mon)
+bool8 CheckMonGrounding(struct Pokemon* mon)
 {
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
@@ -943,12 +943,15 @@ bool8 IsUproarBeingMade(void)
 //Change to loop through battle modified party indexes
 u8 GetIllusionPartyNumber(u8 bank)
 {
-	u8 firstMonId, lastMonId;
+	u8 firstMonId, lastMonId, side, illusionMonId;
+	bool8 useBattleParty;
 
 	if (gStatuses3[bank] & STATUS3_ILLUSION)
 	{
+		side = SIDE(bank);
+	
 		//Wild Pokemon can't diguise themselves
-		if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(bank) == B_SIDE_OPPONENT)
+		if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && side == B_SIDE_OPPONENT)
 			return gBattlerPartyIndexes[bank];
 		
 		//Check for a saved party number first.
@@ -959,23 +962,57 @@ u8 GetIllusionPartyNumber(u8 bank)
 			return gNewBS->disguisedAs[bank] - 1;
 
 		struct Pokemon* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
+		useBattleParty = (side == B_SIDE_PLAYER && !(gBattleTypeFlags & BATTLE_TYPE_LINK));
+		illusionMonId = (useBattleParty) ? GetBattlePartyIdFromPartyId(gBattlerPartyIndexes[bank]) : gBattlerPartyIndexes[bank];
+		bool8 isTagBattle = IsTagBattle();
+	
+		if (useBattleParty && isTagBattle)
+			lastMonId += 1; //Because team is slots 0, 2, 3
 
-		for (u32 i = lastMonId - 1; i >= firstMonId; --i) //Loop through party in reverse order
+		for (u8 i = lastMonId - 1; i >= firstMonId; --i) //Loop through party in reverse order
 		{
-			if (i == gBattlerPartyIndexes[bank]) //Finsihed checking mons after
+			u8 monId = i; //Mon id may get overwritten later
+
+			if (i == 1 && useBattleParty && isTagBattle)
+				--i;
+
+			if (monId == illusionMonId) //Finished checking mons after
 				return gBattlerPartyIndexes[bank];
 
-			if (party[i].species == SPECIES_NONE
-			|| party[i].hp == 0
-			|| GetMonData(&party[i], MON_DATA_IS_EGG, NULL))
+			if (useBattleParty)
+				monId = GetPartyIdFromBattleSlot(monId); //Use the adjusted party order
+
+			if (party[monId].species == SPECIES_NONE
+			|| party[monId].hp == 0
+			|| GetMonData(&party[monId], MON_DATA_IS_EGG, NULL)
+			|| monId < firstMonId
+			|| monId >= lastMonId)
 				continue;
 
-			gNewBS->disguisedAs[bank] = i + 1;
-			return i;
+			gNewBS->disguisedAs[bank] = monId + 1; //Use original mon id
+			return monId;
 		}
 	}
 
 	return gBattlerPartyIndexes[bank];
+}
+
+u8 GetIllusionPartyNumberForShiftSwitch(struct Pokemon* party, u8 monId, u8 firstMonId, u8 lastMonId)
+{
+	for (u32 i = lastMonId - 1; i >= firstMonId; --i) //Loop through party in reverse order
+	{
+		if (i == monId) //Finished checking mons after
+			return monId;
+
+		if (party[i].species == SPECIES_NONE
+		|| party[i].hp == 0
+		|| GetMonData(&party[i], MON_DATA_IS_EGG, NULL))
+			continue;
+
+		return i;
+	}
+	
+	return monId;
 }
 
 struct Pokemon* GetIllusionPartyData(u8 bank)
@@ -1443,6 +1480,17 @@ void RemoveScreensFromSide(const u8 side)
 	gNewBS->AuroraVeilTimers[side] = 0;
 }
 
+void GiveOmniboost(u8 bank)
+{
+	u32 i;
+
+	for (i = STAT_STAGE_ATK; i <= STAT_STAGE_SPDEF; ++i)
+	{
+		if (STAT_STAGE(bank, i) < STAT_STAGE_MAX)
+			++STAT_STAGE(bank, i);
+	}
+}
+
 u8 GetImposterBank(u8 bank)
 {
 	u8 transformBank;
@@ -1530,7 +1578,7 @@ bool8 DoesSleepClausePrevent(u8 bank)
 bool8 IsTargetAbilityIgnoredNoMove(u8 defAbility, u8 atkAbility)
 {
 	return (atkAbility == ABILITY_MOLDBREAKER || atkAbility == ABILITY_TURBOBLAZE || atkAbility == ABILITY_TERAVOLT)
-	&& CheckTableForAbility(defAbility, gMoldBreakerIgnoredAbilities);
+	&& gMoldBreakerIgnoredAbilities[defAbility];
 }
 
 bool8 CanBeGeneralStatused(u8 bankDef, u8 defAbility, u8 atkAbility, bool8 checkFlowerVeil)

@@ -97,6 +97,7 @@ gBattleAnims_General:
 .word ANIM_SUBSTITUTE2
 .word ANIM_SALTCURE_END_TURN
 .word ANIM_SYRUPBOMB_END_TURN
+.word ANIM_AI_ITEM_HEAL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1197,6 +1198,14 @@ ANIM_SYRUPBOMB_END_TURN:
 	playsound2 0x75 SOUND_PAN_TARGET
 	waitanimation
 	pokespritefromBG bank_target 
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_AI_ITEM_HEAL:
+	playsound2 0xE8 SOUND_PAN_ATTACKER
+	launchtask AnimTask_StatusClearedEffect 0x2 0x1 FALSE
+	waitanimation
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

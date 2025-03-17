@@ -325,10 +325,19 @@ void BattleBeginFirstTurn(void)
 							++*bank;
 							return;
 						}
+						else if (totemBoostType == TOTEM_MULTI_BOOST)
+						{
+							BattleScriptPushCursorAndCallback(BattleScript_TotemMultiBoost);
+							gBankAttacker = gBattleScripting.bank = *bank;
+							++*bank;
+							return;
+						}
 						else if (totemBoostType == TOTEM_OMNIBOOST) //All stats
 						{
-							BattleScriptPushCursorAndCallback(BattleScript_TotemOmniboost);
+							gBattleScripting.statAnimPlayed = FALSE;
 							gBankAttacker = gBattleScripting.bank = *bank;
+							GiveOmniboost(gBankAttacker);
+							BattleScriptPushCursorAndCallback(BattleScript_TotemOmniboost);
 							++*bank;
 							return;
 						}
@@ -449,29 +458,73 @@ bool8 TryActivateOWTerrain(void)
 	return effect;
 }
 
+u8 GetTotemStat(u8 bank, bool8 multiBoost)
+{
+	if (multiBoost)
+		bank = PARTNER(bank);
+
+	return VarGet(VAR_TOTEM + bank) & 0x7;
+}
+
+u8 GetTotemRaiseAmount(u8 bank, bool8 multiBoost)
+{
+	if (multiBoost)
+		bank = PARTNER(bank);
+
+	return VarGet(VAR_TOTEM + bank) & ~(0xF);
+}
+
+s8 TotemRaiseAmountToStatMod(u8 raiseAmount)
+{
+	if (raiseAmount >= INCREASE_1 && raiseAmount <= INCREASE_6)
+		return raiseAmount >> 4; //1 to 6
+
+	if (raiseAmount >= DECREASE_1 && raiseAmount <= DECREASE_6)
+	{
+		u8 temp = raiseAmount >> 4; //9 to 14
+		temp *= -1; //-9 to -14
+		temp += 8; //-1 to -6
+		return temp;
+	}
+
+	return 0;
+}
+
 u8 CanActivateTotemBoost(u8 bank)
 {
 	u16 val = VarGet(VAR_TOTEM + bank);
-	u16 stat = val & 0x7;
+	u16 stat = GetTotemStat(bank, FALSE);
 
 	if (bank < gBattlersCount && stat != 0)
 	{
-		u8 raiseAmount = val & ~(0xF);
-
 		if (val == 0xFFFF) //Omniboost
 		{
-			if (InBattleSands())
+			if (InBattleSands()
+			#ifdef FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST
+			|| FlagGet(FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST)
+			#endif
+			)
 				VarSet(VAR_TOTEM + bank, 0); //Only first Pokemon gets boost in battle sands
 
 			return TOTEM_OMNIBOOST;
 		}
-		else if (stat <= STAT_STAGE_EVASION
+
+		u8 raiseAmount = GetTotemRaiseAmount(bank, FALSE);
+		if (stat <= STAT_STAGE_EVASION
 		&& ((raiseAmount >= INCREASE_1 && raiseAmount <= INCREASE_6)
 		 || (raiseAmount >= DECREASE_1 && raiseAmount <= DECREASE_6)))
 		{
 			gBattleScripting.statChanger = stat | raiseAmount;
-			if (InBattleSands())
+
+			if (InBattleSands()
+			#ifdef FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST
+			|| FlagGet(FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST)
+			#endif
+			)
 				VarSet(VAR_TOTEM + bank, 0); //Only first Pokemon gets boost in battle sands
+
+			if (IS_SINGLE_BATTLE && VarGet(VAR_TOTEM + PARTNER(bank)) != 0) //Second stat is stored in partner's var
+				return TOTEM_MULTI_BOOST;
 
 			return TOTEM_SINGLE_BOOST;
 		}
@@ -996,6 +1049,7 @@ void HandleAction_UseMove(void)
 	gNewBS->DancerInProgress = FALSE;
 	gNewBS->MoveBounceInProgress = FALSE;
 	gNewBS->breakDisguiseSpecialDmg = FALSE;
+	gNewBS->dontActivateMoldBreakersAnymoreThisTurn = FALSE;
 	gNewBS->printedStrongWindsWeakenedAttack = FALSE;
 	gNewBS->cramorantTransformed = FALSE;
 	gNewBS->zMoveData.active = FALSE;

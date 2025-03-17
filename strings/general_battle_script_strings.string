@@ -349,6 +349,12 @@ The sleep clause prevents more\nPokemon from being put to sleep！
 
 //Other Battle Features
 
+#org @gText_TotemOmniboostStatsRose
+[ATTACKER]の\nのうりょくが あがった！
+
+#org @gText_SemiSwitchOffer
+[TRAINER1_CLASS]の [TRAINER1_NAME]は\nつぎの ポケモンを くりだそうと している\p[PLAYER_NAME]も ポケモンを\nいれかえますか？
+
 #org @gText_Devolved
 [EFFECT_BANK]は\n[BUFFER][00]に たいかした！
 

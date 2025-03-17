@@ -1475,8 +1475,8 @@ void atk1B_cleareffectsonfaint(void) {
 				++gNewBS->faintEffectsState;
 			__attribute__ ((fallthrough));
 
-			case Faint_PrimalWeather:	;
-				if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
+			case Faint_PrimalWeather:
+				if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler), TRUE))
 					return;
 
 				mon = GetBankPartyData(gActiveBattler); //Mon gets overwritten by Neutralizing Gas for some reason
@@ -5080,6 +5080,18 @@ void atkE7_trycastformdatachange(void)
 				DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE, FALSE);
 				BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
 			}
+			break;
+		#endif
+
+		#if (defined SPECIES_EISCUE && defined SPECIES_EISCUE_NOICE)
+		case SPECIES_EISCUE_NOICE:
+			if (ABILITY(bank) == ABILITY_ICEFACE && !IS_TRANSFORMED(bank)
+			&& WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_HAIL_ANY)
+			{
+				DoFormChange(bank, SPECIES_EISCUE, FALSE, FALSE, FALSE);
+				BattleScriptPushCursorAndCallback(BattleScript_IceFaceRestoreFace);
+			}
+			break;
 		#endif
 	}
 }

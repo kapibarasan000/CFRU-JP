@@ -2059,7 +2059,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 			lastValidMon = i;
 
 			u16 species = GetMonData(&party[i], MON_DATA_SPECIES, NULL);
-			canNegateToxicSpikes[i] = CheckGroundingFromPartyData(&party[i])
+			canNegateToxicSpikes[i] = CheckMonGrounding(&party[i])
 									&& (gBaseStats[species].type1 == TYPE_POISON || gBaseStats[species].type2 == TYPE_POISON);
 
 			if (WillFaintFromEntryHazards(&party[i], SIDE(gActiveBattler)))

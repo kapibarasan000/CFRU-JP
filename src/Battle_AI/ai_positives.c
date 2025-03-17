@@ -986,7 +986,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 								&&  ItemId_GetHoldEffect(GetMonData(&defParty[j], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
 								&&  j != gBattlerPartyIndexes[data->foe1]
 								&&  j != gBattlerPartyIndexes[data->foe2]
-								&&  CheckGroundingFromPartyData(&defParty[j]) == GROUNDED //Affected by Sticky Web
+								&&  CheckMonGrounding(&defParty[j]) == GROUNDED //Affected by Sticky Web
 								&&  SpeedCalcMon(SIDE(bankAtk), &atkParty[i]) < SpeedCalcMon(SIDE(bankDef), &defParty[j]))
 								{
 									IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
@@ -1027,7 +1027,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						&&  ItemId_GetHoldEffect(GetMonData(&defParty[i], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
 						&&  i != gBattlerPartyIndexes[data->foe1]
 						&&  i != gBattlerPartyIndexes[data->foe2]
-						&&  CheckGroundingFromPartyData(&defParty[i]) == GROUNDED)
+						&&  CheckMonGrounding(&defParty[i]) == GROUNDED)
 						{
 							u8 type1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(&defParty[i], 0) : gBaseStats[defParty[i].species].type1;
 							u8 type2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(&defParty[i], 1) : gBaseStats[defParty[i].species].type2;
@@ -1052,7 +1052,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						&&  ItemId_GetHoldEffect(GetMonData(&defParty[i], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
 						&&  i != gBattlerPartyIndexes[data->foe1]
 						&&  i != gBattlerPartyIndexes[data->foe2]
-						&&  CheckGroundingFromPartyData(&defParty[i]) == GROUNDED)
+						&&  CheckMonGrounding(&defParty[i]) == GROUNDED)
 						{
 							IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
 							break; //Can hurt at least one mon

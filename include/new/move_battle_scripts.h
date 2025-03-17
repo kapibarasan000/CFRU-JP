@@ -31,7 +31,6 @@ extern const u8* gBattleScriptsForMoveEffects[];
 #define BattleScript_LeechSeedFree (u8*) 0x81BCDC0
 #define BattleScript_SpikesFree (u8*) 0x81BCDC7
 
-#define BattleScript_AllStatsUp (u8*) 0x81BCD11
 #define BattleScript_RapidSpinAway (u8*) 0x81BCDAD
 #define BattleScript_TargetPRLZHeal (u8*) 0x81BD133
 #define BattleScript_AtkDefDown (u8*) 0x81BCEF1
@@ -73,6 +72,7 @@ extern const u8 BattleScript_ItemSteal[];
 extern const u8 BattleScript_KnockedOff[];
 extern const u8 BattleScript_AbilityWasSuppressed[];
 extern const u8 BattleScript_StatUpPartner[];
+extern const u8 BattleScript_AllStatsUp[];
 extern const u8 BattleScript_EatEffectBankBerry[];
 extern const u8 BattleScript_SetTerrain[];
 extern const u8 BattleScript_MaxMoveRaiseStatTeam[];
@@ -217,6 +217,8 @@ extern const u8 BattleScript_TSAbsorb[];
 extern const u8 BattleScript_StickyWebSpeedDrop[];
 extern const u8 BattleScript_SuccessForceOut[];
 extern const u8 BattleScript_TrainerSlideMsgRet[];
+#define BattleScript_CaughtPokemonSkipNicknameFullParty (u8*) 0x81BDA2E
+#define BattleScript_CaughtPokemonSkipNickname (u8*) 0x81BDA3C
 
 extern const u8 gText_SurroundedByGMaxVineLash[];
 extern const u8 gText_SurroundedByGMaxWildfire[];

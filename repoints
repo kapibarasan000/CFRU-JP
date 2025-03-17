@@ -52,7 +52,11 @@ gTypeNames 0811A064
 
 ##Scripts
 BattleScript_RainDishActivates 08019CB0
+BattleScript_AIUseFullRestoreOrHpHeal 081BD9A4
+BattleScript_AIUseFullRestoreOrHpHeal 081BD9A8
+BattleScript_AIUseStatRestore 081BD9AC
 BattleScript_AIUseXstat 081BD9B0
+BattleScript_AIUseGuardSpec 081BD9B4
 FieldEffectScript_CaveDust 081BD6D0
 FieldEffectScript_Sparkles 081BD6D4
 FieldEffectScript_LavaBubbles 081BD724

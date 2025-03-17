@@ -42,15 +42,17 @@ BattleScript_FollowMeZMove:
 	return
 
 BattleScript_RecoverHPZMove:
-	graphicalhpupdate 0xA
-	datahpupdate 0xA
+	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
+	graphicalhpupdate BANK_SCRIPTING
+	datahpupdate BANK_SCRIPTING
 	setword BATTLE_STRING_LOADER HPRestoredZMoveString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	bicword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
 	return
 	
 BattleScript_StatUpZMove:
-	playanimation 0xA 0x1 0x2023F34
+	playanimation BANK_SCRIPTING 0x1 0x2023F34
 	setword BATTLE_STRING_LOADER StatRaisedZMoveString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -63,13 +65,15 @@ BattleScript_SetUpHealReplacementZMove:
 	return
 
 BattleScript_HealReplacementZMove:
-	playanimation 0xA ANIM_HEALING_WISH_HEAL 0x0
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	playanimation BANK_SCRIPTING ANIM_HEALING_WISH_HEAL 0x0
 	setword BATTLE_STRING_LOADER HPSwitchInRestoredZMoveString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	playanimation 0xA ANIM_HEALING_SPARKLES 0x0
-	graphicalhpupdate 0xA
-	datahpupdate 0xA
+	playanimation BANK_SCRIPTING ANIM_HEALING_SPARKLES 0x0
+	graphicalhpupdate BANK_SCRIPTING
+	datahpupdate BANK_SCRIPTING
+	bicword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
 	return
 
 

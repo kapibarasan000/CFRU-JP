@@ -134,6 +134,7 @@ BattleScript_TSAbsorb:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_StickyWebSpeedDrop:
+	callasm SetStickyWebActive
 	setword BATTLE_STRING_LOADER gText_CaughtInStickyWeb
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
@@ -144,9 +145,10 @@ BattleScript_StickyWebSpeedDrop:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_StickyWebSpeedDropReturn
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83C4554
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 BattleScript_StickyWebSpeedDropReturn:
+	callasm ClearStickyWebActive
 	bicword HIT_MARKER, HITMARKER_NON_ATTACK_DMG | HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE
 	return
 	
@@ -161,8 +163,8 @@ BattleScript_PrimalWeatherEnd:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SuccessForceOut:
+	jumpifbyte EQUALS FORCE_SWITCH_HELPER 0x1 DragonTailForceSwitch
 	jumpifbyte EQUALS FORCE_SWITCH_HELPER 0x2 RedCardForceSwitch
-	jumpifbyte NOTEQUALS FORCE_SWITCH_HELPER 0x0 SkipRoarAnim
 	attackanimation
 	waitanimation
 
@@ -190,7 +192,14 @@ ForceSwitch:
 	setbyte FORCE_SWITCH_HELPER 0x0
 	goto BS_MOVE_END
 
+DragonTailForceSwitch:
+	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
+	goto SkipRoarAnim
+
 RedCardForceSwitch:
+	playanimation BANK_ATTACKER DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
+	callasm ClearAttackerDidDamageOnce
+	callasm TryRemovePrimalWeatherOnPivot
 	switchoutabilities BANK_SWITCHING
 	returntoball BANK_SWITCHING
 	waitstateatk
@@ -262,8 +271,10 @@ BattleScript_EntryHazardsHurtReturn:
 	
 BattleScript_PursuitDmgOnSwitchOut:
 	pause DELAY_HALFSECOND
+	orword HIT_MARKER, HITMARKER_OBEYS
 	setbyte FORCE_SWITCH_HELPER 0x0
 	callasm MoldBreakerRemoveAbilitiesOnForceSwitchIn
+	callasm SetDynamicTypeForPursuitSwitch
 	call STANDARD_DAMAGE
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
@@ -279,6 +290,10 @@ BattleScript_PursuitGiveExp:
 	goto HandleActionSwitchEnd
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.equ BATTLE_STYLE_SHIFT, 0
+.equ BATTLE_STYLE_SET, 1
+.equ BATTLE_STYLE_SEMI_SHIFT, 2
 
 BattleScript_HandleFaintedMonSingles:
 	ifwildbattleend 0x81BC774 @;BattleScript_LinkBattleHandleFaint
@@ -300,10 +315,13 @@ BattleScript_FaintedMonTryChooseAnother:
 	jumpifbattletype BATTLE_WIRELESS, BattleScript_FaintedMonChooseAnother
 	jumpifbattletype BATTLE_FRONTIER, BattleScript_FaintedMonChooseAnother
 	jumpifbattletype BATTLE_DOUBLE, BattleScript_FaintedMonChooseAnother
-	jumpifbyte EQUALS, BATTLE_STYLE, 1, BattleScript_FaintedMonChooseAnother
+	jumpifbyte EQUALS, BATTLE_STYLE, BATTLE_STYLE_SET, BattleScript_FaintedMonChooseAnother
 	jumpifword ANDS, HIT_MARKER, HITMARKER_PLAYER_FAINTED, BattleScript_TryDoAIShiftSwitch
 	jumpifcannotswitch BANK_PLAYER_1, BattleScript_FaintedMonChooseAnother
+	jumpifbyte EQUALS, BATTLE_STYLE, BATTLE_STYLE_SEMI_SHIFT, BattleScript_FaintedMonChooseAnother_SemiSwitchString
+	callasm HandleIllusionShiftSwitch @;Disguises the Pokemon's name if they have Illusion
 	printstring 282 @;STRINGID_ENEMYABOUTTOSWITCHPKMN
+BattleScript_FaintedMonChooseAnother_PostOfferString:
 	setbyte BATTLE_COMMUNICATION, 0
 	yesnobox
 	jumpifbyte EQUALS, BATTLE_COMMUNICATION + 1, 1, BattleScript_FaintedMonChooseAnother
@@ -376,6 +394,11 @@ BattleScript_TryDoAIShiftSwitch:
 	copybyte BATTLE_SCRIPTING_BANK FAINTED_BANK
 	callasm FaintedBankNameInBuff1
 	goto BattleScript_FaintedMonChooseAnotherRejoin
+
+BattleScript_FaintedMonChooseAnother_SemiSwitchString:
+	setword BATTLE_STRING_LOADER gText_SemiSwitchOffer
+	printstring 0x184
+	goto BattleScript_FaintedMonChooseAnother_PostOfferString
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

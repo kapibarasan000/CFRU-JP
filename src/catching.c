@@ -517,10 +517,22 @@ bool8 IsCriticalCaptureSuccess(void)
 	return gNewBS->criticalCaptureSuccess;
 }
 
+static bool8 GetFreeSlotInPartyForMon(void)
+{
+	u32 i = 0;
+
+	while (i < PARTY_SIZE && gPlayerParty[i].species != SPECIES_NONE)
+		++i;
+
+	if (i >= PARTY_SIZE
+	|| (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)) //Always send Pokemon in multi battles to the PC because of overwritten team
+		return PARTY_SIZE;
+
+	return i;
+}
+
 u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 {
-	int i;
-
 	TryFormRevert(mon);
 	TryRevertMega(mon);
 	TryRevertGigantamax(mon);
@@ -529,31 +541,31 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 	SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
 	SetMonData(mon, MON_DATA_OT_ID, gSaveBlock2->playerTrainerId);
 
-	if (gMain.inBattle
-	&&  GetPocketByItemId(gLastUsedItem) == POCKET_POKE_BALLS)
+	u8 freeSlot = GetFreeSlotInPartyForMon();
+	if (freeSlot >= PARTY_SIZE) //Can't add mon
 	{
-		if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_HEAL_BALL)
-			HealMon(mon);
-		else if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_FRIEND_BALL)
-			mon->friendship = 200;
+		TryRevertOriginFormes(mon, TRUE);
+		return SendMonToPC(mon);
 	}
 
-	if (gMain.inBattle && IsRaidBattle() && FlagGet(FLAG_BATTLE_FACILITY))
-		SetMonData(mon, MON_DATA_HELD_ITEM, &gNewBS->dynamaxData.backupRaidMonItem);
-
-	i = 0;
-
-	while (i < PARTY_SIZE && gPlayerParty[i].species != SPECIES_NONE)
-		++i;
-
-	if (i >= PARTY_SIZE
-	|| (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)) //Always send Pokemon in multi battles to the PC because of overwritten team
-		return SendMonToPC(mon);
-
-	CopyMon(&gPlayerParty[i], mon, sizeof(struct Pokemon));
-	gPlayerPartyCount = i + 1;
-
+	CopyMon(&gPlayerParty[freeSlot], mon, sizeof(struct Pokemon));
+	gPlayerPartyCount = freeSlot + 1;
 	return MON_GIVEN_TO_PARTY;
+}
+
+void ApplyBallSpecialEffect(void)
+{
+	struct Pokemon* mon = LoadTargetPartyData();
+	u8 ballType = ItemId_GetType(gLastUsedItem);
+
+	if (ballType == BALL_TYPE_HEAL_BALL)
+		HealMon(mon);
+	else if (ballType == BALL_TYPE_FRIEND_BALL)
+		mon->friendship = 200;
+	#ifdef UNBOUND
+	else if (ballType == BALL_TYPE_DREAM_BALL)
+		mon->hiddenAbility = TRUE;
+	#endif
 }
 
 void atkF0_givecaughtmon(void)

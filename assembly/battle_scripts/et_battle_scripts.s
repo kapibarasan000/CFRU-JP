@@ -45,6 +45,7 @@ et_battle_scripts.s
 .global BattleScript_ShieldsDownToMeteor
 .global BattleScript_FlowerGift
 .global BattleScript_FlowerGiftEnd2
+.global BattleScript_IceFaceRestoreFace
 .global BattleScript_MonTookFutureAttack
 .global BattleScript_OctolockTurnDmg
 .global BattleScript_SyrupBombEndTurn
@@ -192,9 +193,11 @@ BattleScript_LeechSeedTurnPrintLiquidOoze:
 	setbyte MULTISTRING_CHOOSER, 0x4
 
 BattleScript_LeechSeedTurnPrintAndUpdateHp:
+	jumpifcounter BANK_TARGET HEAL_BLOCK_TIMERS NOTEQUALS 0x0 BattleScript_LeechSeedTurnPrintAndUpdateHp_SkipForHealBlock
 	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_TARGET
 	datahpupdate BANK_TARGET
+BattleScript_LeechSeedTurnPrintAndUpdateHp_SkipForHealBlock:
 	printfromtable 0x83C4524 @;gLeechSeedStringIds
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_ATTACKER 0x0 0x0
@@ -323,6 +326,7 @@ BattleScript_GravityEnd:
 BattleScript_TerrainEnd:
 	setbyte TERRAIN_BYTE 0x0
 	callasm TransferTerrainData
+	waitstateatk
 	playanimation 0x0 ANIM_LOAD_DEFAULT_BG 0x0
 	setword BATTLE_STRING_LOADER TerrainEndString
 	printstring 0x184
@@ -462,6 +466,21 @@ BattleScript_FlowerGiftEnd2:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_IceFaceRet:
+	call BattleScript_AbilityPopUp
+	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
+	setword BATTLE_STRING_LOADER TransformedString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+BattleScript_IceFaceRestoreFace:
+	call BattleScript_IceFaceRet
+	end3
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_MonTookFutureAttack:
 	printstring 0xA2 @;STRINGID_PKMNTOOKATTACK
 	waitmessage 0x10
@@ -476,7 +495,7 @@ BattleScript_CalcDamage:
 	critcalc
 	callasm TryUseGemFutureSight
 	callasm FutureSightDamageCalc
-	typecalc
+	callasm FutureSightTypeCalc
 	adjustnormaldamage2
 	callasm TryActivateWeakenessBerryFutureSight
 	jumpifmove MOVE_DOOMDESIRE BattleScript_FutureHitAnimDoomDesire

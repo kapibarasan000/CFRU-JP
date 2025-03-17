@@ -35,6 +35,7 @@ cmd49_battle_scripts.s
 .global BattleScript_RaidShields
 .global BattleScript_BrokenRaidBarrier
 .global BattleScript_RaidBattleStatIncrease
+.global BattleScript_MistProtected
 
 .global ToxicOrbString
 .global FlameOrbString
@@ -403,20 +404,18 @@ BattleScript_BrokenRaidBarrier:
 BattleScript_BrokenRaidBarrier_Def:
 	playstatchangeanimation BANK_TARGET, STAT_ANIM_DEF, STAT_ANIM_DOWN | STAT_ANIM_BY_TWO
 	setstatchanger STAT_DEF | DECREASE_2
-	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrierPrintDefMsg
-BattleScript_BrokenRaidBarrierPrintDefMsg:
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrier_SpDef
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 BattleScript_BrokenRaidBarrier_SpDef
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BattleScript_BrokenRaidBarrierEnd
-	printfromtable 0x83C4554
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 
 BattleScript_BrokenRaidBarrier_SpDef:
 	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPDEF, STAT_ANIM_DOWN | STAT_ANIM_BY_TWO
 	setstatchanger STAT_SPDEF | DECREASE_2
-	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrierPrintSpDefMsg
-BattleScript_BrokenRaidBarrierPrintSpDefMsg:
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrierEnd
 	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BattleScript_BrokenRaidBarrierEnd
-	printfromtable 0x83C4554
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 
 BattleScript_BrokenRaidBarrierEnd:
@@ -430,6 +429,15 @@ BattleScript_RaidBattleStatIncrease:
 	setword BATTLE_STRING_LOADER gText_RaidBattleStatBoost
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MistProtected:
+	pause DELAY_HALFSECOND
+	printstring 98 @;STRINGID_PKMNPROTECTEDBYMIST
+	waitmessage DELAY_1SECOND
+	callasm TryHideActiveAbilityPopUps @;For Gooey
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

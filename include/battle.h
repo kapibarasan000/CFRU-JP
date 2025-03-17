@@ -823,9 +823,10 @@ struct NewBattleStruct
 	u8 switchOutBankLooper;
 	u8 skipBankStatAnim;
 	u8 maxGoldrushUses;
-	u8 playerItemUsedCount; //~0x2017A82
+	u8 playerItemUsedCount;
 	u8 originalAttackerBackup : 2;
 	u8 originalTargetBackup : 2;
+	u8 backupBattlerPosition : 2; //For Neutralizing Gas
 
 	//Booleans
 	bool8 MoveBounceInProgress : 2;
@@ -1222,6 +1223,7 @@ struct FlingStruct
 #define B_ANIM_SUBSTITUTE2 0x4E
 #define B_ANIM_SALTCURE_END_TURN 0x4F
 #define B_ANIM_SYRUPBOMB_END_TURN 0x50
+#define B_ANIM_AI_ITEM_HEAL 0x51
 
 #define B_ANIM_TRANSFORM_MOVE 0xFF
 

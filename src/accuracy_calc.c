@@ -234,7 +234,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 			gBattleCommunication[6] = 1;
 		}
 	}
-	else if (gProtectStructs[bankDef].obstruct && protectFlag)
+	else if (gProtectStructs[bankDef].obstruct && protectFlag && split != SPLIT_STATUS)
 	{
 		effect = 1;
 		gNewBS->missStringId[bankDef] = 1;
@@ -244,7 +244,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 			gBattleCommunication[6] = 1;
 		}
 	}
-	else if (gProtectStructs[bankDef].SilkTrap && protectFlag)
+	else if (gProtectStructs[bankDef].SilkTrap && protectFlag && split != SPLIT_STATUS)
 	{
 		effect = 1;
 		gNewBS->missStringId[bankDef] = 1;
@@ -254,7 +254,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 			gBattleCommunication[6] = 1;
 		}
 	}
-	else if (gProtectStructs[bankDef].BurningBulwark && protectFlag)
+	else if (gProtectStructs[bankDef].BurningBulwark && protectFlag && split != SPLIT_STATUS)
 	{
 		effect = 1;
 		gNewBS->missStringId[bankDef] = 1;
@@ -320,6 +320,7 @@ bool8 DoesProtectionMoveBlockMove(u8 bankAtk, u8 bankDef, u16 atkMove, u16 prote
 			case MOVE_KINGSSHIELD:
 			case MOVE_OBSTRUCT:
 			case MOVE_SILKTRAP:
+			case MOVE_BURNINGBULWARK:
 				return protectFlag && split != SPLIT_STATUS;
 
 			case MOVE_MATBLOCK:

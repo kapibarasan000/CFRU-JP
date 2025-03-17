@@ -63,6 +63,11 @@ struct DamageCalc
 	u8 resultFlags;
 	u8 basePower;
 
+	u8 atkImposterBank;
+	u8 defImposterBank;
+	bool8 atkImposter;
+	bool8 defImposter;
+
 	u8 specialFlags;
 	bool8 attackerLoaded;
 	bool8 defenderLoaded;

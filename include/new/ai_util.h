@@ -43,6 +43,7 @@ u16 GetPokemonOnSideSpeedAverage(u8 bank);
 u16 GetBattleMonMove(u8 bank, u8 index);
 u8 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move);
 u8 GetPredictedAIAbility(u8 bankAtk, u8 bankDef);
+u8 GetMonAbilityAfterTrace(struct Pokemon* mon, u8 foe);
 u16 GetAIChosenMove(u8 bankAtk, u8 bankDef);
 bool8 IsTrapped(u8 bank, bool8 switching);
 bool8 BankHasMonToSwitchTo(u8 bank);

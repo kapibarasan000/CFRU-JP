@@ -474,7 +474,7 @@ GetMonNickname = 0x8120AD0 | 1;
 GetTutorMove = 0x8121398 | 1;
 CanLearnTutorMove = 0x81213D8 | 1;
 MonKnowsMove = 0x812640C | 1;
-GetPartyIdFromBattlePartyId = 0x8128968 | 1;
+GetBattlePartyIdFromPartyId = 0x8128968 | 1;
 
 /* Battle Setup Functions */
 BattleMainCB2 = 0x80109C0 | 1;

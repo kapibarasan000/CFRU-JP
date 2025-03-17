@@ -3,6 +3,7 @@
 #include "../../include/random.h"
 #include "../../include/constants/items.h"
 
+#include "../../include/new/ability_tables.h"
 #include "../../include/new/accuracy_calc.h"
 #include "../../include/new/ai_advanced.h"
 #include "../../include/new/ai_util.h"
@@ -1340,6 +1341,20 @@ u8 GetPredictedAIAbility(u8 bankAtk, u8 bankDef)
 		return GetAIAbility(bankAtk, bankDef, predictedUserMove);
 	else
 		return ABILITY(bankAtk);
+}
+
+u8 GetMonAbilityAfterTrace(struct Pokemon* mon, u8 foe)
+{
+	u8 ability = GetMonAbility(mon);
+	
+	if (IS_SINGLE_BATTLE && ability == ABILITY_TRACE)
+	{
+		u8 foeAbility = *GetAbilityLocation(foe);
+		if (!CheckTableForAbility(foeAbility, gTraceBannedAbilities))
+			ability = foeAbility; //What the Ability will become
+	}
+
+	return ability;
 }
 
 u16 GetAIChosenMove(u8 bankAtk, u8 bankDef)
