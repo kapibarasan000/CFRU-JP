@@ -44,6 +44,7 @@ extern const u8 BattleScript_MagneticFluxStatBoost[];
 extern const u8 BattleScript_GearUpStatBoost[];
 extern const u8 BattleScript_SapSipperAromatherapy[];
 extern const u8 BattleScript_DefogAdditionalEffects[];
+extern const u8 BattleScript_DefogAdditionalEffects_PlayAttackAnim[];
 extern const u8 BattleScript_PledgeCombined[];
 extern const u8 BattleScript_PledgeReady[];
 extern const u8 BattleScript_PrintCustomString[];
@@ -64,6 +65,7 @@ extern const u8 BattleScript_LifeDewFail[];
 extern const u8 BattleScript_CouldntFullyProtect[];
 extern const u8 BattleScript_TeleportSwitch[];
 extern const u8 BattleScript_TeleportFlee[];
+extern const u8 BattleScript_UproarWokeUp[];
 extern const u8 BattleScript_StrongWindsWeakenedttack[];
 
 extern const u8 BattleScript_TargetSleepHeal[];

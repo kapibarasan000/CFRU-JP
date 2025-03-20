@@ -423,6 +423,7 @@ void DefogHelperFunc(void)
 {
 	if (gNewBS->AuroraVeilTimers[SIDE(gBankTarget)]
 	|| gTerrainType != 0
+	|| (gBattleWeather & WEATHER_FOG_ANY)
 	|| gSideStatuses[SIDE(gBankAttacker)] & SIDE_STATUS_SPIKES
 	|| gSideStatuses[SIDE(gBankTarget)] & (SIDE_STATUS_SPIKES
 										  | SIDE_STATUS_REFLECT
@@ -430,7 +431,10 @@ void DefogHelperFunc(void)
 										  | SIDE_STATUS_SAFEGUARD
 										  | SIDE_STATUS_MIST))
 	{
-		gBattlescriptCurrInstr = BattleScript_DefogAdditionalEffects - 5;
+		if (MOVE_HAD_EFFECT)
+			gBattlescriptCurrInstr = BattleScript_DefogAdditionalEffects - 5;
+		else
+			gBattlescriptCurrInstr = BattleScript_DefogAdditionalEffects_PlayAttackAnim - 5;
 	}
 }
 
@@ -2412,6 +2416,22 @@ void TryFailPoltergeist(void)
 	}
 }
 
+void WakeUpSleepingPokemon(void)
+{
+	u32 i;
+
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		if (gBattleMons[i].status1 & STATUS1_SLEEP)
+		{
+			gBattleScripting.bank = i;
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_UproarWokeUp - 5;
+			return;
+		}
+	}
+}
+
 void TryFailCorrosiveGas(void)
 {
 	if (!CanKnockOffItem(gBankTarget))
@@ -2494,6 +2514,14 @@ void DragonCheerFunc(void)
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailedAttackstring - 5;
 	}
+}
+
+void TryFailAuraWheel(void)
+{
+	#ifdef NATIONAL_DEX_MORPEKO
+	if (SpeciesToNationalPokedexNum(SPECIES(gBankAttacker)) != NATIONAL_DEX_MORPEKO)
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2; //From attackstring
+	#endif
 }
 
 void SkipUseNextPkmnPromptIfCantRun(void)

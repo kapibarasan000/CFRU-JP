@@ -6884,7 +6884,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_ACIDSPRAY] =
 	{
-		.effect = EFFECT_SPECIAL_DEFENSE_DOWN_HIT,
+		.effect = EFFECT_SPECIAL_DEFENSE_DOWN_2_HIT,
 		.power = 40,
 		.type = TYPE_POISON,
 		.accuracy = 100,
@@ -8636,7 +8636,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_SYNCHRONOISE] =
 	{
-		.effect = EFFECT_SYNCHRONOISE,
+		.effect = EFFECT_HIT,
 		.power = 120,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 100,
@@ -9036,7 +9036,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_NOBLEROAR] =
 	{
-		.effect = EFFECT_ATTACK_DOWN,
+		.effect = EFFECT_NOBLE_ROAR,
 		.power = 0,
 		.type = TYPE_NORMAL,
 		.accuracy = 100,
@@ -9324,7 +9324,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_SEEDFLARE] =
 	{
-		.effect = EFFECT_SPECIAL_DEFENSE_DOWN_HIT,
+		.effect = EFFECT_SPECIAL_DEFENSE_DOWN_2_HIT,
 		.power = 120,
 		.type = TYPE_GRASS,
 		.accuracy = 85,
@@ -10040,7 +10040,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_TEARFULLOOK] =
 	{
-		.effect = EFFECT_ATTACK_DOWN,
+		.effect = EFFECT_NOBLE_ROAR,
 		.power = 0,
 		.type = TYPE_NORMAL,
 		.accuracy = 0,
@@ -10664,7 +10664,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_VENOMDRENCH] =
 	{
-		.effect = EFFECT_ATTACK_DOWN,
+		.effect = EFFECT_VENOM_DRENCH,
 		.power = 0,
 		.type = TYPE_POISON,
 		.accuracy = 100,
@@ -15274,7 +15274,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_LUMINACRASH] =
     {	
-		.effect = EFFECT_SPECIAL_DEFENSE_DOWN_HIT,
+		.effect = EFFECT_SPECIAL_DEFENSE_DOWN_2_HIT,
 		.power = 80,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 100,

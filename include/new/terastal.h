@@ -13,4 +13,4 @@ bool8 TerastalEnabled(u8 bank);
 bool8 MonCanTerastal(struct Pokemon* mon);
 bool8 DoesTerastalUsageStopMegaEvolution(u8 bank);
 bool8 IsBannedTerastalSpecies(u16 species);
-bool8 CanTeraBlastTypeChange(u8 bank);
+bool8 TeraTypeActive(u8 bank);

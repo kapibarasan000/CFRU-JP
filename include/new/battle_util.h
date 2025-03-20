@@ -93,6 +93,11 @@ void RemoveBankFromPickupStack(const u8 bank);
 u8 GetTopOfPickupStackNotIncludingBank(const u8 bank);
 void RemoveScreensFromSide(const u8 side);
 void GiveOmniboost(u8 bank);
+bool8 WillSyncronoiseFail(u8 bankAtk, u8 bankDef);
+bool8 WillSyncronoiseFailByAttackerTypesAndBank(u8 atkType1, u8 atkType2, u8 atkType3, u8 bankDef);
+bool8 WillSyncronoiseFailByAttackerAnd3DefTypesAndItemEffect(u8 bankAtk, u8 defType1, u8 defType2, u8 defType3, u8 defItemEffect);
+bool8 WillSyncronoiseFailByAttackerTypesAnd2DefTypesAndItemEffect(u8 atkType1, u8 atkType2, u8 atkType3, u8 defType1, u8 defType2, u8 defItemEffect);
+bool8 WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(u8 atkType1, u8 atkType2, u8 atkType3, u8 defType1, u8 defType2, u8 defType3, u8 defItemEffect);
 u8 GetImposterBank(u8 bank);
 bool8 ImposterWorks(u8 bankAtk, bool8 checkingMonAtk);
 

@@ -392,17 +392,21 @@ bool8 IsOfType(u8 bank, u8 type)
 	u8 type3 = gBattleMons[bank].type3;
 	u8 teratype = GetBattlerTeraType(bank);
 
-	if (!IS_BLANK_TYPE(type1) && type1 == type)
-		return TRUE;
+	if (!IS_BLANK_TYPE(teratype))
+	{
+		return teratype == type;
+	}
+	else
+	{
+		if (!IS_BLANK_TYPE(type1) && type1 == type)
+			return TRUE;
 
-	if (!IS_BLANK_TYPE(type2) && type2 == type)
-		return TRUE;
+		if (!IS_BLANK_TYPE(type2) && type2 == type)
+			return TRUE;
 
-	if (!IS_BLANK_TYPE(type3) && type3 == type)
-		return TRUE;
-
-	if (!IS_BLANK_TYPE(teratype) && teratype == type)
-		return TRUE;
+		if (!IS_BLANK_TYPE(type3) && type3 == type)
+			return TRUE;
+	}
 
 	return FALSE;
 }
@@ -1289,7 +1293,7 @@ bool8 IsMoveAffectedByParentalBond(u16 move, u8 bankAtk)
 
 u8 CalcMoveSplit(u8 bankAtk, u16 move, u8 bankDef)
 {
-	if ((CheckTableForMove(move, gMovesThatChangePhysicality) || (move == MOVE_TERABLAST && CanTeraBlastTypeChange(bankAtk)))
+	if ((CheckTableForMove(move, gMovesThatChangePhysicality) || (move == MOVE_TERABLAST && TeraTypeActive(bankAtk)))
 	&&  SPLIT(move) != SPLIT_STATUS)
 	{
 		u32 attack = gBattleMons[bankAtk].attack;
@@ -1489,6 +1493,114 @@ void GiveOmniboost(u8 bank)
 		if (STAT_STAGE(bank, i) < STAT_STAGE_MAX)
 			++STAT_STAGE(bank, i);
 	}
+}
+
+bool8 WillSyncronoiseFail(u8 bankAtk, u8 bankDef)
+{
+	u8 atkType1, atkType2, atkType3, defType1, defType2, defType3;
+
+	if (IsTerastal(bankAtk))
+	{
+		atkType1 = atkType2 = atkType3 = GetTeraType(bankAtk);
+	}
+	else
+	{
+		atkType1 = gBattleMons[bankAtk].type1;
+		atkType2 = gBattleMons[bankAtk].type2;
+		atkType3 = gBattleMons[bankAtk].type3;
+	}
+
+	if (IsTerastal(bankDef))
+	{
+		defType1 = defType2 = defType3 = GetTeraType(bankDef);
+	}
+	else
+	{
+		defType1 = gBattleMons[bankDef].type1;
+		defType2 = gBattleMons[bankDef].type2;
+		defType3 = gBattleMons[bankDef].type3;
+	}
+
+	
+
+	u8 defItemEffect = ITEM_EFFECT(bankDef);
+
+	return WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, defType3, defItemEffect);
+}
+
+bool8 WillSyncronoiseFailByAttackerTypesAndBank(u8 atkType1, u8 atkType2, u8 atkType3, u8 bankDef)
+{
+	u8 defType1, defType2, defType3;
+
+	if (IsTerastal(bankDef))
+	{
+		defType1 = defType2 = defType3 = GetTeraType(bankDef);
+	}
+	else
+	{
+		defType1 = gBattleMons[bankDef].type1;
+		defType2 = gBattleMons[bankDef].type2;
+		defType3 = gBattleMons[bankDef].type3;
+	}
+
+	u8 defItemEffect = ITEM_EFFECT(bankDef);
+
+	return WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, defType3, defItemEffect);
+}
+
+bool8 WillSyncronoiseFailByAttackerAnd3DefTypesAndItemEffect(u8 bankAtk, u8 defType1, u8 defType2, u8 defType3, u8 defItemEffect)
+{
+	u8 atkType1, atkType2, atkType3;
+
+	if (IsTerastal(bankAtk))
+	{
+		atkType1 = atkType2 = atkType3 = GetTeraType(bankAtk);
+	}
+	else
+	{
+		atkType1 = gBattleMons[bankAtk].type1;
+		atkType2 = gBattleMons[bankAtk].type2;
+		atkType3 = gBattleMons[bankAtk].type3;
+	}
+
+	return WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, defType3, defItemEffect);
+}
+
+bool8 WillSyncronoiseFailByAttackerTypesAnd2DefTypesAndItemEffect(u8 atkType1, u8 atkType2, u8 atkType3, u8 defType1, u8 defType2, u8 defItemEffect)
+{
+	return WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, TYPE_BLANK, defItemEffect);
+}
+
+bool8 WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(u8 atkType1, u8 atkType2, u8 atkType3, u8 defType1, u8 defType2, u8 defType3, u8 defItemEffect)
+{
+	if (defItemEffect == ITEM_EFFECT_RING_TARGET)
+		return FALSE;
+
+	if (!IS_BLANK_TYPE(atkType1))
+	{
+		if (atkType1 == defType1
+		||  atkType1 == defType2
+		||  atkType1 == defType3)
+			return FALSE; //No fail
+	}
+
+	if (!IS_BLANK_TYPE(atkType2))
+	{
+		if (atkType2 == defType1
+		||  atkType2 == defType2
+		||  atkType2 == defType3)
+			return FALSE; //No fail
+	}
+
+	if (!IS_BLANK_TYPE(atkType3))
+	{
+		if (atkType3 == defType1
+		||  atkType3 == defType2
+		||  atkType3 == defType3)
+			return FALSE; //No fail
+	}
+
+	return TRUE; //No type in common so fail
 }
 
 u8 GetImposterBank(u8 bank)

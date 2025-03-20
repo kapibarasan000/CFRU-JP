@@ -4080,6 +4080,11 @@ void atkB7_presentdamagecalculation(void)
 	}
 }
 
+const u16 gSafeguardStringIds[] =
+{
+	STRINGID_BUTITFAILED, STRINGID_PKMNCOVEREDBYVEIL, 0x184
+};
+
 void atkB8_setsafeguard(void)
 {
 	if (BankSideHasSafeguard(gBankAttacker))
@@ -5276,4 +5281,22 @@ void atkEE_removelightscreenreflect(void) { //Brick Break
 		gBattleScripting.animTargetsHit = 0;
 	}
 	gBattlescriptCurrInstr++;
+}
+
+void setsubstituteonattacker(void)
+{
+    u32 hp;
+    hp = 1;
+    hp = gBattleMons[gBankSwitching].maxHP / 4;
+    if (gBattleMons[gBankSwitching].maxHP / 4 == 0)
+        hp = 1;
+
+    gBattleMoveDamage = hp; 
+    if (gBattleMoveDamage == 0)
+        gBattleMoveDamage = 1;
+
+    gBattleMons[gBankSwitching].status2 |= STATUS2_SUBSTITUTE;
+    gBattleMons[gBankSwitching].status2 &= ~STATUS2_WRAPPED;
+    gDisableStructs[gBankSwitching].substituteHP = gBattleMoveDamage;
+    gBattleSpritesDataPtr->bankData[gBankSwitching].behindSubstitute = 1;
 }

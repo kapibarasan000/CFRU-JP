@@ -159,6 +159,9 @@
 #org @gText_PoltergeistWarn
 [TARGET]に\n[LAST_ITEM]が おそいかかる！
 
+#org @gText_WokenByUproar
+[SCRIPTING_BANK]は\nめを さました！
+
 #org @gText_CorrodedItem
 [ATTACKER]は\n[TARGET]の\l[LAST_ITEM]を とかした！
 

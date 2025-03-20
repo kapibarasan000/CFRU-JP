@@ -739,7 +739,8 @@ void atk06_typecalc(void)
 				else
 					goto RE_ENTER_TYPE_CHECK;
 			}
-			else if (gBattleMoves[gCurrentMove].effect == EFFECT_SKY_DROP && IsOfType(bankDef, TYPE_FLYING))
+			else if ((gBattleMoves[gCurrentMove].effect == EFFECT_SKY_DROP && IsOfType(bankDef, TYPE_FLYING))
+			|| (gCurrentMove == MOVE_SYNCHRONOISE && WillSyncronoiseFail(gBankAttacker, bankDef)))
 			{
 				gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 				gLastLandedMoves[bankDef] = 0;
@@ -838,7 +839,8 @@ void atk4A_typecalc2(void)
 		else
 			goto RE_ENTER_TYPE_CHECK_2;
 	}
-	else if (gBattleMoves[gCurrentMove].effect == EFFECT_SKY_DROP && IsOfType(gBankTarget, TYPE_FLYING))
+	else if ((gBattleMoves[gCurrentMove].effect == EFFECT_SKY_DROP && IsOfType(gBankTarget, TYPE_FLYING))
+	|| (gCurrentMove == MOVE_SYNCHRONOISE && WillSyncronoiseFail(gBankAttacker, gBankTarget)))
 	{
 		gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 		gLastLandedMoves[gBankTarget] = 0;
@@ -889,7 +891,7 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 		atkType1 = GetMonType(monAtk, 0);
 		atkType2 = GetMonType(monAtk, 1);
 		atkType3 = TYPE_BLANK;
-		atkTeraType = GetBattlerTeraType(GetBankFromPartyData(monAtk));
+		atkTeraType = TYPE_BLANK;
 		moveType = GetMonMoveTypeSpecial(monAtk, move);
 	}
 	else
@@ -932,7 +934,8 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if (gBattleMoves[move].effect == EFFECT_SKY_DROP && IsOfType(bankDef, TYPE_FLYING))
+	else if ((gBattleMoves[move].effect == EFFECT_SKY_DROP && IsOfType(bankDef, TYPE_FLYING))
+	|| (move == MOVE_SYNCHRONOISE && WillSyncronoiseFailByAttackerTypesAndBank(atkType1, atkType2, atkType3, bankDef)))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
@@ -1017,7 +1020,8 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if (gBattleMoves[move].effect == EFFECT_SKY_DROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING))
+	else if ((gBattleMoves[move].effect == EFFECT_SKY_DROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING))
+	|| (move == MOVE_SYNCHRONOISE && WillSyncronoiseFailByAttackerTypesAnd2DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, defEffect)))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
@@ -1108,7 +1112,8 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if (gBattleMoves[move].effect == EFFECT_SKY_DROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
+	else if ((gBattleMoves[move].effect == EFFECT_SKY_DROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
+	|| (move == MOVE_SYNCHRONOISE && WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, defType3, defEffect)))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
@@ -1182,6 +1187,10 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
+	else if (move == MOVE_SYNCHRONOISE && WillSyncronoiseFailByAttackerAnd3DefTypesAndItemEffect(bankAtk, defType1, defType2, defType3, defEffect))
+	{
+		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+	}
 	else //Regular Type Calc
 		TypeDamageModificationByDefTypes(atkAbility, bankDef, move, moveType, &flags, defType1, defType2, defType3);
 
@@ -1231,15 +1240,16 @@ void FutureSightTypeCalc(void)
 
 void TypeDamageModification(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags)
 {
-	return TypeDamageModificationByDefTypes(atkAbility, bankDef, move, moveType, flags, gBattleMons[bankDef].type1, gBattleMons[bankDef].type2, gBattleMons[bankDef].type3);
+	u8 defTeraType = GetBattlerTeraType(bankDef);
+	if (!IS_BLANK_TYPE(defTeraType))
+		return TypeDamageModificationByDefTypes(atkAbility, bankDef, move, moveType, flags, defTeraType, defTeraType, defTeraType);
+	else
+		return TypeDamageModificationByDefTypes(atkAbility, bankDef, move, moveType, flags, gBattleMons[bankDef].type1, gBattleMons[bankDef].type2, gBattleMons[bankDef].type3);
 }
 
 static void TypeDamageModificationByDefTypes(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags, u8 defType1, u8 defType2, u8 defType3)
 {
 	u8 multiplier1, multiplier2, multiplier3;
-
-	if (IsTerastal(bankDef))
-		defType1 = defType2 = defType3 = GetTeraType(bankDef);
 
 TYPE_LOOP:
 	multiplier1 = gTypeEffectiveness[moveType][defType1];
@@ -1648,7 +1658,7 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 			break;
 
 		case MOVE_TERABLAST:
-			if (CanTeraBlastTypeChange(bankAtk))
+			if (TeraTypeActive(bankAtk))
 				moveType = GetTeraType(bankAtk);
 			break;
 	}

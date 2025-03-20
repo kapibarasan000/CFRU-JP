@@ -296,11 +296,7 @@ bool8 IsMonOfType(struct Pokemon* mon, u8 type)
 {
 	u8 type1 = GetMonType(mon, 0);
 	u8 type2 = GetMonType(mon, 1);
-	u8 teratype = GetBattlerTeraType(GetBankFromPartyData(mon));
 
-	if (teratype != TYPE_BLANK)
-		return teratype == type;
-	else
 		return type1 == type || type2 == type;
 }
 

@@ -811,7 +811,7 @@ void MoveSelectionDisplayMoveEffectiveness(void)
 			&& (moveType == moveInfo->monType1
 			 || moveType == moveInfo->monType2
 			 || moveType == moveInfo->monType3
-			 || (moveType == moveInfo->monTeraType && CanTeraBlastTypeChange(gActiveBattler)))
+			 || (moveType == moveInfo->monTeraType && TeraTypeActive(gActiveBattler)))
 			&& !CheckTableForMoveEffect(move, gMoveEffectsThatIgnoreWeaknessResistance); //These moves can't have STAB
 
 		if (IS_SINGLE_BATTLE)

@@ -250,7 +250,7 @@ bool8 DoesTerastalUsageStopMegaEvolution(u8 bank)
 		&& gNewBS->terastalData.partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]];
 }
 
-bool8 CanTeraBlastTypeChange(u8 bank)
+bool8 TeraTypeActive(u8 bank)
 {
 	return IsTerastal(bank) || gNewBS->terastalData.chosen[bank];
 }
