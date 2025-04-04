@@ -66,6 +66,8 @@ static void MoveSelectionDisplayDetails(void);
 static void ReloadMoveNamesIfNecessary(void);
 static void CloseZMoveDetails(void);
 static void CloseMaxMoveDetails(void);
+static void HighlightPossibleTargets(void);
+static void LoadShadowColourForGreyedOutBagText(void);
 static void TryLoadTypeIcons(void);
 static void SpriteCB_CamomonsTypeIcon(struct Sprite* sprite);
 static void TriggerTerastal(void);
@@ -232,7 +234,7 @@ void HandleInputChooseMove(void)
 	gNewBS->dynamaxData.partyIndex[SIDE(gActiveBattler)] = moveInfo->dynamaxPartyIndex;
 	gNewBS->terastalData.partyIndex[SIDE(gActiveBattler)] = moveInfo->terastalPartyIndex;
 
-	sub_803323C();
+	HighlightPossibleTargets();
 
 	if (gMain.newKeys & A_BUTTON)
 	{
@@ -250,7 +252,7 @@ void HandleInputChooseMove(void)
 		else if (chosenMove == MOVE_ACUPRESSURE && !(IS_DOUBLE_BATTLE))
 			moveTarget = MOVE_TARGET_USER; //Only can target yourself in singles
 		else
-			moveTarget = GetBaseMoveTargetByGrounding(chosenMove, CheckGrounding(gActiveBattler));
+			moveTarget = GetBaseMoveTargetByGrounding(chosenMove, moveInfo->atkIsGrounded);
 
 		if (gNewBS->zMoveData.viewing && moveInfo->moveSplit[gMoveSelectionCursor[gActiveBattler]] != SPLIT_STATUS) //Status moves keep original targets
 			moveTarget = gBattleMoves[moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]]].target;
@@ -290,7 +292,18 @@ void HandleInputChooseMove(void)
 		{
 			CloseZMoveDetails();
 			CloseMaxMoveDetails();
-			TryRemoveDoublesKillingScore(gActiveBattler, gMultiUsePlayerCursor, chosenMove);
+
+			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+			{
+				//Will be set by emit, but needed in multi battles so the partner chooses the best move for the job
+				gBattleStruct->chosenMovePositions[gActiveBattler] = gMoveSelectionCursor[gActiveBattler];
+				gBattleStruct->moveTarget[gActiveBattler] =gMultiUsePlayerCursor;
+				gChosenMovesByBanks[gActiveBattler] = chosenMove;
+
+				//Wipe doubles killing score
+				TryRemovePartnerDoublesKillingScoreComplete(gActiveBattler, gMultiUsePlayerCursor, chosenMove, moveTarget, FALSE);
+			}
+
 			EmitMoveChosen(1, gMoveSelectionCursor[gActiveBattler], gMultiUsePlayerCursor, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler], gNewBS->terastalData.chosen[gActiveBattler]);
 			PlayerBufferExecCompleted();
 		}
@@ -305,7 +318,7 @@ void HandleInputChooseMove(void)
 			else
 				gMultiUsePlayerCursor = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 
-			gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8011894; //sub_8039AD8 in Emerald
+			gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget;
 			MoveSelectionDisplayMoveEffectiveness();
 		}
 	}
@@ -385,7 +398,8 @@ void HandleInputChooseMove(void)
 	}
 	else if (gMain.newKeys & SELECT_BUTTON)
 	{
-		if (gNumberOfMovesToChoose > 1 && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER))
+		if (gNumberOfMovesToChoose > 1 && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_CAMOMONS))
+		&& gDisableStructs[gActiveBattler].encoreTimer == 0 //Breaks the Encore otherwise
 		&& !gNewBS->dynamaxData.viewing
 		&& !gNewBS->zMoveData.viewing
 		&& !gNewBS->zMoveData.viewingDetails)
@@ -508,6 +522,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	tempMoveStruct->monType3 = gBattleMons[gActiveBattler].type3;
 	tempMoveStruct->monTeraType = GetTeraType(gActiveBattler);
 	tempMoveStruct->ability = ABILITY(gActiveBattler);
+	tempMoveStruct->atkIsGrounded = CheckGrounding(gActiveBattler);
 
 	//Fix Transformed Move PP
 	if (IS_TRANSFORMED(gActiveBattler))
@@ -1580,8 +1595,9 @@ void HandleInputChooseTarget(void)
 	if (JOY_NEW(A_BUTTON))
 	{
 		PlaySE(SE_SELECT);
-		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_80118E8; //sub_8039B2C in Emerald
-		TryRemoveDoublesKillingScore(gActiveBattler, gMultiUsePlayerCursor, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]);
+		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
+		if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+			TryRemovePartnerDoublesKillingScore(gActiveBattler, gMultiUsePlayerCursor, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]], FALSE);
 		EmitMoveChosen(1, gMoveSelectionCursor[gActiveBattler], gMultiUsePlayerCursor, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler], gNewBS->terastalData.chosen[gActiveBattler]);
 		CloseZMoveDetails();
 		CloseMaxMoveDetails();
@@ -1591,7 +1607,7 @@ void HandleInputChooseTarget(void)
 	else if (JOY_NEW(B_BUTTON))
 	{
 		PlaySE(SE_SELECT);
-		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_80118E8; //sub_8039B2C in Emerald
+		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
 		gBattlerControllerFuncs[gActiveBattler] = HandleInputChooseMove;
 		DoBounceEffect(gActiveBattler, BOUNCE_HEALTHBOX, 7, 1);
 		DoBounceEffect(gActiveBattler, BOUNCE_MON, 7, 1);
@@ -1607,7 +1623,7 @@ void HandleInputChooseTarget(void)
 	else if (JOY_NEW(DPAD_LEFT | DPAD_UP))
 	{
 		PlaySE(SE_SELECT);
-		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_80118E8; //sub_8039B2C in Emerald
+		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
 
 		do
 		{
@@ -1620,7 +1636,7 @@ void HandleInputChooseTarget(void)
 					{
 						gMultiUsePlayerCursor ^= BIT_FLANK;
 					}
-					gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8011894; //sub_8039AD8 in Emerald
+					gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget; //sub_8039AD8 in Emerald
 					return;
 
 				case MOVE_POLLENPUFF:
@@ -1628,7 +1644,7 @@ void HandleInputChooseTarget(void)
 					&& !(gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor ^ 2]))
 					{
 						gMultiUsePlayerCursor ^= BIT_FLANK;
-						gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8011894; //sub_8039AD8 in Emerald
+						gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget; //sub_8039AD8 in Emerald
 						return;
 					}
 			}
@@ -1652,7 +1668,7 @@ void HandleInputChooseTarget(void)
 				case B_POSITION_PLAYER_RIGHT:
 					if (gActiveBattler != gMultiUsePlayerCursor)
 						i++;
-					else if (GetBaseMoveTargetByGrounding(move, CheckGrounding(gActiveBattler)) & MOVE_TARGET_USER_OR_PARTNER)
+					else if (GetBaseMoveTargetByGrounding(move, moveInfo->atkIsGrounded) & MOVE_TARGET_USER_OR_PARTNER)
 						i++;
 
 					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
@@ -1670,13 +1686,13 @@ void HandleInputChooseTarget(void)
 
 		} while (i == 0);
 
-		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8011894; //sub_8039AD8 in Emerald
+		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget;
 		MoveSelectionDisplayMoveEffectiveness();
 	}
 	else if (JOY_NEW(DPAD_RIGHT | DPAD_DOWN))
 	{
 		PlaySE(SE_SELECT);
-		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_80118E8; //sub_8039B2C in Emerald
+		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
 
 		do
 		{
@@ -1689,7 +1705,7 @@ void HandleInputChooseTarget(void)
 					{
 						gMultiUsePlayerCursor ^= BIT_FLANK;
 					}
-					gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8011894; //sub_8039AD8 in Emerald
+					gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget;
 					return;
 
 				case MOVE_POLLENPUFF:
@@ -1697,7 +1713,7 @@ void HandleInputChooseTarget(void)
 					&& !(gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor ^ 2]))
 					{
 						gMultiUsePlayerCursor ^= BIT_FLANK;
-						gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8011894; //sub_8039AD8 in Emerald
+						gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget;
 						return;
 					}
 			}
@@ -1721,7 +1737,7 @@ void HandleInputChooseTarget(void)
 				case B_POSITION_PLAYER_RIGHT:
 					if (gActiveBattler != gMultiUsePlayerCursor)
 						i++;
-					else if (GetBaseMoveTargetByGrounding(move, CheckGrounding(gActiveBattler)) & MOVE_TARGET_USER_OR_PARTNER)
+					else if (GetBaseMoveTargetByGrounding(move, moveInfo->atkIsGrounded) & MOVE_TARGET_USER_OR_PARTNER)
 						i++;
 
 					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
@@ -1738,8 +1754,133 @@ void HandleInputChooseTarget(void)
 
 		} while (i == 0);
 
-		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8011894; //sub_8039AD8 in Emerald
+		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget; //sub_8039AD8 in Emerald
 		MoveSelectionDisplayMoveEffectiveness();
+	}
+}
+
+static void HighlightPossibleTargets(void)
+{
+	u32 bitMask = 0;
+	u8 startY = 0;
+
+	if (IS_DOUBLE_BATTLE)
+	{
+		u8 moveTarget;
+		struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
+		u16 chosenMove = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
+
+		if (chosenMove == MOVE_CURSE)
+		{
+			if (TeraTypeActive(gActiveBattler))
+			{
+				if (moveInfo->monTeraType != TYPE_GHOST)
+					moveTarget = MOVE_TARGET_USER;
+				else
+					moveTarget = MOVE_TARGET_SELECTED;
+			}
+			else if (moveInfo->monType1 != TYPE_GHOST&& moveInfo->monType2 != TYPE_GHOST && moveInfo->monType3 != TYPE_GHOST)
+				moveTarget = MOVE_TARGET_USER;
+			else
+				moveTarget = MOVE_TARGET_SELECTED;
+		}
+		else
+			moveTarget = GetBaseMoveTargetByGrounding(chosenMove, moveInfo->atkIsGrounded);
+
+		if (gNewBS->zMoveData.viewing && moveInfo->moveSplit[gMoveSelectionCursor[gActiveBattler]] != SPLIT_STATUS) //Status moves keep original targets
+			moveTarget = gBattleMoves[moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]]].target;
+
+		if (gNewBS->dynamaxData.viewing || moveInfo->dynamaxed)
+			moveTarget = gBattleMoves[moveInfo->possibleMaxMoves[gMoveSelectionCursor[gActiveBattler]]].target;
+
+		switch (moveTarget)
+		{
+			case MOVE_TARGET_SELECTED:
+			case MOVE_TARGET_DEPENDS:
+			case MOVE_TARGET_USER_OR_PARTNER:
+			case MOVE_TARGET_RANDOM:
+				bitMask = 0xF0000;
+				startY = 0;
+				break;
+			case MOVE_TARGET_BOTH:
+			case MOVE_TARGET_OPPONENTS_FIELD:
+				bitMask = (gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] 
+						 | gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)]) << 16; 
+				startY = 8;
+				break;
+			case MOVE_TARGET_USER:
+				switch (chosenMove)
+				{
+					//Moves that affect the whole field
+					case MOVE_HAZE:
+					case MOVE_SANDSTORM:
+					case MOVE_PERISHSONG:
+					case MOVE_RAINDANCE:
+					case MOVE_SUNNYDAY:
+					case MOVE_HAIL:
+					case MOVE_MUDSPORT:
+					case MOVE_WATERSPORT:
+					case MOVE_FLOWERSHIELD:
+					case MOVE_ROTOTILLER:
+					case MOVE_ELECTRICTERRAIN:
+					case MOVE_GRASSYTERRAIN:
+					case MOVE_MISTYTERRAIN:
+					case MOVE_PSYCHICTERRAIN:
+					case MOVE_TRICKROOM:
+					case MOVE_MAGICROOM:
+					case MOVE_WONDERROOM:
+					case MOVE_GRAVITY:
+					case MOVE_IONDELUGE:
+					case MOVE_FAIRYLOCK:
+					case MOVE_TEATIME:
+					case MOVE_COURTCHANGE:
+						bitMask = 0xF0000;
+						break;
+
+					//Moves that affect the user's side
+					case MOVE_HOWL:
+					case MOVE_SAFEGUARD:
+					case MOVE_REFLECT:
+					case MOVE_LIGHTSCREEN:
+					case MOVE_MIST:
+					case MOVE_AURORAVEIL:
+					case MOVE_HEALBELL:
+					case MOVE_AROMATHERAPY:
+					case MOVE_TAILWIND:
+					case MOVE_LUCKYCHANT:
+					case MOVE_CRAFTYSHIELD:
+					case MOVE_MATBLOCK:
+					case MOVE_QUICKGUARD:
+					case MOVE_WIDEGUARD:
+					case MOVE_GEARUP:
+					case MOVE_MAGNETICFLUX:
+					case MOVE_LIFEDEW:
+					case MOVE_JUNGLEHEALING:
+						bitMask = (gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] 
+								 | gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)]) << 16; 
+						break;
+
+					//Moves the affect the user's partner
+					case MOVE_HELPINGHAND:
+					case MOVE_AROMATICMIST:
+					case MOVE_COACHING:
+						bitMask = (gBitTable[GetBattlerAtPosition(GetBattlerPosition(gActiveBattler) ^ BIT_FLANK)]) << 16;
+						break;
+					default:
+						bitMask = (gBitTable[gActiveBattler]) << 16;
+						break;
+				}
+				startY = 8;
+				break;
+			case MOVE_TARGET_FOES_AND_ALLY:
+				bitMask = (gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] 
+						 | gBitTable[GetBattlerAtPosition(GetBattlerPosition(gActiveBattler) ^ BIT_FLANK)] 
+						 | gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)]) << 16;
+				startY = 8;
+				break;
+		}
+
+		BeginNormalPaletteFade(bitMask, 8, startY, 0, RGB_WHITE);
 	}
 }
 
@@ -1765,7 +1906,7 @@ u8 TrySetCantSelectMoveBattleScript(void)
 		return FALSE;
 
 	if (IsDynamaxed(gActiveBattler) || gNewBS->dynamaxData.toBeUsed[gActiveBattler])
-		move = gCurrentMove = GetMaxMove(gActiveBattler, gBattleBufferB[gActiveBattler][2]);
+		move = gCurrentMove = GetMaxMoveByMove(gActiveBattler, move);
 
 	if (IsAnyMaxMove(move))
 		isAnyMaxMove = TRUE; //Save time later
@@ -1814,14 +1955,15 @@ u8 TrySetCantSelectMoveBattleScript(void)
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedMoveChoiceItem;
 		++limitations;
 	}
-	else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
+	else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && IsMoveBannedByAssaultVest(move))
 	{
 		gLastUsedItem = ITEM(gActiveBattler);
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedMoveAssaultVest;
 		++limitations;
 	}
 	#ifdef FLAG_SKY_BATTLE
-	else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
+	else if (!gNewBS->zMoveData.toBeUsed[gActiveBattler] //Can still use status Z-Moves even during Sky Battle
+	&& FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
 	{
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedSkyBattle;
 		++limitations;
@@ -1935,17 +2077,27 @@ void PlayerHandleChooseAction(void)
 	&& !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
 	&& !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
 	&& gBattleBufferA[gActiveBattler][1] != ACTION_USE_ITEM) //Mon 1 didn't use item
-	#ifndef UNBOUND
-		BattlePutTextOnWindow(gText_BattleMenu2, 2);
+	{
+		if (IsBagDisabled()) //Grey out bag text to indicate no point in pressing it
+		{
+			BattlePutTextOnWindow(gText_BattleMenu2NoItems, 2);
+			LoadShadowColourForGreyedOutBagText();
+		}
+		else
+			BattlePutTextOnWindow(gText_BattleMenu2, 2);
+	}
 	else
-		BattlePutTextOnWindow(gText_BattleMenu, 2);
-	#else
-		BattlePutTextOnWindow(gText_UnboundBattleMenu2, 2);
-	else
-		BattlePutTextOnWindow(gText_UnboundBattleMenu, 2);
-	#endif
+	{
+		if (IsBagDisabled())
+		{
+			BattlePutTextOnWindow(gText_BattleMenuNoItems, 2);
+			LoadShadowColourForGreyedOutBagText();
+		}
+		else
+			BattlePutTextOnWindow(gText_BattleMenu, 2);
+	}
 
-	for (i = 0; i < 4; i++)
+	for (i = 0; i < MAX_MON_MOVES; i++)
 		ActionSelectionDestroyCursorAt(i);
 
 	ActionSelectionCreateCursorAt(gActionSelectionCursor[gActiveBattler], 0);
@@ -1959,6 +2111,12 @@ void PlayerHandleChooseAction(void)
 	#ifdef LAST_USED_BALL_TRIGGER
 	TryLoadLastUsedBallTrigger();
 	#endif
+}
+
+static void LoadShadowColourForGreyedOutBagText(void)
+{
+	gPlttBufferUnfaded[5 * 0x10 + 11] = RGB(28, 28, 27); //Grey shadow colour
+	CpuCopy16(&gPlttBufferUnfaded[5 * 0x10 + 11], &gPlttBufferFaded[5 * 0x10 + 11], sizeof(u16));
 }
 
 void HandleInputChooseAction(void)
@@ -2119,17 +2277,38 @@ bool8 CheckCantMoveThisTurn(void)
 bool8 IsBagDisabled(void)
 {
 	#ifdef VAR_GAME_DIFFICULTY
+	u8 itemRestrictions = 0;
 	u8 difficulty = VarGet(VAR_GAME_DIFFICULTY);
-	
+
+	#ifdef VAR_ITEM_RESTRICTIONS
+	itemRestrictions = VarGet(VAR_ITEM_RESTRICTIONS);
+	#endif
+
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
+		//Determine based on player-set restrictions
+		if (itemRestrictions >= OPTIONS_ITEM_RESTRICTIONS_NO_ITEMS)
+			return TRUE;
+		else if (itemRestrictions == OPTIONS_ITEM_RESTRICTIONS_4_ITEMS
+		&& gNewBS->playerItemUsedCount >= 4)
+			return TRUE;
+
+		//Determine based on difficulty set restrictions
 		if (difficulty == OPTIONS_HARD_DIFFICULTY)
 		{
 			if (gNewBS->playerItemUsedCount >= 4) //Max four items can be used
-				return FALSE;
+				return TRUE;
 		}
-		if (difficulty >= OPTIONS_EXPERT_DIFFICULTY) //No items in battles for Experts
-			return FALSE;
+		else if (difficulty >= OPTIONS_EXPERT_DIFFICULTY) //No items in battles for Insane players
+			return TRUE;
+	}
+	else
+	{
+		if (!IsRaidBattle()
+		&& CantCatchBecauseFlag() //Can't be caught
+		&& (difficulty >= OPTIONS_EXPERT_DIFFICULTY //No items in battles for Insane players
+		 || itemRestrictions >= OPTIONS_ITEM_RESTRICTIONS_NO_ITEMS))
+			return TRUE;
 	}
 	#endif
 

@@ -528,7 +528,7 @@ void sp017_ChangePokemonAttacks(void) {
 		// otherwise, replace given slot
 		gPlayerParty[mon].moves[moveSlot] = move;
 		gPlayerParty[mon].pp[moveSlot] = gBattleMoves[move].pp;
-		gPlayerParty[mon].pp_bonuses &= ~(gBitTable[moveSlot * 2] | gBitTable[moveSlot * 2 + 1]);	//reset pp bonuses
+		gPlayerParty[mon].ppBonuses &= ~(gBitTable[moveSlot * 2] | gBitTable[moveSlot * 2 + 1]);	//reset pp bonuses
 	}
 	else if (move == 0)
 		Special_0DD_DeleteMove();

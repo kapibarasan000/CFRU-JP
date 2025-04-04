@@ -82,17 +82,9 @@ spe:
 	bl call_via_r5
 /*
 print_ability_one:
-	ldr r0, [sp, #0x1C]
-	mov r3, #0x1C
-	mul r0, r3
-	ldr r1, base_stats
-	ldr r1, [r1]
-	mov r3, #0x16
-	add r1, r1, r3
-	add r1, r0, r1
-	ldrb r0, [r1]
+	ldrh r0, [sp, #0x1C]
+	bl GetAbility1
 	ldrh r1, [sp, #0x1C]
-	bl TryRandomizeAbility
 	bl GetAbilityName
 	mov r2, r0
  
@@ -109,23 +101,17 @@ print_ability_one:
 	bl call_via_r5
 
 print_ability_two:
+	ldrh r0, [sp, #0x1C]
+	bl GetAbility1
+	mov r5, r0
 	ldr r0, [sp, #0x1C]
-	mov r3, #0x1C
-	mul r0, r3
-	ldr r1, base_stats
-	ldr r1, [r1]
-	mov r3, #0x16
-	add r1, r1, r3
-	add r1, r0, r1
-	ldrb r2, [r1, #1]
-	ldrb r5, [r1, #0]
-	cmp r2, r5
+	bl GetAbility2
+
+	cmp r5, r0 @Ability 1 == Ability 2
 	beq return
-	cmp r2, #0
+	cmp r0, #0 @Ability 2 == 0
 	beq return
-	mov r0, r2
 	ldrh r1, [sp, #0x1C]
-	bl TryRandomizeAbility
 	bl GetAbilityName
    	mov r2, r0
 	

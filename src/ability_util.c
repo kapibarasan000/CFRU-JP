@@ -12,6 +12,16 @@
 #include "../include/new/util.h"
 
 
+bool8 IsTargetAbilityIgnored(u8 defAbility, u8 atkAbility, u16 move)
+{
+	return IS_MOLD_BREAKER(atkAbility, move) && gMoldBreakerIgnoredAbilities[defAbility];
+}
+
+bool8 IsTargetAbilityIgnoredNoMove(u8 defAbility, u8 atkAbility)
+{
+	return IsMoldBreakerAbility(atkAbility) && gMoldBreakerIgnoredAbilities[defAbility];
+}
+
 bool8 IsClearBodyAbility(u8 ability)
 {
 	return ability == ABILITY_CLEARBODY
@@ -24,12 +34,31 @@ bool8 IsClearBodyAbility(u8 ability)
 		;
 }
 
+bool8 IsMoldBreakerAbility(u8 ability)
+{
+	return ability == ABILITY_MOLDBREAKER
+		#ifdef ABILITY_TURBOBLAZE
+		|| ability == ABILITY_TURBOBLAZE
+		#endif
+		#ifdef ABILITY_TERAVOLT
+		|| ability == ABILITY_TERAVOLT
+		#endif
+		;
+}
+
 bool8 AbilityBlocksIntimidate(u8 ability)
 {
 	return ability == ABILITY_INNERFOCUS
 		|| ability == ABILITY_OWNTEMPO
 		|| ability == ABILITY_OBLIVIOUS
 		|| ability == ABILITY_SCRAPPY;
+}
+
+bool8 AbilityPreventsLoweringAtk(u8 ability)
+{
+	return ability == ABILITY_HYPERCUTTER
+		|| ability == ABILITY_MIRRORARMOR
+		|| IsClearBodyAbility(ability);
 }
 
 bool8 AbilityPreventsLoweringStat(u8 ability, u8 statId)
@@ -47,12 +76,50 @@ bool8 AbilityPreventsLoweringStat(u8 ability, u8 statId)
 	}
 }
 
+bool8 IsAffectedBySturdy(u8 defAbility, u8 bankDef)
+{
+	return defAbility == ABILITY_STURDY
+		&& BATTLER_MAX_HP(bankDef);
+}
+
 bool8 IsAffectedByBadDreams(u8 bank)
 {
 	return BATTLER_ALIVE(bank)
 		&& (gBattleMons[bank].status1 & STATUS_SLEEP
 		 || ABILITY(FOE(bank)) == ABILITY_COMATOSE)
 		&& ABILITY(bank) != ABILITY_MAGICGUARD;
+}
+
+bool8 IsTrappedByAbility(u8 bankDef, u8 trapAbility)
+{
+	if (!CanBeTrapped(bankDef))
+		return FALSE;
+
+	switch (trapAbility)
+	{
+		case ABILITY_SHADOWTAG:
+			return ABILITY(bankDef) != ABILITY_SHADOWTAG; //Shadow Tag's not affected by Shadow Tag
+		case ABILITY_ARENATRAP:
+			return CheckGrounding(bankDef) == GROUNDED;
+		case ABILITY_MAGNETPULL:
+			return IsOfType(bankDef, TYPE_STEEL);
+		default:
+			return FALSE;
+	}
+}
+
+bool8 IsPriorityBlockingAbility(u8 ability)
+{
+	switch (ability)
+	{
+		case ABILITY_DAZZLING:
+		#ifdef ABILITY_QUEENLYMAJESTY
+		case ABILITY_QUEENLYMAJESTY:
+		#endif
+			return TRUE;
+		default:
+			return FALSE;
+	}
 }
 
 bool8 IsUnnerveAbility(u8 ability)
@@ -65,4 +132,21 @@ bool8 IsUnnerveAbility(u8 ability)
 		|| ability == ABILITY_ASONE_CHILLING
 		#endif
 		;
+}
+
+bool8 UnnerveOnOpposingField(u8 bank)
+{
+	return ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_UNNERVE)
+		#ifdef ABILITY_ASONE_GRIM
+		|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_GRIM)
+		#endif
+		#ifdef ABILITY_ASONE_CHILLING
+		|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING)
+		#endif
+		;
+}
+
+bool8 AbilityIncreasesWildItemChance(u8 ability)
+{
+	return ability == ABILITY_COMPOUNDEYES || ability == ABILITY_SUPERLUCK;
 }

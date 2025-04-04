@@ -46,9 +46,9 @@ extern const u8 gText_ZMoveRaise1[];
 extern const u8 gText_ZMoveRaise2[];
 extern const u8 gText_ZMoveRaise3[];
 extern const u8 gText_BattleMenu[];
+extern const u8 gText_BattleMenuNoItems[];
 extern const u8 gText_BattleMenu2[];
-extern const u8 gText_UnboundBattleMenu[];
-extern const u8 gText_UnboundBattleMenu2[];
+extern const u8 gText_BattleMenu2NoItems[];
 extern const u8 gText_BattleMenuRaidEnd[];
 extern const u8 gText_CaptureRaidMon[];
 

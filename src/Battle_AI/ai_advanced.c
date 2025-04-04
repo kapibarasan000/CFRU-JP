@@ -681,6 +681,9 @@ bool8 ShouldTrap(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 
 	if (IsClassStall(class))
 	{
+		if (!HasMonToSwitchTo(bankDef))
+			return FALSE;
+
 		if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Attacker goes first
 		{
 			if (!CanKnockOut(bankDef, bankAtk)) //Enemy can't kill attacker
@@ -1258,7 +1261,7 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 
 	if (IS_SINGLE_BATTLE)
 	{
-		if (!BankHasMonToSwitchTo(bankAtk))
+		if (!HasMonToSwitchTo(bankAtk))
 			return CAN_TRY_PIVOT; //Can't switch
 
 		if (IsPredictedToSwitch(bankDef, bankAtk) && !hasUsefulStatBoost)

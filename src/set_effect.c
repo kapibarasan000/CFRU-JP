@@ -113,7 +113,7 @@ const u16 gWrappedStringIds[] =
 
 void atk15_seteffectwithchance(void)
 {
-	u32 PercentChance;
+	u32 percentChance = gBattleMoves[gCurrentMove].secondaryEffectChance;
 
 	//if (CheckSoundMove(gCurrentMove) || ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
 	//{
@@ -122,16 +122,14 @@ void atk15_seteffectwithchance(void)
 	if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || BankSideHasRainbow(gBankAttacker))
 	{
 		if (gCurrentMove == MOVE_TRIPLEARROWS && gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_FLINCH)
-			PercentChance = 30 * 2;
+			percentChance = 30 * 2;
 		else
-			PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance * 2;
+			percentChance *= 2;
 	}
 	else
 	{
 		if (gCurrentMove == MOVE_TRIPLEARROWS && gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_FLINCH)
-			PercentChance = 30;
-		else
-			PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance;
+			percentChance = 30;
 	}
 
 	if (!SheerForceCheck() || (gBattleCommunication[MOVE_EFFECT_BYTE] & 0x3F) == MOVE_EFFECT_RAPIDSPIN)
@@ -141,7 +139,7 @@ void atk15_seteffectwithchance(void)
 			gBattleCommunication[MOVE_EFFECT_BYTE] &= 0x7F;
 			SetMoveEffect(FALSE, MOVE_EFFECT_CERTAIN);
 		}
-		else if (Random() % 100 <= PercentChance && gBattleCommunication[MOVE_EFFECT_BYTE] != 0 && MOVE_HAD_EFFECT)
+		else if (Random() % 100 <= percentChance && gBattleCommunication[MOVE_EFFECT_BYTE] != 0 && MOVE_HAD_EFFECT)
 		{
 			SetMoveEffect(FALSE, 0);
 		}
@@ -199,7 +197,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 	if (IsOfType(gEffectBank, TYPE_GRASS)
 	&& (ABILITY(gEffectBank) == ABILITY_FLOWERVEIL || (IS_DOUBLE_BATTLE && ABILITY(PARTNER(gEffectBank)) == ABILITY_FLOWERVEIL))
 	&& gEffectBank != gBankAttacker
-	&& (gBattleCommunication[MOVE_EFFECT_BYTE] <= MOVE_EFFECT_CONFUSION
+	&& (gBattleCommunication[MOVE_EFFECT_BYTE] <= MOVE_EFFECT_TOXIC
 	 || (gBattleCommunication[MOVE_EFFECT_BYTE] >= MOVE_EFFECT_ATK_MINUS_1 && gBattleCommunication[MOVE_EFFECT_BYTE] <= MOVE_EFFECT_EVS_MINUS_1)
 	 || (gBattleCommunication[MOVE_EFFECT_BYTE] >= MOVE_EFFECT_ATK_MINUS_2 && gBattleCommunication[MOVE_EFFECT_BYTE] <= MOVE_EFFECT_EVS_MINUS_2)))
 	{
@@ -224,9 +222,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		goto CLEAR_MOVE_EFFECT_BYTE;
 	}
 
-	if (gNewBS->dynamaxData.raidShieldsUp
+	if (HasRaidShields(gEffectBank)
 	&& affectsUser != MOVE_EFFECT_AFFECTS_USER
-	&& gEffectBank == BANK_RAID_BOSS
 	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
 	{
 		++gBattlescriptCurrInstr;
@@ -418,78 +415,78 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 
 			case MOVE_EFFECT_WRAP:
-				if (gCurrentMove == MOVE_SALTCURE && gNewBS->SaltcureBits & gBitTable[gEffectBank])
+				if (gCurrentMove == MOVE_SALTCURE)
 				{
-					gBattlescriptCurrInstr++;
-				}
-				if (gBattleMons[gEffectBank].status2 & STATUS2_WRAPPED || gNewBS->secondaryEffectApplied)
-				{
-					gBattlescriptCurrInstr++;
-				}
-				else
-				{
-					if (gCurrentMove == MOVE_SALTCURE)
+					if (gNewBS->SaltcureBits & gBitTable[gEffectBank])
+					{
+						gBattlescriptCurrInstr++;
+					}
+					else
 					{
 						gNewBS->SaltcureBits |= gBitTable[gEffectBank];
 						BattleScriptPush(gBattlescriptCurrInstr + 1);
 						gBattleStringLoader = gText_TargetWasSaltcure;
 						gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 					}
+				}
+				else if (gBattleMons[gEffectBank].status2 & STATUS2_WRAPPED || gNewBS->secondaryEffectApplied)
+				{
+					gBattlescriptCurrInstr++;
+				}
+				else
+				{
+					u16 trappingMove = gCurrentMove;
+					gNewBS->secondaryEffectApplied = TRUE;
+
+					if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_GRIP_CLAW)
+						gBattleMons[gEffectBank].status2 |= (7 << 0xD);
 					else
+						gBattleMons[gEffectBank].status2 |= ((Random() & 1) + 4) << 0xD;
+
+					//Turn G-Max Moves into their corresponding trapping moves
+					switch (trappingMove) {
+						case MOVE_G_MAX_CENTIFERNO_P:
+						case MOVE_G_MAX_CENTIFERNO_S:
+							trappingMove = MOVE_FIRESPIN;
+							break;
+						case MOVE_G_MAX_SANDBLAST_P:
+						case MOVE_G_MAX_SANDBLAST_S:
+							trappingMove = MOVE_SANDTOMB;
+							break;
+					}
+
+					gBattleStruct->wrappedMove[gEffectBank] = trappingMove;
+					gBattleStruct->wrappedBy[gEffectBank] = gBankAttacker;
+
+					BattleScriptPush(gBattlescriptCurrInstr + 1);
+					gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]];
+
+					for (gBattleCommunication[MULTISTRING_CHOOSER] = 0; ; gBattleCommunication[MULTISTRING_CHOOSER]++)
 					{
-						u16 trappingMove = gCurrentMove;
-						gNewBS->secondaryEffectApplied = TRUE;
+						if (gBattleCommunication[MULTISTRING_CHOOSER] > 6)
+							break;
+						if (gTrappingMoves[gBattleCommunication[MULTISTRING_CHOOSER]] == trappingMove)
+							break;
+					}
 
-						if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_GRIP_CLAW)
-							gBattleMons[gEffectBank].status2 |= (7 << 0xD);
-						else
-							gBattleMons[gEffectBank].status2 |= ((Random() & 1) + 4) << 0xD;
-
-						//Turn G-Max Moves into their corresponding trapping moves
-						switch (trappingMove) {
-							case MOVE_G_MAX_CENTIFERNO_P:
-							case MOVE_G_MAX_CENTIFERNO_S:
-								trappingMove = MOVE_FIRESPIN;
-								break;
-							case MOVE_G_MAX_SANDBLAST_P:
-							case MOVE_G_MAX_SANDBLAST_S:
-								trappingMove = MOVE_SANDTOMB;
-								break;
-						}
-
-						gBattleStruct->wrappedMove[gEffectBank] = trappingMove;
-						gBattleStruct->wrappedBy[gEffectBank] = gBankAttacker;
-
-						BattleScriptPush(gBattlescriptCurrInstr + 1);
-						gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]];
-
-						for (gBattleCommunication[MULTISTRING_CHOOSER] = 0; ; gBattleCommunication[MULTISTRING_CHOOSER]++)
-						{
-							if (gBattleCommunication[MULTISTRING_CHOOSER] > 6)
-								break;
-							if (gTrappingMoves[gBattleCommunication[MULTISTRING_CHOOSER]] == trappingMove)
-								break;
-						}
-
-						switch (gCurrentMove) {
-							case MOVE_INFESTATION:
-								gBattleStringLoader = gText_TargetWasInfested;
-								break;
-							case MOVE_SNAPTRAP:
-								gBattleStringLoader = gText_TargetWasCaughtInSnapTrap;
-								break;
-							case MOVE_THUNDERCAGE:
-								gBattleStringLoader = gText_TargetWasTrappedByAttacker;
-								break;
-							case MOVE_G_MAX_CENTIFERNO_P:
-							case MOVE_G_MAX_CENTIFERNO_S:
-							case MOVE_G_MAX_SANDBLAST_P:
-							case MOVE_G_MAX_SANDBLAST_S:
-								gNewBS->sandblastCentiferno[gEffectBank] = 1; //This condition doesn't get removed when the attacker leaves the field
-								if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_GRIP_CLAW)
-									gNewBS->sandblastCentiferno[gEffectBank] |= 2;
-								break;
-						}
+					switch (gCurrentMove) {
+						case MOVE_INFESTATION:
+							gBattleStringLoader = gText_TargetWasInfested;
+							break;
+						case MOVE_SNAPTRAP:
+							gBattleStringLoader = gText_TargetWasCaughtInSnapTrap;
+							break;
+						case MOVE_THUNDERCAGE:
+							gBattleStringLoader = gText_TargetWasTrappedByAttacker;
+							break;
+						case MOVE_G_MAX_CENTIFERNO_P:
+						case MOVE_G_MAX_CENTIFERNO_S:
+						case MOVE_G_MAX_SANDBLAST_P:
+						case MOVE_G_MAX_SANDBLAST_S:
+							gNewBS->sandblastCentiferno[gEffectBank] = 1; //This condition doesn't get removed when the attacker leaves the field
+							if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_GRIP_CLAW)
+								gNewBS->sandblastCentiferno[gEffectBank] |= 2;
+							break;
 					}
 				}
 				break;
@@ -707,10 +704,17 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			case MOVE_EFFECT_ALL_STATS_UP:
 				if (gCurrentMove != MOVE_CLANGOROUS_SOULBLAZE || !gNewBS->secondaryEffectApplied) //Hits two targets but only gets effect once
 				{
-					gNewBS->secondaryEffectApplied = TRUE;
-					BattleScriptPush(gBattlescriptCurrInstr + 1);
-					gBattlescriptCurrInstr = BattleScript_AllStatsUp;
+					if (ViableMonCountFromBank(FOE(gEffectBank)) == 0) //End of battle so don't bother
+						gBattlescriptCurrInstr++;
+					else
+					{
+						gNewBS->secondaryEffectApplied = TRUE;
+						BattleScriptPush(gBattlescriptCurrInstr + 1);
+						gBattlescriptCurrInstr = BattleScript_AllStatsUp;
+					}
 				}
+				else
+					gBattlescriptCurrInstr++;
 				break;
 
 			case MOVE_EFFECT_RAPIDSPIN:
@@ -857,7 +861,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					gBattleStringLoader = TerrainEndString;
 					gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 
-					gActiveBattler = 0;
+					gActiveBattler = GetFirstAliveActiveBattler();
 					EmitDataTransfer(0, &gTerrainType, 1, &gTerrainType);
 					MarkBufferBankForExecution(gActiveBattler);
 				}
@@ -907,14 +911,29 @@ bool8 SetMoveEffect2(void)
 
 	if (gBattleMons[gEffectBank].hp == 0
 	&& gBattleCommunication[MOVE_EFFECT_BYTE] != MOVE_EFFECT_STEAL_ITEM)
-		RESET_RETURN
+	{
+		#ifdef PICK_UP_KNOCKED_OFF_ITEMS
+		if (gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_KNOCK_OFF
+		&& !(gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		&& SIDE(gEffectBank) == B_SIDE_OPPONENT
+		#ifdef FLAG_KEEP_CONSUMABLE_ITEMS
+		&& !FlagGet(FLAG_KEEP_CONSUMABLE_ITEMS) //Can't keep these items
+		#endif
+		)
+		{
+			//Allow knocking off wild item even if KOd
+		}
+		else
+		#endif
+			RESET_RETURN
+	}
 
 	if (MoveBlockedBySubstitute(gCurrentMove, gBattleScripting.bank, gEffectBank)
 	&& !affectsUser
 	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
 		RESET_RETURN
 
-	if (gNewBS->dynamaxData.raidShieldsUp
+	if (HasRaidShields(gEffectBank)
 	&& !affectsUser
 	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
 		RESET_RETURN
@@ -926,12 +945,12 @@ bool8 SetMoveEffect2(void)
 			{
 				break;
 			}
-			else if (ITEM(gEffectBank) == 0
-			||  ITEM(gBankAttacker) != 0
-			||  !CanTransferItem(SPECIES(gEffectBank), ITEM(gEffectBank))
-			||  !CanTransferItem(SPECIES(gBankAttacker), ITEM(gEffectBank))
-			||  (gNewBS->corrodedItems[SIDE(gBankAttacker)] & gBitTable[gBattlerPartyIndexes[gBankAttacker]])
-			||	!BATTLER_ALIVE(gBankAttacker))
+			else if (!BATTLER_ALIVE(gBankAttacker)
+			|| ITEM(gEffectBank) == ITEM_NONE
+			|| ITEM(gBankAttacker) != ITEM_NONE
+			|| !CanTransferItem(SPECIES(gEffectBank), ITEM(gEffectBank))
+			|| !CanTransferItem(SPECIES(gBankAttacker), ITEM(gEffectBank))
+			|| (gNewBS->corrodedItems[SIDE(gBankAttacker)] & gBitTable[gBattlerPartyIndexes[gBankAttacker]]))
 			{
 				break;
 			}
@@ -1003,6 +1022,17 @@ bool8 SetMoveEffect2(void)
 				gBattlescriptCurrInstr = BattleScript_KnockedOff;
 
 				gBattleStruct->choicedMove[gEffectBank] = 0;
+
+				#ifdef PICK_UP_KNOCKED_OFF_ITEMS
+				if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+				&& SIDE(gEffectBank) == B_SIDE_OPPONENT //Wild Pokemon's item
+				#ifdef FLAG_KEEP_CONSUMABLE_ITEMS
+				&& !FlagGet(FLAG_KEEP_CONSUMABLE_ITEMS) //Can't keep these items
+				#endif
+				)
+					gNewBS->knockedOffWildItem = gLastUsedItem;
+				#endif
+
 				effect = TRUE;
 			}
 			break;

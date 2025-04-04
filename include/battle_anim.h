@@ -451,6 +451,7 @@ void __attribute__((long_call)) CompleteOnSpecialAnimDone(void);
 bool8 __attribute__((long_call)) CreateShockWaveLightning(struct Task *task, u8 taskId);
 u8 __attribute__((long_call)) CreateMonPicBattleAnim(u16 species, bool8 isBackpic, u8 a3, s16 x, s16 y, u8 subpriority, u32 personality, u32 trainerId, u32 battlerId, u32 a10);
 void __attribute__((long_call)) TranslateSpriteLinearFixedPoint(struct Sprite *sprite);
+void __attribute__((long_call)) SpriteCB_SetInvisible(struct Sprite *sprite);
 void __attribute__((long_call)) SetAnimBgAttribute(u8 bgId, u8 attributeId, u8 value);
 void __attribute__((long_call)) GetBattleAnimBg1Data(struct BattleAnimBgData *animBgData);
 void __attribute__((long_call)) AnimLoadCompressedBgTilemap(u32 bgId, const u32 *src);

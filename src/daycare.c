@@ -1029,3 +1029,34 @@ u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves
 
 	return j;
 }
+
+u32 GetExperienceAfterDaycareSteps(struct BoxPokemon* mon, u32 steps)
+{
+	u32 originalExp = GetBoxMonData(mon, MON_DATA_EXP, NULL);
+	u32 experience = originalExp + steps;
+
+	#ifdef FLAG_HARD_LEVEL_CAP
+	struct BoxPokemon tempMon = *mon;
+	SetBoxMonData(&tempMon, MON_DATA_EXP, &experience);
+	u8 level = GetLevelFromBoxMonExp(&tempMon);
+	extern u8 GetCurrentLevelCap(void); //Must be implemented yourself
+	if (FlagGet(FLAG_HARD_LEVEL_CAP) && level >= GetCurrentLevelCap())
+	{
+		SetBoxMonData(&tempMon, MON_DATA_EXP, &originalExp); //Prepare to get the original level
+		if (GetLevelFromBoxMonExp(&tempMon) >= GetCurrentLevelCap())
+			experience = originalExp; //Original level is already past level cap so don't add anymore
+		else
+			experience = GetSpeciesExpToLevel(GetBoxMonData(mon, MON_DATA_SPECIES, NULL), GetCurrentLevelCap()); //Exp can't go past level cap
+	}
+	#endif
+
+	return experience;
+}
+
+u8 GetLevelAfterDaycareSteps(struct BoxPokemon* mon, u32 steps)
+{
+	struct BoxPokemon tempMon = *mon;
+	u32 experience = GetExperienceAfterDaycareSteps(mon, steps);
+	SetBoxMonData(&tempMon, MON_DATA_EXP, &experience);
+	return GetLevelFromBoxMonExp(&tempMon);
+}

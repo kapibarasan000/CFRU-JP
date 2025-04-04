@@ -454,12 +454,15 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 				index = 4;
 			}
 
-			gBattleTextBuff2[index] = B_BUFF_STRING;
-			index++;
-			gBattleTextBuff2[index] = STRINGID_STATFELL;
-			index++;
-			gBattleTextBuff2[index] = STRINGID_STATFELL >> 8;
-			index++;
+			if (!gNewBS->zMoveData.runningZEffect)
+			{
+				gBattleTextBuff2[index] = B_BUFF_STRING;
+				index++;
+				gBattleTextBuff2[index] = STRINGID_STATFELL;
+				index++;
+				gBattleTextBuff2[index] = STRINGID_STATFELL >> 8;
+				index++;
+			}
 
 			gBattleTextBuff2[index] = B_BUFF_EOS;
 
@@ -502,12 +505,15 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			index = 4;
 		}
 
-		gBattleTextBuff2[index] = B_BUFF_STRING;
-		index++;
-		gBattleTextBuff2[index] = STRINGID_STATROSE;
-		index++;
-		gBattleTextBuff2[index] = STRINGID_STATROSE >> 8;
-		index++;
+		if (!gNewBS->zMoveData.runningZEffect)
+		{
+			gBattleTextBuff2[index] = B_BUFF_STRING;
+			index++;
+			gBattleTextBuff2[index] = STRINGID_STATROSE;
+			index++;
+			gBattleTextBuff2[index] = STRINGID_STATROSE >> 8;
+			index++;
+		}
 
 		gBattleTextBuff2[index] = B_BUFF_EOS;
 
@@ -633,9 +639,9 @@ void PrepareStringForAIUsingXItem(void)
 	gBattleTextBuff2[index++] = STRINGID_STATROSE >> 8;
 	gBattleTextBuff2[index] = B_BUFF_EOS;
 
-	while (!(gBattleStruct->AI_itemFlags[gBankAttacker & BIT_FLANK] & 1))
+	while (!(gBattleStruct->AI_itemFlags[gBankAttacker >> 1] & 1))
 	{
-		gBattleStruct->AI_itemFlags[gBankAttacker & BIT_FLANK] >>= 1;
+		gBattleStruct->AI_itemFlags[gBankAttacker >> 1] >>= 1;
 		++gBattleTextBuff1[2];
 	}
 

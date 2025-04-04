@@ -128,6 +128,7 @@ struct ChooseMoveStruct
 	bool8 dynamaxDone : 1;
 	bool8 dynamaxed : 1;
     bool8 terastalDone : 1;
+    bool8 atkIsGrounded : 1;
 	bool8 bank;
 	u8 zPartyIndex;
 	u16 possibleZMoves[MAX_MON_MOVES];
@@ -295,6 +296,7 @@ void __attribute__((long_call)) c3_0802F574(u8 taskId);
 void __attribute__((long_call)) ActionSelectionCreateCursorAt(u8 cursorPos, u8 unused);
 void __attribute__((long_call)) ActionSelectionDestroyCursorAt(u8 cursorPos);
 void __attribute__((long_call)) InitMoveSelectionsVarsAndStrings(void);
+void __attribute__((long_call)) PlayerHandlePrintSelectionString(void);
 
 // recorded player controller
 void __attribute__((long_call)) SetControllerToRecordedPlayer(void);

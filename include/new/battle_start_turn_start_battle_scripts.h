@@ -23,10 +23,13 @@ extern const u8 BattleScript_BeakBlastSetUp[];
 extern const u8 BattleScript_ShellTrapSetUp[];
 extern const u8 BattleScript_FocusPunchSetUp[];
 extern const u8 BattleScript_QuickClaw[];
+extern const u8 BattleScript_QuickDraw[];
 extern const u8 BattleScript_NoTargetMoveFailed[];
 extern const u8 BattleScript_CamomonsTypeRevealEnd3[];
 extern const u8 BattleScript_CamomonsTypeRevealRet[];
 extern const u8 BattleScript_RaidBattleStart[];
+extern const u8 BattleScript_RaidBattleStart_NoDynamax[];
+extern const u8 BattleScript_RaidShieldsBattleStart[];
 extern const u8 BattleScript_RaidBattleStorm[];
 extern const u8 BattleScript_DynamaxEnergySwirl[];
 

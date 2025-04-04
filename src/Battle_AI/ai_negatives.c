@@ -722,14 +722,14 @@ MOVESCR_CHECK_0:
 		case EFFECT_TELEPORT:
 			if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 			{
-				if (!BankHasMonToSwitchTo(bankAtk))
+				if (!HasMonToSwitchTo(bankAtk))
 					DECREASE_VIABILITY(10);
 			}
 			else //Wild Battle
 			{
 				if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
 				{
-					if (!BankHasMonToSwitchTo(bankAtk))
+					if (!HasMonToSwitchTo(bankAtk))
 						DECREASE_VIABILITY(10);
 				}
 				else //Wild Enemy
@@ -1046,7 +1046,7 @@ MOVESCR_CHECK_0:
 					goto AI_STANDARD_DAMAGE;
 
 				default:
-					if (!BankHasMonToSwitchTo(bankDef)
+					if (!HasMonToSwitchTo(bankDef)
 					||  data->defAbility == ABILITY_SUCTIONCUPS
 					||  data->defStatus3 & STATUS3_ROOTED)
 						DECREASE_VIABILITY(10);
@@ -1676,7 +1676,7 @@ MOVESCR_CHECK_0:
 			{
 				goto AI_STANDARD_DAMAGE;
 			}
-			else if (!BankHasMonToSwitchTo(bankAtk))
+			else if (!HasMonToSwitchTo(bankAtk))
 			{
 				DECREASE_VIABILITY(10);
 				break;
@@ -1798,7 +1798,7 @@ MOVESCR_CHECK_0:
 				if ((data->atkItemEffect == ITEM_EFFECT_CHOICE_BAND || data->atkAbility == ABILITY_GORILLATACTICS)
 				&& (ViableMonCountFromBank(bankDef) >= 2 || !MoveKnocksOutXHits(MOVE_FAKEOUT, bankAtk, bankDef, 1)))
 				{
-					if (!BankHasMonToSwitchTo(bankAtk))
+					if (!HasMonToSwitchTo(bankAtk))
 						DECREASE_VIABILITY(10); //Don't lock the attacker into Fake Out if they can't switch out afterwards.
 				}
 			}
@@ -1861,7 +1861,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_MEMENTO:
-			if (!BankHasMonToSwitchTo(bankAtk)
+			if (!HasMonToSwitchTo(bankAtk)
 			|| PARTNER_MOVE_EFFECT_IS_SAME)
 			{
 				DECREASE_VIABILITY(10);

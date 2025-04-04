@@ -187,7 +187,7 @@ bxr3:
 DoubleWildDexHook1:
 	push {r4-r5,lr}
 	sub sp, #0x14
-	bl LoadTargetPartyData
+	bl LoadTargetPokedexSpecies
 	mov r1, #0xB
 	ldr r2, =0x802D1F0 | 1
 	bx r2
@@ -511,6 +511,17 @@ OvalCharmHook:
 	ldr r2, =Random
 	bl bxr2
 	ldr r1, =0x80458B2 | 1
+	bx r1
+
+.pool
+@0x8044C54 with r0
+DaycareLevelCapHook:
+	mov r1, r5
+	add r1, #0x88
+	ldr r1, [r1] @Steps
+	mov r0, sp @Mon
+	bl GetExperienceAfterDaycareSteps
+	ldr r1, =0x8044C5C | 1
 	bx r1
 
 .pool

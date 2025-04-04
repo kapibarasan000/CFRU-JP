@@ -12,7 +12,7 @@
 #define MON_DATA_OT_NAME            7
 #define MON_DATA_MARKINGS           8
 #define MON_DATA_CHECKSUM           9
-#define MON_DATA_10                10
+#define MON_DATA_ENCRYPT_SEPARATOR 10
 #define MON_DATA_SPECIES           11
 #define MON_DATA_HELD_ITEM         12
 #define MON_DATA_MOVE1             13
@@ -317,7 +317,7 @@ typedef struct Pokemon
     u16 species;
     u16 item;
     u32 experience;
-    u8 pp_bonuses;
+    u8 ppBonuses;
     u8 friendship;
 	u8 pokeball; //This is new
     u8 unknown;

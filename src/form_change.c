@@ -110,6 +110,9 @@ void SwitchOutFormsRevert(u8 bank)
 	struct Pokemon* mon = GetBankPartyData(bank);
 	u16 backupSpecies = mon->backupSpecies;
 
+	if (IS_TRANSFORMED(bank))
+		return;
+
 	switch (gBattleMons[bank].species) {
 		#if (defined SPECIES_CHERRIM && defined SPECIES_CHERRIM_SUN)
 		case SPECIES_CHERRIM_SUN:
@@ -193,7 +196,7 @@ void SwitchOutFormsRevert(u8 bank)
 	}
 }
 
-void FormsRevert(pokemon_t* party)
+void FormsRevert(struct Pokemon* party)
 {
 	int i;
 
@@ -201,7 +204,7 @@ void FormsRevert(pokemon_t* party)
 		TryFormRevert(&party[i]);
 }
 
-bool8 TryFormRevert(pokemon_t* mon)
+bool8 TryFormRevert(struct Pokemon* mon)
 {
 	int i;
 	u16 species = mon->species;
@@ -256,7 +259,7 @@ bool8 TryFormRevert(pokemon_t* mon)
 	#if (defined SPECIES_SHAYMIN && defined SPECIES_SHAYMIN_SKY)
 	else if (mon->species == SPECIES_SHAYMIN_SKY)
 	{
-		if (IsNightTime())
+		if (IsNightTime() && !(gBattleTypeFlags & BATTLE_TYPE_FRONTIER))
 		{
 			mon->species = SPECIES_SHAYMIN; //Shaymin reverts to normal form at night
 			CalculateMonStats(mon);
@@ -348,7 +351,7 @@ void UpdateBurmy(void)
 {
 	#ifdef SPECIES_BURMY
 	int i;
-	u16 form = gTerrainTable[gBattleTerrain].burmyForm;
+	u16 form = gTerrainTable[GetBattleTerrainOverride() + 4].burmyForm;
 
 	if (form != SPECIES_NONE)
 	{
@@ -591,9 +594,39 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 			break;
 
 		case SPECIES_GIRATINA_ORIGIN:
-			if (itemEffect != ITEM_EFFECT_GRISEOUS_ORB)
+			if (itemEffect != ITEM_EFFECT_GRISEOUS_ORB
+			#ifdef MAPSEC_DISTORTION_WORLD
+			&& GetCurrentRegionMapSectionId() != MAPSEC_DISTORTION_WORLD
+			#endif
+			)
 				targetSpecies = SPECIES_GIRATINA;
 			break;
+		#endif
+
+		#ifdef PLA_HELD_ORIGIN_ORBS
+		#if (defined SPECIES_DIALGA && defined SPECIES_DIALGA_ORIGIN)
+		case SPECIES_DIALGA:
+			if (itemEffect == ITEM_EFFECT_ADAMANT_ORB)
+				targetSpecies = SPECIES_DIALGA_ORIGIN;
+			break;
+
+		case SPECIES_DIALGA_ORIGIN:
+			if (itemEffect != ITEM_EFFECT_ADAMANT_ORB)
+				targetSpecies = SPECIES_DIALGA;
+			break;
+		#endif
+
+		#if (defined SPECIES_PALKIA && defined SPECIES_PALKIA_ORIGIN)
+		case SPECIES_PALKIA:
+			if (itemEffect == ITEM_EFFECT_LUSTROUS_ORB)
+				targetSpecies = SPECIES_PALKIA_ORIGIN;
+			break;
+
+		case SPECIES_PALKIA_ORIGIN:
+			if (itemEffect != ITEM_EFFECT_LUSTROUS_ORB)
+				targetSpecies = SPECIES_PALKIA;
+			break;
+		#endif
 		#endif
 
 		#ifdef SPECIES_GENESECT

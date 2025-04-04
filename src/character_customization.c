@@ -12,6 +12,7 @@
 
 #include "../include/new/character_customization.h"
 #include "../include/new/follow_me.h"
+#include "../include/new/frontier.h"
 #include "../include/new/multi.h"
 #include "../include/new/util.h"
 /*
@@ -377,7 +378,7 @@ void PlayerHandleDrawTrainerPic(void)
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = 240;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = -3; //-2; //Speed scrolling in
-	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033660; //sub_805D7AC in Emerald
+	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn; //sub_805D7AC in Emerald
 
 	gBattlerControllerFuncs[gActiveBattler] = sub_802EEB0;
 }
@@ -393,7 +394,7 @@ void PlayerHandleTrainerSlide(void)
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = -96;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 2;
-	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033660;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn;
 
 	gBattlerControllerFuncs[gActiveBattler] = sub_802EEE8;
 }
@@ -414,7 +415,7 @@ u16 GetBackspriteId(void)
 	{
 		trainerPicId = LoadPartnerBackspriteIndex();
 	}
-	else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)
+	else if (IsAIControlledBattle())
 	{
 		trainerPicId = LoadPartnerBackspriteIndex(); //The trainer's backsprite for the Battle Sands is stored in the multi partner var
 	}

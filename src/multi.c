@@ -6,6 +6,7 @@
 #include "../include/pokeball.h"
 #include "../include/sound.h"
 #include "../include/random.h"
+#include "../include/battle_string_ids.h"
 
 #include "../include/new/ai_util.h"
 #include "../include/new/ai_master.h"
@@ -491,28 +492,44 @@ u32 MultiMoneyCalc(void)
 #define gTrainerMoneyTable ((struct TrainerMoney*) *((u32*) 0x80251B8))
 static u32 CalcMultiMoneyForTrainer(u16 trainerId)
 {
-	int i;
-	struct Trainer trainer = gTrainers[trainerId];
-	u8 rate = 0;
+	u8 i, firstMonId, lastMonId, level, rate;
+	struct Trainer* trainer = &gTrainers[trainerId];
 
-	/* Find level of the last Pokemon in trainer's party */
-	u8 lastMon = trainer.partySize - 1;
-	if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS) && lastMon > 3)
-		lastMon = 3;
-
-	u8 level = 0;
-	#ifdef OPEN_WORLD_TRAINERS
-		level = gOpenWorldLevelRanges[GetOpenWorldBadgeCount()][1];
-	#else
-		if (trainer.partyFlags & PARTY_FLAG_CUSTOM_MOVES)
-			level = trainer.party.ItemCustomMoves[lastMon].lvl;
-		else
-			level = trainer.party.NoItemDefaultMoves[lastMon].lvl;
-	#endif
-
-	for (i = 0; i < NUM_TRAINER_CLASSES; ++i)
+	//Get the party range to search through for the given trainer
+	if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 	{
-		if (gTrainerMoneyTable[i].trainerClass == trainer.trainerClass)
+		if (gTrainerBattleOpponent_A == trainerId)
+		{
+			firstMonId = 0;
+			lastMonId = 3;
+		}
+		else
+		{
+			firstMonId = 3;
+			lastMonId = 6;
+		}
+	}
+	else
+	{
+		firstMonId = 0;
+		lastMonId = 6;
+	}
+
+	//Scan through the party backwards until the last mon
+	for (i = lastMonId - 1, level = 0; i >= firstMonId; --i)
+	{
+		u16 species = GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2, NULL);
+		if (species != SPECIES_NONE && species != SPECIES_EGG)
+		{
+			level = GetMonData(&gEnemyParty[i], MON_DATA_LEVEL, NULL); //The level of the last mon
+			break;
+		}
+	}
+
+	//Get the money rate
+	for (i = 0, rate = 0; i < NUM_TRAINER_CLASSES; ++i)
+	{
+		if (gTrainerMoneyTable[i].trainerClass == trainer->trainerClass)
 		{
 			rate = gTrainerMoneyTable[i].money;
 			break;
@@ -525,9 +542,10 @@ static u32 CalcMultiMoneyForTrainer(u16 trainerId)
 		}
 	}
 
+	//Final calc
 	u32 money = (rate * 4) * level * gBattleStruct->moneyMultiplier;
 
-	if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS)))
+	if (IS_DOUBLE_BATTLE && !(gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
 		money *= 2;
 
 	return money;
@@ -611,7 +629,10 @@ void ChooseProperPartnerController(void)
 	gBattlersCount = 4;
 
 	if (IsRaidBattle())
+	{
 		gBattlersCount = 3;
+		gBattlerPositions[3] = 0xFF;
+	}
 
 	gBattlerControllerFuncs[0] = SetControllerToPlayer;
 	gBattlerControllerFuncs[1] = SetControllerToOpponent;
@@ -712,10 +733,8 @@ static void PlayerPartnerHandleChooseMove(void)
 		{
 			if (ShouldAITerastal(gActiveBattler, gBankTarget) && Random() & 1)
 				gNewBS->terastalData.chosen[gActiveBattler] = TRUE;
-			
-			if (!IsRaidBattle() || gBattleResults.battleTurnCounter > 3 //Give the Player a chance to Dynamax first in a Raid battle
-				|| PlayerHasNoMonsLeftThatCanDynamax()) //Doesn't matter if they have no mons left
-					gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
+			else
+				gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 		}
 		else if (ShouldAITerastal(gActiveBattler, gBankTarget))
 		{
@@ -726,9 +745,7 @@ static void PlayerPartnerHandleChooseMove(void)
 	{
 		if (ShouldAIDynamax(gActiveBattler, gBankTarget))
 		{
-			if (!IsRaidBattle() || gBattleResults.battleTurnCounter > 3 //Give the Player a chance to Dynamax first in a Raid battle
-			|| PlayerHasNoMonsLeftThatCanDynamax()) //Doesn't matter if they have no mons left
-				gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
+			gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 		}
 	}
 	else if (moveInfo->canterastal)
@@ -741,7 +758,9 @@ static void PlayerPartnerHandleChooseMove(void)
 	gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMoveId;
 	gBattleStruct->moveTarget[gActiveBattler] = gBankTarget;
 	gChosenMovesByBanks[gActiveBattler] = chosenMove;
-	TryRemoveDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove);
+
+	if (IsMockBattle())
+		TryRemovePartnerDoublesKillingScoreComplete(gActiveBattler, gBankTarget, chosenMove, moveTarget, FALSE); //Moves are chosen in order of bank
 
 	EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], FALSE, gNewBS->terastalData.chosen[gActiveBattler]);
 	PlayerPartnerBufferExecComplete();
@@ -749,11 +768,23 @@ static void PlayerPartnerHandleChooseMove(void)
 
 static void PlayerPartnerHandlePrintSelectionString(void)
 {
-	PlayerPartnerBufferExecComplete();
+	u16* stringId = (u16 *)(&gBattleBufferA[gActiveBattler][2]);
+
+	if (IsMockBattle() && *stringId == STRINGID_ITEMSCANTBEUSEDNOW) //Important to display this string to the player
+		PlayerHandlePrintSelectionString();
+	else
+		PlayerPartnerBufferExecComplete();
 }
 
+void __attribute__((long_call)) PlayerHandleChoosePokemon(void);
 static void PlayerPartnerHandleChooseAction(void)
 {
+	if (IsMockBattle())
+	{
+		PlayerHandleChooseAction(); //Allow the player to choose to Fight, Switch, etc., but the actual choice will be made by the AI
+		return;
+	}
+
 	u8 partner = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
 	u16 itemId = gBattleBufferA[gActiveBattler][2] | (gBattleBufferA[gActiveBattler][3] << 8);
 
@@ -794,33 +825,41 @@ static void PlayerPartnerHandleChoosePokemon(void)
 {
 	u8 chosenMonId;
 
+	if (IsMockBattle())
+	{
+		PlayerHandleChoosePokemon(); //Allow the player to choose the Pokemon to switch to
+		return;
+	}
+
 	if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
 	{
 		u8 battlerIn1, battlerIn2, firstId, lastId;
 		struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 
+		if (IS_DOUBLE_BATTLE)
+		{
+			battlerIn1 = gActiveBattler; //The dead mon
+			if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
+				battlerIn2 = gActiveBattler;
+			else
+				battlerIn2 = PARTNER(battlerIn1);
+		}
+		else
+		{
+			battlerIn1 = gActiveBattler;
+			battlerIn2 = gActiveBattler;
+		}
+
 		if (gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE
-		||  GetMonData(&party[gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0)
+		||  GetMonData(&party[gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0
+		|| gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == gBattlerPartyIndexes[battlerIn1]
+		|| gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == gBattlerPartyIndexes[battlerIn2])
 			CalcMostSuitableMonToSwitchInto();
 
 		chosenMonId = GetMostSuitableMonToSwitchInto();
 
 		if (chosenMonId == PARTY_SIZE)
 		{
-			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-			{
-				battlerIn1 = gActiveBattler;
-				if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
-					battlerIn2 = gActiveBattler;
-				else
-					battlerIn2 = PARTNER(battlerIn1);
-			}
-			else
-			{
-				battlerIn1 = gActiveBattler;
-				battlerIn2 = gActiveBattler;
-			}
-
 			for (chosenMonId = firstId; chosenMonId < lastId; ++chosenMonId)
 			{
 				if (party[chosenMonId].species != SPECIES_NONE

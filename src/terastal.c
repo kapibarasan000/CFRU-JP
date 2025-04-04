@@ -89,6 +89,16 @@ bool8 IsTerastal(u8 bank)
     return FALSE;
 }
 
+bool8 IsMonTerastal(struct Pokemon* mon)
+{
+	u8 bank = GetBankFromPartyData(mon);
+
+	if (bank >= PARTY_SIZE)
+		return FALSE;
+
+	return IsTerastal(bank);
+}
+
 u8 GetTeraType(u8 bank)
 {
     struct Pokemon* mon = GetBankPartyData(bank);

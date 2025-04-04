@@ -29,16 +29,20 @@ bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType);
 bool8 ShouldDisablePartyMenuItemsBattleTower(void);
 const u8* GetFrontierTierName(u8 tier, u8 format);
 bool8 InBattleSands(void);
+bool8 IsAIControlledBattle(void);
 bool8 IsCamomonsTier(u8 tier);
 bool8 IsLittleCupTier(u8 tier);
 bool8 IsMiddleCupTier(u8 tier);
 bool8 IsAverageMonsBattle(void);
 bool8 Is350CupBattle(void);
 bool8 IsScaleMonsBattle(void);
+bool8 IsOnlyScalemonsGame(void);
 bool8 IsCamomonsBattle(void);
 bool8 IsBenjaminButterfreeBattle(void);
 bool8 AreMegasZMovesBannedInTier(u8 tier);
 bool8 IsMegaZMoveBannedBattle(void);
+bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const struct Pokemon* const mon, const u8 tier, const u8 checkFromLocationType);
+bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier);
 u16 GetCurrentBattleTowerStreak(void);
 u16 GetBattleMineStreak(u8 type, u8 tier);
 u16 GetMaxBattleTowerStreakForTier(u8 tier);
@@ -172,6 +176,7 @@ enum
 	DOUBLES_RAIN_TEAM,
 	DOUBLES_HAIL_TEAM,
 	DOUBLES_ELECTRIC_TERRAIN_TEAM,
+	DOUBLES_PSYCHIC_TERRAIN_TEAM,
 	DOUBLES_TRICK_ROOM_TEAM,
 	DOUBLES_TAILWIND_TEAM,
 	DOUBLES_HYPER_OFFENSE_TEAM,

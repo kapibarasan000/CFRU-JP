@@ -81,6 +81,18 @@ u8 GetBankForBattleScript(u8 caseId)
 	return ret;
 }
 
+u8 GetFirstAliveActiveBattler(void)
+{
+	u32 i;
+
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		if (BATTLER_ALIVE(i))
+			return i;
+	}
+
+	return 1; //If no choice, use opponent because if SIDE is called on it, the position returned will be 0xFF, and that defaults to opponent side
+}
 
 ability_t GetBankAbility(u8 bank)
 {
@@ -98,15 +110,18 @@ ability_t GetRecordedAbility(u8 bank)
 	if (BATTLE_HISTORY->abilities[bank] != ABILITY_NONE)
 		return BATTLE_HISTORY->abilities[bank];
 
-	u16 species = species;
-	u8 ability1 = TryRandomizeAbility(gBaseStats[species].ability1, species);
-	u8 ability2 = TryRandomizeAbility(gBaseStats[species].ability2, species);
-	u8 hiddenAbility = TryRandomizeAbility(gBaseStats[species].hiddenAbility, species);
+	u16 species = SPECIES(bank);
+	u8 ability1 = GetAbility1(species);
+	u8 ability2 = GetAbility2(species);
+	u8 hiddenAbility = GetHiddenAbility(species);
 
 	if (ability1 == ability2 && hiddenAbility == ABILITY_NONE)
 		return ability1;
 
 	if (ability1 == ability2 && ability1 == hiddenAbility)
+		return ability1;
+
+	if (ability2 == ABILITY_NONE && hiddenAbility == ABILITY_NONE)
 		return ability1;
 
 	return ABILITY_NONE; //We don't know which ability the target has
@@ -174,10 +189,7 @@ item_effect_t GetMonItemEffect(struct Pokemon* mon)
 
 item_effect_t GetRecordedItemEffect(u8 bank)
 {
-	if (GetRecordedAbility(bank) != ABILITY_KLUTZ
-	&& !gNewBS->EmbargoTimers[bank]
-	&& !IsMagicRoomActive()
-	&& ITEM(bank) != ITEM_NONE) //Can't have an effect if you have no item
+	if (ITEM_EFFECT(bank) == gNewBS->ai.itemEffects[bank]) //Allows factoring in Klutz and Magic Room
 		return gNewBS->ai.itemEffects[bank];
 
 	return 0;
@@ -191,6 +203,31 @@ void RecordItemEffectBattle(u8 bank, u8 itemEffect)
 void ClearBattlerItemEffectHistory(u8 bank)
 {
 	gNewBS->ai.itemEffects[bank] = 0;
+}
+
+void RecordLastUsedMoveByAttacker(u16 move)
+{
+	u32 i;
+
+	for (i = 0; i < MAX_MON_MOVES; i++)
+	{
+		if (BATTLE_HISTORY->usedMoves[gBankAttacker][i] == move) //Move already recorded
+			break; //Don't record again
+
+		if (BATTLE_HISTORY->usedMoves[gBankAttacker][i] == MOVE_NONE) //Move hasn't been used yet
+		{
+			BATTLE_HISTORY->usedMoves[gBankAttacker][i] = move; //Record move
+			return;
+		}
+	}
+}
+
+void ClearBattlerMoveHistory(u8 bank)
+{
+	u32 i;
+
+	for (i = 0; i < MAX_MON_MOVES; i++)
+		BATTLE_HISTORY->usedMoves[bank][i] = MOVE_NONE;
 }
 
 struct Pokemon* GetBankPartyData(u8 bank)
@@ -265,18 +302,13 @@ bool8 CheckGrounding(u8 bank)
 	else if ((gStatuses3[bank] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS | STATUS3_IN_AIR))
 		   || ITEM_EFFECT(bank) == ITEM_EFFECT_AIR_BALLOON
 		   || ABILITY(bank) == ABILITY_LEVITATE
-		   || gBattleMons[bank].type3 == TYPE_FLYING
-		   || gBattleMons[bank].type1 == TYPE_FLYING
-		   || gBattleMons[bank].type2 == TYPE_FLYING)
+		   || IsOfType(bank, TYPE_FLYING))
 				return IN_AIR;
-	
-	else if (GetBattlerTeraType(bank) == TYPE_FLYING)
-		return IN_AIR;
 
 	return GROUNDED;
 }
 
-bool8 NonInvasiveCheckGrounding(u8 bank)
+bool8 NonInvasiveCheckGrounding(u8 bank, u8 defAbility, u8 defType1, u8 defType2, u8 defType3)
 {
 	if (BATTLER_SEMI_INVULNERABLE(bank)) //Apparently a thing
 		return IN_AIR;
@@ -287,14 +319,11 @@ bool8 NonInvasiveCheckGrounding(u8 bank)
 		return GROUNDED;
 
 	else if ((gStatuses3[bank] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS | STATUS3_IN_AIR))
-		   || GetRecordedItemEffect(bank) == ITEM_EFFECT_AIR_BALLOON
-		   || GetRecordedAbility(bank) == ABILITY_LEVITATE
-		   || gBattleMons[bank].type3 == TYPE_FLYING
-		   || gBattleMons[bank].type1 == TYPE_FLYING
-		   || gBattleMons[bank].type2 == TYPE_FLYING)
-				return IN_AIR;
-
-	else if (GetBattlerTeraType(bank) == TYPE_FLYING)
+	|| GetRecordedItemEffect(bank) == ITEM_EFFECT_AIR_BALLOON
+	|| defAbility == ABILITY_LEVITATE
+   	|| defType1 == TYPE_FLYING
+   	|| defType2 == TYPE_FLYING
+   	|| defType3 == TYPE_FLYING)
 		return IN_AIR;
 
 	return GROUNDED;
@@ -314,10 +343,32 @@ bool8 CheckMonGrounding(struct Pokemon* mon)
 		|| gBaseStats[species].type2 == TYPE_FLYING)
 			return IN_AIR;
 
-	else if (GetBattlerTeraType(GetBankFromPartyData(mon)) == TYPE_FLYING)
+	return GROUNDED;
+}
+
+bool8 CheckGroundingByDetails(u16 species, u16 item, u8 ability)
+{
+	if (ability != ABILITY_KLUTZ && ItemId_GetHoldEffect(item) == ITEM_EFFECT_IRON_BALL)
+		return GROUNDED;
+	else if (ability == ABILITY_LEVITATE
+	|| gBaseStats[species].type1 == TYPE_FLYING
+	|| gBaseStats[species].type2 == TYPE_FLYING)
 		return IN_AIR;
 
 	return GROUNDED;
+}
+
+bool8 IsDamageHalvedDueToFullHP(u8 bank, u8 defAbility, u16 move, u8 atkAbility)
+{
+	if (BATTLER_MAX_HP(bank))
+	{
+		if (defAbility == ABILITY_SHADOWSHIELD)
+			return TRUE;
+		else if (defAbility == ABILITY_MULTISCALE && NO_MOLD_BREAKERS(atkAbility, move))
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
 u8 ViableMonCountFromBank(u8 bank)
@@ -340,6 +391,33 @@ u8 ViableMonCountFromBankLoadPartyRange(u8 bank)
 	}
 
 	return count;
+}
+
+bool8 HasMonToSwitchTo(u8 bank)
+{
+	u8 i, firstMonId, lastMonId;
+	u8 battlerIn1, battlerIn2;
+	u8 foe1, foe2;
+	struct Pokemon* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
+
+	u8 backupActiveBattler = gActiveBattler;
+	gActiveBattler = bank; //Needed for LoadBattlersAndFoes
+	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
+	gActiveBattler = backupActiveBattler;
+
+	for (i = firstMonId; i < lastMonId; ++i)
+	{
+		u16 species = GetMonData(&party[i], MON_DATA_SPECIES2, 0);
+
+		if (species != SPECIES_NONE
+		&& species != SPECIES_EGG
+		&& GetMonData(&party[i], MON_DATA_HP, 0) > 0
+		&& i != gBattlerPartyIndexes[battlerIn1]
+		&& i != gBattlerPartyIndexes[battlerIn2])
+			break;
+	}
+
+	return i != lastMonId;
 }
 
 bool8 CheckContact(u16 move, u8 bankAtk, u8 bankDef)
@@ -464,7 +542,7 @@ bool8 ProtectsAgainstZMoves(u16 move, u8 bankAtk, u8 bankDef)
 		return TRUE;
 	}
 	else if (gSideStatuses[SIDE(bankDef)] & (SIDE_STATUS_WIDE_GUARD)
-		&& (GetBaseMoveTarget(move, bankAtk) == MOVE_TARGET_BOTH || GetBaseMoveTarget(move, bankAtk) == MOVE_TARGET_FOES_AND_ALLY))
+		&& (GetBaseMoveTarget(move, bankAtk) & (MOVE_TARGET_BOTH | MOVE_TARGET_FOES_AND_ALLY)))
 	{
 		return TRUE;
 	}
@@ -584,19 +662,19 @@ bool8 IsUnusableMove(u16 move, u8 bank, u8 check, u8 pp, u8 ability, u8 holdEffe
 	{
 		return TRUE;
 	}
-	else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
+	else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && IsMoveBannedByAssaultVest(move) && check & MOVE_LIMITATION_TAUNT)
 		return TRUE;
 	#ifdef FLAG_SKY_BATTLE
-	else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
+	else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves) && check & MOVE_LIMITATION_ENCORE)
 		return TRUE;
 	#endif
-	else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
+	else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves) && check & MOVE_LIMITATION_DISABLED)
 		return TRUE;
-	else if (CantUseSoundMoves(bank) && CheckSoundMove(move))
+	else if (CantUseSoundMoves(bank) && CheckSoundMove(move) && check & MOVE_LIMITATION_DISABLED)
 		return TRUE;
-	else if (IsHealBlocked(bank) && CheckHealingMove(move))
+	else if (IsHealBlocked(bank) && CheckHealingMove(move) && check & MOVE_LIMITATION_DISABLED)
 		return TRUE;
-	else if (IsRaidBattle() && bank != BANK_RAID_BOSS && CheckTableForMove(move, gRaidBattleBannedMoves))
+	else if (IsRaidBattle() && bank != BANK_RAID_BOSS && CheckTableForMove(move, gRaidBattleBannedMoves) && check & MOVE_LIMITATION_ENCORE)
 		return TRUE;
 	else if (move == MOVE_GIGATONHAMMER && gNewBS->LastUsedMove == MOVE_GIGATONHAMMER)
         return TRUE;
@@ -618,15 +696,15 @@ u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check
 			unusableMoves |= gBitTable[i];
 		else if (GetMonData(mon, MON_DATA_PP1 + i, NULL) == 0 && check & MOVE_LIMITATION_PP)
 			unusableMoves |= gBitTable[i];
-		else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
+		else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && IsMoveBannedByAssaultVest(move))
 			unusableMoves |= gBitTable[i];
 		#ifdef FLAG_SKY_BATTLE
-		else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
+		else if (check & MOVE_LIMITATION_ENCORE && FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
 			unusableMoves |= gBitTable[i];
 		#endif
-		else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
+		else if (check & MOVE_LIMITATION_DISABLED && IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
 			unusableMoves |= gBitTable[i];
-		else if (IsRaidBattle() && CheckTableForMove(move, gRaidBattleBannedMoves))
+		else if (check & MOVE_LIMITATION_ENCORE && IsRaidBattle() && CheckTableForMove(move, gRaidBattleBannedMoves))
 			unusableMoves |= gBitTable[i];
 	}
 
@@ -640,10 +718,15 @@ void CancelMultiTurnMoves(u8 battler)
     gBattleMons[battler].status2 &= ~(STATUS2_UPROAR);
     gBattleMons[battler].status2 &= ~(STATUS2_BIDE);
 
-    gStatuses3[battler] &= ~(STATUS3_SEMI_INVULNERABLE);
+    gStatuses3[battler] &= (~(STATUS3_SEMI_INVULNERABLE) | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET); //Sky Drop is removed seperately
 
     gDisableStructs[battler].rolloutTimer = 0;
     gDisableStructs[battler].furyCutterCounter = 0;
+}
+
+bool8 IsMoveBannedByAssaultVest(u16 move)
+{
+	return SPLIT(move) == SPLIT_STATUS && move != MOVE_MEFIRST;
 }
 
 bool8 IsMoveRedirectedByFollowMe(u16 move, u8 bankAtk, u8 defSide)
@@ -867,7 +950,7 @@ struct Pokemon* LoadPartyRange(u8 bank, u8* firstMonId, u8* lastMonId)
 	else if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
 	{
 		//Two Human Trainers vs Two AI Trainers
-		if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
+		if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 		{
 			if (SIDE(bank) == B_SIDE_PLAYER)
 			{
@@ -1027,6 +1110,20 @@ struct Pokemon* GetIllusionPartyData(u8 bank)
 	return &party[GetIllusionPartyNumber(bank)];
 }
 
+u16 GetWishHPRecovery(u8 bank, bool8 ignoreWishTimer)
+{
+	u16 recovery = 0;
+
+	if (gWishFutureKnock.wishCounter[bank] > 0 || ignoreWishTimer)
+	{
+		u8 firstId, lastId;
+		struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
+		recovery = MathMax(1, GetMonData(&party[gWishFutureKnock.wishMonId[bank]], MON_DATA_MAX_HP, NULL) / 2);
+	}
+
+	return recovery;
+}
+
 bool8 BankMovedBefore(u8 bank1, u8 bank2)
 {
 	for (u32 i = 0; i < gBattlersCount; ++i)
@@ -1091,6 +1188,22 @@ bool8 CanTransferItem(u16 species, u16 item)
 			break;
 		#endif
 
+		#ifdef PLA_HELD_ORIGIN_ORBS
+			#ifdef NATIONAL_DEX_DIALGA
+			case ITEM_EFFECT_ADAMANT_ORB:
+				if (dexNum == NATIONAL_DEX_DIALGA)
+					return FALSE;
+				break;
+			#endif
+
+			#ifdef NATIONAL_DEX_PALKIA
+			case ITEM_EFFECT_LUSTROUS_ORB:
+				if (dexNum == NATIONAL_DEX_PALKIA)
+					return FALSE;
+				break;
+			#endif
+		#endif
+
 		#ifdef NATIONAL_DEX_ARCEUS
 		case ITEM_EFFECT_PLATE:
 			if (dexNum == NATIONAL_DEX_ARCEUS)
@@ -1129,7 +1242,9 @@ bool8 CanTransferItem(u16 species, u16 item)
 		case ITEM_EFFECT_MEGA_STONE:
 			for (i = 0; i < EVOS_PER_MON; ++i)
 			{
-				if ((evolutions[i].method == MEGA_EVOLUTION && evolutions[i].param == item) //Can Mega Evolve
+				if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+					break; //Break now to save time
+				else if ((evolutions[i].method == MEGA_EVOLUTION && evolutions[i].param == item) //Can Mega Evolve
 				||  (evolutions[i].method == MEGA_EVOLUTION && evolutions[i].param == 0)) //Is Mega
 					return FALSE;
 			}
@@ -1138,7 +1253,9 @@ bool8 CanTransferItem(u16 species, u16 item)
 		case ITEM_EFFECT_PRIMAL_ORB:
 			for (i = 0; i < EVOS_PER_MON; ++i)
 			{
-				if ((evolutions[i].method == MEGA_EVOLUTION && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item) //Can Primal Evolve
+				if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+					break; //Break now to save time
+				else if ((evolutions[i].method == MEGA_EVOLUTION && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item) //Can Primal Evolve
 				||  (evolutions[i].method == MEGA_EVOLUTION && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == 0)) //Is Primal
 					return FALSE;
 			}
@@ -1163,7 +1280,7 @@ bool8 CanFling(u16 item, u16 species, u8 ability, u8 bankOnSide, u8 embargoTimer
 	|| itemEffect == ITEM_EFFECT_ABILITY_CAPSULE
 	|| itemEffect == ITEM_EFFECT_RUSTED_SWORD
 	|| itemEffect == ITEM_EFFECT_RUSTED_SHIELD
-	|| (IsBerry(item) && AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bankOnSide, ABILITY_UNNERVE, 0, 0))
+	|| (IsBerry(item) && UnnerveOnOpposingField(bankOnSide))
 	|| GetPocketByItemId(item) == POCKET_POKE_BALLS)
 		return FALSE;
 
@@ -1219,9 +1336,38 @@ bool8 CanKnockOffMonItem(struct Pokemon* mon, u8 side)
 	return TRUE;
 }
 
+bool8 IsBankHoldingFocusSash(u8 bank)
+{
+	return ITEM_EFFECT(bank) == ITEM_EFFECT_FOCUS_BAND && ItemId_GetMystery2(ITEM(bank));
+}
+
+bool8 IsMonHoldingFocusSash(struct Pokemon* mon)
+{
+	return GetMonItemEffect(mon) == ITEM_EFFECT_FOCUS_BAND && ItemId_GetMystery2(mon->item);
+}
+
+bool8 IsAffectedByFocusSash(u8 bank)
+{
+	return BATTLER_MAX_HP(bank) && IsBankHoldingFocusSash(bank);
+}
+
+bool8 IsMonAffectedByFocusSash(struct Pokemon* mon)
+{
+	return mon->hp == mon->maxHP && IsMonHoldingFocusSash(mon);
+}
+
+bool8 CanBeTrapped(u8 bank)
+{
+	return !IsOfType(bank, TYPE_GHOST) && ITEM_EFFECT(bank) != ITEM_EFFECT_SHED_SHELL;
+}
+
 bool8 IsAffectedByPowder(u8 bank)
 {
-	return IsAffectedByPowderByDetails(gBattleMons[bank].type1, gBattleMons[bank].type2, gBattleMons[bank].type3, ABILITY(bank), ITEM_EFFECT(bank));
+	u8 teraType = GetBattlerTeraType(bank);
+	if (!IS_BLANK_TYPE(teraType))
+		return IsAffectedByPowderByDetails(teraType, teraType, teraType, ABILITY(bank), ITEM_EFFECT(bank));
+	else
+		return IsAffectedByPowderByDetails(gBattleMons[bank].type1, gBattleMons[bank].type2, gBattleMons[bank].type3, ABILITY(bank), ITEM_EFFECT(bank));
 }
 
 bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u8 ability, u8 itemEffect)
@@ -1258,6 +1404,17 @@ bool8 IsAuraBoss(u8 bank)
 bool8 IsMockBattle(void)
 {
 	return (gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE) != 0;
+}
+
+bool8 IsPlayerInControl(u8 bank)
+{
+	if (SIDE(bank) == B_SIDE_OPPONENT || IsMockBattle()) //AI side or AI controls everyone
+		return FALSE;
+
+	if (IsTagBattle() && GetBattlerPosition(bank) == B_POSITION_PLAYER_RIGHT)
+		return FALSE;
+
+	return TRUE;
 }
 
 bool8 IsMoveAffectedByParentalBond(u16 move, u8 bankAtk)
@@ -1299,11 +1456,8 @@ u8 CalcMoveSplit(u8 bankAtk, u16 move, u8 bankDef)
 		u32 attack = gBattleMons[bankAtk].attack;
 		u32 spAttack = gBattleMons[bankAtk].spAttack;
 
-		attack = attack * gStatStageRatios[STAT_STAGE(bankAtk, STAT_STAGE_ATK)][0];
-		attack = udivsi(attack, gStatStageRatios[STAT_STAGE(bankAtk, STAT_STAGE_ATK)][1]);
-
-		spAttack = spAttack * gStatStageRatios[STAT_STAGE(bankAtk, STAT_STAGE_SPATK)][0];
-		spAttack = udivsi(spAttack, gStatStageRatios[STAT_STAGE(bankAtk, STAT_STAGE_SPATK)][1]);
+		APPLY_QUICK_STAT_MOD(attack, STAT_STAGE(bankAtk, STAT_STAGE_ATK));
+		APPLY_QUICK_STAT_MOD(spAttack, STAT_STAGE(bankAtk, STAT_STAGE_SPATK));
 
 		if (spAttack >= attack)
 			return SPLIT_SPECIAL;
@@ -1366,6 +1520,9 @@ u8 AttacksThisTurn(u8 bank, u16 move) // Note: returns 1 if it's a charging turn
 		return 2;
 
 	if (moveEffect == EFFECT_SOLARBEAM && (gBattleWeather & WEATHER_SUN_ANY) && WEATHER_HAS_EFFECT)
+		return 2;
+
+	if (move == MOVE_ELECTROSHOT && (gBattleWeather & WEATHER_RAIN_ANY) && WEATHER_HAS_EFFECT)
 		return 2;
 
 	if (moveEffect == EFFECT_SKULL_BASH
@@ -1482,6 +1639,12 @@ void RemoveScreensFromSide(const u8 side)
 	gSideTimers[side].reflectTimer = 0;
 	gSideTimers[side].lightscreenTimer = 0;
 	gNewBS->AuroraVeilTimers[side] = 0;
+}
+
+void UpdateQuickClawRandomNumber(u8 bank)
+{
+	gNewBS->quickClawRandomNumber[bank] = ((u32) Random32()) % 100;
+	gNewBS->quickDrawRandomNumber[bank] = ((u32) Random32()) % 100;
 }
 
 void GiveOmniboost(u8 bank)
@@ -1603,6 +1766,26 @@ bool8 WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(u8 atkType1, u
 	return TRUE; //No type in common so fail
 }
 
+bool8 WeatherHasEffect(void)
+{
+	u32 i;
+
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		u8 ability = ABILITY(i);
+
+		if ((ability == ABILITY_CLOUDNINE
+		#ifdef ABILITY_AIRLOCK
+		|| ability == ABILITY_AIRLOCK
+		#endif
+		)
+		&& BATTLER_ALIVE(i))
+			return FALSE;
+	}
+
+	return TRUE;
+}
+
 u8 GetImposterBank(u8 bank)
 {
 	u8 transformBank;
@@ -1685,12 +1868,6 @@ bool8 DoesSleepClausePrevent(u8 bank)
 	}
 
 	return FALSE;
-}
-
-bool8 IsTargetAbilityIgnoredNoMove(u8 defAbility, u8 atkAbility)
-{
-	return (atkAbility == ABILITY_MOLDBREAKER || atkAbility == ABILITY_TURBOBLAZE || atkAbility == ABILITY_TERAVOLT)
-	&& gMoldBreakerIgnoredAbilities[defAbility];
 }
 
 bool8 CanBeGeneralStatused(u8 bankDef, u8 defAbility, u8 atkAbility, bool8 checkFlowerVeil)
@@ -1993,7 +2170,7 @@ bool8 CanBeInfatuated(u8 bankDef, u8 bankAtk)
 
 	return BATTLER_ALIVE(bankDef)
 		&& !(gBattleMons[bankDef].status2 & STATUS2_INFATUATION)
-		&& ABILITY(bankDef) != ABILITY_OBLIVIOUS
+		&& (ABILITY(bankDef) != ABILITY_OBLIVIOUS || IsTargetAbilityIgnoredNoMove(ABILITY_OBLIVIOUS, ABILITY(bankAtk)))
 		&& GetGenderFromSpeciesAndPersonality(speciesAttacker, personalityAttacker) != GetGenderFromSpeciesAndPersonality(speciesTarget, personalityTarget)
 		&& GetGenderFromSpeciesAndPersonality(speciesAttacker, personalityAttacker) != MON_GENDERLESS
 		&& GetGenderFromSpeciesAndPersonality(speciesTarget, personalityTarget) != MON_GENDERLESS
@@ -2066,6 +2243,7 @@ bool8 BankSideHasSafeguard(u8 bank)
 bool8 BankSideHasMist(u8 bank)
 {
 	return gSideStatuses[SIDE(bank)] & SIDE_STATUS_MIST
+		|| gSideTimers[SIDE(bank)].mistTimer > 0 //Guard Spec
 		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_MIST);
 }
 
@@ -2182,12 +2360,12 @@ u16 TryFixDynamaxTransformSpecies(u8 bank, u16 species)
 	return species;
 }
 
-u8 GetCriticalRank(u8 bank)
+u8 GetCriticalRank(u8 bankAtk, u32 atkStatus2)
 {
 	u8 rank = 0;
-	if (gBattleMons[bank].status2 & STATUS2_FOCUS_ENERGY)
+	if (atkStatus2 & STATUS2_FOCUS_ENERGY)
 	{
-		if (gNewBS->DragonCheerRanks[bank] == 1)
+		if (gNewBS->DragonCheerRanks[bankAtk] == 1)
 			rank = 1;
 		else
 			rank = 2;

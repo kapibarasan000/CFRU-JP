@@ -5,9 +5,11 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/ability_battle_scripts.h"
+#include "../include/new/attackcanceler_battle_scripts.h"
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/battle_script_util.h"
+#include "../include/new/battle_start_turn_start.h"
 #include "../include/new/cmd49.h"
 #include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/damage_calc.h"
@@ -233,7 +235,7 @@ void atkFF06_setterrain(void)
 			case MOVE_STEELROLLER:
 			REMOVE_TERRAIN:
 				type = 0;
-				gNewBS->terrainForcefullyRemoved = TRUE;
+				//gNewBS->terrainForcefullyRemoved = TRUE;
 				gBattleScripting.animArg1 = B_ANIM_LOAD_DEFAULT_BG;
 				gBattleStringLoader = TerrainEndString;
 				break;
@@ -518,10 +520,7 @@ void atkFF0A_setability(void)
 {
 	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 ability = gBattlescriptCurrInstr[2];
-	ability_t* abilityLoc = GetAbilityLocation(bank);
-
-	*abilityLoc = ability;
-
+	*GetAbilityLocation(bank) = ability;
 	gBattlescriptCurrInstr += 3;
 }
 
@@ -830,6 +829,8 @@ const u16 gFlowerShieldStringIds[] =
 	STRINGID_PKMNPROTECTEDITSELF,
 	STRINGID_ITDOESNTAFFECT,
 	STRINGID_STATSWONTINCREASE2,
+	STRINGID_ITDOESNTAFFECT, //Protect by Ability - don't change this table index!
+	0x184, //Protected by Psychic Terrain
 };
 
 //flowershieldlooper PLUS_MINUS SUCCESS_ADDRESS FAIL_ADDRESS
@@ -837,6 +838,7 @@ void atkFF1F_flowershieldlooper(void)
 {
 	bool8 plusMinus = gBattlescriptCurrInstr[1];
 	u8 battlerCount = (plusMinus) ? gBattlersCount / 2 : gBattlersCount;
+	bool8 priority = PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0;
 
 	for (; gBattleCommunication[0] < battlerCount; ++gBattleCommunication[0])
 	{
@@ -872,6 +874,18 @@ void atkFF1F_flowershieldlooper(void)
 				gBattleCommunication[MULTISTRING_CHOOSER] = 0; //Avoided attack
 				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
 			}
+			else if (priority && gBankAttacker != bank && gTerrainType == PSYCHIC_TERRAIN && CheckGrounding(bank))
+			{
+				gBattleStringLoader = PsychicTerrainAttackCancelString;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 5; //Protected by Psychic Terrain
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
+			}
+			else if (priority && gBankAttacker != bank && IsPriorityBlockingAbility(ABILITY(bank)))
+			{
+				gBattleScripting.bank = bank;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 4; //Protected by Ability
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
+			}
 			else if ((!plusMinus && IsOfType(bank, TYPE_GRASS))
 			|| (plusMinus && (ABILITY(bank) == ABILITY_PLUS || ABILITY(bank) == ABILITY_MINUS)))
 			{
@@ -899,7 +913,7 @@ void atkFF20_jumpifprotectedbycraftyshield(void)
 	if (CheckCraftyShield(GetBankForBattleScript(gBattlescriptCurrInstr[1])))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	else
-		gBattlescriptCurrInstr += 6;
+		gBattlescriptCurrInstr += 5;
 }
 
 //tryspectralthiefsteal SUCCESS_ADDRESS
@@ -981,8 +995,9 @@ void atkFE_prefaintmoveendeffects(void)
 			if (arg1 != ARG_IN_FUTURE_ATTACK
 			&& TOOK_DAMAGE(gBankTarget)
 			&& MOVE_HAD_EFFECT
-			&& gBattleMons[gBankTarget].hp
-			&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget))
+			&& BATTLER_ALIVE(gBankTarget)
+			&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
+			&& !gProtectStructs[gBankAttacker].confusionSelfDmg)
 			{
 				switch (ABILITY(gBankAttacker)) {
 					case ABILITY_STENCH: //Check for Stench is taken care of in King's Rock check
@@ -1107,15 +1122,16 @@ void atkFE_prefaintmoveendeffects(void)
 
 		case FAINT_RAGE: // rage check
 			if (gBattleMons[gBankTarget].status2 & STATUS2_RAGE
-			&& gBattleMons[gBankTarget].hp
+			&& BATTLER_ALIVE(gBankTarget)
 			&& gBankAttacker != gBankTarget
 			&& SIDE(gBankAttacker) != SIDE(gBankTarget)
 			&& MOVE_HAD_EFFECT
 			&& TOOK_DAMAGE(gBankTarget)
 			&& SPLIT(gCurrentMove) != SPLIT_STATUS
-			&& STAT_CAN_RISE(gBankTarget, STAT_ATK))
+			&& STAT_CAN_RISE(gBankTarget, STAT_ATK)
+			&& (GetNumRaidShieldsUp() <= 1 //No raid shields are up or last shield
+			 || !BATTLER_ALIVE(gBankAttacker)))
 			{
-				gBattleMons[gBankTarget].statStages[STAT_ATK - 1]++;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_RageIsBuilding;
 				effect = TRUE;
@@ -1328,7 +1344,8 @@ void atkFF27_tryactivateprotean(void)
 	&& !(gMoveResultFlags & MOVE_RESULT_FAILED)
 	&& gCurrentMove != MOVE_STRUGGLE
 	&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
-	&& !(CheckTableForMove(gCurrentMove, gMovesThatCallOtherMoves)))
+	&& !(CheckTableForMove(gCurrentMove, gMovesThatCallOtherMoves))
+	&& !IsTerastal(gBankAttacker))
 	{
 		if (gBattleMons[gBankAttacker].type1 != moveType
 		||  gBattleMons[gBankAttacker].type2 != moveType
@@ -1418,7 +1435,8 @@ void atkFF29_trysetsleep(void)
 	}
 	else if (CheckTableForMove(gCurrentMove, gPowderMoves) && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
 	{
-		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+		TrySetMissStringForSafetyGoggles(bank);
+		gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
 		return;
 	}
@@ -1482,7 +1500,9 @@ void atkFF29_trysetsleep(void)
 	{
 		switch (ABILITY(bank)) {
 			case ABILITY_INSOMNIA:
-			//case ABILITY_VITALSPIRIT:
+			#ifdef ABILITY_VITALSPIRIT
+			case ABILITY_VITALSPIRIT:
+			#endif
 				gBattlescriptCurrInstr = BattleScript_TargetStayedAwakeUsingAbility;
 				return;
 			case ABILITY_LEAFGUARD:
@@ -1592,7 +1612,9 @@ void atkD7_setyawn(void)
 	{
 		switch (ABILITY(bank)) {
 			case ABILITY_INSOMNIA:
-			//case ABILITY_VITALSPIRIT:
+			#ifdef ABILITY_VITALSPIRIT
+			case ABILITY_VITALSPIRIT:
+			#endif
 				gBattlescriptCurrInstr = BattleScript_TargetStayedAwakeUsingAbility;
 				return;
 			case ABILITY_LEAFGUARD:
@@ -1651,10 +1673,16 @@ void atkFF2A_trysetparalysis(void)
 	{
 		return;
 	}
-	else if ((CheckTableForMove(gCurrentMove, gPowderMoves) || gCurrentMove == MOVE_THUNDERWAVE)
-	&& TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
+	else if (gCurrentMove == MOVE_THUNDERWAVE && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
 	{
 		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
+		return;
+	}
+	else if (CheckTableForMove(gCurrentMove, gPowderMoves) && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
+	{
+		TrySetMissStringForSafetyGoggles(bank);
+		gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
 		return;
 	}
@@ -1834,6 +1862,13 @@ void atkFF2C_trysetpoison(void)
 	}
 	else if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, bank, 0, 0, gCurrentMove))
 	{
+		return;
+	}
+	else if (CheckTableForMove(gCurrentMove, gPowderMoves) && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
+	{
+		TrySetMissStringForSafetyGoggles(bank);
+		gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
+		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
 		return;
 	}
 	else if (ABILITY(gBankAttacker) != ABILITY_CORROSION

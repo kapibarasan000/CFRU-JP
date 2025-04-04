@@ -209,6 +209,7 @@ DrawLevelUpWindowPg2Hook 811F15C 4
 
 ##Battle Animation Hooks
 TryHandleLaunchBattleTableAnimationHook 8033792 4
+SpriteCB_EnemyShadow 8034D98 1
 UpdateOamPriorityInAllHealthboxes 8047814 1
 ModifyMegaCryHook 8071732 1
 ScriptCmd_loadspritegfx 0807200C 0
@@ -444,6 +445,7 @@ DisplayTypeHook 081370B0 1
 
 ## Evolution Methods
 GetEvolutionTargetSpecies 080425B4 3
+CreateShedinja 080CF8A0 2
 RemoveEvoItem 080CFE78 0
 EvolutionMovesHook 080CFEF0 1
 
@@ -483,6 +485,7 @@ GetNumberOfRelearnableMoves 08043478 1
 #PokedexLoadAlternateWeightHook 08105A58 0
 #SizeMinigameLoadAlternateHeightHook 080A0774 2
 PokedexScreenStats 08106EFE 0
+GetVisualBaseStat 0801CF8C 2
 
 ##Daycare
 GiveEggFromDaycare 08045698 1
@@ -494,6 +497,9 @@ CreateHatchedMon 08046184 2
 OvalCharmHook 080458A8 1
 DaycareInheritHiddenAbility 80456DA 0
 GetDaycareCompatibilityScore 8045AE0 1
+GetLevelAfterDaycareSteps 8044D10 2
+DaycareLevelCapHook 8044C54 0
+GetMonDevolution 801CF9C 1
 
 ##Shiny Charm
 CreateBoxMonHook 803D23E 0

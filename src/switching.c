@@ -6,7 +6,9 @@
 #include "../include/constants/trainer_classes.h"
 
 #include "../include/new/ability_battle_scripts.h"
+#include "../include/new/ability_tables.h"
 #include "../include/new/ai_master.h"
+#include "../include/new/ai_util.h"
 #include "../include/new/battle_indicators.h"
 #include "../include/new/battle_script_util.h"
 #include "../include/new/battle_start_turn_start.h"
@@ -36,6 +38,7 @@ enum SwitchInStates
 {
 	SwitchIn_HandleAICooldown,
 	SwitchIn_CamomonsReveal,
+	SwitchIn_NeutralizingGasRemoveAbility,
 	SwitchIn_HealingWish,
 	SwitchIn_ZHealingWish,
 	SwitchIn_Spikes,
@@ -357,6 +360,7 @@ void atk4D_switchindataupdate(void)
 
 	ClearSwitchBytes(gActiveBattler);
 	ClearSwitchBits(gActiveBattler);
+	gNewBS->AttackerDidDamageAtLeastOnce = FALSE; //Helps with Throat Spray
 
 	//gNewBS->LastUsedMoves[gActiveBattler] = 0;
 	//gNewBS->LastUsedTypes[gActiveBattler] = TYPE_BLANK;
@@ -433,35 +437,17 @@ void TryReactivateCentifernoSandblast(u32* status2)
 
 void atk4F_jumpifcantswitch(void)
 {
-	int i;
-	u8 firstMonId, lastMonId;
-	u8 battlerIn1, battlerIn2;
-	u8 foe1, foe2;
-
 	gActiveBattler = GetBankForBattleScript(T2_READ_8(gBattlescriptCurrInstr + 1) & ~(ATK4F_DONT_CHECK_STATUSES));
-	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
-	struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstMonId, &lastMonId);
 
 	if (!(T2_READ_8(gBattlescriptCurrInstr + 1) & ATK4F_DONT_CHECK_STATUSES)
-	&& !IsOfType(gActiveBattler, TYPE_GHOST)
-	&& ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_SHED_SHELL
+	&& CanBeTrapped(gActiveBattler)
 	&& ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)) || (gStatuses3[gActiveBattler] & STATUS3_ROOTED) || IsFairyLockActive()))
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	}
 	else
 	{
-		for (i = firstMonId; i < lastMonId; ++i)
-		{
-			if (GetMonData(&party[i], MON_DATA_HP, 0) != 0
-			&& GetMonData(&party[i], MON_DATA_SPECIES, 0) != SPECIES_NONE
-			&& !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
-			&& i != gBattlerPartyIndexes[battlerIn1]
-			&& i != gBattlerPartyIndexes[battlerIn2])
-				break;
-		}
-
-		if (i == lastMonId)
+		if (!HasMonToSwitchTo(gActiveBattler))
 			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 		else
 			gBattlescriptCurrInstr += 6;
@@ -495,13 +481,13 @@ void atk51_switchhandleorder(void)
 
 			if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
 			{
-				gBattleStruct->field_60[gActiveBattler][0] &= 0xF;
-				gBattleStruct->field_60[gActiveBattler][0] |= (gBattleBufferB[gActiveBattler][2] & 0xF0);
-				gBattleStruct->field_60[gActiveBattler][1] = gBattleBufferB[gActiveBattler][3];
+				gBattleStruct->battlerPartyOrders[gActiveBattler][0] &= 0xF;
+				gBattleStruct->battlerPartyOrders[gActiveBattler][0] |= (gBattleBufferB[gActiveBattler][2] & 0xF0);
+				gBattleStruct->battlerPartyOrders[gActiveBattler][1] = gBattleBufferB[gActiveBattler][3];
 
-				gBattleStruct->field_60[gActiveBattler ^ BIT_FLANK][0] &= (0xF0);
-				gBattleStruct->field_60[gActiveBattler ^ BIT_FLANK][0] |= (gBattleBufferB[gActiveBattler][2] & 0xF0) >> 4;
-				gBattleStruct->field_60[gActiveBattler ^ BIT_FLANK][2] = gBattleBufferB[gActiveBattler][3];
+				gBattleStruct->battlerPartyOrders[gActiveBattler ^ BIT_FLANK][0] &= (0xF0);
+				gBattleStruct->battlerPartyOrders[gActiveBattler ^ BIT_FLANK][0] |= (gBattleBufferB[gActiveBattler][2] & 0xF0) >> 4;
+				gBattleStruct->battlerPartyOrders[gActiveBattler ^ BIT_FLANK][2] = gBattleBufferB[gActiveBattler][3];
 			}
 			else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 				SwitchPartyOrderInGameMulti(gActiveBattler, gBattleStruct->monToSwitchIntoId[gActiveBattler]);
@@ -518,13 +504,16 @@ void atk51_switchhandleorder(void)
 
 void atk52_switchineffects(void)
 {
-	int i;
+	if (gBattleExecBuffer)
+		return;
+
+	u32 i;
 	u8 arg = T2_READ_8(gBattlescriptCurrInstr + 1);
 	if (arg == BS_GET_SCRIPTING_BANK)
 		gBattleScripting.bank = gNewBS->SentInBackup; //Restore scripting backup b/c can get changed
 
 	gActiveBattler = GetBankForBattleScript(arg);
-	sub_8016CC8(gActiveBattler);
+	UpdateSentPokesToOpponentValue(gActiveBattler);
 	gHitMarker &= ~(HITMARKER_FAINTED(gActiveBattler));
 	gSpecialStatuses[gActiveBattler].flag40 = 0;
 	u8 ability = ABILITY(gActiveBattler);
@@ -564,12 +553,40 @@ void atk52_switchineffects(void)
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_CamomonsTypeRevealRet;
 
-				if (gBattleMons[gActiveBattler].type1 == gBattleMons[gActiveBattler].type2)
+				u8 type1, type2;
+				struct Pokemon* monIllusion = GetIllusionPartyData(gActiveBattler);
+				if (monIllusion != GetBankPartyData(gActiveBattler)) //Under Illusion
+				{
+					type1 = GetMonType(monIllusion, 0);
+					type2 = GetMonType(monIllusion, 1);
+				}
+				else
+				{
+					type1 = gBattleMons[gActiveBattler].type1;
+					type2 = gBattleMons[gActiveBattler].type2;
+				}
+
+				if (type1 == type2)
 					gBattleStringLoader = gText_CamomonsTypeReveal;
 				else
 					gBattleStringLoader = gText_CamomonsTypeRevealDualType;
-				PREPARE_TYPE_BUFFER(gBattleTextBuff1, gBattleMons[gActiveBattler].type1);
-				PREPARE_TYPE_BUFFER(gBattleTextBuff2, gBattleMons[gActiveBattler].type2);
+
+				PREPARE_TYPE_BUFFER(gBattleTextBuff1, type1);
+				PREPARE_TYPE_BUFFER(gBattleTextBuff2, type2);
+			}
+			++gNewBS->switchInEffectsState;
+			break;
+
+		case SwitchIn_NeutralizingGasRemoveAbility:
+			if (!IsAbilitySuppressed(gActiveBattler) //Gastro Acid has higher priority
+			&& ABILITY(gActiveBattler) != ABILITY_NONE
+			&& !CheckTableForAbility(ABILITY(gActiveBattler), gNeutralizingGasBannedAbilities)
+			&& AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BANK, gActiveBattler, ABILITY_NEUTRALIZINGGAS, 0, 0))
+			{
+				u8* abilityLoc = GetAbilityLocation(gActiveBattler);
+				gNewBS->neutralizingGasBlockedAbilities[gActiveBattler] = *abilityLoc;
+				*abilityLoc = 0;
+				gNewBS->SlowStartTimers[gActiveBattler] = 0;
 			}
 			++gNewBS->switchInEffectsState;
 			break;
@@ -586,6 +603,7 @@ void atk52_switchineffects(void)
 					gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
 					gBattleMons[gActiveBattler].status1 = 0;
 					EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
+					MarkBufferBankForExecution(gActiveBattler);
 					gBattleScripting.bank = gActiveBattler;
 					gBankAttacker = gActiveBattler;
 					++gNewBS->switchInEffectsState;
@@ -606,6 +624,7 @@ void atk52_switchineffects(void)
 				gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
 				gBattleMons[gActiveBattler].status1 = 0;
 				EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
+				MarkBufferBankForExecution(gActiveBattler);
 
 				//PP Restored in Battle Script
 
@@ -704,7 +723,9 @@ void atk52_switchineffects(void)
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_TSAbsorb;
 				}
-				else if (itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS) //Pokemon with this item can still remove T-Spikes
+				else if (itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS
+				&& CanBePoisoned(gActiveBattler, 0xFF, TRUE) //Must include check here, otherwise Corrosion can activate (which it shouldn't)
+				&& !BankSideHasSafeguard(gActiveBattler)) //Pokemon with this item can still remove T-Spikes
 				{
 					if (gSideTimers[SIDE(gActiveBattler)].tspikesAmount == 1)
 					{
@@ -754,6 +775,7 @@ void atk52_switchineffects(void)
 				&&  gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2
 				&&  gBattleMons[gActiveBattler].hp + gNewBS->DamageTaken[gActiveBattler] > gBattleMons[gActiveBattler].maxHP / 2)
 				{
+					gBattleScripting.bank = gBankSwitching = gActiveBattler;
 					BattleScriptPush(gBattlescriptCurrInstr + 2);
 					gBattlescriptCurrInstr = BattleScript_EmergencyExit;
 					return;
@@ -764,7 +786,7 @@ void atk52_switchineffects(void)
 
 		case SwitchIn_PrimalReversion:	;
 			const u8* script = DoPrimalReversion(gActiveBattler, 1);
-			if(script)
+			if(!IsMegaZMoveBannedBattle() && script != NULL)
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = script;
@@ -912,7 +934,8 @@ void atk52_switchineffects(void)
 
 			for (i = 0; i < gBattlersCount; ++i)
 			{
-				if (ITEM_EFFECT(i) == ITEM_EFFECT_EJECT_PACK && ItemBattleEffects(ItemEffects_SwitchIn, i, TRUE, FALSE))  //Try to trigger Eject Packs after Intimidate
+				if ((ITEM_EFFECT(i) == ITEM_EFFECT_EJECT_PACK || ITEM_EFFECT(i) == ITEM_EFFECT_RESTORE_STATS)
+				&& ItemBattleEffects(ItemEffects_SwitchIn, i, TRUE, FALSE))  //Try to trigger Eject Packs after Intimidate
 					return;
 			}
 		__attribute__ ((fallthrough));
@@ -1088,15 +1111,15 @@ static void SwitchPartyOrderInGameMulti(u8 bank, u8 monToSwitchIntoId)
 	{
 		s32 i;
 
-		// gBattleStruct->field_60[0][i]
+		// gBattleStruct->battlerPartyOrders[0][i]
 
-		for (i = 0; i < 3; i++)
-			gBattlePartyCurrentOrder[i] = gBattleStruct->field_60[0][i];
+		for (i = 0; i < PARTY_SIZE / 2; i++)
+			gBattlePartyCurrentOrder[i] = gBattleStruct->battlerPartyOrders[0][i];
 
 		SwitchPartyMonSlots(GetBattlePartyIdFromPartyId(gBattlerPartyIndexes[bank]), GetBattlePartyIdFromPartyId(monToSwitchIntoId));
 
-		for (i = 0; i < 3; i++)
-			gBattleStruct->field_60[0][i] = gBattlePartyCurrentOrder[i];
+		for (i = 0; i < PARTY_SIZE / 2; i++)
+			gBattleStruct->battlerPartyOrders[0][i] = gBattlePartyCurrentOrder[i];
 	}
 }
 
@@ -1182,12 +1205,14 @@ void ClearSwitchBytes(u8 bank)
 	DestroyMegaIndicator(bank);
 	ClearBattlerAbilityHistory(bank);
 	ClearBattlerItemEffectHistory(bank);
+	ClearBattlerMoveHistory(bank);
+	ClearMovePredictionsOnBank(bank);
 }
 
 void ClearSwitchBits(u8 bank)
 {
 	gNewBS->PowderByte &= ~(gBitTable[bank]);
-	gNewBS->quashed &= ~(gBitTable[bank]);
+	gNewBS->turnOrderLocked &= ~(gBitTable[bank]);
 	gNewBS->BeakBlastByte &= ~(gBitTable[bank]);
 	gNewBS->tarShotBits &= ~(gBitTable[bank]);
 	gNewBS->trappedByOctolock &= ~(gBitTable[bank]);
@@ -1195,7 +1220,8 @@ void ClearSwitchBits(u8 bank)
 	gNewBS->UnburdenBoosts &= ~(gBitTable[bank]);
 	gNewBS->IllusionBroken &= ~(gBitTable[bank]);
 	gNewBS->brokeFreeMessage &= ~(gBitTable[bank]);
-	gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]);
+	gNewBS->ateCustapBerry &= ~(gBitTable[bank]);
+	gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]);
 	gNewBS->devolveForgotMove &= ~(gBitTable[bank]);
 	gNewBS->SaltcureBits &= ~(gBitTable[bank]);
 }
@@ -1204,34 +1230,38 @@ void PartyMenuSwitchingUpdate(void)
 {
 	int i;
 
-	if (IsOfType(gActiveBattler, TYPE_GHOST)
-	||  ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_SHED_SHELL)
-		goto SKIP_SWITCH_BLOCKING_CHECK;
-
 	gBattleStruct->switchoutPartyIndex[gActiveBattler] = gBattlerPartyIndexes[gActiveBattler];
-	if ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
-	|| (gStatuses3[gActiveBattler] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET))
+
+	if (gStatuses3[gActiveBattler] & STATUS3_SKY_DROP_TARGET) //Being Ghost doesn't get you out of this
+		goto TRAPPED;
+	else if (!CanBeTrapped(gActiveBattler))
+		goto SKIP_SWITCH_BLOCKING_CHECK;
+	else if ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
+	|| (gStatuses3[gActiveBattler] & STATUS3_ROOTED)
 	|| IsFairyLockActive())
 	{
-		EmitChoosePokemon(0, PARTY_CANT_SWITCH, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
+		TRAPPED:
+		EmitChoosePokemon(0, PARTY_CANT_SWITCH, PARTY_SIZE, ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 	}
-	else if (((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG)) && ABILITY(gActiveBattler) != ABILITY_SHADOWTAG)
-		 ||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENATRAP)) && CheckGrounding(gActiveBattler))
-		 ||  ((i = AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BANK, gActiveBattler, ABILITY_MAGNETPULL, 0, 0))
-				 && IsOfType(gActiveBattler, TYPE_STEEL)))
+	else if (((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG)) && IsTrappedByAbility(gActiveBattler, ABILITY_SHADOWTAG))
+	||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENATRAP)) && IsTrappedByAbility(gActiveBattler, ABILITY_ARENATRAP))
+	||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_MAGNETPULL)) && IsTrappedByAbility(gActiveBattler, ABILITY_MAGNETPULL)))
 	{
-		EmitChoosePokemon(0, ((i - 1) << 4) | PARTY_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->field_60[gActiveBattler]);
+		EmitChoosePokemon(0, ((i - 1) << 4) | PARTY_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 	}
 	else
 	{
 	SKIP_SWITCH_BLOCKING_CHECK:
-		if (gActiveBattler == B_POSITION_PLAYER_RIGHT && gChosenActionByBank[0] == ACTION_SWITCH)
-			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[0], ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
-		else if (gActiveBattler == B_POSITION_OPPONENT_RIGHT && gChosenActionByBank[1] == ACTION_SWITCH)
-			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[1], ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
+		if (GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
+		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] == ACTION_SWITCH)
+			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[0], ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
+		else if (GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_RIGHT
+		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] == ACTION_SWITCH)
+			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[1], ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 		else
-			EmitChoosePokemon(0, PARTY_CHOOSE_MON, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
+			EmitChoosePokemon(0, PARTY_CHOOSE_MON, PARTY_SIZE, ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 	}
+
 	MarkBufferBankForExecution(gActiveBattler);
 }
 
@@ -1259,28 +1289,38 @@ u32 CalcStealthRockDamage(u8 bank)
 	u8 divisor = 8;
 	gBattleMoveDamage = 40;
 
-	if (ITEM_EFFECT(bank) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
-		return 0;
-
 	TypeDamageModification(0, bank, MOVE_STEALTHROCK, TYPE_ROCK, &flags);
 	divisor = GetStealthRockDivisor();
 
 	return MathMax(1, gBattleMons[bank].maxHP / divisor);
 }
 
-u32 CalcStealthRockDamagePartyMon(struct Pokemon* mon)
+u32 GetStealthRockDamage(u8 bank)
+{
+	if (ITEM_EFFECT(bank) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+		return 0;
+
+	return CalcStealthRockDamage(bank);
+}
+
+u32 CalcMonStealthRockDamage(struct Pokemon* mon)
 {
 	u8 flags;
 	u8 divisor = 8;
 	gBattleMoveDamage = 40;
 
-	if (GetMonItemEffect(mon) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
-		return 0;
-
 	TypeDamageModificationPartyMon(0, mon, MOVE_STEALTHROCK, TYPE_ROCK, &flags);
 	divisor = GetStealthRockDivisor();
 
 	return MathMax(1, GetMonData(mon, MON_DATA_MAX_HP, NULL) / divisor);
+}
+
+u32 GetStealthRockDamagePartyMon(struct Pokemon* mon)
+{
+	if (GetMonItemEffect(mon) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+		return 0;
+
+	return CalcMonStealthRockDamage(mon);
 }
 
 u32 CalcSteelsurgeDamage(u8 bank)
@@ -1343,27 +1383,28 @@ static u8 GetStealthRockDivisor(void)
 	return divisor;
 }
 
-bool8 WillFaintFromEntryHazards(struct Pokemon* mon, u8 side)
+u32 GetMonEntryHazardDamage(struct Pokemon* mon, u8 side)
 {
-	u16 hp = GetMonData(mon, MON_DATA_HP, NULL);
 	u32 dmg = 0;
 
 	if (gSideStatuses[side] & SIDE_STATUS_SPIKES
 	&& GetMonAbility(mon) != ABILITY_MAGICGUARD
-	&& ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+	&& ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS) //Has Klutz or not holding boots
 	{
 		if (gSideTimers[side].srAmount > 0)
-			dmg += CalcStealthRockDamagePartyMon(mon);
+			dmg += CalcMonStealthRockDamage(mon);
 
 		if (gSideTimers[side].steelsurge > 0)
 			dmg += CalcSteelsurgeDamagePartyMon(mon);
 
 		if (gSideTimers[side].spikesAmount > 0)
 			dmg += CalcSpikesDamagePartyMon(mon, side);
-
-		if (dmg >= hp)
-			return TRUE;
 	}
 
-	return FALSE;
+	return dmg;
+}
+
+bool8 WillFaintFromEntryHazards(struct Pokemon* mon, u8 side)
+{
+	return GetMonEntryHazardDamage(mon, side) >= mon->hp;
 }

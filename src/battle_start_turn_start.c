@@ -10,6 +10,7 @@
 
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/ai_master.h"
+#include "../include/new/ai_util.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/battle_transition.h"
@@ -20,6 +21,7 @@
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
+#include "../include/new/general_bs_commands.h"
 #include "../include/new/multi.h"
 #include "../include/new/mega.h"
 #include "../include/new/mega_battle_scripts.h"
@@ -36,18 +38,20 @@ battle_start_turn_start.c
 
 enum BattleBeginStates
 {
-	BackupPartyItems,
-	GetTurnOrder,
-	ThirdTypeRemoval,
-	RaidBattleReveal,
-	DynamaxUsableIndicator,
-	NeutralizingGas,
-	SwitchInAbilities,
-	Intimidate,
-	AmuletCoin_WhiteHerb,
-	AirBalloon,
-	TotemPokemon,
-	StartTurnEnd,
+	BTSTART_BACKUP_PARTY_ITEMS,
+	BTSTART_GET_TURN_ORDER,
+	BTSTART_ACTIVATE_OW_WEATHER,
+	BTSTART_ACTIVATE_OW_TERRAIN,
+	BTSTART_PRIMAL_REVERSION,
+	BTSTART_THIRD_TYPE_REMOVAL,
+	BTSTART_RAID_BATTLE_REVEAL,
+	BTSTART_DYNAMAX_USABLE_INDICATOR,
+	BTSTART_NEUTRALIZING_GAS,
+	BTSTART_SWITCH_IN_ABILITIES,
+	BTSTART_SWITCH_IN_ITEMS,
+	BTSTART_AIR_BALLOON,
+	BTSTART_TOTEM_POKEMON,
+	BTSTART_END,
 };
 
 enum SpeedWarResults
@@ -104,10 +108,12 @@ void HandleNewBattleRamClearBeforeBattle(void)
 	if (IsRaidBattle())
 	{
 		gBattleTypeFlags |= BATTLE_TYPE_DYNAMAX;
-		gNewBS->dynamaxData.timer[B_POSITION_OPPONENT_LEFT] = -2; //Don't revert
+		if (!IsBannedDynamaxBaseSpecies(GetMonData(&gEnemyParty[0], MON_DATA_SPECIES, NULL)))
+			gNewBS->dynamaxData.timer[B_POSITION_OPPONENT_LEFT] = -2; //Don't revert
 		gNewBS->dynamaxData.backupRaidMonItem = GetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, NULL); //For Frontier
 	}
 
+	gNewBS->isTrainerBattle = (gBattleTypeFlags & BATTLE_TYPE_TRAINER) != 0; //Used as part of the anti-catch-Trainer-Pokemon cheat
 	FormsRevert(gPlayerParty); //Try to reset all forms before battle
 }
 
@@ -115,6 +121,44 @@ static void SavePartyItems(void)
 {
 	for (int i = 0; i < PARTY_SIZE; ++i)
 		gNewBS->itemBackup[i] = GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, NULL);
+}
+
+static void TryBackupEnemyTeam(void)
+{
+	#ifdef FLAG_BACKUP_ENEMY_TEAM
+	if (FlagGet(FLAG_BACKUP_ENEMY_TEAM))
+	{
+		gNewBS->foePartyBackup = Calloc(sizeof(struct Pokemon) * PARTY_SIZE);
+		Memcpy(gNewBS->foePartyBackup, gEnemyParty, sizeof(struct Pokemon) * PARTY_SIZE);
+	}
+	#endif
+}
+
+static void TryClearLevelCapKeptOn(void)
+{
+	#if (defined FLAG_HARD_LEVEL_CAP && defined FLAG_KEPT_LEVEL_CAP_ON)
+	if (!FlagGet(FLAG_SYS_GAME_CLEAR) //Main game
+	&& FlagGet(FLAG_HARD_LEVEL_CAP) //Level Cap is on
+	&& FlagGet(FLAG_KEPT_LEVEL_CAP_ON)) //And it hasn't ever been turned off
+	{
+		u32 i, levelCap;
+		
+		extern u8 GetCurrentLevelCap(void); //Must be implemented yourself
+		for (i = 0, levelCap = GetCurrentLevelCap(); i < PARTY_SIZE; ++i)
+		{
+			u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+			if (species != SPECIES_NONE && species != SPECIES_EGG)
+			{
+				u8 level = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
+				if (level > levelCap)
+				{
+					FlagClear(FLAG_KEPT_LEVEL_CAP_ON);
+					break;
+				}
+			}
+		}
+	}
+	#endif
 }
 
 void BattleBeginFirstTurn(void)
@@ -126,11 +170,18 @@ void BattleBeginFirstTurn(void)
 	if (!gBattleExecBuffer) //Inlclude Safari Check Here?
 	{
 		switch(*state) {
-			case BackupPartyItems:
+			case BTSTART_BACKUP_PARTY_ITEMS:
+				#ifdef FLAG_SEMI_SHIFT
+				if (FlagGet(FLAG_SEMI_SHIFT))
+					gBattleScripting.battleStyle = OPTIONS_BATTLE_STYLE_SEMI_SHIFT;
+				#endif
 				SavePartyItems();
+				TryBackupEnemyTeam();
+				TryClearLevelCapKeptOn();
 				++*state;
 				break;
-			case GetTurnOrder:
+
+			case BTSTART_GET_TURN_ORDER:
 				gNewBS->skipBankStatAnim = 0xFF;
 				for (i = 0; i < gBattlersCount; ++i)
 				{
@@ -146,29 +197,43 @@ void BattleBeginFirstTurn(void)
 							SwapTurnOrder(i, j);
 					}
 				}
+				++*state;
+				break;
 
-				//OW Weather
+			case BTSTART_ACTIVATE_OW_WEATHER:
 				if (!gBattleStruct->overworldWeatherDone && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFF, 0))
 				{
 					gBattleStruct->overworldWeatherDone = TRUE;
 					return;
 				}
 
-				//OW Terrain
+				++*state;
+				break;
+
+			case BTSTART_ACTIVATE_OW_TERRAIN:
 				if (TryActivateOWTerrain())
 					return;
 
-				//Primal Reversion
-				for (; *bank < gBattlersCount; ++*bank)
-				{
-					const u8* script = DoPrimalReversion(gBanksByTurnOrder[*bank], 0);
+				++*state;
+				*bank = 0;
+				break;
 
-					if(script != NULL)
+			case BTSTART_PRIMAL_REVERSION:
+				//Primal Reversion
+				if (!(gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_POKE_DUDE))
+				&& !IsMegaZMoveBannedBattle())
+				{
+					for (; *bank < gBattlersCount; ++*bank)
 					{
-						BattleScriptPushCursorAndCallback(script);
-						gBankAttacker = gBattleScripting.bank = gBanksByTurnOrder[*bank];
-						++*bank;
-						return;
+						const u8* script = DoPrimalReversion(gBanksByTurnOrder[*bank], 0);
+
+						if (script != NULL)
+						{
+							BattleScriptPushCursorAndCallback(script);
+							gBankAttacker = gBattleScripting.bank = gBanksByTurnOrder[*bank];
+							++*bank;
+							return;
+						}
 					}
 				}
 
@@ -176,7 +241,7 @@ void BattleBeginFirstTurn(void)
 				*bank = 0;
 				break;
 
-			case ThirdTypeRemoval:
+			case BTSTART_THIRD_TYPE_REMOVAL:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
 					gBattleMons[*bank].type3 =  TYPE_BLANK;
@@ -192,12 +257,25 @@ void BattleBeginFirstTurn(void)
 						gBattleScripting.bank = *bank;
 						BattleScriptPushCursorAndCallback(BattleScript_CamomonsTypeRevealEnd3);
 
-						if (gBattleMons[*bank].type1 == gBattleMons[*bank].type2)
+						u8 type1, type2;
+						struct Pokemon* monIllusion = GetIllusionPartyData(*bank);
+						if (monIllusion != GetBankPartyData(*bank)) //Under Illusion
+						{
+							type1 = GetMonType(monIllusion, 0);
+							type2 = GetMonType(monIllusion, 1);
+						}
+						else
+						{
+							type1 = gBattleMons[*bank].type1;
+							type2 = gBattleMons[*bank].type2;
+						}
+
+						if (type1 == type2)
 							gBattleStringLoader = gText_CamomonsTypeReveal;
 						else
 							gBattleStringLoader = gText_CamomonsTypeRevealDualType;
-						PREPARE_TYPE_BUFFER(gBattleTextBuff1, gBattleMons[*bank].type1);
-						PREPARE_TYPE_BUFFER(gBattleTextBuff2, gBattleMons[*bank].type2);
+						PREPARE_TYPE_BUFFER(gBattleTextBuff1, type1);
+						PREPARE_TYPE_BUFFER(gBattleTextBuff2, type2);
 						++*bank;
 						return;
 					}
@@ -207,30 +285,52 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case RaidBattleReveal:
+			case BTSTART_RAID_BATTLE_REVEAL:
+				if (ShouldStartWithRaidShieldsUp() && !gNewBS->dynamaxData.raidShieldsUp) //Can be done outside of Raid Battles now
+				{
+					//Start with shields for harder Raids
+					gNewBS->dynamaxData.raidShieldsUp = TRUE;
+					gNewBS->dynamaxData.shieldsDestroyed = 0;
+					gBattleScripting.bank = BANK_RAID_BOSS;
+					BattleScriptPushCursorAndCallback(BattleScript_RaidShieldsBattleStart);
+				}
+
 				if (IsRaidBattle())
 				{
 					gAbsentBattlerFlags |= gBitTable[B_POSITION_OPPONENT_RIGHT]; //Because it's not there - causes bugs without
-					gBattleScripting.bank = BANK_RAID_BOSS;
-					gBattleStringLoader = gText_RaidBattleReveal;
-					BattleScriptPushCursorAndCallback(BattleScript_RaidBattleStart);
+
+					#ifdef FLAG_RAID_BATTLE_NO_FORCE_END
+					if (FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END))
+					{
+						//Don't play the storm animation in a Raid Battle that isn't 10 turns long
+					}
+					else
+					#endif
+					{
+						gBattleScripting.bank = BANK_RAID_BOSS;
+						gBattleStringLoader = gText_RaidBattleReveal;
+						if (IsBannedDynamaxBaseSpecies(SPECIES(BANK_RAID_BOSS)))
+							BattleScriptPushCursorAndCallback(BattleScript_RaidBattleStart_NoDynamax);
+						else
+							BattleScriptPushCursorAndCallback(BattleScript_RaidBattleStart);
+					}
 				}
 				++*state;
 				break;
 
-			case DynamaxUsableIndicator:
-			#ifdef DYNAMAX_FEATURE
+			case BTSTART_DYNAMAX_USABLE_INDICATOR:
+				#ifdef DYNAMAX_FEATURE
 				gBattleScripting.bank = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
 				if (DynamaxEnabled(gBattleScripting.bank))
 				{
 					gBattleStringLoader = gText_DynamaxUsable;
 					BattleScriptPushCursorAndCallback(BattleScript_DynamaxEnergySwirl);
 				}
-			#endif
+				#endif
 				++*state;
 				break;
 
-			case NeutralizingGas:
+			case BTSTART_NEUTRALIZING_GAS:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
 					if (ABILITY(gBanksByTurnOrder[*bank]) == ABILITY_NEUTRALIZINGGAS
@@ -245,7 +345,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case SwitchInAbilities:
+			case BTSTART_SWITCH_IN_ABILITIES:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
 					if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*bank], 0, 0, 0))
@@ -259,17 +359,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case Intimidate:
-			/*
-				if (AbilityBattleEffects(ABILITYEFFECT_INTIMIDATE1, 0, 0, 0, 0))
-					return;
-				if (AbilityBattleEffects(ABILITYEFFECT_INTIMIDATE2, 0, 0, 0, 0))
-					return;
-			*/
-				++*state;
-				break;
-
-			case AmuletCoin_WhiteHerb:
+			case BTSTART_SWITCH_IN_ITEMS:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
 					if (ItemBattleEffects(ItemEffects_SwitchIn, gBanksByTurnOrder[*bank], FALSE, FALSE))
@@ -283,7 +373,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case AirBalloon:
+			case BTSTART_AIR_BALLOON:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
 					#ifndef NO_GHOST_BATTLES
@@ -306,8 +396,8 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case TotemPokemon: ;
-				if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS //The only battle facility to utilize totem boosts
+			case BTSTART_TOTEM_POKEMON:
+				if (InBattleSands() //The only battle facility to utilize totem boosts
 				|| !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN)))
 				{
 					for (; *bank < gBattlersCount; ++*bank)
@@ -348,7 +438,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case StartTurnEnd:
+			case BTSTART_END:
 				for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 				{
 					gBattleStruct->monToSwitchIntoId[i] = PARTY_SIZE;
@@ -390,6 +480,7 @@ void BattleBeginFirstTurn(void)
 					gNewBS->statRoseThisRound[i] = FALSE;
 					gNewBS->statFellThisTurn[i] = FALSE;
 					gNewBS->statFellThisRound[i] = FALSE;
+					UpdateQuickClawRandomNumber(i);
 				}
 
 				gBattleStruct->turnEffectsTracker = 0;
@@ -452,7 +543,10 @@ bool8 TryActivateOWTerrain(void)
 		}
 
 		if (effect)
+		{
 			gTerrainType = owTerrain;
+			gNewBS->TerrainTimer = 0; //Reset any timers that may have been set before
+		}
 	}
 
 	return effect;
@@ -570,7 +664,6 @@ static void TryPrepareTotemBoostInBattleSands(void)
 
 		increase = (Random() % increaseMax) + 1;
 		VarSet(VAR_TOTEM + playerId, playerStat | (increase * 0x10 + contraryShiftPlayer));
-		increase = (Random() % increaseMax) + 1;
 		VarSet(VAR_TOTEM + enemyId, enemyStat | (increase * 0x10 + contraryShiftEnemy));
 	}
 }
@@ -585,6 +678,7 @@ void CleanUpExtraTurnValues(void)
 	gNewBS->zMoveData.active = FALSE;
 	gNewBS->dynamaxData.active = FALSE;
 	gNewBS->batonPassing = FALSE;
+	gNewBS->devolveForgotMove = 0;
 }
 
 void SetActionsAndBanksTurnOrder(void)
@@ -696,6 +790,7 @@ void SetActionsAndBanksTurnOrder(void)
 
 	gBattleMainFunc = CheckFocusPunch_ClearVarsBeforeTurnStarts;
 	gBattleStruct->focusPunchBank = 0;
+	gCurrentMove = 0;
 }
 
 enum MegaStates
@@ -722,24 +817,47 @@ void RunTurnActionsFunctions(void)
 	{
 		for (i = 0; i < gBattlersCount; ++i) //Loop through all battlers and play Quick Claw anim for each
 		{
-			if (gNewBS->CustapQuickClawIndicator & gBitTable[i])
+			u8 bank = gBanksByTurnOrder[i];
+			u8 action = gActionsByTurnOrder[i];
+
+			if (gNewBS->quickDrawIndicator & gBitTable[bank])
 			{
-				gNewBS->CustapQuickClawIndicator &= ~(gBitTable[i]);
+				gNewBS->quickDrawIndicator &= ~(gBitTable[bank]);
+				gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]); //One or the other
 
-				if (gActionsByTurnOrder[i] != ACTION_USE_ITEM)
-				{
-					gBattleScripting.bank = i;
-					gLastUsedItem = ITEM(i);
-					if (ITEM_EFFECT(i) != ITEM_EFFECT_CUSTAP_BERRY)
-						RecordItemEffectBattle(i, ITEM_EFFECT(i));
+				if (action == ACTION_USE_ITEM || action == ACTION_SWITCH || action == ACTION_RUN)
+					continue;
 
-					BattleScriptExecute(BattleScript_QuickClaw);
-					gCurrentActionFuncId = savedActionFuncId;
-					return;
-				}
+				gBattleScripting.bank = bank;
+				BattleScriptExecute(BattleScript_QuickDraw);
+				gCurrentActionFuncId = savedActionFuncId;
+				return;
+			}
+			else if (gNewBS->quickClawCustapIndicator & gBitTable[bank])
+			{
+				gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]);
+				gNewBS->quickDrawIndicator &= ~(gBitTable[bank]); //One or the other
+
+				if (action == ACTION_USE_ITEM)
+					continue;
+				else if (ITEM_EFFECT(bank) == ITEM_EFFECT_CUSTAP_BERRY
+				&& (action == ACTION_USE_ITEM || action == ACTION_SWITCH || action == ACTION_RUN)) //Only Quick Claw activates on the switch
+					continue;
+
+				gBattleScripting.bank = bank;
+				gLastUsedItem = ITEM(bank);
+				if (ITEM_EFFECT(bank) != ITEM_EFFECT_CUSTAP_BERRY)
+					RecordItemEffectBattle(bank, ITEM_EFFECT(bank));
+				else
+					gNewBS->ateCustapBerry |= gBitTable[bank];
+
+				BattleScriptExecute(BattleScript_QuickClaw);
+				gCurrentActionFuncId = savedActionFuncId;
+				return;
 			}
 		}
 	}
+
 	
 	gNewBS->activatedCustapQuickClaw = TRUE; //So the animation only plays once
 
@@ -919,6 +1037,7 @@ void RunTurnActionsFunctions(void)
 				gNewBS->terastalData.chosen[bank] = FALSE;
 				gNewBS->terastalData.done[bank] = TRUE;
 				gNewBS->terastalData.partyIndex[SIDE(bank)] = gBitTable[gBattlerPartyIndexes[bank]];
+				gBattleMons[bank].type3 = TYPE_BLANK;
 
 				if (SIDE(bank) == B_SIDE_PLAYER)
 				{
@@ -951,11 +1070,12 @@ void RunTurnActionsFunctions(void)
 		{
 			gActiveBattler = gBanksByTurnOrder[gBattleStruct->focusPunchBank];
 			++gBattleStruct->focusPunchBank;
-			u16 chosenMove = gChosenMovesByBanks[gActiveBattler];
+			u16 chosenMove = gActionsByTurnOrder[gActiveBattler] == ACTION_USE_MOVE ? gChosenMovesByBanks[gActiveBattler] : MOVE_NONE;
 			if ((chosenMove == MOVE_FOCUSPUNCH || chosenMove == MOVE_BEAKBLAST || chosenMove == MOVE_SHELLTRAP)
 			&& !(gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP)
 			&& !(gDisableStructs[gActiveBattler].truantCounter)
 			&& !(gProtectStructs[gActiveBattler].onlyStruggle)
+			&& !gNewBS->zMoveData.toBeUsed[gActiveBattler]
 			&& !IsDynamaxed(gActiveBattler))
 			{
 				gBankAttacker = gBattleScripting.bank = gActiveBattler;
@@ -1020,8 +1140,8 @@ void HandleAction_UseMove(void)
 					&& gActionsByTurnOrder[j] != ACTION_SWITCH
 					&& gActionsByTurnOrder[i] != ACTION_FINISHED
 					&& gActionsByTurnOrder[j] != ACTION_FINISHED
-					&& !(gBitTable[bank1] & gNewBS->quashed)
-					&& !(gBitTable[bank2] & gNewBS->quashed))
+					&& !(gNewBS->turnOrderLocked & gBitTable[bank1])
+					&& !(gNewBS->turnOrderLocked & gBitTable[bank2]))
 				{
 					if (GetWhoStrikesFirstUseLastBracketCalc(bank1, bank2))
 						SwapTurnOrder(i, j);
@@ -1062,11 +1182,9 @@ void HandleAction_UseMove(void)
 
 	gNewBS->totalDamageGiven = 0;
 	gNewBS->selfInflictedDamage = 0;
+	gNewBS->enduredDamage = 0;
 	gNewBS->lessThanHalfHPBeforeShellBell = FALSE;
-	//Clear spread move things
-	gNewBS->doneDoublesSpreadHit = FALSE;
-	gNewBS->calculatedSpreadMoveData = FALSE;
-	gNewBS->calculatedSpreadMoveAccuracy = FALSE;
+	ResetDoublesSpreadMoveCalcs(); //Clear spread move things
 
 	for (int i = 0; i < MAX_BATTLERS_COUNT; ++i)
 	{
@@ -1097,16 +1215,6 @@ void HandleAction_UseMove(void)
 	else if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
 	{
 		gChosenMovesByBanks[gBankAttacker] = gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
-
-		if (FindMovePositionInMoveset(gLockedMoves[gBankAttacker], gBankAttacker) == 4) //The Pokemon doesn't know the move it's locked into
-		{
-			CancelMultiTurnMoves(gBankAttacker);
-			gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
-			gBankTarget = gBattleStruct->moveTarget[gBankAttacker];
-			gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
-			gCurrentActionFuncId = ACTION_RUN_BATTLESCRIPT;
-			return;
-		}
 	}
 	// Encore forces you to use the same move
 	else if (gDisableStructs[gBankAttacker].encoredMove != MOVE_NONE
@@ -1186,10 +1294,16 @@ void HandleAction_UseMove(void)
 			u8 split = SPLIT(gCurrentMove);
 			bool8 isBannedMove = CheckTableForMove(gCurrentMove, gRaidBattleBannedRaidMonMoves)
 							  || CheckTableForMove(gCurrentMove, gRaidBattleBannedMoves)
+							  || gBattleMoves[gCurrentMove].effect == EFFECT_BIDE //Bide should always be executed as Max Strike
 							  || IsUnusableMove(gCurrentMove, gBankAttacker, 0xFF, 1, ABILITY(gBankAttacker), ITEM_EFFECT(gBankAttacker), CHOICED_MOVE(gBankAttacker));
 
 			if (isBannedMove && split != SPLIT_STATUS) //Use banned status move - don't use Max Guard
+			{
+				if (gBattleMoves[gCurrentMove].effect == EFFECT_BIDE)
+					gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(GetMaxMove(gBankAttacker, gCurrMovePos), FALSE); //Fix self-targeting
+
 				goto TURN_MOVE_INTO_MAX_MOVE;
+			}
 			else if (IsRaidBossUsingRegularMove(gBankAttacker, gCurrentMove))
 			{
 				//Samll chance to use regular damaging move
@@ -1203,6 +1317,8 @@ void HandleAction_UseMove(void)
 			TURN_MOVE_INTO_MAX_MOVE:
 			gNewBS->dynamaxData.active = TRUE;
 			gCurrentMove = GetMaxMove(gBankAttacker, gCurrMovePos);
+			if (gCurrentMove == MOVE_MAX_GUARD)
+				gBattleStruct->moveTarget[gBankAttacker] = gBankAttacker; //Fix target to self
 		}
 	}
 
@@ -1220,11 +1336,12 @@ void HandleAction_UseMove(void)
 	{
 		gBankTarget = gSideTimers[side].followmeTarget;
 	}
-	else if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-		  &&  gSideTimers[side].followmeTimer == 0
+	else if (IS_DOUBLE_BATTLE
+		  && gSideTimers[side].followmeTimer == 0
 		  && !IsMoveRedirectionPrevented(gCurrentMove, atkAbility)
-		  && (SPLIT(gCurrentMove) != SPLIT_STATUS || gBattleMoves[gCurrentMove].target != MOVE_TARGET_USER)
-		  && !(gBattleMoves[gCurrentMove].target & (MOVE_TARGET_ALL | MOVE_TARGET_BOTH)))
+		  && (SPLIT(gCurrentMove) != SPLIT_STATUS ||  moveTarget != MOVE_TARGET_USER)
+		  && !(moveTarget & (MOVE_TARGET_ALL | MOVE_TARGET_BOTH))
+		  && NO_MOLD_BREAKERS(ABILITY(gBankAttacker), gCurrentMove))
 	{ //Try Ability Redirection
 		switch (moveType) {
 			case TYPE_WATER:
@@ -1273,7 +1390,7 @@ void HandleAction_UseMove(void)
 
 		if (!gSpecialStatuses[gBankTarget].lightningRodRedirected)
 		{
-			if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_RANDOM
+			if (moveTarget & MOVE_TARGET_RANDOM
 			&& !IsAnyMaxMove(gCurrentMove))
 				goto CHOOSE_RANDOM_TARGET_DOUBLES;
 			else
@@ -1281,7 +1398,7 @@ void HandleAction_UseMove(void)
 		}
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-		  && gBattleMoves[gCurrentMove].target & MOVE_TARGET_RANDOM
+		  && moveTarget & MOVE_TARGET_RANDOM
 		  && !IsAnyMaxMove(gCurrentMove))
 	{
 	CHOOSE_RANDOM_TARGET_DOUBLES:
@@ -1306,8 +1423,7 @@ void HandleAction_UseMove(void)
 			gBankTarget = GetBattlerAtPosition(PARTNER(gBankTarget));
 		}
 	}
-	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-		 && gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL)
+	else if (IS_DOUBLE_BATTLE && moveTarget & MOVE_TARGET_ALL)
 	{
 		DetermineFirstMultiTarget();
 	}
@@ -1317,15 +1433,27 @@ void HandleAction_UseMove(void)
 		gBankTarget = selectedTarget;
 		if (gAbsentBattlerFlags & gBitTable[gBankTarget])
 		{
-			if (SIDE(gBankAttacker) != SIDE(gBankTarget))
+			if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_USER_OR_PARTNER) //Acupressure
+			{
+				gBankTarget = gBankAttacker; //Redirect to user instead
+			}
+			else if (SIDE(gBankAttacker) != SIDE(gBankTarget))
 			{
 				gBankTarget = PARTNER(gBankTarget);
 			}
 			else //Targeted Partner
 			{
-				gBankTarget = GetBattlerAtPosition(GetBattlerPosition(gBankAttacker) ^ BIT_SIDE);
-				if (gAbsentBattlerFlags & gBitTable[gBankTarget])
-					gBankTarget = PARTNER(gBankTarget);
+				if (gCurrentMove == MOVE_HEALPULSE || gCurrentMove == MOVE_INSTRUCT)
+				{
+					//Never redirect Heal Pulse or Instruct to the enemy
+					goto FAIL_NO_TARGET;
+				}
+				else
+				{
+					gBankTarget = GetBattlerAtPosition(GetBattlerPosition(gBankAttacker) ^ BIT_SIDE);
+					if (gAbsentBattlerFlags & gBitTable[gBankTarget])
+						gBankTarget = PARTNER(gBankTarget);
+				}
 			}
 		}
 	}
@@ -1334,17 +1462,23 @@ void HandleAction_UseMove(void)
 
 	// choose battlescript
 	if (gStatuses3[gBankAttacker] & STATUS3_SKY_DROP_ATTACKER
-	&& gBattleMons[gNewBS->skyDropAttackersTarget[gBankAttacker]].hp == 0)
+	&& !BATTLER_ALIVE(gNewBS->skyDropAttackersTarget[gBankAttacker]))
 	{
 		gStatuses3[gBankAttacker] &= ~(STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET | STATUS3_IN_AIR);
 		gNewBS->skyDropTargetsAttacker[gBankTarget] = 0;
 		gNewBS->skyDropAttackersTarget[gBankAttacker] = 0;
 		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
 	}
-	else if (gBattleMons[gBankTarget].hp == 0
-	&&  AttacksThisTurn(gBankAttacker, gCurrentMove) == 2 //Not charging move
-	&&  !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD)) //Moves like Stealth Rock can still be used
+	else if (!BATTLER_ALIVE(gBankTarget)
+	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2 //Not charging move
+	&& gBattleMoves[gCurrentMove].effect != EFFECT_EXPLOSION //Exploding moves still KO the attacker
+	&& !(moveTarget & MOVE_TARGET_OPPONENTS_FIELD)
+	&& !(SPLIT(gCurrentMove) == SPLIT_STATUS && moveTarget & MOVE_TARGET_DEPENDS)) //Moves like Stealth Rock can still be used
+	{
+		FAIL_NO_TARGET:
+		CancelMultiTurnMoves(gBankAttacker);
 		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
+	}
 	else
 		gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 
@@ -1472,13 +1606,17 @@ u16 GetMUS_ForBattle(void)
 					return gClassBasedBattleBGM[trainerClass];
 			}
 
-			//Then try loading the song override
-			song = VarGet(VAR_BATTLE_FACILITY_SONG_OVERRIDE);
-			if (song == BGM_RANDOM_BATTLE_MUSIC)
-				song = GetRandomBattleBGM();
+			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+			{
+				//Then try loading the song override only in the actual Frontier
+				song = VarGet(VAR_BATTLE_FACILITY_SONG_OVERRIDE);
+				if (song == BGM_RANDOM_BATTLE_MUSIC)
+					song = GetRandomBattleBGM();
 
-			if (song != 0)
-				return song;
+				if (song != 0)
+					return song;
+			}
+			
 		}
 		else
 		{
@@ -1647,19 +1785,27 @@ u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities)
 	u32 bank1Spd, bank2Spd;
 
 //Priority Calc
-	if(!ignoreMovePriorities)
+	if (!ignoreMovePriorities)
 	{
-		bank1Priority = PriorityCalc(bank1, gChosenActionByBank[bank1], ReplaceWithZMoveRuntime(bank1, gBattleMons[bank1].moves[gBattleStruct->chosenMovePositions[bank1]]));
-		bank2Priority = PriorityCalc(bank2, gChosenActionByBank[bank2], ReplaceWithZMoveRuntime(bank2, gBattleMons[bank2].moves[gBattleStruct->chosenMovePositions[bank2]]));
+		u16 move1 = ReplaceWithZMoveRuntime(bank1, gBattleMons[bank1].moves[gBattleStruct->chosenMovePositions[bank1]]);
+		u16 move2 = ReplaceWithZMoveRuntime(bank2, gBattleMons[bank2].moves[gBattleStruct->chosenMovePositions[bank2]]);
+	
+		bank1Priority = PriorityCalc(bank1, gChosenActionByBank[bank1], move1);
+		bank2Priority = PriorityCalc(bank2, gChosenActionByBank[bank2], move2);
 		if (bank1Priority > bank2Priority)
 			return FirstMon;
 		else if (bank1Priority < bank2Priority)
 			return SecondMon;
-	}
 
-//BracketCalc
-	bank1Bracket = gNewBS->lastBracketCalc[bank1] = BracketCalc(bank1);
-	bank2Bracket = gNewBS->lastBracketCalc[bank2] = BracketCalc(bank2);
+		bank1Bracket = gNewBS->lastBracketCalc[bank1] = BracketCalc(bank1, gChosenActionByBank[bank1], move1);
+		bank2Bracket = gNewBS->lastBracketCalc[bank2] = BracketCalc(bank2, gChosenActionByBank[bank2], move2);
+	}
+	else
+	{
+		//Bracket Calc
+		bank1Bracket = gNewBS->lastBracketCalc[bank1] = BracketCalc(bank1, 0, MOVE_NONE);
+		bank2Bracket = gNewBS->lastBracketCalc[bank2] = BracketCalc(bank2, 0, MOVE_NONE);
+	}
 
 	if (bank1Bracket > bank2Bracket)
 		return FirstMon;
@@ -1682,7 +1828,10 @@ u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities)
 	else if (bank1Spd < bank2Spd)
 		return SecondMon;
 
-	return SpeedTie;
+	if (Random() & 1)
+		return SpeedTie; //Second mon goes first because it won the speed tie
+
+	return FirstMon;
 }
 
 static u8 GetWhoStrikesFirstUseLastBracketCalc(u8 bank1, u8 bank2)
@@ -1773,9 +1922,7 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move)
 
 s8 PriorityCalcMon(struct Pokemon* mon, u16 move)
 {
-	u8 priority = 0;
-
-	priority = gBattleMoves[move].priority;
+	u8 priority = gBattleMoves[move].priority;
 
 	switch (GetMonAbility(mon)) {
 		case ABILITY_PRANKSTER:
@@ -1801,35 +1948,55 @@ s8 PriorityCalcMon(struct Pokemon* mon, u16 move)
 	return priority;
 }
 
-s32 BracketCalc(u8 bank)
+bool8 QuickClawActivatesThisTurn(u8 bank)
+{
+	return gNewBS->quickClawRandomNumber[bank] < ITEM_QUALITY(bank);
+}
+
+s32 BracketCalc(u8 bank, unusedArg u8 action, unusedArg u16 move)
 {
 	u8 itemEffect = ITEM_EFFECT(bank);
-	u8 itemQuality = ITEM_QUALITY(bank);
 	u8 ability = ABILITY(bank);
 
-	gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
+	gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
+	gNewBS->quickDrawIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
 	if (BATTLER_ALIVE(bank))
 	{
-		switch (itemEffect) {
-			case ITEM_EFFECT_QUICK_CLAW:
-				if (gRandomTurnNumber % 100 < itemQuality)
-				{
-					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
-					return 1;
-				}
-				break;
+		if (gNewBS->ateCustapBerry & gBitTable[bank]) //Already ate the Berry
+			return 1;
+		else
+		{
+			#ifdef ABILITY_QUICKDRAW
+			if (ability == ABILITY_QUICKDRAW
+			&& gNewBS->quickDrawRandomNumber[bank] < 30 //30% chance - activates before items
+			&& action == ACTION_USE_MOVE
+			&& SPLIT(move) != SPLIT_STATUS) //Only damaging moves
+			{
+				gNewBS->quickDrawIndicator |= gBitTable[bank];
+				return 1;
+			}
+			#endif
 
-			case ITEM_EFFECT_CUSTAP_BERRY:
-				if (!AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0)
-				&& PINCH_BERRY_CHECK(bank))
-				{
-					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
-					return 1;
-				}
-				break;
+			switch (itemEffect) {
+				case ITEM_EFFECT_QUICK_CLAW:
+					if (QuickClawActivatesThisTurn(bank))
+					{
+						gNewBS->quickClawCustapIndicator |= gBitTable[bank];
+						return 1;
+					}
+					break;
 
-			case ITEM_EFFECT_LAGGING_TAIL:
-				return -2;
+				case ITEM_EFFECT_CUSTAP_BERRY:
+					if (PINCH_BERRY_CHECK(bank) && !UnnerveOnOpposingField(bank))
+					{
+						gNewBS->quickClawCustapIndicator |= gBitTable[bank];
+						return 1;
+					}
+					break;
+
+				case ITEM_EFFECT_LAGGING_TAIL:
+					return -2;
+			}
 		}
 
 		if (ability == ABILITY_STALL)
@@ -1888,7 +2055,7 @@ static u32 BoostSpeedByItemEffect(u8 itemEffect, u8 itemQuality, u16 species, u3
 
 u32 SpeedCalc(u8 bank)
 {
-	u32 speed;
+	u32 speed, rawSpeed;
 
 	if (!BATTLER_ALIVE(bank))
 		return 0;
@@ -1898,7 +2065,8 @@ u32 SpeedCalc(u8 bank)
 	u8 itemQuality = ITEM_QUALITY(bank);
 
 	//Calculate adjusted speed stat
-	speed = (gBattleMons[bank].speed * gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][0]) / gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][1];
+	rawSpeed = gBattleMons[bank].speed;
+	speed = (rawSpeed * gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][0]) / gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][1];
 
 	//Check for abilities that alter speed
 	speed = BoostSpeedInWeather(ability, itemEffect, speed);
@@ -1931,11 +2099,13 @@ u32 SpeedCalc(u8 bank)
 		&& gBattleTypeFlags & BATTLE_TYPE_TRAINER
 		&& SIDE(bank) == B_SIDE_PLAYER
 		&& gTrainerBattleOpponent_A != 0x400)
-			speed = (speed * 110) / 100;
+			speed = (speed * 11) / 10; //1.1x
 	#endif
 
 	if (gBattleMons[bank].status1 & STATUS_ANY && ability == ABILITY_QUICKFEET)
-		speed *= 2;
+	{
+		speed = (speed * 15) / 10; //1.5x
+	}
 	else if (gBattleMons[bank].status1 & STATUS_PARALYSIS)
 	{
 		#ifndef OLD_PARALYSIS_SPD_DROP
@@ -1954,8 +2124,9 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon)
 		return 0;
 
 	u8 itemEffect;
-	u8 ability = GetMonAbility(mon);
+	u8 ability = GetMonAbilityAfterTrace(mon, FOE(side));
 	u32 speed = mon->speed;
+	u8 statVal = 6;
 
 	if (ability != ABILITY_KLUTZ)
 		itemEffect = ItemId_GetHoldEffect(mon->item);
@@ -1963,6 +2134,25 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon)
 		itemEffect = 0;
 
 	u8 itemQuality = ItemId_GetHoldEffectParam(mon->item);
+
+	//Calculate adjusted speed stat if Sticky Web is present
+	if (gSideTimers[side].stickyWeb
+	&& itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS
+	&& !IsClearBodyAbility(ability)
+	&& CheckMonGrounding(mon))
+	{
+		if (ability == ABILITY_CONTRARY) //Gets a speed boost
+			statVal += 1;
+		else if (ability == ABILITY_SIMPLE) //Gets extra speed decrement
+			statVal -= 2;
+		else
+			statVal -= 1;
+	}
+
+	if (IsTrickRoomActive() && itemEffect == ITEM_EFFECT_ROOM_SERVICE)
+		statVal -= 1;
+
+	speed = (speed * gStatStageRatios[statVal][0]) / gStatStageRatios[statVal][1];
 
 	//Check for abilities that alter speed
 	speed = BoostSpeedInWeather(ability, itemEffect, speed);
@@ -1987,7 +2177,9 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon)
 		speed /= 4;
 
 	if (mon->condition & STATUS_ANY && ability == ABILITY_QUICKFEET)
-		speed *= 2;
+	{
+		speed = (speed * 15) / 10; //1.5x
+	}
 	else if (mon->condition & STATUS_PARALYSIS)
 	{
 		#ifndef OLD_PARALYSIS_SPD_DROP

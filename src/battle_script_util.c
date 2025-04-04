@@ -17,6 +17,7 @@
 #include "../include/new/end_battle.h"
 #include "../include/new/end_turn_battle_scripts.h"
 #include "../include/new/frontier.h"
+#include "../include/new/general_bs_commands.h"
 #include "../include/new/util.h"
 #include "../include/new/item.h"
 #include "../include/new/item_battle_scripts.h"
@@ -122,9 +123,10 @@ void AcupressureFunc(void)
 
 void SetStatSwapSplit(void)
 {
+	u32 temp, i;
 	u8 bankAtk = gBankAttacker;
 	u8 bankDef = gBankTarget;
-	u32 temp, i;
+	const u8* string = NULL;
 
 	switch (gCurrentMove) {
 		case MOVE_POWERTRICK:
@@ -132,32 +134,31 @@ void SetStatSwapSplit(void)
 			temp = gBattleMons[bankAtk].attack;
 			gBattleMons[bankAtk].attack = gBattleMons[bankAtk].defense;
 			gBattleMons[bankAtk].defense = temp;
-
 			gStatuses3[bankAtk] ^= STATUS3_POWER_TRICK;
 
-			gBattleStringLoader = PowerTrickString;
+			string = PowerTrickString;
 			break;
 
 		case MOVE_POWERSWAP:	;
-			u8 atkAtkBuff = gBattleMons[bankAtk].statStages[STAT_STAGE_ATK-1];
-			u8 atkSpAtkBuff = gBattleMons[bankAtk].statStages[STAT_STAGE_SPATK-1];
-			gBattleMons[bankAtk].statStages[STAT_STAGE_ATK-1] = gBattleMons[bankDef].statStages[STAT_STAGE_ATK-1];
-			gBattleMons[bankAtk].statStages[STAT_STAGE_SPATK-1] = gBattleMons[bankDef].statStages[STAT_STAGE_SPATK-1];
-			gBattleMons[bankDef].statStages[STAT_STAGE_ATK-1] = atkAtkBuff;
-			gBattleMons[bankDef].statStages[STAT_STAGE_SPATK-1] = atkSpAtkBuff;
+			u8 atkAtkBuff = STAT_STAGE(bankAtk, STAT_STAGE_ATK);
+			u8 atkSpAtkBuff = STAT_STAGE(bankAtk, STAT_STAGE_SPATK);
+			STAT_STAGE(bankAtk, STAT_STAGE_ATK) = STAT_STAGE(bankDef, STAT_STAGE_ATK);
+			STAT_STAGE(bankAtk, STAT_STAGE_SPATK) = STAT_STAGE(bankDef, STAT_STAGE_SPATK);
+			STAT_STAGE(bankDef, STAT_STAGE_ATK) = atkAtkBuff;
+			STAT_STAGE(bankDef, STAT_STAGE_SPATK) = atkSpAtkBuff;
 
-			gBattleStringLoader = PowerSwapString;
+			string = PowerSwapString;
 			break;
 
 		case MOVE_GUARDSWAP:	;
-			u8 atkDefBuff = gBattleMons[bankAtk].statStages[STAT_STAGE_DEF-1];
-			u8 atkSpDefBuff = gBattleMons[bankAtk].statStages[STAT_STAGE_SPDEF-1];
-			gBattleMons[bankAtk].statStages[STAT_STAGE_DEF-1] = gBattleMons[bankDef].statStages[STAT_STAGE_DEF-1];
-			gBattleMons[bankAtk].statStages[STAT_STAGE_SPDEF-1] = gBattleMons[bankDef].statStages[STAT_STAGE_SPDEF-1];
-			gBattleMons[bankDef].statStages[STAT_STAGE_DEF-1] = atkDefBuff;
-			gBattleMons[bankDef].statStages[STAT_STAGE_SPDEF-1] = atkSpDefBuff;
+			u8 atkDefBuff = STAT_STAGE(bankAtk, STAT_STAGE_DEF);
+			u8 atkSpDefBuff = STAT_STAGE(bankAtk, STAT_STAGE_SPDEF);
+			STAT_STAGE(bankAtk, STAT_STAGE_DEF) = STAT_STAGE(bankDef, STAT_STAGE_DEF);
+			STAT_STAGE(bankAtk, STAT_STAGE_SPDEF) = STAT_STAGE(bankDef, STAT_STAGE_SPDEF);
+			STAT_STAGE(bankDef, STAT_STAGE_DEF) = atkDefBuff;
+			STAT_STAGE(bankDef, STAT_STAGE_SPDEF) = atkSpDefBuff;
 
-			gBattleStringLoader = GuardSwapString;
+			string = GuardSwapString;
 			break;
 
 		case MOVE_SPEEDSWAP:
@@ -165,18 +166,18 @@ void SetStatSwapSplit(void)
 			gBattleMons[bankAtk].speed = gBattleMons[bankDef].speed;
 			gBattleMons[bankDef].speed = temp;
 
-			gBattleStringLoader = SpeedSwapString;
+			string = SpeedSwapString;
 			break;
 
 		case MOVE_HEARTSWAP:
-			for (i = 0; i < BATTLE_STATS_NO-1; ++i)
+			for (i = 0; i < BATTLE_STATS_NO - 1; ++i)
 			{
 				temp = gBattleMons[bankAtk].statStages[i];
 				gBattleMons[bankAtk].statStages[i] = gBattleMons[bankDef].statStages[i];
 				gBattleMons[bankDef].statStages[i] = temp;
 			}
 
-			gBattleStringLoader = HeartSwapString;
+			string = HeartSwapString;
 			break;
 
 		case MOVE_POWERSPLIT:	;
@@ -188,7 +189,7 @@ void SetStatSwapSplit(void)
 			gBattleMons[bankDef].attack = MathMax(1, newAtk);
 			gBattleMons[bankDef].spAttack = MathMax(1, newSpAtk);
 
-			gBattleStringLoader = PowerSplitString;
+			string = PowerSplitString;
 			break;
 
 		case MOVE_GUARDSPLIT:	;
@@ -200,8 +201,10 @@ void SetStatSwapSplit(void)
 			gBattleMons[bankDef].defense = MathMax(1, newDef);
 			gBattleMons[bankDef].spDefense = MathMax(1, newSpDef);
 
-			gBattleStringLoader = GuardSplitString;
+			string = GuardSplitString;
 	}
+
+	gBattleStringLoader = string;
 }
 
 void ResetTargetStats(void)
@@ -256,9 +259,7 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 	else
 		bank = gBankAttacker;
 
-	if (ABILITY(bank) == ABILITY_MOLDBREAKER
-	||  ABILITY(bank) == ABILITY_TURBOBLAZE
-	||  ABILITY(bank) == ABILITY_TERAVOLT)
+	if (IsMoldBreakerAbility(ABILITY(bank)))
 	{
 		if (gMoldBreakerIgnoredAbilities[ABILITY(gBankSwitching)])
 		{
@@ -365,37 +366,43 @@ void TryActivatePartnerSapSipper(void)
 
 void RoundBSFunction(void)
 {
-	int i;
-	u8 j = 0;
-	u8 k = 0;
-	u8 index = 0;
-	u8 rounders[3] = {0xFF, 0xFF, 0xFF};
-	u8 nonRounders[3] = {0xFF, 0xFF, 0xFF};
+	u32 i, j, k, index;
+	u8 rounders[4] = {0xFF, 0xFF, 0xFF, 0xFF}; //Last slot is always 0xFF
+	u8 nonRounders[4] = {0xFF, 0xFF, 0xFF, 0xFF};
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
-		for (i = 0; i < gBattlersCount; ++i) {
-			if (gBanksByTurnOrder[i] == gBankAttacker) {
+	if (IS_DOUBLE_BATTLE)
+	{
+		for (i = 0, index = 0; i < gBattlersCount; ++i)
+		{
+			if (gBanksByTurnOrder[i] == gBankAttacker)
+			{
 				index = i + 1; //Index after attacker; index to start swapping data
 				break;
 			}
 		}
 
-		for (i = index; i < gBattlersCount; ++i) {
+		for (i = index, j = 0, k = 0; i < gBattlersCount; ++i)
+		{
 			if (gChosenMovesByBanks[gBanksByTurnOrder[i]] == MOVE_ROUND)
 				rounders[j++] = gBanksByTurnOrder[i];
 			else
 				nonRounders[k++] = gBanksByTurnOrder[i];
 		}
 
-		for (i = 0; rounders[i] != 0xFF && i < 3; ++i)
+		if (rounders[0] != 0xFF)
 		{
-			gBanksByTurnOrder[index++] = rounders[i];
-			gNewBS->quashed |= gBitTable[rounders[i]]; //So their turn order can't be changed
+			for (i = 0; rounders[i] != 0xFF && i < 3; ++i)
+			{
+				gBanksByTurnOrder[index++] = rounders[i];
+				gNewBS->turnOrderLocked |= gBitTable[rounders[i]]; //So their turn order can't be changed
+			}
 		}
 
-		for (i = 0; nonRounders[i] != 0xFF && i < 3; ++i)
-			gBanksByTurnOrder[index++] = nonRounders[i];
-
+		if (nonRounders[0] != 0xFF)
+		{
+			for (i = 0; nonRounders[i] != 0xFF && i < 3; ++i)
+				gBanksByTurnOrder[index++] = nonRounders[i];
+		}
 	}
 }
 
@@ -591,8 +598,11 @@ void CaptivateFunc(void)
 void MeFirstFunc(void)
 {
 	u16 move = gChosenMovesByBanks[gBankTarget];
+	if (move == MOVE_NONE)
+		move = gLockedMoves[gBankTarget]; //If it's charging on a two-turn move
 
-	if (SPLIT(move) == SPLIT_STATUS
+	if (move == MOVE_NONE
+	|| SPLIT(move) == SPLIT_STATUS
 	|| GetBattlerTurnOrderNum(gBankTarget) < gCurrentTurnActionNumber
 	|| CheckTableForMove(move, gMeFirstBannedMoves)
 	|| CheckTableForMove(move, gMovesThatCallOtherMoves))
@@ -645,8 +655,9 @@ void LoadPledgeScript(void)
 		gBattlescriptCurrInstr = BattleScript_PledgeCombined - 5;
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-	&& gBattleMons[PARTNER(gBankAttacker)].hp
+	&& BATTLER_ALIVE(PARTNER(gBankAttacker))
 	&& partnerMove != gCurrentMove
+	&& !IsDynamaxed(PARTNER(gBankAttacker))
 	&& gBattleMoves[partnerMove].effect == EFFECT_PLEDGE)
 	{
 		u8 index = 0;
@@ -768,7 +779,7 @@ void DoBattleFieldEffect(void)
 		{
 			for (i = 0; i < gBattlersCount; ++i)
 			{
-				if (!CheckGrounding(i))
+				if (BATTLER_ALIVE(i) && !CheckGrounding(i))
 					gNewBS->targetsToBringDown |= gBitTable[i];
 			}
 
@@ -832,9 +843,9 @@ void DoBattleFieldEffect(void)
 			}
 			else if (!IsGravityActive())
 			{
-				for (int i = 0; i < gBattlersCount; ++i)
+				for (i = 0; i < gBattlersCount; ++i)
 				{
-					if (!CheckGrounding(i))
+					if (BATTLER_ALIVE(i) && !CheckGrounding(i))
 						gNewBS->targetsToBringDown |= gBitTable[i];
 				}
 
@@ -959,7 +970,13 @@ void ChangeTargetTypeFunc(void)
 			break;
 
 		case MOVE_MAGICPOWDER:
-			if (ABILITY(gBankTarget) == ABILITY_MULTITYPE
+			if (!IsAffectedByPowder(gBankTarget))
+			{
+				gMoveResultFlags |= MOVE_RESULT_MISSED;
+				TrySetMissStringForSafetyGoggles(gBankTarget);
+				gBattlescriptCurrInstr = BattleScript_NotAffected - 5;
+			}
+			else if (ABILITY(gBankTarget) == ABILITY_MULTITYPE
 			||  ABILITY(gBankTarget) == ABILITY_RKS_SYSTEM
 			||  IsTerastal(gBankTarget)
 			|| (gBattleMons[gBankTarget].type1 == TYPE_PSYCHIC &&
@@ -977,7 +994,8 @@ void ChangeTargetTypeFunc(void)
 			break;
 
 		case MOVE_TRICKORTREAT:
-			if (IsOfType(gBankTarget, TYPE_GHOST))
+			if (IsOfType(gBankTarget, TYPE_GHOST)
+			||  IsTerastal(gBankTarget))
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			else
 			{
@@ -992,7 +1010,8 @@ void ChangeTargetTypeFunc(void)
 			break;
 
 		case MOVE_FORESTSCURSE:
-			if (IsOfType(gBankTarget, TYPE_GRASS))
+			if (IsOfType(gBankTarget, TYPE_GRASS)
+			||  IsTerastal(gBankTarget))
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			else
 			{
@@ -1147,6 +1166,8 @@ void AfterYouFunc(void)
 
 		if (newTurnOrder[1] != 0xFF)
 			gBanksByTurnOrder[index] = newTurnOrder[1];
+
+		gNewBS->turnOrderLocked |= gBitTable[gBankTarget]; //So their turn order isn't changed
 	}
 	else
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -1179,7 +1200,7 @@ void QuashFunc(void)
 				gBanksByTurnOrder[i] = newTurnOrder[i];
 		}
 
-		gNewBS->quashed |= gBitTable[gBankTarget];
+		gNewBS->turnOrderLocked |= gBitTable[gBankTarget];
 	}
 	else
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -1190,8 +1211,8 @@ void TryExecuteInstruct(void)
 	u16 move = gLastPrintedMoves[gBankTarget];
 
 	if (CheckTableForMove(move, gInstructBannedMoves)
-	||  CheckTableForMove(move, gMovesThatRequireRecharging)
 	||  CheckTableForMove(move, gMovesThatCallOtherMoves)
+	|| gBattleMoves[move].effect == EFFECT_RECHARGE
 	|| IsZMove(move)
 	|| IsAnyMaxMove(move)
 	|| IsDynamaxed(gBankTarget)
@@ -1213,10 +1234,11 @@ void InitiateInstruct(void)
 	gCurrentMove = gLastPrintedMoves[gBankTarget];
 	gCurrMovePos = FindMovePositionInMoveset(gCurrentMove, gBankTarget);
 	gChosenMovePos = FindMovePositionInMoveset(gCurrentMove, gBankTarget);
-
 	gBankAttacker = gBankTarget;
+	gNewBS->InstructInProgress = TRUE; //Must be up here so chosen target doesn't get overwritten
 
-	if (gAbsentBattlerFlags & gBitTable[gNewBS->lastTargeted[gBankAttacker]])
+	if (gAbsentBattlerFlags & gBitTable[gNewBS->lastTargeted[gBankAttacker]]
+	|| GetBaseMoveTarget(gCurrentMove, gBankAttacker) & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Spread move
 		gBankTarget = GetMoveTarget(gCurrentMove, FALSE);
 	else
 		gBankTarget = gNewBS->lastTargeted[gBankAttacker];
@@ -1227,12 +1249,13 @@ void InitiateInstruct(void)
 
 	gBattleScripting.animTargetsHit = 0;
 	gBattleStruct->atkCancellerTracker = 0;
+	ResetDoublesSpreadMoveCalcs();
 	MoveValuesCleanUp();
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
+	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
 	BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
 	gBattlescriptCurrInstr = BattleScript_FlushMessageBox - 5;
 	gNewBS->zMoveData.active = FALSE;
-	gNewBS->InstructInProgress = TRUE;
 }
 
 void TrySetMagnetRise(void)
@@ -1601,7 +1624,7 @@ void TransferTerrainData(void)
 		gBattlescriptCurrInstr -= 5;
 	else
 	{
-		gActiveBattler = 0;
+		gActiveBattler = GetFirstAliveActiveBattler();
 		EmitDataTransfer(0, &gTerrainType, 1, &gTerrainType);
 		MarkBufferBankForExecution(gActiveBattler);
 	}
@@ -1670,8 +1693,8 @@ void CycleScriptingBankHealthBetween0And1(void)
 
 	gActiveBattler = gBattleScripting.bank;
 
-	if (!gBattleMons[gActiveBattler].hp)
-		gBattleMons[gActiveBattler].hp = 1;
+	if (gBattleMons[gActiveBattler].hp == 0)
+		gBattleMons[gActiveBattler].hp = gBattleMons[gActiveBattler].maxHP; //Because 1 causes the low health beeps
 	else
 		gBattleMons[gActiveBattler].hp = 0;
 
@@ -1723,9 +1746,9 @@ void DoProteanTypeChange(void)
 
 void HarvestActivateBerry(void)
 {
-	gBattlescriptCurrInstr += 5;
-	if (ItemBattleEffects(ItemEffects_EndTurn, gBattleScripting.bank, TRUE, FALSE))
-		gBattlescriptCurrInstr -= 5;
+	gBattlescriptCurrInstr += 5; //In case a new battle script is applied on top
+	ItemBattleEffects(ItemEffects_EndTurn, gBattleScripting.bank, TRUE, FALSE);
+	gBattlescriptCurrInstr -= 5; //Either so the new battle script plays properly, or revert the shift done above
 }
 
 void TryManipulateDamageForLeechSeedBigRoot(void)
@@ -1769,8 +1792,13 @@ void HandleForfeitYesNoBox(void)
 	{
 		PlaySE(SE_SELECT);
 
-		if (gBattleCommunication[1] == 0)
+		if (gBattleCommunication[CURSOR_POSITION] == 0)
+		{
+			if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+				gBattleOutcome = B_OUTCOME_RAN;
+
 			gBattleMainFunc = HandleEndTurn_RanFromBattle;
+		}
 
 		gBattleCommunication[CURSOR_POSITION] = 0; //So the game doesn't crash when selecting a move
 		HandleBattleWindow(0x17, 0x8, 0x1D, 0xD, WINDOW_CLEAR);
@@ -1816,10 +1844,15 @@ void TransferLastUsedItem(void)
 		gBattlescriptCurrInstr -= 5;
 	else
 	{
-		gActiveBattler = 0;
+		gActiveBattler = GetFirstAliveActiveBattler();
 		EmitDataTransfer(0, &gLastUsedItem, 2, &gLastUsedItem);
 		MarkBufferBankForExecution(gActiveBattler);
 	}
+}
+
+void WipeSwitchInEffectsState(void)
+{
+	gNewBS->switchInEffectsState = 0;
 }
 
 void TryToStopNewMonFromSwitchingInAfterSRHurt(void)
@@ -1830,7 +1863,7 @@ void TryToStopNewMonFromSwitchingInAfterSRHurt(void)
 		gBattlescriptCurrInstr = BattleScript_EntryHazardsHurtReturn - 5; //Continue the switch in effects
 	}
 
-	gNewBS->switchInEffectsState = 0;
+	WipeSwitchInEffectsState();
 }
 
 void ClearSwitchInEffectsState(void)
@@ -1838,7 +1871,7 @@ void ClearSwitchInEffectsState(void)
 	if (!gNewBS->endTurnDone)
 	{
 		gBattlescriptCurrInstr = BattleScript_HandleFaintedMonDoublesSwitchInEffects - 5;
-		gNewBS->switchInEffectsState = 0;
+		WipeSwitchInEffectsState();
 	}
 };
 
@@ -1849,7 +1882,7 @@ void UpdatePrimalAbility(void)
 
 void ClearAttackerDidDamageOnce(void)
 {
-	gNewBS->AttackerDidDamageAtLeastOnce = 0;
+	gNewBS->AttackerDidDamageAtLeastOnce = FALSE;
 }
 
 void TryRemovePrimalWeatherOnPivot(void)
@@ -2048,13 +2081,18 @@ void RestoreEffectBankHPStatsAndRemoveBackupSpecies(void)
 	}
 
 	//Check if chosen move is still in moveset
-	u8 originalMovePos = FindMovePositionInMoveset(gChosenMovesByBanks[gEffectBank], gEffectBank);
-	if (gChosenMovesByBanks[gEffectBank] != MOVE_NONE && originalMovePos < MAX_MON_MOVES)
+	u16 chosenMove = gChosenMovesByBanks[gEffectBank];
+	if (gBattleMons[gEffectBank].status2 & STATUS2_MULTIPLETURNS)
+		chosenMove = gLockedMoves[gEffectBank]; //Like locked into Outrage
+
+	u8 originalMovePos = FindMovePositionInMoveset(chosenMove, gEffectBank);
+
+	if (chosenMove != MOVE_NONE && originalMovePos < MAX_MON_MOVES)
 	{
 		gBattleStruct->chosenMovePositions[gEffectBank] = originalMovePos;
 		gMoveSelectionCursor[gEffectBank] = originalMovePos;
 	}
-	else
+	else if (!gProtectStructs[gEffectBank].onlyStruggle) //Isn't already struggling
 	{
 		gNewBS->devolveForgotMove |= gBitTable[gEffectBank]; //Can't use move anymore
 		gMoveSelectionCursor[gEffectBank] = 0; //Reset selection so can't select null move
@@ -2128,7 +2166,7 @@ void FailIfAttackerIsntHoldingEdibleBerry(void)
 	u16 item = ITEM(gBankAttacker);
 
 	if (!IsBerry(item) || CheckTableForItem(item, gBannedBattleEatBerries)
-	|| AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ABILITY_UNNERVE, 0, 0))
+	|| UnnerveOnOpposingField(gBankAttacker))
 		gBattlescriptCurrInstr = BattleScript_ButItFailedAttackstring - 5;
 }
 
@@ -2158,11 +2196,6 @@ void ClearPlayerRechargeMultipleTurns(void)
 {
 	gBattleMons[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)].status2 &= ~(STATUS2_RECHARGE | STATUS2_MULTIPLETURNS);
 	gBattleMons[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)].status2 &= ~(STATUS2_RECHARGE | STATUS2_MULTIPLETURNS);
-}
-
-void SetScriptingBankToItsPartner(void)
-{
-	gBattleScripting.bank = PARTNER(gBattleScripting.bank);
 }
 
 void IncrementBattleTurnCounter(void)
@@ -2232,7 +2265,7 @@ const u8* TryActivateMimicryForBank(u8 bank)
 			monType = 0xFF;
 	}
 
-	if (ABILITY(bank) == ABILITY_MIMICRY)
+	if (ABILITY(bank) == ABILITY_MIMICRY && !IsTerastal(bank))
 	{
 		struct Pokemon* mon = GetBankPartyData(bank);
 
@@ -2246,7 +2279,6 @@ const u8* TryActivateMimicryForBank(u8 bank)
 			{
 				gBattleMons[bank].type1 = type1;
 				gBattleMons[bank].type2 = type2;
-				gBattleMons[bank].type3 = TYPE_BLANK;
 
 				gBattleScripting.bank = bank;
 				return BattleScript_MimicryReturnedToNormal;
@@ -2258,7 +2290,8 @@ const u8* TryActivateMimicryForBank(u8 bank)
 			|| !IS_BLANK_TYPE(gBattleMons[bank].type3))
 			{
 				gBattleScripting.bank = bank;
-				SET_BATTLER_TYPE(bank, monType);
+				gBattleMons[bank].type1 = monType;
+				gBattleMons[bank].type2 = monType;
 				PREPARE_TYPE_BUFFER(gBattleTextBuff1, monType);
 				return BattleScript_MimicryTransformed;
 			}

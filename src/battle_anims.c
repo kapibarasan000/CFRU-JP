@@ -16,6 +16,7 @@
 #include "../include/new/battle_util.h"
 #include "../include/new/dns.h"
 #include "../include/new/dynamax.h"
+#include "../include/new/end_turn.h"
 #include "../include/new/mega.h"
 /*
 battle_anims.c
@@ -27,6 +28,7 @@ battle_anims.c
 #define gMonBackPicTable ((const struct CompressedSpriteSheet*) *((u32*) 0x800012C))
 #define gMonFrontPicCoords ((const struct MonCoords*) *((u32*) 0x801179C))
 #define gMonBackPicCoords ((const struct MonCoords*) *((u32*) 0x8073DD8))
+#define gEnemyMonElevation ((const u8*) *((u32*) 0x8034E6C))
 
 extern const u8* sBattleAnimScriptPtr;
 extern u16 sAnimMoveIndex;
@@ -5834,10 +5836,10 @@ static bool8 ShouldAnimBeDoneRegardlessOfSubsitute(u8 animId)
 		case B_ANIM_GRASSY_SURGE:
 		case B_ANIM_MISTY_SURGE:
 		case B_ANIM_PSYCHIC_SURGE:
-		case B_ELECTRIC_TERRAIN_ACTIVE_ANIM:
-		case B_GRASSY_TERRAIN_ACTIVE_ANIM:
-		case B_MISTY_TERRAIN_ACTIVE_ANIM:
-		case B_PSYCHIC_TERRAIN_ACTIVE_ANIM:
+		case B_ANIM_ELECTRIC_TERRAIN_ACTIVE:
+		case B_ANIM_GRASSY_TERRAIN_ACTIVE:
+		case B_ANIM_MISTY_TERRAIN_ACTIVE:
+		case B_ANIM_PSYCHIC_TERRAIN_ACTIVE:
 		case B_ANIM_LOAD_DEFAULT_BG:
 		case B_ANIM_TOTEM_BOOST:
 		case B_ANIM_DYNAMAX_START:
@@ -5860,13 +5862,14 @@ static bool8 ShouldSubstituteRecedeForSpecialBattleAnim(u8 animId)
 		case B_ANIM_POWDER_EXPLOSION:
 		case B_ANIM_BEAK_BLAST_WARM_UP:
 		case B_ANIM_SHELL_TRAP_SET:
-		case B_BATON_PASS_ANIM:
-		case B_DRAGON_TAIL_BLOW_AWAY_ANIM:
+		case B_ANIM_BATON_PASS:
+		case B_ANIM_DRAGON_TAIL_BLOW_AWAY:
 		case B_ANIM_ZMOVE_ACTIVATE:
 		case B_ANIM_MEGA_EVOLUTION:
 		case B_ANIM_ULTRA_BURST:
 		case B_ANIM_DYNAMAX_START:
 		case B_ANIM_RAID_BATTLE_ENERGY_BURST:
+		case B_ANIM_RAID_BATTLE_BLOW_AWAY:
 		case B_ANIM_TERASTAL:
 			return TRUE;
 		default:
@@ -6242,4 +6245,45 @@ void AnimTask_FadeOutParticles(u8 taskId)
 	gTasks[taskId].data[3] = gBattleAnimArgs[0]; //Delay
 	gTasks[taskId].data[4] = 0; //Delay Timer
 	gTasks[taskId].func = AnimTask_FadeOutParticlesHelper;
+}
+
+//Enemy Shadow Callback//
+void SpriteCB_EnemyShadow(struct Sprite *shadowSprite)
+{
+	bool8 invisible = FALSE;
+	u8 battlerId = shadowSprite->tBattlerId;
+	struct Sprite* battlerSprite = &gSprites[gBattlerSpriteIds[battlerId]];
+
+	if (gNewBS->trainerSlideInProgress)
+		return; //Don't do anything
+
+	else if (!battlerSprite->inUse || !IsBattlerSpritePresent(battlerId)
+	#ifdef FLAG_SKY_BATTLE
+	|| FlagGet(FLAG_SKY_BATTLE) //Doesn't make sense to use Shadows in Sky Battle
+	#endif
+	#ifdef MAPSEC_DISTORTION_WORLD
+	|| (GetCurrentRegionMapSectionId() == MAPSEC_DISTORTION_WORLD
+	 && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	 && SIDE(battlerId) == B_SIDE_OPPONENT) //Fighting Giratina
+	#endif
+	)
+	{
+		shadowSprite->callback = SpriteCB_SetInvisible;
+		return;
+	}
+
+	if (IsInMiddleOfEndTurnSwitchIn(battlerId))
+		invisible = TRUE;
+	else if (gAnimScriptActive || battlerSprite->invisible)
+		invisible = TRUE;
+	else if (gBattleSpritesDataPtr->bankData[battlerId].transformSpecies != SPECIES_NONE
+	&& gEnemyMonElevation[gBattleSpritesDataPtr->bankData[battlerId].transformSpecies] == 0)
+		invisible = TRUE;
+
+	if (gBattleSpritesDataPtr->bankData[battlerId].behindSubstitute)
+		invisible = TRUE;
+
+	shadowSprite->pos1.x = battlerSprite->pos1.x;
+	shadowSprite->pos2.x = battlerSprite->pos2.x;
+	shadowSprite->invisible = invisible;
 }

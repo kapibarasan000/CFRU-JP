@@ -24,6 +24,7 @@ battle_start_turn_start_battle_scripts.s
 .global BattleScript_MistyTerrainBattleBegin
 .global BattleScript_PsychicTerrainBattleBegin
 .global BattleScript_QuickClaw
+.global BattleScript_QuickDraw
 .global BattleScript_FocusPunchSetUp
 .global BattleScript_BeakBlastSetUp
 .global BattleScript_ShellTrapSetUp
@@ -32,7 +33,9 @@ battle_start_turn_start_battle_scripts.s
 .global BattleScript_CamomonsTypeRevealEnd3
 .global BattleScript_DynamaxEnergySwirl
 .global BattleScript_RaidBattleStart
+.global BattleScript_RaidBattleStart_NoDynamax
 .global BattleScript_RaidBattleStorm
+.global BattleScript_RaidShieldsBattleStart
 
 .global StringNull
 
@@ -190,6 +193,18 @@ QuickClawBS:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_QuickDraw:
+	setword BATTLE_STRING_LOADER StringNull
+	printstring 0x184
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_AbilityIncreasedSpeedBracket
+	printstring 0x184
+	waitmessage DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
+	end3
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_FocusPunchSetUp:
 	printstring 0x130
 	waitmessage 0xA
@@ -240,6 +255,7 @@ BattleScript_RaidBattleStart:
 	playanimation BANK_SCRIPTING ANIM_DYNAMAX_START 0x0
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+BattleScript_RaidBattleStart_NoDynamax:
 	setword BATTLE_STRING_LOADER gText_RaidBattleStormStarted
 	call BattleScript_RaidBattleStorm
 	end3
@@ -252,6 +268,15 @@ BattleScript_RaidBattleStorm:
 
 BattleScript_DynamaxEnergySwirl:
 	playanimation BANK_SCRIPTING ANIM_DYNAMAX_ENERGY_SWIRL 0x0
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	end3
+
+BattleScript_RaidShieldsBattleStart:
+	pause 0x20
+	callasm CreateRaidShieldSprites
+	pause 0x10
+	setword BATTLE_STRING_LOADER gText_RaidShield
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	end3

@@ -121,7 +121,7 @@ gBattleScriptingCommandsTable:
 .word 0x8025791					@cancelallactions
 .word atk69_adjustsetdamage
 .word atk6A_removeitem
-.word 0x80259B5					@atknameinbuff1
+.word atk6B_atknameinbuff1
 .word 0x80259F1					@drawlvlupbox
 .word 0x8025FB5					@resetsentmonsvalue
 .word 0x8025FCD					@setatktoplayer0
@@ -223,7 +223,7 @@ gBattleScriptingCommandsTable:
 .word atkCE_settorment
 .word atkCF_jumpifnodamage
 .word atkD0_settaunt
-.word 0x802B811					@sethelpinghand
+.word atkD1_trysethelpinghand	@sethelpinghand
 .word atkD2_tryswapitems		@itemswap
 .word atkD3_trycopyability		@copyability
 .word atkD4_trywish

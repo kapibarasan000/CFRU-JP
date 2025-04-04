@@ -31,7 +31,7 @@ void atk01_accuracycheck(void)
 ACCURACY_CHECK_START:
 	if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL)
 	{
-		if (!sub_80EC28C(1) && SPLIT(move) != SPLIT_STATUS)
+		if (!BtlCtrl_OakOldMan_TestState2Flag(1) && SPLIT(move) != SPLIT_STATUS)
 		{
 			if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
 			{
@@ -40,7 +40,7 @@ ACCURACY_CHECK_START:
 			}
 		}
 
-		if (!sub_80EC28C(2) && SPLIT(move) == SPLIT_STATUS)
+		if (!BtlCtrl_OakOldMan_TestState2Flag(2) && SPLIT(move) == SPLIT_STATUS)
 		{
 			if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
 			{
@@ -85,6 +85,7 @@ ACCURACY_CHECK_START:
 						 || ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_LOADED_DICE)))
 		{
 			//No acc checks for second hit of Parental Bond or multi hit moves
+			TrySetDestinyBondToHappen();
 			gBattlescriptCurrInstr += 7;
 		}
 		else
@@ -264,7 +265,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 			gBattleCommunication[6] = 1;
 		}
 	}
-	else if (gSideStatuses[defSide] & SIDE_STATUS_CRAFTY_SHIELD && target != MOVE_TARGET_USER && split == SPLIT_STATUS)
+	else if (gSideStatuses[defSide] & SIDE_STATUS_CRAFTY_SHIELD && !(target & (MOVE_TARGET_USER | MOVE_TARGET_OPPONENTS_FIELD)) && split == SPLIT_STATUS)
 	{
 		effect = 1;
 		gBattleStringLoader = CraftyShieldProtectedString;
@@ -380,8 +381,7 @@ static bool8 AccuracyCalcHelper(u16 move, u8 bankDef)
 	||   (CheckTableForMove(move, gAlwaysHitWhenMinimizedMoves) && gStatuses3[bankDef] & STATUS3_MINIMIZED)
 	||  ((gStatuses3[bankDef] & STATUS3_TELEKINESIS) && gBattleMoves[move].effect != EFFECT_0HKO)
 	||	 gBattleMoves[move].accuracy == 0
-	||  (gStatuses3[bankDef] & STATUS3_GLAIVERUSH)
-	||  (move == MOVE_TACHYONCUTTER))
+	||  (gStatuses3[bankDef] & STATUS3_GLAIVERUSH))
 	{
 		//JumpIfMoveFailed(7, move);
 		doneStatus = TRUE;
@@ -424,13 +424,19 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 	else
 		acc = STAT_STAGE(bankAtk, STAT_STAGE_ACC);
 
-	if ((gBattleMons[bankDef].status2 & STATUS2_FORESIGHT)
-	||  (gBattleMons[bankDef].status2 & STATUS3_MIRACLE_EYED)
-	||   atkAbility == ABILITY_UNAWARE
-	||   atkAbility == ABILITY_KEENEYE
+	if (atkAbility == ABILITY_UNAWARE
+	|| (gBattleMons[bankDef].status2 & STATUS2_FORESIGHT)
+	|| (gBattleMons[bankDef].status2 & STATUS3_MIRACLE_EYED)
 	||   CheckTableForMove(move, gIgnoreStatChangesMoves))
 	{
 		buff = acc;
+	}
+	else if (atkAbility == ABILITY_KEENEYE)
+	{
+		if (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6) //Stops higher evasion, allows lower
+			buff = acc;
+		else
+			buff = acc + 6 - STAT_STAGE(bankDef, STAT_STAGE_EVASION);
 	}
 	else
 		buff = acc + 6 - STAT_STAGE(bankDef, STAT_STAGE_EVASION);
@@ -532,8 +538,22 @@ u32 VisualAccuracyCalc(u16 move, u8 bankAtk, u8 bankDef)
 {
 	u8 defEffect  = GetRecordedItemEffect(bankDef);
 	u8 defAbility = GetRecordedAbility(bankDef);
+	u32 acc = AccuracyCalcPassDefAbilityItemEffect(move, bankAtk, bankDef, defAbility, defEffect);
 
-	return AccuracyCalcPassDefAbilityItemEffect(move, bankAtk, bankDef, defAbility, defEffect);
+	if (ABILITY(bankAtk) == ABILITY_NOGUARD || defAbility == ABILITY_NOGUARD
+	|| (gStatuses3[bankDef] & STATUS3_ALWAYS_HITS && gDisableStructs[bankDef].bankWithSureHit == bankAtk)
+	|| (move == MOVE_TOXIC && IsOfType(bankAtk, TYPE_POISON))
+	|| (CheckTableForMove(move, gAlwaysHitWhenMinimizedMoves) && gStatuses3[bankDef] & STATUS3_MINIMIZED)
+	|| ((gStatuses3[bankDef] & STATUS3_TELEKINESIS) && gBattleMoves[move].effect != EFFECT_0HKO))
+		acc = 0xFFFF; //No Miss
+	else if (WEATHER_HAS_EFFECT)
+	{
+		if (((gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, gAlwaysHitInRainMoves) && ITEM_EFFECT(bankDef) != ITEM_EFFECT_UTILITY_UMBRELLA)
+		||  ((gBattleWeather & WEATHER_HAIL_ANY) && move == MOVE_BLIZZARD))
+			acc = 0xFFFF; //No Miss
+	}
+
+	return acc;
 }
 
 u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
@@ -546,7 +566,7 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 moveSplit = SPLIT(move);
 
-	acc = gBattleMons[bankAtk].statStages[STAT_STAGE_ACC-1];
+	acc = STAT_STAGE(bankAtk, STAT_STAGE_ACC);
 	moveAcc = gBattleMoves[move].accuracy;
 
 	//Check Thunder + Hurricane in sunny weather
@@ -597,11 +617,14 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 			calc = (calc * 12) / 10; // 1.2 Micle Berry Boost
 	}
 
-	if (WEATHER_HAS_EFFECT)
+	if (atkAbility == ABILITY_NOGUARD
+		|| (move == MOVE_TOXIC && IsOfType(bankAtk, TYPE_POISON)))
+			calc = 0xFFFF; //No Miss
+	else if (WEATHER_HAS_EFFECT)
 	{
 		if (((gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, gAlwaysHitInRainMoves))
 		||  ((gBattleWeather & WEATHER_HAIL_ANY) && move == MOVE_BLIZZARD))
-			calc = 0; //No Miss
+			calc = 0xFFFF; //No Miss
 	}
 
 	if (gBattleMoves[move].accuracy == 0) //Always hit

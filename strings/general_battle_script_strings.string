@@ -144,6 +144,9 @@
 //#org @gText_CloakedInLight
 //[ATTACKER]を\nはげしい ひかりが つつむ！
 
+#org @gText_NotAffectedBecauseOfItem
+[TARGET]は [LAST_ITEM]で\n[CURRENT_MOVE]を うけない！
+
 //#org @gText_ItemPumpedMon
 //[SCRIPTING_BANK]は\n[LAST_ITEM]を つかって\lはりきり だした！
 

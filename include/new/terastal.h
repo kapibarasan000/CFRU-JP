@@ -6,6 +6,7 @@
 //Exported Functions
 bool8 CanTerastal(u8 bank);
 bool8 IsTerastal(u8 bank);
+bool8 IsMonTerastal(struct Pokemon* mon);
 u8 GetTeraType(u8 bank);
 u8 GetBattlerTeraType(u8 bank);
 u16 GetTeraTypeColor(u8 teratype);

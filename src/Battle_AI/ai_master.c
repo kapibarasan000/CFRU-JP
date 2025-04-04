@@ -1396,7 +1396,7 @@ static u8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 checkLocke
 			||	i == gBattleStruct->monToSwitchIntoId[battlerIn2])
 				continue;
 
-			if (AI_TypeCalc(gLockedMoves[bankAtk], bankAtk, &party[i]) & flags)
+			if (AI_TypeCalc(gLockedMoves[bankAtk], bankAtk, gActiveBattler, &party[i]) & flags)
 			{
 				return i;
 			}
@@ -1583,7 +1583,7 @@ static bool8 ShouldSwitchToAvoidDeath(void)
 			u8 firstId, lastId;
 			struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 			u8 bestMon = GetMostSuitableMonToSwitchInto();
-			u32 resultFlags = AI_TypeCalc(defMove, FOE(gActiveBattler), &party[bestMon]);
+			u32 resultFlags = AI_TypeCalc(defMove, FOE(gActiveBattler), gActiveBattler, &party[bestMon]);
 
 			if ((resultFlags & MOVE_RESULT_NO_EFFECT && GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE) //Has some sort of followup
 			||  (PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMon], FOE(gActiveBattler)) && GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_INCREASE_WALLS_FOE))
@@ -1657,9 +1657,9 @@ bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent)
 			continue;
 
 		if (predictedMove1 != MOVE_NONE && predictedMove1 != MOVE_PREDICTION_SWITCH)
-			moveFlags = AI_TypeCalc(predictedMove1, foe1, &party[i]);
+			moveFlags = AI_TypeCalc(predictedMove1, foe1, battlerIn1, &party[i]);
 		else
-			moveFlags = AI_TypeCalc(predictedMove2, foe2, &party[i]);
+			moveFlags = AI_TypeCalc(predictedMove2, foe2, battlerIn2, &party[i]);
 
 		if (moveFlags & flags)
 		{
@@ -1741,7 +1741,7 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 							return FALSE;
 						break;
 					case EFFECT_ROAR:
-						if (BankHasMonToSwitchTo(bankDef))
+						if (HasMonToSwitchTo(bankDef))
 							return FALSE;
 						break;
 					case EFFECT_TOXIC:
@@ -2188,7 +2188,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 
 						if (!(gBitTable[k] & foeMoveLimitations))
 						{
-							typeEffectiveness = AI_TypeCalc(move, foe, &party[i]);
+							typeEffectiveness = AI_TypeCalc(move, foe, gActiveBattler, &party[i]);
 
 							if (typeEffectiveness & MOVE_RESULT_SUPER_EFFECTIVE)
 							{
@@ -2838,6 +2838,37 @@ static bool8 ShouldAIUseItem(void)
 		}
 	}
 	return FALSE;
+}
+
+void ClearCachedAIData(void)
+{
+	u32 i, j, k;
+
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		gNewBS->ai.calculatedAISwitchings[i] = FALSE;
+		gNewBS->recalculatedBestDoublesKillingScores[i] = FALSE;
+		gNewBS->ai.fightingStyle[i] = 0xFF;
+		gNewBS->ai.megaPotential[i] = NULL;
+
+		for (j = 0; j < gBattlersCount; ++j)
+		{
+			gNewBS->ai.strongestMove[i][j] = 0xFFFF;
+			gNewBS->ai.canKnockOut[i][j] = 0xFF;
+			gNewBS->ai.can2HKO[i][j] = 0xFF;
+			gNewBS->ai.onlyBadMovesLeft[i][j] = 0xFF;
+			gNewBS->ai.shouldFreeChoiceLockWithDynamax[i][j] = FALSE;
+			gNewBS->ai.dynamaxPotential[i][j] = FALSE;
+			gNewBS->ai.terastalPotential[i][j] = FALSE;
+
+			for (k = 0; k < MAX_MON_MOVES; ++k)
+			{
+				gNewBS->ai.damageByMove[i][j][k] = 0xFFFFFFFF;
+				gNewBS->ai.moveKnocksOut1Hit[i][j][k] = 0xFF;
+				gNewBS->ai.moveKnocksOut2Hits[i][j][k] = 0xFF;
+			}
+		}
+	}
 }
 
 #ifdef VAR_GAME_DIFFICULTY

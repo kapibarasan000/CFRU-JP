@@ -15,6 +15,7 @@
 #include "../include/new/damage_calc.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
+#include "../include/new/general_bs_commands.h"
 #include "../include/new/item.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
@@ -94,6 +95,8 @@ enum
 };
 
 static bool8 CanDoMoveEndSwitchout(u8 arg);
+static void SortBanksBySpeed(u8 banks[], bool8 slowToFast);
+static bool8 DidSubstituteJustBreak(void);
 
 void atk49_moveend(void) //All the effects that happen after a move is used
 {
@@ -424,13 +427,16 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			|| !(gStatuses3[gBankAttacker] & (STATUS3_SEMI_INVULNERABLE))
 			|| WasUnableToUseMove(gBankAttacker))
 			{
-				gActiveBattler = gBankAttacker;
-				EmitSpriteInvisibility(0, FALSE);
-				MarkBufferBankForExecution(gActiveBattler);
-				gStatuses3[gBankAttacker] &= ~(STATUS3_SEMI_INVULNERABLE);
-				gSpecialStatuses[gBankAttacker].restoredBankSprite = 1;
-				gBattleScripting.atk49_state++;
-				return;
+				if (arg1 != ARG_IN_FUTURE_ATTACK)
+				{
+					gActiveBattler = gBankAttacker;
+					EmitSpriteInvisibility(0, FALSE);
+					MarkBufferBankForExecution(gActiveBattler);
+					gStatuses3[gBankAttacker] &= ~(STATUS3_SEMI_INVULNERABLE);
+					gSpecialStatuses[gBankAttacker].restoredBankSprite = 1;
+					gBattleScripting.atk49_state++;
+					return;
+				}
 			}
 			gBattleScripting.atk49_state++;
 			break;
@@ -545,7 +551,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 
 		case ATK49_ITEM_EFFECTS_KINGS_ROCK:
-			if (arg1 != ARG_IN_FUTURE_ATTACK && ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_FLINCH) //King's Rock Only
+			if (arg1 != ARG_IN_FUTURE_ATTACK && arg1 != ARG_PARTING_SHOT
+			&& ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_FLINCH) //King's Rock Only
 			{
 				if (ItemBattleEffects(ItemEffects_ContactAttacker, gBankAttacker, TRUE, FALSE))
 					effect = TRUE;
@@ -604,6 +611,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				{
 					gLastUsedMoves[gBankAttacker] = gChosenMove;
 					gLastResultingMoves[gBankAttacker] = gCurrentMove;
+					RecordLastUsedMoveByAttacker(gCurrentMove);
 				}
 				else
 				{
@@ -619,6 +627,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					if (gChosenMove == 0xFFFF)
 					{
 						gLastLandedMoves[bankDef] = gChosenMove;
+						RecordLastUsedMoveByAttacker(gCurrentMove);
 					}
 					else
 					{
@@ -1096,7 +1105,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			{
 				if ((gCurrentMove == MOVE_MINDBLOWN || gCurrentMove == MOVE_STEELBEAM)
 				&& ABILITY(gBankAttacker) != ABILITY_MAGICGUARD
-				&& BATTLER_ALIVE(gBankAttacker))
+				&& BATTLER_ALIVE(gBankAttacker)
+				&& !(gMoveResultFlags & MOVE_RESULT_FAILED))
 				{
 					gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 2);
 
@@ -1110,7 +1120,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					effect = 1;
 				}
 				else if (gCurrentMove == MOVE_STRUGGLE
-				&& BATTLER_ALIVE(gBankAttacker))
+				&& BATTLER_ALIVE(gBankAttacker)
+				&& gNewBS->AttackerDidDamageAtLeastOnce)
 				{
 					gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 4);
 					BattleScriptPushCursor();
@@ -1118,7 +1129,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					effect = 1;
 				}
 				else if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION
-				&& !ABILITY_PRESENT(ABILITY_DAMP))
+				&& !ABILITY_ON_FIELD(ABILITY_DAMP))
 				{
 					gBattleMoveDamage = 0;
 					BattleScriptPushCursor();
@@ -1201,10 +1212,11 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&&  !(gNewBS->ResultFlags[banks[i]] & MOVE_RESULT_NO_EFFECT)
 					&&  gNewBS->turnDamageTaken[banks[i]] != 0
 					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
-					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(i) == B_SIDE_PLAYER)) //Wilds can't activate
+					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(i) == B_SIDE_PLAYER)
+					&&  HasMonToSwitchTo(banks[i])) //Wilds can't activate
 					{
 						if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
-							gBattlescriptCurrInstr = BattleScript_MoveEnd; //Cancel switchout for U-Turn & Volt Switch
+							gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch
 
 						gNewBS->NoSymbiosisByte = TRUE;
 						gActiveBattler = gBankSwitching = gBattleScripting.bank = banks[i];
@@ -1237,7 +1249,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&&  !(gNewBS->ResultFlags[banks[i]] & MOVE_RESULT_NO_EFFECT)
 					&&  gNewBS->turnDamageTaken[banks[i]] != 0
 					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, banks[i])
-					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(gBankAttacker) == B_SIDE_PLAYER)) //Wild attackers can't activate
+					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || IsRaidBattle() || SIDE(banks[i]) == B_SIDE_PLAYER)) //Wild attackers can't activate
 					{
 						gNewBS->NoSymbiosisByte = TRUE;
 						gForceSwitchHelper = Force_Switch_Red_Card;
@@ -1295,7 +1307,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
 						&&  BATTLER_ALIVE(bank)
 						&&  gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2
-						&&  gBattleMons[bank].hp + gNewBS->turnDamageTaken[bank] > gBattleMons[bank].maxHP / 2) //Fell this turn
+						&&  gBattleMons[bank].hp + gNewBS->turnDamageTaken[bank] > gBattleMons[bank].maxHP / 2 //Fell this turn
+						&&  (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) || HasMonToSwitchTo(bank)))
 						{
 							if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
 								gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch
@@ -1313,7 +1326,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
 						&&  BATTLER_ALIVE(bank)
 						&&  (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2 || gNewBS->lessThanHalfHPBeforeShellBell) //Ignore Shell Bell Recovery
-						&&  gBattleMons[bank].hp + gNewBS->selfInflictedDamage > gBattleMons[bank].maxHP / 2) //Fell this turn
+						&&  gBattleMons[bank].hp + gNewBS->selfInflictedDamage > gBattleMons[bank].maxHP / 2 //Fell this turn
+						&&  (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) || HasMonToSwitchTo(bank)))
 						{
 							if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
 								gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch
@@ -1372,6 +1386,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				&&  ABILITY(bank) == ABILITY_PICKPOCKET
 				&&  !(gNewBS->ResultFlags[bank] & MOVE_RESULT_NO_EFFECT)
 				&&  TOOK_DAMAGE(bank)
+				&& ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(bank) == B_SIDE_PLAYER)
 				&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 				&&  gBattleMons[bank].hp != 0
 				&&  CheckContact(gCurrentMove, gBankAttacker, bank)
@@ -1395,9 +1410,24 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			if (IsRaidBattle()
 			&& BATTLER_ALIVE(gBankAttacker)
 			&& gBankAttacker == BANK_RAID_BOSS
-			&& (SPLIT(gCurrentMove) == SPLIT_STATUS || !IsAnyMaxMove(gCurrentMove)) //Status move or Raid Boss didn't use Max Move
-			&& Random() % 100 < GetRaidBattleRepeatedAttackChance(gBankAttacker))
-				gNewBS->dynamaxData.attackAgain = TRUE;
+			&& !(gBattleMons[gBankAttacker].status2 & STATUS2_RECHARGE))
+			{
+				u8 foe = FOE(gBankAttacker);
+			
+				if (DidSubstituteJustBreak())
+					gNewBS->dynamaxData.attackAgain = TRUE; //Always attack again no matter what
+				else if (gNewBS->dynamaxData.repeatedAttacks == 0 //Raid boss hasn't attacked again yet
+				#ifdef VAR_GAME_DIFFICULTY
+				&& VarGet(VAR_GAME_DIFFICULTY) != OPTIONS_EASY_DIFFICULTY //Too mean for easy
+				#endif
+				&& ((BATTLER_ALIVE(foe) && gChosenActionByBank[foe] == ACTION_USE_ITEM) //Player used item
+				 || (BATTLER_ALIVE(PARTNER(foe)) && gChosenActionByBank[PARTNER(foe)] == ACTION_USE_ITEM)))
+					gNewBS->dynamaxData.attackAgain = TRUE; //Always attack again no matter what
+				else if ((SPLIT(gCurrentMove) == SPLIT_STATUS || !IsAnyMaxMove(gCurrentMove)) //Status move or Raid Boss didn't use Max Move
+				&& Random() % 100 < GetRaidBattleRepeatedAttackChance(gBankAttacker))
+					gNewBS->dynamaxData.attackAgain = TRUE;
+			}
+
 			gBattleScripting.atk49_state++;
 			break;
 
@@ -1441,10 +1471,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->totalDamageGiven = 0;
 			gNewBS->selfInflictedDamage = 0;
 			gNewBS->lessThanHalfHPBeforeShellBell = FALSE;
-			//Clear spread move things
-			gNewBS->doneDoublesSpreadHit = FALSE;
-			gNewBS->calculatedSpreadMoveData = FALSE;
-			gNewBS->calculatedSpreadMoveAccuracy = FALSE;
+			ResetDoublesSpreadMoveCalcs();
 
 			gNewBS->fusionFlareUsedPrior = FALSE;
 			gNewBS->fusionBoltUsedPrior = FALSE;
@@ -1474,6 +1501,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->MeFirstByte = FALSE;
 			gNewBS->GemHelper = FALSE;
 			gNewBS->breakDisguiseSpecialDmg = FALSE;
+			gNewBS->rolloutFinalHit = FALSE;
 			gNewBS->dontActivateMoldBreakersAnymoreThisTurn = FALSE;
 			gNewBS->printedStrongWindsWeakenedAttack = FALSE;
 			gBattleScripting.atk49_state++;
@@ -1498,7 +1526,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 			if (!gNewBS->DancerInProgress
 			&& arg1 != ARG_IN_PURSUIT
-			&& ABILITY_PRESENT(ABILITY_DANCER)
+			&& ABILITY_ON_FIELD(ABILITY_DANCER)
 			&& gNewBS->attackAnimationPlayed
 			&& !gNewBS->moveWasBouncedThisTurn
 			&& CheckTableForMove(gCurrentMove, gDanceMoves))
@@ -1525,6 +1553,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			u8 bank = gNewBS->DancerTurnOrder[gNewBS->DancerBankCount];
 
 			if (ABILITY(bank) == ABILITY_DANCER
+			&& BATTLER_ALIVE(bank)
 			&& !(gAbsentBattlerFlags & gBitTable[bank])
 			&& bank != gNewBS->CurrentTurnAttacker)
 			{
@@ -1585,7 +1614,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		gBattlescriptCurrInstr += 3;
 }
 
-static const bank_t gTargetsByBank[4][4] =
+static const bank_t sTargetsByBank[4][4] =
 {
 	{B_POSITION_OPPONENT_LEFT, B_POSITION_OPPONENT_RIGHT, B_POSITION_PLAYER_RIGHT, 0xFF},	//Bank 0 - Player Left
 	{B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_RIGHT, 0xFF}, 	//Bank 1 - Opponent Left
@@ -1593,9 +1622,23 @@ static const bank_t gTargetsByBank[4][4] =
 	{B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_LEFT, 0xFF}  		//Bank 3 - Opponent Right
 };
 
+static const bank_t sRaidTargetsByBank[4][4] =
+{
+	{B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_LEFT, B_POSITION_OPPONENT_RIGHT, 0xFF},	//Bank 0 - Player Left
+	{B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_RIGHT, 0xFF}, 	//Bank 1 - Opponent Left
+	{B_POSITION_PLAYER_LEFT, B_POSITION_OPPONENT_LEFT, B_POSITION_OPPONENT_RIGHT, 0xFF}, 	//Bank 2 - Player Right
+	{B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_LEFT, 0xFF}  		//Bank 3 - Opponent Right (Doesn't Exist)
+};
+
 bank_t GetNextMultiTarget(void)
 {
-	u8 pos = gTargetsByBank[gBankAttacker][gNewBS->OriginalAttackerTargetCount];
+	u8 pos;
+	
+	if (IsRaidBattle()) //Raid battles have special orders so damage to a partner is resolved first (in case the turn is prematurely ended due to the Raid boss' defeat)
+		pos = sRaidTargetsByBank[gBankAttacker][gNewBS->OriginalAttackerTargetCount];
+	else
+		pos = sTargetsByBank[gBankAttacker][gNewBS->OriginalAttackerTargetCount];
+
 	if (pos != 0xFF)
 		return GetBattlerAtPosition(pos);
 
@@ -1645,4 +1688,17 @@ void SortBanksBySpeed(u8 banks[], bool8 slowToFast)
 		banks[j + 1] = keyBank;
 		speeds[j + 1] = key;
 	}
+}
+
+static bool8 DidSubstituteJustBreak(void)
+{
+	u32 i;
+
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		if (BATTLER_ALIVE(i) && IS_BEHIND_SUBSTITUTE(i) && gDisableStructs[i].substituteHP == 0)
+			return TRUE;
+	}
+
+	return FALSE;
 }

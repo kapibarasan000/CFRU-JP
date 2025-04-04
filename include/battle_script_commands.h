@@ -78,11 +78,6 @@
 #define WINDOW_x80              0x80
 
 
-//void AI_CalcDmg(u8 bankAtk, u8 bankDef);
-//u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);
-//u8 AI_TypeCalc(move_t, u8 bankAtk, pokemon_t* party_data_def);
-//u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef);
-//u8 AI_TypeCalc(u16 move, u16 targetSpecies, u8 targetAbility);
 u8 __attribute__((long_call)) BankGetTurnOrder(u8 bank);
 void __attribute__((long_call)) SetMoveEffect(bool8 primary, u8 certain);
 void __attribute__((long_call)) BattleDestroyYesNoCursorAt(u8 cursorPosition);

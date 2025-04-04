@@ -11,9 +11,12 @@
 #include "../include/constants/pokemon.h"
 #include "../include/constants/species.h"
 
+#include "../include/new/catching.h"
 #include "../include/new/dns.h"
 #include "../include/new/evolution.h"
 #include "../include/new/form_change.h"
+#include "../include/new/util.h"
+
 /*
 evolution.c
 	handles old and new evolution methods
@@ -423,6 +426,9 @@ bool8 IsLevelUpEvolutionMethod(u8 method)
 		case EVO_LEVEL_NIGHT:
 		case EVO_LEVEL_DAY:
 		case EVO_LEVEL_SPECIFIC_TIME_RANGE:
+		case EVO_NATURE_HIGH:
+		case EVO_NATURE_LOW:
+		case EVO_LEVEL_HOLD_ITEM:
 			return TRUE;
 		default:
 			return FALSE;
@@ -433,9 +439,12 @@ bool8 IsItemEvolutionMethod(u8 method)
 {
 	switch (method) {
 		case EVO_ITEM:
+		case EVO_ITEM_LOCATION:
+		case EVO_ITEM_HOLD_ITEM:
 		case EVO_TRADE_ITEM:
 		case EVO_HOLD_ITEM_NIGHT:
 		case EVO_HOLD_ITEM_DAY:
+		case EVO_ITEM_NIGHT:
 			return TRUE;
 		default:
 			return FALSE;
@@ -448,6 +457,7 @@ bool8 IsFriendshipEvolutionMethod(u8 method)
 		case EVO_FRIENDSHIP:
 		case EVO_FRIENDSHIP_DAY:
 		case EVO_FRIENDSHIP_NIGHT:
+		case EVO_MOVE_TYPE:
 			return TRUE;
 		default:
 			return FALSE;
@@ -459,84 +469,32 @@ bool8 IsOtherEvolutionMethod(u8 method)
 	switch (method) {
 		case EVO_BEAUTY:
 		case EVO_TRADE:
-		case EVO_MOVE_TYPE:
 		case EVO_MAP:
 		case EVO_MOVE:
+		case EVO_MOVE_MALE:
+		case EVO_MOVE_FEMALE:
 		case EVO_OTHER_PARTY_MON:
 		case EVO_FLAG_SET:
+		case EVO_CRITICAL_HIT:
+		case EVO_DAMAGE_LOCATION:
 			return TRUE;
 		default:
 			return FALSE;
 	}
 }
 
-u16 GetMonDevolution(struct Pokemon* mon)
+bool8 EvolutionMethodRequiresLevelUp(u8 method)
 {
-	int j, k;
-	bool8 found;
-	bool8 checkingBackupSpecies = FALSE;
-	u16 originalSpecies = GetMonData(mon, MON_DATA_SPECIES, NULL);
-
-	SEARCH_START: ;
-	u16 species = originalSpecies;
-	found = FALSE;
-	for (j = 1; j < NUM_SPECIES; ++j)
-	{
-		for (k = 0; k < EVOS_PER_MON; ++k)
-		{
-			if (gEvolutionTable[j][k].method == EVO_MEGA)
-			{
-				if (gEvolutionTable[j][k].targetSpecies == species && gEvolutionTable[j][k].param != ITEM_NONE)
-				{
-					originalSpecies = j;
-					goto SEARCH_START; //Find base form for Mega and then actually look
-				}
-			}
-			else if (gEvolutionTable[j][k].method == EVO_GIGANTAMAX)
-			{
-				if (gEvolutionTable[j][k].targetSpecies == species && gEvolutionTable[j][k].param != FALSE)
-				{
-					originalSpecies = j;
-					goto SEARCH_START; //Find base form for Gigantamax and then actually look
-				}
-			}
-			else if (gEvolutionTable[j][k].targetSpecies == species)
-			{
-				species = j;
-				found = TRUE;
-				break;
-			}
-		}
-
-		if (found)
-			break;
-	}
-
-	u16 dexNum = SpeciesToNationalPokedexNum(species);
-	switch(dexNum) {
-		#if (defined NATIONAL_DEX_PIKACHU && defined SPECIES_PICHU)
-		case NATIONAL_DEX_PIKACHU: //Get's all the special forms
-			species = SPECIES_PICHU;
-			break;
-		#endif
-		#if (defined NATIONAL_DEX_VIVILLON && defined SPECIES_SCATTERBUG)
-		case NATIONAL_DEX_VIVILLON:
-			species = SPECIES_SCATTERBUG;
-			break;
-		#endif
-	}
-
-	if (species != originalSpecies)
-		return species;
-
-	if (mon->backupSpecies != SPECIES_NONE && !checkingBackupSpecies) //Only check once
-	{
-		checkingBackupSpecies = TRUE;
-		originalSpecies = mon->backupSpecies;
-		goto SEARCH_START;
-	}
-
-	return SPECIES_NONE;
+	return IsLevelUpEvolutionMethod(method)
+		|| IsFriendshipEvolutionMethod(method)
+		|| method == EVO_BEAUTY
+		|| method == EVO_MOVE_TYPE
+		|| method == EVO_MAP
+		|| method == EVO_MOVE
+		|| method == EVO_MOVE_MALE
+		|| method == EVO_MOVE_FEMALE
+		|| method == EVO_OTHER_PARTY_MON
+		|| method == EVO_FLAG_SET;
 }
 
 bool8 HasHighNature(struct Pokemon* mon)
@@ -576,4 +534,151 @@ bool8 EvolvesViaScoring3Crits(struct Pokemon* mon)
 	}
 
 	return FALSE;
+}
+
+static u16 GetDevolution(u16 originalSpecies, u16 backupSpecies)
+{
+	int j, k;
+	bool8 found;
+	bool8 checkingBackupSpecies = FALSE;
+	u16 dexNum = SpeciesToNationalPokedexNum(originalSpecies);
+
+	switch(dexNum) {
+		#if (defined NATIONAL_DEX_PIKACHU && defined SPECIES_PICHU)
+		case NATIONAL_DEX_PIKACHU: //Get's all the special forms
+			return SPECIES_PICHU;
+		#endif
+		#if (defined NATIONAL_DEX_VIVILLON && defined SPECIES_SPEWPA)
+		case NATIONAL_DEX_VIVILLON:
+			return SPECIES_SPEWPA;
+		#endif
+	}
+
+	SEARCH_START: ;
+	u16 species = originalSpecies;
+	found = FALSE;
+	for (j = 1; j < NUM_SPECIES; ++j)
+	{
+		for (k = 0; k < EVOS_PER_MON; ++k)
+		{
+			if (gEvolutionTable[j][k].method == EVO_MEGA)
+			{
+				if (gEvolutionTable[j][k].targetSpecies == species && gEvolutionTable[j][k].param != ITEM_NONE)
+				{
+					originalSpecies = j;
+					goto SEARCH_START; //Find base form for Mega and then actually look
+				}
+			}
+			else if (gEvolutionTable[j][k].method == EVO_GIGANTAMAX)
+			{
+				if (gEvolutionTable[j][k].targetSpecies == species && gEvolutionTable[j][k].param != FALSE)
+				{
+					originalSpecies = j;
+					goto SEARCH_START; //Find base form for Gigantamax and then actually look
+				}
+			}
+			else if (gEvolutionTable[j][k].targetSpecies == species)
+			{
+				species = j;
+				found = TRUE;
+				break;
+			}
+
+			if (gEvolutionTable[j][k].method == EVO_NONE)
+				break; //Likely no more entries, so break here to save time
+		}
+
+		if (found)
+			break;
+	}
+
+	if (species != originalSpecies)
+		return species;
+
+	if (backupSpecies != SPECIES_NONE && !checkingBackupSpecies) //Only check once
+	{
+		checkingBackupSpecies = TRUE;
+		originalSpecies = backupSpecies;
+		goto SEARCH_START;
+	}
+
+	return SPECIES_NONE;
+}
+
+u16 GetMonDevolution(struct Pokemon* mon)
+{
+	return GetDevolution(GetMonData(mon, MON_DATA_SPECIES, NULL), mon->backupSpecies);
+}
+
+u8 GetMinimumLevel(u16 species)
+{
+	u32 i;
+	u32 increase = 0;
+
+	while (TRUE)
+	{
+		u16 devolutionSpecies = GetDevolution(species, SPECIES_NONE);
+		if (devolutionSpecies == SPECIES_NONE)
+			return 1 + increase; //Can't go any lower
+
+		for (i = 0; i < EVOS_PER_MON; ++i)
+		{
+			if (gEvolutionTable[devolutionSpecies][i].targetSpecies == species)
+			{
+				u8 method = gEvolutionTable[devolutionSpecies][i].method;
+
+				if (IsLevelUpEvolutionMethod(method))
+					return gEvolutionTable[devolutionSpecies][i].param + increase; //The minimum level is the one that it was when it evolved
+				else if (EvolutionMethodRequiresLevelUp(method))
+					increase = 1; //Must have leveled up at least once to evolve
+			}
+
+			if (gEvolutionTable[devolutionSpecies][i].method == EVO_NONE)
+				break; //Likely no more entries, so break here to save time
+		}
+
+		species = devolutionSpecies; //Go another round down
+	}
+}
+
+void CreateShedinja(u16 preEvoSpecies, struct Pokemon* mon)
+{
+	u32 data = 0;
+	if (gEvolutionTable[preEvoSpecies][0].method == EVO_LEVEL_NINJASK
+	&& gPlayerPartyCount < PARTY_SIZE
+	&& CheckBagHasItem(ITEM_POKE_BALL, 1)) //Must have a standard Poke Ball in the Bag
+	{
+		s32 i;
+		const struct Evolution *evos;
+		const struct Evolution *evos2;
+		u8 ball = BALL_TYPE_POKE_BALL;
+
+		CopyMon(&gPlayerParty[gPlayerPartyCount], mon, sizeof(struct Pokemon));
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_SPECIES, (&gEvolutionTable[preEvoSpecies][1].targetSpecies));
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_NICKNAME, (gSpeciesNames[gEvolutionTable[preEvoSpecies][1].targetSpecies]));
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_HELD_ITEM, (&data));
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_MARKINGS, (&data));
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_ENCRYPT_SEPARATOR, (&data));
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_POKEBALL, &ball);
+
+		for (i = MON_DATA_COOL_RIBBON; i < MON_DATA_COOL_RIBBON + 5; i++)
+			SetMonData(&gPlayerParty[gPlayerPartyCount], i, (&data));
+		for (i = MON_DATA_CHAMPION_RIBBON; i <= MON_DATA_FATEFUL_ENCOUNTER; i++)
+			SetMonData(&gPlayerParty[gPlayerPartyCount], i, (&data));
+
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_STATUS, (&data));
+		data = 0xFF;
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_MAIL, (&data));
+
+		CalculateMonStats(&gPlayerParty[gPlayerPartyCount]);
+		CalculatePlayerPartyCount();
+
+		// can't match it otherwise, ehh
+		evos2 = gEvolutionTable[0];
+		evos = evos2 + EVOS_PER_MON * preEvoSpecies;
+
+		GetSetPokedexFlag(SpeciesToNationalPokedexNum(evos[1].targetSpecies), FLAG_SET_SEEN);
+		GetSetPokedexFlag(SpeciesToNationalPokedexNum(evos[1].targetSpecies), FLAG_SET_CAUGHT);
+		RemoveBagItem(ITEM_POKE_BALL, 1);
+	}
 }

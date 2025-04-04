@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/bg.h"
 #include "../include/event_data.h"
+#include "../include/evolution_scene.h"
 #include "../include/gpu_regs.h"
 #include "../include/fieldmap.h"
 #include "../include/field_player_avatar.h"
@@ -13,6 +14,7 @@
 #include "../include/new/battle_terrain.h"
 #include "../include/new/dns.h"
 #include "../include/new/frontier.h"
+#include "../include/new/multi.h"
 #include "../include/new/overworld.h"
 #include "../include/new/util.h"
 /*
@@ -129,15 +131,30 @@ u8 GetBattleTerrainOverride(void)
 {
 	u8 terrain = gBattleTerrain;
 	
-	if (!gMain.inBattle)
-		return BattleSetup_GetTerrainId(); //Mainly for evolution scene
+	if (gMain.callback2 == CB2_EvolutionSceneLoadGraphics
+	|| gMain.callback2 == CB2_BeginEvolutionScene
+	|| gMain.callback2 == CB2_EvolutionSceneUpdate
+	|| gMain.callback2 == CB2_TradeEvolutionSceneUpdate)
+	{
+		bool8 wasRoamerBattle = (gBattleTypeFlags & BATTLE_TYPE_ROAMER) != 0;
+		bool8 wasTwoOpponentBattle = IsTwoOpponentBattle();
+		gBattleTypeFlags = 0;
+
+		if (wasRoamerBattle)
+			gBattleTypeFlags |= BATTLE_TYPE_ROAMER; //Needed otherwise the Roamer may not disappear when caught
+
+		if (wasTwoOpponentBattle)
+			gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS); //Needed otherwise the second opponent will battle the player again
+
+		gBattleTerrain = BattleSetup_GetTerrainId();
+	}
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER))
 	{
 		#ifdef UNBOUND
 			terrain = BATTLE_TERRAIN_INSIDE;
 		#else
-			terrain = 10;
+			terrain = BATTLE_TERRAIN_INSIDE_2;
 		#endif
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_POKE_DUDE)
@@ -158,20 +175,20 @@ u8 GetBattleTerrainOverride(void)
 			u8 trainerClassB = GetFrontierTrainerClassId(SECOND_OPPONENT, 1);
 			if (trainerClass == CLASS_LEADER || trainerClassB == CLASS_LEADER)
 			{
-				terrain = 12;
+				terrain = BATTLE_TERRAIN_INSIDE_4;
 			}
 			else if (trainerClass == CLASS_CHAMPION || trainerClassB == CLASS_CHAMPION)
 			{
-				terrain = 19;
+				terrain = BATTLE_TERRAIN_CHAMPION;
 			}
 			else if (GetCurrentMapBattleScene() != 0)
 			{
-				terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
+				terrain = GetBattleTerrainByMapScene(GetCurrentMapBattleScene());
 			}
 		#else
 			if (GetCurrentMapBattleScene() != 0)
 			{
-				terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
+				terrain = GetBattleTerrainByMapScene(GetCurrentMapBattleScene());
 			}
 		#endif
 			else
@@ -181,7 +198,7 @@ u8 GetBattleTerrainOverride(void)
 	{
 		if (GetCurrentMapBattleScene() != 0)
 		{
-			terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
+			terrain = GetBattleTerrainByMapScene(GetCurrentMapBattleScene());
 		}
 		else
 			terrain = gBattleTerrain;

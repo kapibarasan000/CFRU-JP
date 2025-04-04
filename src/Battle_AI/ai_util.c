@@ -673,7 +673,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 
 u8 GetDoubleKillingScore(u16 move, u8 bankAtk, u8 bankDef)
 {
-	if (gBattleMoves[move].target & MOVE_TARGET_ALL
+	if (GetBaseMoveTarget(move, bankAtk) & MOVE_TARGET_ALL
 	&&  gBattleMoves[gChosenMovesByBanks[PARTNER(bankAtk)]].effect == EFFECT_PROTECT
 	&& !gNewBS->recalculatedBestDoublesKillingScores[bankAtk])
 	{
@@ -700,22 +700,38 @@ static void RemoveDoublesKillingScore(u8 bankAtk, u8 bankDef)
 	UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef]);
 }
 
-void TryRemoveDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove)
+bool8 TryRemovePartnerDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove, bool8 doSpeedCalc)
 {
 	u8 partner = PARTNER(bankAtk);
 
-	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(partner))
+	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(bankDef) && BATTLER_ALIVE(partner))
 	{
 		u16 partnerKillingMove = gNewBS->ai.bestDoublesKillingMoves[partner][bankDef];
 
-		if (!(bankAtk & BIT_FLANK) //Don't bother with reseting scores if no Pokemon are going to choose moves after this
-		&& !IsBankIncapacitated(bankAtk) //Not actually going to hit a target this turn
+		if (((!doSpeedCalc && !(bankAtk & BIT_FLANK)) || (doSpeedCalc && SpeedCalc(bankAtk) >= SpeedCalc(partner))) //Don't bother with reseting scores if no Pokemon are going to choose moves after this
+		&& !IsBankIncapacitated(bankAtk) //Actually going to hit a target this turn
 		&& SIDE(bankAtk) != SIDE(bankDef) //No scores are calculated for hitting partners
 		&& (CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2 //Two targets that can be hit on enemy side
 		 || MoveWouldHitFirst(chosenMove, bankAtk, bankDef) //This mon is going to hit the enemy before it can attack
 		 || !MoveWouldHitFirst(partnerKillingMove, partner, bankDef)) //The partner won't hit the enemy before it can attack
 		&& MoveKnocksOutXHits(chosenMove, bankAtk, bankDef, 1))
-			RemoveDoublesKillingScore(partner, bankDef); //This mon's got it covered
+		{
+			//This mon's got it covered, so recalculate killing score for the partner factoring this info in
+			RemoveDoublesKillingScore(partner, bankDef);
+			RemoveDoublesKillingScore(partner, PARTNER(bankDef));
+		}
+	}
+
+	return FALSE;
+}
+
+void TryRemovePartnerDoublesKillingScoreComplete(u8 bankAtk, u8 bankDef, u16 chosenMove, u32 moveTarget, bool8 doSpeedCalc)
+{
+	//Also handles the special case where the Pokemon is using a spread move
+	if (!TryRemovePartnerDoublesKillingScore(bankAtk, bankDef, chosenMove, doSpeedCalc))
+	{
+		if (moveTarget & MOVE_TARGET_SPREAD)
+			TryRemovePartnerDoublesKillingScore(bankAtk, PARTNER(bankDef), chosenMove, doSpeedCalc); //Important in case that foe is KOd
 	}
 }
 
@@ -1131,7 +1147,7 @@ bool8 MoveWouldHitBeforeOtherMove(u16 moveAtk, u8 bankAtk, u16 moveDef, u8 bankD
 	}
 
 //BracketCalc
-	if (BracketCalc(bankAtk) > BracketCalc(bankDef)) //Hehehe...AI knows when its Quick Claw activates
+	if (BracketCalc(bankAtk, ACTION_USE_MOVE, moveAtk) > BracketCalc(bankDef, ACTION_USE_MOVE, moveDef)) //Hehehe...AI knows when its Quick Claw activates
 		return TRUE;
 
 //SpeedCalc
@@ -1208,7 +1224,7 @@ bool8 WillTakeSignificantDamageFromEntryHazards(u8 bank, u8 healthFraction)
 		struct Pokemon* mon = GetBankPartyData(bank);
 
 		if (gSideTimers[SIDE(bank)].srAmount > 0)
-			dmg += CalcStealthRockDamagePartyMon(mon);
+			dmg += CalcMonStealthRockDamage(mon);
 
 		if (gSideTimers[SIDE(bank)].steelsurge > 0)
 			dmg += CalcSteelsurgeDamagePartyMon(mon);
@@ -1326,7 +1342,7 @@ u8 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move)
 	u8 ability = ABILITY_NONE;
 
 	if (!ShouldAIDelayMegaEvolution(bankAtk, bankDef, move))
-		ability = GetBankMegaFormAbility(bankAtk);
+		ability = GetBankMegaFormAbility(bankAtk, bankDef);
 
 	if (ability == ABILITY_NONE)
 		return ABILITY(bankAtk);
@@ -1395,46 +1411,6 @@ bool8 IsTrapped(u8 bank, bool8 switching)
 	return FALSE;
 }
 
-bool8 BankHasMonToSwitchTo(u8 bank)
-{
-	if (IS_SINGLE_BATTLE)
-	{
-		if (ViableMonCountFromBank(bank) <= 1)
-			return FALSE;
-	}
-	else //Double
-	{
-		if (SIDE(bank) == B_SIDE_PLAYER)
-		{
-			if (IsTagBattle())
-			{
-				if (ViableMonCountFromBankLoadPartyRange(bank) <= 1)
-					return FALSE;
-			}
-			else //Regular Double Battle
-			{
-				if (ViableMonCountFromBankLoadPartyRange(bank) <= 2)
-					return FALSE;
-			}
-		}
-		else //Opponent
-		{
-			if (IsTwoOpponentBattle())
-			{
-				if (ViableMonCountFromBankLoadPartyRange(bank) <= 1)
-					return FALSE;
-			}
-			else //Regular Double Battle
-			{
-				if (ViableMonCountFromBankLoadPartyRange(bank) <= 2)
-					return FALSE;
-			}
-		}
-	}
-
-	return TRUE;
-}
-
 bool8 IsTakingSecondaryDamage(u8 bank)
 {
 	u8 ability = ABILITY(bank);
@@ -1501,6 +1477,36 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 	return FALSE;
 }
 
+static u32 GetContactDamageByDefAbilityItemEffect(u8 defAbility, u8 defItemEffect, u16 baseMaxHP)
+{
+	u32 dmg = 0;
+
+	if (defAbility == ABILITY_ROUGHSKIN
+	#ifdef ABILITY_IRONBARBS
+	|| defAbility == ABILITY_IRONBARBS
+	#endif
+	)
+		dmg += baseMaxHP / 8;
+
+	if (defItemEffect == ITEM_EFFECT_ROCKY_HELMET)
+		dmg += baseMaxHP / 6;
+
+	return dmg;
+}
+
+u32 GetContactDamage(u16 move, u16 bankAtk, u16 bankDef)
+{
+	if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
+		return 0;
+
+	if (ABILITY(bankAtk) == ABILITY_LONGREACH
+	|| ABILITY(bankAtk) == ABILITY_MAGICGUARD
+	|| (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_PUNCHING_GLOVE && CheckTableForMove(move, gPunchingMoves)))
+		return 0;
+
+	return GetContactDamageByDefAbilityItemEffect(ABILITY(bankDef), ITEM_EFFECT(bankDef), GetBaseMaxHP(bankAtk));
+}
+
 u16 CalcSecondaryEffectChance(u8 bank, u16 move)
 {
 	u16 chance = gBattleMoves[move].secondaryEffectChance;
@@ -1528,7 +1534,7 @@ u16 CalcAIAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, unusedArg u8 bankDef, u16 move)
 {
 	u8 atkAbility = ABILITY(bankAtk);
-	u8 megaAbility = GetBankMegaFormAbility(bankAtk);
+	u8 megaAbility = GetBankMegaFormAbility(bankAtk, bankDef);
 
 	if (BATTLER_SEMI_INVULNERABLE(bankAtk))
 		return TRUE; //Can't Mega Evolve this turn
@@ -1564,6 +1570,14 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, unusedArg u8 bankDef, u16 move)
 	}
 
 	return FALSE;
+}
+
+void ClearMovePredictionsOnBank(u8 bank)
+{
+	u32 i;
+	
+	for (i = 0; i < gBattlersCount; ++i)
+		gNewBS->ai.movePredictions[i][bank] = MOVE_NONE;
 }
 
 bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk)

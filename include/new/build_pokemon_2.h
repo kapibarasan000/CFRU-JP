@@ -27,19 +27,21 @@
 		if (IsBossTrainerClassForLevelScaling(trainerId))																									\
 			ModifySpeciesAndLevelForBossBattle(&speciesToCreate, &lvl, maxPartyLevel, highestPlayerLevel, canEvolveMon);									\
 		else																																				\
-			ModifySpeciesAndLevelForGenericBattle(&speciesToCreate, &lvl, minPartyLevel, modifiedAveragePlayerLevel, trainer->partyFlags, canEvolveMon);	\
+			ModifySpeciesAndLevelForGenericBattle(&speciesToCreate, &lvl, minPartyLevel, highestPlayerLevel, modifiedAveragePlayerLevel, trainer->partyFlags, trainer->partySize, canEvolveMon);	\
 	}																																						\
 																																							\
 	CreateMon(&party[i], speciesToCreate, lvl, baseIV, TRUE, personalityValue, otIdType, otid);																\
 	party[i].metLevel = structure[i].lvl;																													\
 }
 
-#define SET_MOVES(structure)										\
-{																	\
-	for (j = 0; j < MAX_MON_MOVES; j++) {							\
-		party[i].moves[j] = structure[i].moves[j];					\
-		party[i].pp[j] = gBattleMoves[structure[i].moves[j]].pp;	\
-	}																\
+#define SET_MOVES(structure)										        \
+{																	        \
+	for (j = 0; j < MAX_MON_MOVES; j++) {							        \
+		party[i].moves[j] = structure[i].moves[j];					        \
+		party[i].pp[j] = GetTrainerMonMovePP(structure[i].moves[j], j);	    \
+	}																        \
+	                                                                        \
+	party[i].ppBonuses = GetTrainerMonMovePPBonus();                        \
 }
 
 #define SET_IVS_SINGLE_VALUE(val)					\
@@ -70,16 +72,6 @@
 	party[i].spdEv = structure->spdEv;				\
 	party[i].spAtkEv = structure->spAtkEv;			\
 	party[i].spDefEv = structure->spDefEv;			\
-}
-
-#define LOAD_TIER_CHECKING_ABILITY										\
-{																		\
-	if (spread->ability == 0 && gBaseStats[species].hiddenAbility != 0)	\
-		ability = gBaseStats[species].hiddenAbility;					\
-	else if (spread->ability == 2 && gBaseStats[species].ability2 != 0)	\
-		ability = gBaseStats[species].ability2;							\
-	else																\
-		ability = gBaseStats[species].ability1;							\
 }
 
 struct TrainersWithEvs

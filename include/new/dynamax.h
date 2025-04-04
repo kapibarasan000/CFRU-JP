@@ -10,6 +10,7 @@
 
 //Exported Functions
 species_t GetDynamaxSpecies(unusedArg u8 bank, unusedArg bool8 checkGMaxInstead);
+bool8 IsBannedDynamaxBaseSpecies(u16 species);
 bool8 IsBannedDynamaxSpecies(u16 species);
 bool8 CanDynamax(u8 bank);
 bool8 CanGigantamax(u8 bank);
@@ -54,6 +55,7 @@ bool8 IsFrontierRaidBattle(void);
 bool8 IsCatchableRaidBattle(void);
 bool8 HasRaidShields(u8 bank);
 u8 GetNumRaidShieldsUp(void);
+bool8 ShouldStartWithRaidShieldsUp(void);
 bool8 ShouldCreateRaidShields(u8 bank);
 u16 GetNextRaidShieldHP(u8 bank);
 void CreateRaidShieldSprites(void);
@@ -71,6 +73,7 @@ void DetermineRaidPartners(bool8* checkedPartners, u8 maxPartners);
 u8 GetRaidSpeciesAbilityNum(u16 species);
 u8 GetRaidEggMoveChance(void);
 bool8 HasRaidBattleAlreadyBeenDone(void);
+void ClearAllRaidBattleFlags(void);
 
 //Functions Called Via Assembly
 void TryFadeBankPaletteForDynamax(u8 bank, u16 paletteOffset);

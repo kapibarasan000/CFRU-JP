@@ -1688,19 +1688,14 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			if(MoveInMoveset(MOVE_RAGEFIST, bank))
 			{
 				u8 side = SIDE(bank);
+
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
 				&& BATTLER_ALIVE(bank)
 				&& gBankAttacker != bank
 				&& (SPLIT(move) == SPLIT_PHYSICAL || SPLIT_SPECIAL)
-				&& gNewBS->rageFistCounter[side][gBattlerPartyIndexes[bank]] <= 6)
-				{
-					if(gNewBS->rageFistCounter[side][gBattlerPartyIndexes[bank]] == 0)
-						gNewBS->rageFistCounter[side][gBattlerPartyIndexes[bank]] = 1;
+				&& gNewBS->rageFistCounter[side][gBattlerPartyIndexes[bank]] < 6)
 					gNewBS->rageFistCounter[side][gBattlerPartyIndexes[bank]]++;
-					effect++;
-				}
-				break;
 			}
 
 			switch (gLastUsedAbility)

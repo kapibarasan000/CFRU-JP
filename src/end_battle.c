@@ -9,12 +9,15 @@
 #include "../include/constants/songs.h"
 #include "../include/constants/trainer_classes.h"
 
+#include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_util.h"
+#include "../include/new/catching.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/end_battle.h"
 #include "../include/new/end_battle_battle_scripts.h"
 #include "../include/new/evolution.h"
 #include "../include/new/form_change.h"
+#include "../include/new/frontier.h"
 #include "../include/new/util.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
@@ -64,6 +67,24 @@ const u16 gEndBattleFlagClearTable[] =
 #ifdef FLAG_CAMOMONS_BATTLE
 	FLAG_CAMOMONS_BATTLE,
 #endif
+#ifdef FLAG_PRESET_FRONTIER_OPPONENT_TEAM
+	FLAG_PRESET_FRONTIER_OPPONENT_TEAM,
+#endif
+#ifdef FLAG_PRESET_RANDOM_TEAM
+	FLAG_PRESET_RANDOM_TEAM,
+#endif
+#ifdef FLAG_TWO_WILD_POKEMON_ATTACKED_STRING
+	FLAG_TWO_WILD_POKEMON_ATTACKED_STRING,
+#endif
+#ifdef FLAG_WORST_NIGHTMARE_STRING
+	FLAG_WORST_NIGHTMARE_STRING,
+#endif
+#ifdef FLAG_LEGENDARY_APPEARED_STRING
+	FLAG_LEGENDARY_APPEARED_STRING,
+#endif
+#ifdef FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST
+	FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST,
+#endif
 #ifdef FLAG_BENJAMIN_BUTTERFREE_BATTLE
 	FLAG_BENJAMIN_BUTTERFREE_BATTLE,
 #endif
@@ -85,12 +106,28 @@ const u16 gEndBattleFlagClearTable[] =
 #ifdef FLAG_GIGANTAMAXABLE
 	FLAG_GIGANTAMAXABLE,
 #endif
+#ifdef FLAG_TEMP_DISABLE_RANDOMIZER
+	FLAG_TEMP_DISABLE_RANDOMIZER,
+#endif
+#ifdef FLAG_AI_CONTROL_BATTLE
+	FLAG_AI_CONTROL_BATTLE,
+#endif
+#ifdef FLAG_USE_HALF_PARTNER_TEAM
+	FLAG_USE_HALF_PARTNER_TEAM,
+#endif
+#ifdef FLAG_BATTLE_YOURSELF
+	FLAG_BATTLE_YOURSELF,
+#endif
+#ifdef FLAG_DISPLAY_OPPOSING_FOR_WILD
+	FLAG_DISPLAY_OPPOSING_FOR_WILD,
+#endif
 
 	FLAG_TAG_BATTLE,
 	FLAG_TWO_OPPONENTS,
 };
 
 //This file's functions:
+static void TryRestoreEnemyTeam(void);
 static void NaturalCureHeal(void);
 static void RestoreNonConsumableItems(void);
 static void RevertDynamax(void);
@@ -129,6 +166,12 @@ void HandleEndTurn_BattleWon(void)
 		u16 id = gTrainerBattleOpponent_A;
 		u8 specialMus = FALSE;
 		u8 loop = FALSE;
+
+		if (IsFrontierTrainerId(id))
+		{
+			PlayBGM(BGM_VICTORY_TRAINER_BATTLE);
+			goto SKIP_MUSIC_SELECTION;
+		}
 
 	VICTORY_MUSIC_SELECTION:
 		switch (gTrainers[id].trainerClass) {
@@ -177,7 +220,9 @@ void HandleEndTurn_BattleWon(void)
 		#endif
 		}
 
-		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && !specialMus && !loop) {
+	SKIP_MUSIC_SELECTION:
+		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && !specialMus && !loop)
+		{
 			id = VarGet(VAR_SECOND_OPPONENT);
 			loop = TRUE;
 			goto VICTORY_MUSIC_SELECTION;
@@ -185,13 +230,6 @@ void HandleEndTurn_BattleWon(void)
 	}
 	else
 	{
-		if (IsRaidBattle())
-		#ifdef UNBOUND
-			PlayBGM(BGM_VICTORY_GYM);
-		#else
-			PlayBGM(BGM_VICTORY_SPECIAL);
-		#endif
-
 		gBattlescriptCurrInstr = BattleScript_PayDayMoneyAndPickUpItems;
 	}
 
@@ -303,13 +341,32 @@ void HandleEndTurn_RanFromBattle(void)
 
 bool8 HandleRunActionFrontier(void)
 {
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
-	&& gBattleTypeFlags & BATTLE_TYPE_FRONTIER
-	&& gBattleBufferB[gActiveBattler][1] == ACTION_RUN)
+	if (gBattleBufferB[gActiveBattler][1] == ACTION_RUN)
 	{
-		BattleScriptExecute(BattleScript_AskIfWantsToForfeitMatch);
-		gBattleCommunication[gActiveBattler] = STATE_BEFORE_ACTION_CHOSEN;
-		return TRUE;
+		if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		{
+			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+			{
+				BattleScriptExecute(BattleScript_AskIfWantsToForfeitMatch);
+				gBattleCommunication[gActiveBattler] = STATE_BEFORE_ACTION_CHOSEN;
+				return TRUE;
+			}
+		}
+		else if (!CantCatchBecauseFlag() //Wild battle where mon can be caught
+		&& !IsRunningFromBattleImpossible()) //Can run right now
+		{
+			if ((GetMonData(&gEnemyParty[0], MON_DATA_HP, 0) != 0 && IsMonShiny(&gEnemyParty[0]))
+			|| (IS_DOUBLE_BATTLE && GetMonData(&gEnemyParty[1], MON_DATA_HP, 0) != 0 && IsMonShiny(&gEnemyParty[1]))
+			#ifdef FLAG_LEGENDARY_APPEARED_STRING
+			|| FlagGet(FLAG_LEGENDARY_APPEARED_STRING)
+			#endif
+			)
+			{
+				BattleScriptExecute(BattleScript_ConfirmRunAway);
+				gBattleCommunication[gActiveBattler] = STATE_BEFORE_ACTION_CHOSEN;
+				return TRUE;
+			}
+		}
 	}
 
 	return FALSE;
@@ -341,6 +398,7 @@ u8 IsRunningFromBattleImpossible(void)
 
 	itemEffect = ITEM_EFFECT(gActiveBattler);
 	gStringBank = gActiveBattler;
+	gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER))
 		return FALSE;
@@ -357,34 +415,16 @@ u8 IsRunningFromBattleImpossible(void)
 
 	for (i = 0; i < gBattlersCount; i++)
 	{
-		if (ABILITY(gActiveBattler) != ABILITY_SHADOWTAG //Shadow Tag's not affected by Shadow Tag
-		&& side != SIDE(i)
-		&& ABILITY(i) == ABILITY_SHADOWTAG)
+		if (side != SIDE(i))
 		{
-			gBattleScripting.bank = i;
-			gLastUsedAbility = ABILITY(i);
-			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-			return ABILITY_PREVENTING_ESCAPE;
-		}
-
-		if (side != SIDE(i)
-		&& ABILITY(i) == ABILITY_ARENATRAP
-		&& CheckGrounding(gActiveBattler))
-		{
-			gBattleScripting.bank = i;
-			gLastUsedAbility = ABILITY(i);
-			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-			return ABILITY_PREVENTING_ESCAPE;
-		}
-
-		if (i != gActiveBattler
-		&& ABILITY(i) == ABILITY_MAGNETPULL
-		&& IsOfType(gActiveBattler, TYPE_STEEL))
-		{
-			gBattleScripting.bank = i;
-			gLastUsedAbility = ABILITY(i);
-			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-			return ABILITY_PREVENTING_ESCAPE;
+			u8 ability = ABILITY(i);
+			if (IsTrappedByAbility(gActiveBattler, ability))
+			{
+				gBattleScripting.bank = i;
+				gLastUsedAbility = ABILITY(i);
+				gBattleCommunication[MULTISTRING_CHOOSER] = ABILITY_PREVENTING_ESCAPE;
+				return ABILITY_PREVENTING_ESCAPE;
+			}
 		}
 	}
 
@@ -465,6 +505,12 @@ bool8 TryRunFromBattle(u8 bank)
 	{
 		++effect;
 	}
+	#ifdef QUICK_CLAW_PROCING_ALWAYS_ALLOWS_FLEEING
+	else if (ITEM_EFFECT(bank) == ITEM_EFFECT_QUICK_CLAW && QuickClawActivatesThisTurn(bank))
+	{
+		++effect;
+	}
+	#endif
 	else
 	{
 		if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
@@ -526,6 +572,7 @@ void EndOfBattleThings(void)
 {
 	if (gNewBS != NULL) //Hasn't been cleared yet
 	{
+		TryRestoreEnemyTeam();
 		NaturalCureHeal();
 		RestoreNonConsumableItems();
 		RevertDynamax();
@@ -559,6 +606,17 @@ void EndOfBattleThings(void)
 	}
 }
 
+static void TryRestoreEnemyTeam(void)
+{
+	#ifdef FLAG_BACKUP_ENEMY_TEAM
+	if (FlagGet(FLAG_BACKUP_ENEMY_TEAM))
+	{
+		Memcpy(gEnemyParty, gNewBS->foePartyBackup, sizeof(struct Pokemon) * PARTY_SIZE);
+		Free(gNewBS->foePartyBackup);
+	}
+	#endif
+}
+
 static void NaturalCureHeal(void)
 {
 	for (int bank = 0; bank < gBattlersCount; ++bank)
@@ -578,7 +636,7 @@ static void RestoreNonConsumableItems(void)
 	bool8 keepConsumables = FALSE;
 	#endif
 
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER || IsRaidBattle())
 	{
 		for (int i = 0; i < PARTY_SIZE; ++i)
 		{
@@ -608,8 +666,8 @@ static void RecalcAllStats(void)
 {
 	for (int i = 0; i < PARTY_SIZE; ++i)
 	{
-		if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
-		&& !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL))
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+		if (species != SPECIES_NONE && species != SPECIES_EGG)
 			CalculateMonStats(&gPlayerParty[i]); //Only recalc Pokemon that need to be recalced
 	}
 }
@@ -620,7 +678,8 @@ static void BringBackTheDead(void)
 	{
 		for (int i = 0; i < PARTY_SIZE; ++i)
 		{
-			if (gPlayerParty[i].species != 0 && !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, 0))
+			u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+			if (species != SPECIES_NONE && species != SPECIES_EGG)
 			{
 				gPlayerParty[i].hp = 1;
 				break;
@@ -633,7 +692,7 @@ static void EndPartnerBattlePartyRestore(void)
 {
 	int i;
 	u8 counter = 0;
-	pokemon_t* backup = ExtensionState.partyBackup;
+	struct Pokemon* backup = ExtensionState.partyBackup;
 
 	if (ExtensionState.partyBackup != NULL)
 	{
@@ -643,24 +702,32 @@ static void EndPartnerBattlePartyRestore(void)
 		}
 		else
 		{ 	//Special 0x2F was used
-			pokemon_t* foughtMons = Calloc(sizeof(struct Pokemon) * 3);
-			if (foughtMons != NULL)
+			struct Pokemon foughtMons[3];
+			u8 newLeveledUpInBattle = 0;
+			Memcpy(foughtMons, gPlayerParty, sizeof(struct Pokemon) * 3);
+			Memset(gPlayerParty, 0x0, sizeof(struct Pokemon) * PARTY_SIZE);
+
+			for (i = 0; i < 3; ++i)
 			{
-				Memcpy(foughtMons, gPlayerParty, sizeof(struct Pokemon) * 3);
-				Memset(gPlayerParty, 0x0, sizeof(struct Pokemon) * 6);
-				for (i = 0; i < 3; ++i)
+				if (gSelectedOrderFromParty[i] != 0) //Pokemon was chosen for battle
 				{
-					if (gSelectedOrderFromParty[i] != 0)
-						Memcpy(&gPlayerParty[gSelectedOrderFromParty[i] - 1], &foughtMons[i], sizeof(struct Pokemon));
+					u8 correctSlotId = gSelectedOrderFromParty[i] - 1;
+					Memcpy(&gPlayerParty[correctSlotId], &foughtMons[i], sizeof(struct Pokemon));
+					if (gLeveledUpInBattle & gBitTable[i])
+						newLeveledUpInBattle |= gBitTable[correctSlotId]; //Move to correct index
 				}
 			}
+
+			//Pokemon that leveled up may move around after battle.
+			//This is necessary so proper evolutions can happen after battle.
+			gLeveledUpInBattle = newLeveledUpInBattle;
 
 			for (i = 0; i < PARTY_SIZE; ++i)
 			{
 				if (!FlagGet(FLAG_BATTLE_FACILITY))
 					gSelectedOrderFromParty[i] = 0; //Reset for next battle
 
-				if (gPlayerParty[i].species == 0)
+				if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) == SPECIES_NONE)
 					Memcpy(&gPlayerParty[i], &backup[counter++], sizeof(struct Pokemon));
 			}
 		}
@@ -678,21 +745,33 @@ static void EndSkyBattlePartyRestore(void)
 
 	if (backup != NULL)
 	{
+		u8 newLeveledUpInBattle = 0;
 		struct Pokemon tempTeam[PARTY_SIZE] = {0};
+		bool8 slotFilled[PARTY_SIZE] = {FALSE};
 
 		for (i = 0; i < PARTY_SIZE; ++i)
 		{
 			if (gSelectedOrderFromParty[i] != 0)
 			{
-				tempTeam[gSelectedOrderFromParty[i] - 1] = gPlayerParty[i];
+				u8 correctSlotId = gSelectedOrderFromParty[i] - 1;
+				tempTeam[correctSlotId] = gPlayerParty[i];
+				slotFilled[correctSlotId] = TRUE;
 				gSelectedOrderFromParty[i] = 0;
+
+				if (gLeveledUpInBattle & gBitTable[i])
+					newLeveledUpInBattle |= gBitTable[correctSlotId]; //Move to correct index
 			}
 		}
 
+		gLeveledUpInBattle = newLeveledUpInBattle; //Same logic as in above function
+
 		for (i = 0; i < PARTY_SIZE; ++i)
 		{
-			if (tempTeam[i].species == SPECIES_NONE)
+			if (!slotFilled[i])
+			{
 				tempTeam[i] = backup[counter++];
+				slotFilled[i] = TRUE;
+			}
 		}
 
 		Memcpy(gPlayerParty, tempTeam, sizeof(struct Pokemon) * PARTY_SIZE);
@@ -750,9 +829,15 @@ static void EndBattleFlagClear(void)
 
 	//Handle DexNav Chain
 	if (gDexNavStartedBattle
-	&& gCurrentDexNavChain < 100
 	&& (gBattleOutcome == B_OUTCOME_WON || gBattleOutcome == B_OUTCOME_CAUGHT))
-		++gCurrentDexNavChain;
+	{
+		if (gCurrentDexNavChain == 0)
+			gCurrentDexNavChain = 2; //Next battle would be battle 2
+		else if (gCurrentDexNavChain < 100)
+			++gCurrentDexNavChain;
+		else
+			gCurrentDexNavChain = 1; //Restart from 1 (101 % 100 = 1)
+	}
 	else
 		gCurrentDexNavChain = 0;
 	gDexNavStartedBattle = FALSE;
@@ -761,6 +846,7 @@ static void EndBattleFlagClear(void)
 	Memset(&ExtensionState, 0x0, sizeof(struct BattleExtensionState));
 	gTrainerBattleOpponent_B = backup;
 	gBattleCircusFlags = 0;
+	Memset(gStatuses3, 0, sizeof(gStatuses3));
 }
 
 static void HealPokemonInFrontier(void)

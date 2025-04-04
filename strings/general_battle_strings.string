@@ -149,14 +149,14 @@ The Shadow
 #org @gText_BattleMenu
 [FC][05][05][FC][04][0D][0E][0F]たたかう  [ALIGN][38]バッグ\nポケモン  [ALIGN][38]にげる
 
+#org @gText_BattleMenuNoItems
+[FC][05][05][FC][04][0D][0E][0F]たたかう  [ALIGN][38][FC][04][0F][0E][0B]バッグ\n[FC][04][0D][0E][0F]ポケモン  [ALIGN][38]にげる
+
 #org @gText_BattleMenu2
 [FC][05][05][FC][04][0D][0E][0F]たたかう  [ALIGN][38]バッグ\nポケモン  [ALIGN][38]もどる
 
-#org @gText_UnboundBattleMenu
-[FC][05][05][FC][04][0D][0E][0F]たたかう[ALIGN][38]Cube\nポケモン[ALIGN][38]Run
-
-#org @gText_UnboundBattleMenu2
-[FC][05][05][FC][04][0D][0E][0F]たたかう[ALIGN][38]Cube\nポケモン[ALIGN][38]Back
+#org @gText_BattleMenu2NoItems
+[FC][05][05][FC][04][0D][0E][0F]たたかう  [ALIGN][38][FC][04][0F][0E][0B]バッグ\n[FC][04][0D][0E][0F]ポケモン  [ALIGN][38]もどる
 
 #org @gText_BattleMenuRaidEnd
 [FC][05][05][FC][04][0D][0E][0F]つかまえる [ALIGN][38]おわる
@@ -365,6 +365,9 @@ PP
 #org @gText_CantAimAtSemiInvulnerableTarget
 だめだ！ ポケモンが みえなくて\nねらいが さだまらない……！[FC][09]
 
+#org @gText_CantUseAMoveAndABall
+しゅうちゅう しないと\nボールは じょうずに なげられない！[FC][09]
+
 #org @gText_CantCatchPokemonYet
 ボールを なげることが できない！[FC][09]
 
@@ -373,6 +376,9 @@ PP
 
 #org @sText_QuestionForfeitMatch
 しょうぶを あきらめて\nこうさんしますか？
+
+#org @sText_ConfirmRunAway
+ほんとうに にげても\nよろしいですか？
 
 #org @sText_PlayerForfeitedMatch
 [PLAYER_NAME]は こうさんした！

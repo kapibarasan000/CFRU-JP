@@ -115,8 +115,8 @@ void OpponentHandleChooseMove(void)
 					{
 						if (ShouldAITerastal(gActiveBattler, gBankTarget) && Random() & 1)
 							gNewBS->terastalData.chosen[gActiveBattler] = TRUE;
-
-						gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
+						else
+							gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 					}
 					else if (ShouldAITerastal(gActiveBattler, gBankTarget))
 					{
@@ -138,7 +138,7 @@ void OpponentHandleChooseMove(void)
 				gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMoveId;
 				gBattleStruct->moveTarget[gActiveBattler] = gBankTarget;
 				gChosenMovesByBanks[gActiveBattler] = chosenMove;
-				TryRemoveDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove);
+				TryRemovePartnerDoublesKillingScoreComplete(gActiveBattler, gBankTarget, chosenMove, moveTarget, TRUE); //Allow the partner to choose a new target if its best move was this target
 
 				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler], gNewBS->terastalData.chosen[gActiveBattler]);
 				TryRechoosePartnerMove(moveInfo->moves[chosenMoveId]);
@@ -159,7 +159,7 @@ void OpponentHandleChooseMove(void)
 
 		if (GetBaseMoveTarget(move, gActiveBattler) & (MOVE_TARGET_USER_OR_PARTNER | MOVE_TARGET_USER))
 			EmitMoveChosen(1, chosenMoveId, gActiveBattler, 0, 0, 0, FALSE, FALSE);
-		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		else if (IS_DOUBLE_BATTLE)
 			EmitMoveChosen(1, chosenMoveId, GetBattlerAtPosition(Random() & 2), 0, 0, 0, FALSE, FALSE);
 		else
 			EmitMoveChosen(1, chosenMoveId, FOE(gActiveBattler), 0, 0, 0, FALSE, FALSE);
@@ -221,7 +221,7 @@ void OpponentHandleDrawTrainerPic(void)
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[5] = gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum = GetSpriteTileStartByTag(gTrainerFrontPicTable[trainerPicId].tag);
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.affineParam = trainerPicId;
-	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033660;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn;
 
 	gBattlerControllerFuncs[gActiveBattler] = CompleteOnBattlerSpriteCallbackDummy;
 }
@@ -242,7 +242,7 @@ void OpponentHandleTrainerSlide(void)
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[5] = gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum = GetSpriteTileStartByTag(gTrainerFrontPicTable[trainerPicId].tag);
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.affineParam = trainerPicId;
-	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033660;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn;
 
 	gBattlerControllerFuncs[gActiveBattler] = CompleteOnBankSpriteCallbackDummy2;
 }

@@ -628,7 +628,7 @@ struct BattleStruct
 	bool8 selectionScriptFinished[BATTLE_BANKS_COUNT];
 	u8 switchoutPartyIndex[BATTLE_BANKS_COUNT];
 	u8 monToSwitchIntoId[BATTLE_BANKS_COUNT];
-	u8 field_60[4][3];
+	u8 battlerPartyOrders[MAX_BATTLERS_COUNT][3];
 	u8 runTries;
 	u8 caughtMonNick[11]; //0x200007D
 	u8 field_78;
@@ -766,6 +766,8 @@ struct NewBattleStruct
 	u8 chiStrikeCritBoosts[MAX_BATTLERS_COUNT]; //~0x2017A4B
 	u8 sandblastCentiferno[MAX_BATTLERS_COUNT]; //Records if any banks are trapped by G-Max Centiferno or G-Max Sandblast
 	u8 disguisedAs[MAX_BATTLERS_COUNT]; //The party index + 1 the mon with Illusion is disguised as
+	u8 quickClawRandomNumber[MAX_BATTLERS_COUNT];
+	u8 quickDrawRandomNumber[MAX_BATTLERS_COUNT];
 	u8 GlaiveRushTimers[MAX_BATTLERS_COUNT];
 	u8 rageFistCounter[NUM_BATTLE_SIDES][PARTY_SIZE];
 	u8 SyrupBombTimers[MAX_BATTLERS_COUNT];
@@ -778,10 +780,12 @@ struct NewBattleStruct
 	u8 playedFocusPunchMessage;
 	u8 playedShellTrapMessage;
 	u8 RoostCounter;
-	u8 CustapQuickClawIndicator; //0x2017632
+	u8 quickClawCustapIndicator;
+	u8 quickDrawIndicator;
+	u8 ateCustapBerry;
 	u8 HealingWishLoc;
 	u8 PowderByte;
-	u8 quashed;
+	u8 turnOrderLocked;
 	u8 tarShotBits;
 	u8 trappedByOctolock;
 	u8 trappedByNoRetreat;
@@ -793,6 +797,7 @@ struct NewBattleStruct
 	u8 doSwitchInEffects;
 	u8 devolveForgotMove;
 	u8 hiddenAnimBattlerSprites;
+	u8 enduredDamage;
 	u8 SaltcureBits;
 
 	//Bit Fields for Party
@@ -840,6 +845,7 @@ struct NewBattleStruct
 	bool8 fusionFlareUsedPrior : 1;
 	bool8 fusionBoltUsedPrior : 1;
 	bool8 endTurnDone : 1;
+	bool8 usedAmuletCoin : 1;
 	bool8 HappyHourByte : 1;
 	bool8 attackAnimationPlayed : 1;
 	bool8 DancerInProgress : 1;
@@ -989,6 +995,7 @@ struct NewBattleStruct
 		u16 zMoveHelper;
 		bool8 sideSwitchedThisRound;
 		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //~0x2017B5B
+		u8 typeAbsorbSwitchingCooldown[MAX_BATTLERS_COUNT]; //Prevent a type absorb switching loop
 		u8 itemEffects[MAX_BATTLERS_COUNT];
 		u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef]
 		u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
@@ -1011,6 +1018,8 @@ struct NewBattleStruct
 		u8 terastalMonId[NUM_BATTLE_SIDES]; //terastalMonId[SIDE(bankAtk)]
 		const void* megaPotential[MAX_BATTLERS_COUNT]; //aiMegaPotential[bankAtk] - stores evolution data of attacker
 	} ai;
+
+	struct Pokemon** foePartyBackup; //Pointer to dynamically allocated memory
 };
 
 extern struct NewBattleStruct* gNewBS; //0x203E038
@@ -1198,12 +1207,12 @@ struct FlingStruct
 #define B_ANIM_BERRY_EAT 0x35
 #define B_ANIM_FOG_CONTINUES 0x36
 #define B_ANIM_AQUA_RING_HEAL 0x37
-#define B_ELECTRIC_TERRAIN_ACTIVE_ANIM 0x38
-#define B_GRASSY_TERRAIN_ACTIVE_ANIM 0x39
-#define B_MISTY_TERRAIN_ACTIVE_ANIM 0x3A
-#define B_PSYCHIC_TERRAIN_ACTIVE_ANIM 0x3B
-#define B_BATON_PASS_ANIM 0x3C
-#define B_DRAGON_TAIL_BLOW_AWAY_ANIM 0x3D
+#define B_ANIM_ELECTRIC_TERRAIN_ACTIVE 0x38
+#define B_ANIM_GRASSY_TERRAIN_ACTIVE 0x39
+#define B_ANIM_MISTY_TERRAIN_ACTIVE 0x3A
+#define B_ANIM_PSYCHIC_TERRAIN_ACTIVE 0x3B
+#define B_ANIM_BATON_PASS 0x3C
+#define B_ANIM_DRAGON_TAIL_BLOW_AWAY 0x3D
 #define B_ANIM_ZMOVE_ACTIVATE 0x3E
 #define B_ANIM_MEGA_EVOLUTION 0x3F
 #define B_ANIM_ULTRA_BURST 0x40
@@ -1215,15 +1224,16 @@ struct FlingStruct
 #define B_ANIM_DYNAMAX_ENERGY_SWIRL 0x46
 #define B_ANIM_RAID_BATTLE_STORM 0x47
 #define B_ANIM_RAID_BATTLE_ENERGY_BURST 0x48
-#define B_ANIM_G_MAX_VINE_LASH 0x49
-#define B_ANIM_G_MAX_WILDFIRE 0x4A
-#define B_ANIM_G_MAX_CANNONADE 0x4B
-#define B_ANIM_G_MAX_VOLCALITH 0x4C
-#define B_ANIM_TERASTAL 0x4D
-#define B_ANIM_SUBSTITUTE2 0x4E
-#define B_ANIM_SALTCURE_END_TURN 0x4F
-#define B_ANIM_SYRUPBOMB_END_TURN 0x50
-#define B_ANIM_AI_ITEM_HEAL 0x51
+#define B_ANIM_RAID_BATTLE_BLOW_AWAY 0x49
+#define B_ANIM_G_MAX_VINE_LASH 0x4A
+#define B_ANIM_G_MAX_WILDFIRE 0x4B
+#define B_ANIM_G_MAX_CANNONADE 0x4C
+#define B_ANIM_G_MAX_VOLCALITH 0x4D
+#define B_ANIM_TERASTAL 0x4E
+#define B_ANIM_SUBSTITUTE2 0x4F
+#define B_ANIM_SALTCURE_END_TURN 0x50
+#define B_ANIM_SYRUPBOMB_END_TURN 0x51
+#define B_ANIM_AI_ITEM_HEAL 0x52
 
 #define B_ANIM_TRANSFORM_MOVE 0xFF
 

@@ -4,6 +4,8 @@
 #include "../include/string_util.h"
 #include "../include/constants/items.h"
 #include "../include/constants/trainer_classes.h"
+
+#include "../include/new/ability_tables.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/build_pokemon.h"
 #include "../include/new/util.h"
@@ -62,7 +64,9 @@ const struct Evolution* CanMegaEvolve(unusedArg u8 bank, unusedArg bool8 CheckUB
 
 	for (i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_MEGA)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_MEGA)
 		{
 			//Ignore reversion information
 			if (evolutions[i].param == 0) continue;
@@ -134,26 +138,33 @@ species_t GetMegaSpecies(unusedArg u16 species, unusedArg u16 item, unusedArg co
 	#endif
 }
 
-ability_t GetBankMegaFormAbility(u8 bank)
+ability_t GetBankMegaFormAbility(u8 megaBank, u8 foe)
 {
+	u8 ability = ABILITY_NONE;
 	const struct Evolution* evos;
 
-	if (!IsAbilitySuppressed(bank))
+	if (!IsAbilitySuppressed(megaBank))
 	{
-		evos = CanMegaEvolve(bank, FALSE);
+		evos = CanMegaEvolve(megaBank, FALSE);
 		if (evos != NULL)
+			ability = GetAbility1(evos->targetSpecies); //Megas can only have 1 ability
+		else
 		{
-			return TryRandomizeAbility(gBaseStats[evos->targetSpecies].ability1, evos->targetSpecies); //Megas can only have 1 ability
+			//Check Ultra Burst
+			evos = CanMegaEvolve(megaBank, TRUE);
+			if (evos != NULL)
+				ability = GetAbility1(evos->targetSpecies); //Ultra Necrozma only has 1 ability
 		}
 
-		evos = CanMegaEvolve(bank, TRUE);
-		if (evos != NULL)
+		if (ability == ABILITY_TRACE && IS_SINGLE_BATTLE)
 		{
-			return TryRandomizeAbility(gBaseStats[evos->targetSpecies].ability1, evos->targetSpecies); //Ultra Necrozma only has 1 ability
+			u8 foeAbility = *GetAbilityLocation(foe);
+			if (!CheckTableForAbility(foeAbility, gTraceBannedAbilities))
+				ability = foeAbility; //What the Ability will become
 		}
 	}
 
-	return ABILITY_NONE;
+	return ability;
 }
 
 const u8* DoMegaEvolution(u8 bank)
@@ -219,7 +230,7 @@ const u8* DoPrimalReversion(u8 bank, u8 caseId)
 //In theory, this function will do nothing as the regular forms revert should
 //should take care of the reversion. This is to prevent bugs if the player
 //gives themselves a Mega or Primal to start the battle.
-void MegaRevert(pokemon_t* party)
+void MegaRevert(struct Pokemon* party)
 {
 	int i;
 
@@ -227,7 +238,7 @@ void MegaRevert(pokemon_t* party)
 		TryRevertMega(&party[i]);
 }
 
-void TryRevertMega(pokemon_t* mon)
+void TryRevertMega(struct Pokemon* mon)
 {
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 
@@ -467,10 +478,17 @@ const u8* GetTrainerName(u8 bank)
 
 	switch (GetBattlerPosition(bank)) {
 		case B_POSITION_PLAYER_LEFT:
-			if (InBattleSands())
+			if (IsAIControlledBattle())
 			{
-				trainerId = BATTLE_FACILITY_MULTI_TRAINER_TID;
-				battlerNum = 2; //Name stored in partner var
+				if (InBattleSands())
+				{
+					trainerId = BATTLE_FACILITY_MULTI_TRAINER_TID;
+					battlerNum = 2; //Name stored in partner var
+				}
+				else
+				{
+					trainerId = VarGet(VAR_PARTNER);
+				}
 			}
 			break;
 
@@ -489,10 +507,17 @@ const u8* GetTrainerName(u8 bank)
 			}
 			else if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
 				trainerId = linkPartner;
-			else if (InBattleSands())
+			else if (IsAIControlledBattle())
 			{
-				trainerId = BATTLE_FACILITY_MULTI_TRAINER_TID;
-				battlerNum = 2; //Name stored in partner var
+				if (InBattleSands())
+				{
+					trainerId = BATTLE_FACILITY_MULTI_TRAINER_TID;
+					battlerNum = 2; //Name stored in partner var
+				}
+				else
+				{
+					trainerId = VarGet(VAR_PARTNER);
+				}
 			}
 			else
 				battlerNum = 0;
