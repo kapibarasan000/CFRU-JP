@@ -289,6 +289,7 @@
 .equ TYPE_DARK, 0x11
 .equ TYPE_ROOSTLESS, 0x13
 .equ TYPE_FAIRY, 0x17
+.equ TYPE_STELLAR, 0x18
 
 @terrains
 .equ ELECTRIC_TERRAIN, 0x1

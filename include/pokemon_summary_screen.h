@@ -2,6 +2,7 @@
 #define GUARD_POKEMON_SUMMARY_SCREEN_H
 
 #include "main.h"
+#include "constants/moves.h"
 
 extern const u8* const gMoveDescriptionPointers[];
 extern const u8* const gNatureNamePointers[];
@@ -56,12 +57,33 @@ enum PokemonSummaryScreenStat
     PSS_STAT_SPE
 };
 
+#define POKESUM_WIN_PAGE_NAME        0
+#define POKESUM_WIN_CONTROLS         1
+#define POKESUM_WIN_LVL_NICK         2
+#define POKESUM_WIN_RIGHT_PANE       3
+#define POKESUM_WIN_TRAINER_MEMO     4
+
+#define POKESUM_WIN_INFO_3           3
+#define POKESUM_WIN_INFO_4           4
+#define POKESUM_WIN_INFO_5           5
+#define POKESUM_WIN_INFO_6           6
+
+#define POKESUM_WIN_SKILLS_3         3
+#define POKESUM_WIN_SKILLS_4         4
+#define POKESUM_WIN_SKILLS_5         5
+#define POKESUM_WIN_SKILLS_6         6
+
+#define POKESUM_WIN_MOVES_3          3
+#define POKESUM_WIN_MOVES_4          4
+#define POKESUM_WIN_MOVES_5          5
+#define POKESUM_WIN_MOVES_6          6
+
 struct PokemonSummaryScreenData
 {
     u16 unk0[0x800];
     u16 unk1000[0x800];
     u16 unk2000[0x800];
-    u8 ALIGNED(4) unk3000[7];
+    u8 ALIGNED(4) windowIds[7];
 
     u8 ALIGNED(4) unk3008;
     u8 ALIGNED(4) ballIconSpriteId;
@@ -114,7 +136,7 @@ struct PokemonSummaryScreenData
     u8 ALIGNED(4) curPageIndex; /* 0x31C0 */
     u8 ALIGNED(4) unk31C4; /* 0x31C4 */
     u8 ALIGNED(4) isBoxMon; /* 0x31C8 */
-    u8 ALIGNED(4) unk31CC[2]; /* 0x31CC */
+    u8 ALIGNED(4) monTypes[2]; /* 0x31CC */
 
     u8 ALIGNED(4) unk31D0; /* 0x31D0 */
     u8 ALIGNED(4) unk31D4; /* 0x31D4 */

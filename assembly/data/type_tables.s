@@ -40,6 +40,7 @@ typeicon 32, 12, 0xC0       @ -Accuracy- icon
 typeicon 32, 12, 0xC4       @ -PP- icon
 typeicon 32, 12, 0xC8       @ -Effect- icon
 typeicon 32, 12, 0xE0       @ Fairy icon
+typeicon 32, 12, 0xE4       @ Stellar icon
 typeicon  8,  8, 0xCE       @ Unused (Small white pokeball)
 typeicon  8,  8, 0xCF       @ Unused (Small dark pokeball)
 
