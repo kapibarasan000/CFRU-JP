@@ -174,10 +174,10 @@ The Shadow
 
 //Other
 #org @gText_BattleUI_SuperEffective
-[F9][15]
+[F9][00]
 
 #org @gText_BattleUI_NotVeryEffective
-[F9][16]
+[F9][01]
 
 #org @gText_BattleUI_NoEffect
 *

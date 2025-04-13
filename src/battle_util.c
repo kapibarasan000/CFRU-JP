@@ -470,7 +470,7 @@ bool8 IsOfType(u8 bank, u8 type)
 	u8 type3 = gBattleMons[bank].type3;
 	u8 teratype = GetBattlerTeraType(bank);
 
-	if (!IS_BLANK_TYPE(teratype))
+	if (!IS_BLANK_TYPE(teratype) && teratype != TYPE_STELLAR)
 	{
 		return teratype == type;
 	}
@@ -1364,7 +1364,7 @@ bool8 CanBeTrapped(u8 bank)
 bool8 IsAffectedByPowder(u8 bank)
 {
 	u8 teraType = GetBattlerTeraType(bank);
-	if (!IS_BLANK_TYPE(teraType))
+	if (!IS_BLANK_TYPE(teraType) && teraType != TYPE_STELLAR)
 		return IsAffectedByPowderByDetails(teraType, teraType, teraType, ABILITY(bank), ITEM_EFFECT(bank));
 	else
 		return IsAffectedByPowderByDetails(gBattleMons[bank].type1, gBattleMons[bank].type2, gBattleMons[bank].type3, ABILITY(bank), ITEM_EFFECT(bank));
@@ -1661,10 +1661,12 @@ void GiveOmniboost(u8 bank)
 bool8 WillSyncronoiseFail(u8 bankAtk, u8 bankDef)
 {
 	u8 atkType1, atkType2, atkType3, defType1, defType2, defType3;
+	u8 atkTeraType = GetBattlerTeraType(bankAtk);
+	u8 defTeraType = GetBattlerTeraType(bankDef);
 
-	if (IsTerastal(bankAtk))
+	if (!IS_BLANK_TYPE(atkTeraType) && atkTeraType != TYPE_STELLAR)
 	{
-		atkType1 = atkType2 = atkType3 = GetTeraType(bankAtk);
+		atkType1 = atkType2 = atkType3 = atkTeraType;
 	}
 	else
 	{
@@ -1673,9 +1675,9 @@ bool8 WillSyncronoiseFail(u8 bankAtk, u8 bankDef)
 		atkType3 = gBattleMons[bankAtk].type3;
 	}
 
-	if (IsTerastal(bankDef))
+	if (!IS_BLANK_TYPE(defTeraType) && defTeraType != TYPE_STELLAR)
 	{
-		defType1 = defType2 = defType3 = GetTeraType(bankDef);
+		defType1 = defType2 = defType3 = defTeraType;
 	}
 	else
 	{
@@ -1694,10 +1696,11 @@ bool8 WillSyncronoiseFail(u8 bankAtk, u8 bankDef)
 bool8 WillSyncronoiseFailByAttackerTypesAndBank(u8 atkType1, u8 atkType2, u8 atkType3, u8 bankDef)
 {
 	u8 defType1, defType2, defType3;
+	u8 defTeraType = GetBattlerTeraType(bankDef);
 
-	if (IsTerastal(bankDef))
+	if (!IS_BLANK_TYPE(defTeraType) && defTeraType != TYPE_STELLAR)
 	{
-		defType1 = defType2 = defType3 = GetTeraType(bankDef);
+		defType1 = defType2 = defType3 = defTeraType;
 	}
 	else
 	{
@@ -1714,10 +1717,11 @@ bool8 WillSyncronoiseFailByAttackerTypesAndBank(u8 atkType1, u8 atkType2, u8 atk
 bool8 WillSyncronoiseFailByAttackerAnd3DefTypesAndItemEffect(u8 bankAtk, u8 defType1, u8 defType2, u8 defType3, u8 defItemEffect)
 {
 	u8 atkType1, atkType2, atkType3;
+	u8 atkTeraType = GetBattlerTeraType(bankAtk);
 
-	if (IsTerastal(bankAtk))
+	if (!IS_BLANK_TYPE(atkTeraType) && atkTeraType != TYPE_STELLAR)
 	{
-		atkType1 = atkType2 = atkType3 = GetTeraType(bankAtk);
+		atkType1 = atkType2 = atkType3 = atkTeraType;
 	}
 	else
 	{

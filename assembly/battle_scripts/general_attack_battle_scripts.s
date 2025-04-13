@@ -6113,9 +6113,36 @@ BS_247_Glaive_Rush:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_248_Blank
-BS_248_Blank:
+.global BS_248_TeraBlast
+.global BattleScript_LowerAtkSpAtk
+BS_248_TeraBlast:
+	callasm TeraBlastFunc
 	goto BS_STANDARD_HIT
+
+BattleScript_LowerAtkSpAtk:
+	attackcanceler
+	accuracycheck BS_MOVE_MISSED 0x0
+	call STANDARD_DAMAGE
+	jumpifmovehadnoeffect BS_MOVE_FAINT
+	jumpifstat BANK_ATTACKER GREATERTHAN STAT_ATK STAT_MIN LowerAtk
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPATK STAT_MIN BS_MOVE_FAINT
+
+LowerAtk:
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_DOWN | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | DECREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN LowerSpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 LowerSpAtk
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+LowerSpAtk:
+	setstatchanger STAT_SPATK | DECREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_FAINT
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_FAINT
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_FAINT
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

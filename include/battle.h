@@ -988,6 +988,7 @@ struct NewBattleStruct
 		u8 done[MAX_BATTLERS_COUNT];
 		u8 partyIndex[NUM_BATTLE_SIDES];
 		u8 fainted[MAX_BATTLERS_COUNT];
+		u32 stellarBoosted[MAX_BATTLERS_COUNT];
 	} terastalData;
 
 	struct 

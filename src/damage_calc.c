@@ -56,7 +56,7 @@ static const u16 sCriticalHitChances[] =
 //This file's functions:
 static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, struct Pokemon* monDef);
 static void TypeDamageModificationByDefTypes(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags, u8 defType1, u8 defType2, u8 defType3, struct Pokemon* monDef);
-static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 bankDef, u8 atkAbility, u8* flags, struct Pokemon* monDef);
+static u8 ModulateDmgByType(const u16 move, const u8 moveType, const u8 defType, const u8 bankDef, u8 atkAbility, struct Pokemon* monDef);
 static bool8 AbilityCanChangeTypeAndBoost(u16 move, u8 atkAbility, u8 electrifyTimer, bool8 zMoveActive);
 static s32 CalculateBaseDamage(struct DamageCalc* data);
 static u16 GetBasePower(struct DamageCalc* data);
@@ -743,7 +743,12 @@ void atk06_typecalc(void)
 			//Check Stab
 			if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
 			{
-				if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
+				if (atkTeraType == TYPE_STELLAR && CanStellarBoost(gBankAttacker, moveType))
+				{
+					gBattleMoveDamage *= 2;
+					gNewBS->terastalBoost = TRUE;
+				}
+				else if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
 				{
 					gBattleMoveDamage = (gBattleMoveDamage * 225) / 100;
 					gNewBS->terastalBoost = TRUE;
@@ -757,6 +762,11 @@ void atk06_typecalc(void)
 					gBattleMoveDamage *= 2;
 				else
 					gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
+			}
+			else if (atkTeraType == TYPE_STELLAR && CanStellarBoost(gBankAttacker, moveType))
+			{
+				gBattleMoveDamage = (gBattleMoveDamage * 12) / 10;
+				gNewBS->terastalBoost = TRUE;
 			}
 			else if (atkTeraType == moveType)
 			{
@@ -854,6 +864,12 @@ void atk06_typecalc(void)
 
 			if (gNewBS->ResultFlags[bankDef] & MOVE_RESULT_DOESNT_AFFECT_FOE)
 				gProtectStructs[gBankAttacker].targetNotAffected = 1;
+
+			if (gNewBS->ResultFlags[bankDef] & MOVE_RESULT_NO_EFFECT)
+				gNewBS->terastalBoost = FALSE;
+
+			if (gMultiHitCounter && gBattleScripting.multihitString[4] > 0)
+				gNewBS->terastalBoost = FALSE;
 
 			gNewBS->DamageTaken[bankDef] = gBattleMoveDamage;
 
@@ -1009,12 +1025,18 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType
 	|| (atkAbility == ABILITY_PROTEAN && IS_BLANK_TYPE(atkTeraType)))
 	{
-		if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
+		if (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, moveType))
+			gBattleMoveDamage *= 2;
+		else if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
 			gBattleMoveDamage = udivsi(gBattleMoveDamage * 225, 100);
 		else if (atkAbility == ABILITY_ADAPTABILITY)
 			gBattleMoveDamage *= 2;
 		else
 			gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
+	}
+	else if (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, moveType))
+	{
+		gBattleMoveDamage = udivsi(gBattleMoveDamage * 120, 100);
 	}
 	else if (atkTeraType == moveType)
 	{
@@ -1080,7 +1102,7 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monDef)
 	u8 atkTeraType = GetBattlerTeraType(bankAtk);
 	u8 moveType, defType1, defType2;
 
-	if (IsMonTerastal(monDef))
+	if (IsMonTerastal(monDef) && monDef->teratype != TYPE_STELLAR)
 	{
 		defType1 = defType2 = monDef->teratype;
 	}
@@ -1102,12 +1124,18 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monDef)
 	//Check stab
 	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
 	{
-		if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
+		if (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, moveType))
+			gBattleMoveDamage *= 2;
+		else if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
 			gBattleMoveDamage = udivsi(gBattleMoveDamage * 225, 100);
 		else if (atkAbility == ABILITY_ADAPTABILITY || atkTeraType == moveType)
 			gBattleMoveDamage *= 2;
 		else
 			gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
+	}
+	else if (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, moveType))
+	{
+		gBattleMoveDamage = udivsi(gBattleMoveDamage * 120, 100);
 	}
 	else if (atkTeraType == moveType)
 	{
@@ -1157,7 +1185,7 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	u8 atkAbility = GetAIAbility(bankAtk, bankDef, move);
 	u8 defAbility = GetAIAbility(bankDef, bankAtk, IsValidMovePrediction(bankDef, bankAtk));
 	u8 defEffect = ITEM_EFFECT(bankDef);
-	u8 atkType1, atkType2, atkType3, atkTeraType, defType1, defType2, defType3;
+	u8 atkType1, atkType2, atkType3, atkTeraType, defType1, defType2, defType3, defTeraType;
 	u8 flags = 0;
 
 	if (move == MOVE_STRUGGLE)
@@ -1167,16 +1195,17 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	atkType2 = gBattleMons[bankAtk].type2;
 	atkType3 = gBattleMons[bankAtk].type3;
 	atkTeraType = GetBattlerTeraType(bankAtk);
+	defTeraType = GetBattlerTeraType(bankDef);
 	moveType = GetMoveTypeSpecial(bankAtk, move);
 
 	if (atkAbility == ABILITY_PROTEAN && !IsTerastal(bankAtk))
 		atkType1 = atkType2 = atkType3 = moveType;
 
-	if (IsTerastal(bankDef))
+	if (!IS_BLANK_TYPE(defTeraType) && defTeraType != TYPE_STELLAR)
 	{
-		defType1 = defType2 = defType3 = GetTeraType(bankDef);
+		defType1 = defType2 = defType3 = defTeraType;
 	}
-	if (gStatuses3[bankDef] & STATUS3_ILLUSION && gDisableStructs[bankDef].isFirstTurn) //Under illusion and haven't figured it out yet
+	else if (gStatuses3[bankDef] & STATUS3_ILLUSION && gDisableStructs[bankDef].isFirstTurn) //Under illusion and haven't figured it out yet
 	{
 		struct Pokemon* illusionMon = GetIllusionPartyData(bankDef);
 		u16 fakeSpecies = GetMonData(illusionMon, MON_DATA_SPECIES, NULL);
@@ -1195,12 +1224,18 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	//Check STAB
 	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
 	{
-		if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
+		if (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, moveType))
+			gBattleMoveDamage *= 2;
+		else if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
 			gBattleMoveDamage = (gBattleMoveDamage * 9) / 2;
 		else if (atkAbility == ABILITY_ADAPTABILITY)
 			gBattleMoveDamage *= 2;
 		else
 			gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
+	}
+	else if (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, moveType))
+	{
+		gBattleMoveDamage = udivsi(gBattleMoveDamage * 120, 100);
 	}
 	else if (atkTeraType == moveType)
 	{
@@ -1266,7 +1301,7 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 
 	struct Pokemon* monIllusion = GetIllusionPartyData(bankDef);
 	bool8 underIllusion = monIllusion != GetBankPartyData(bankDef);
-	if (IsTerastal(bankDef))
+	if (IsTerastal(bankDef) && GetTeraType(bankDef) != TYPE_STELLAR)
 	{
 		defType1 = defType2 = defType3 = GetTeraType(bankDef);
 		if (underIllusion)
@@ -1405,40 +1440,80 @@ void FutureSightTypeCalc(void)
 void TypeDamageModification(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags)
 {
 	u8 defTeraType = GetBattlerTeraType(bankDef);
-	if (!IS_BLANK_TYPE(defTeraType))
+	if (!IS_BLANK_TYPE(defTeraType) && defTeraType != TYPE_STELLAR)
 		return TypeDamageModificationByDefTypes(atkAbility, bankDef, move, moveType, flags, defTeraType, defTeraType, defTeraType, NULL);
 	else
 		return TypeDamageModificationByDefTypes(atkAbility, bankDef, move, moveType, flags, gBattleMons[bankDef].type1, gBattleMons[bankDef].type2, gBattleMons[bankDef].type3, NULL);
 }
 
+u8 ModulateMultiplier(u8 multiplier, u8 modifier)
+{
+	return (multiplier * modifier) / 10;
+}
+
+static void UpdateMoveResultFlags(u8 multiplier, u8* flags)
+{
+	if (multiplier == 0)
+	{
+		*flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+		*flags &= ~(MOVE_RESULT_NOT_VERY_EFFECTIVE | MOVE_RESULT_SUPER_EFFECTIVE);
+	}
+	else if (multiplier == TYPE_MUL_NORMAL)
+	{
+		*flags &= ~(MOVE_RESULT_NOT_VERY_EFFECTIVE | MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_DOESNT_AFFECT_FOE);
+	}
+	else if (multiplier > TYPE_MUL_NORMAL)
+	{
+		*flags |= MOVE_RESULT_SUPER_EFFECTIVE;
+		*flags &= ~(MOVE_RESULT_NOT_VERY_EFFECTIVE | MOVE_RESULT_DOESNT_AFFECT_FOE);
+	}
+	else
+	{
+		*flags |= MOVE_RESULT_NOT_VERY_EFFECTIVE;
+		*flags &= ~(MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_DOESNT_AFFECT_FOE);
+	}
+}
+
 static void TypeDamageModificationByDefTypes(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags, u8 defType1, u8 defType2, u8 defType3, struct Pokemon* monDef)
 {
-	u8 multiplier1, multiplier2, multiplier3;
+	u8 multiplier = TYPE_MUL_NORMAL;
 
 TYPE_LOOP:
-	multiplier1 = gTypeEffectiveness[moveType][defType1];
-	multiplier2 = gTypeEffectiveness[moveType][defType2];
-	multiplier3 = gTypeEffectiveness[moveType][defType3];
-
 	//If the multiplier is 0, that means normal damage. No effect is 1 (it is modified to 0 later).
-	ModulateDmgByType(multiplier1, move, moveType, defType1, bankDef, atkAbility, flags, monDef);
+	multiplier = ModulateMultiplier(multiplier, ModulateDmgByType(move, moveType, defType1, bankDef, atkAbility, monDef));
 
 	if (defType1 != defType2)
-		ModulateDmgByType(multiplier2, move, moveType, defType2, bankDef, atkAbility, flags, monDef);
+		multiplier = ModulateMultiplier(multiplier, ModulateDmgByType(move, moveType, defType2, bankDef, atkAbility, monDef));
 
-	if (defType3 != defType1 && defType3 != defType2)
-		ModulateDmgByType(multiplier3, move, moveType, defType3, bankDef, atkAbility, flags, monDef);
+	if (!IS_BLANK_TYPE(defType3) && defType3 != defType1 && defType3 != defType2)
+		multiplier = ModulateMultiplier(multiplier, ModulateDmgByType(move, moveType, defType3, bankDef, atkAbility, monDef));
 
 	if (move == MOVE_FLYINGPRESS && moveType != TYPE_FLYING)
 	{
 		moveType = TYPE_FLYING;
 		goto TYPE_LOOP;
 	}
+
+	if (moveType == TYPE_FIRE && gNewBS->tarShotBits & gBitTable[bankDef])
+		multiplier = ModulateMultiplier(multiplier, TYPE_MUL_SUPER_EFFECTIVE);
+
+	if (!CheckGrounding(bankDef)
+	&& move == MOVE_THOUSANDARROWS
+	&& (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
+		multiplier = TYPE_MUL_NORMAL;
+
+	if (moveType == TYPE_STELLAR && IsTerastal(bankDef))
+		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
+
+	UpdateMoveResultFlags(multiplier, flags);
+
+	if (multiplier != TYPE_MUL_NORMAL)
+		gBattleMoveDamage = MathMax(1, (gBattleMoveDamage * multiplier) / 10);
 }
 
 void TypeDamageModificationPartyMon(u8 atkAbility, struct Pokemon* monDef, u16 move, u8 moveType, u8* flags)
 {
-	u8 defType1, defType2, multiplier1, multiplier2;
+	u8 defType1, defType2, multiplier;
 
 	if (IsMonTerastal(monDef))
 	{
@@ -1450,25 +1525,41 @@ void TypeDamageModificationPartyMon(u8 atkAbility, struct Pokemon* monDef, u16 m
 		defType2 = GetMonType(monDef, 1);
 	}
 
-TYPE_LOOP_AI:
-	multiplier1 = gTypeEffectiveness[moveType][defType1];
-	multiplier2 = gTypeEffectiveness[moveType][defType2];
+	multiplier = TYPE_MUL_NORMAL;
 
-	ModulateDmgByType(multiplier1, move, moveType, defType1, 0, atkAbility, flags, monDef);
+TYPE_LOOP_AI:
+	multiplier = ModulateMultiplier(multiplier, ModulateDmgByType(move, moveType, defType1, 0, atkAbility, monDef));
 
 	if (defType1 != defType2)
-		ModulateDmgByType(multiplier2, move, moveType, defType2, 0, atkAbility, flags, monDef);
+		multiplier = ModulateMultiplier(multiplier, ModulateDmgByType(move, moveType, defType2, 0, atkAbility, monDef));
 
 	if (move == MOVE_FLYINGPRESS && moveType != TYPE_FLYING)
 	{
 		moveType = TYPE_FLYING;
 		goto TYPE_LOOP_AI;
 	}
+
+	if (CheckMonGrounding(monDef)
+	&& move == MOVE_THOUSANDARROWS
+	&& (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING))
+		multiplier = TYPE_MUL_NORMAL;
+
+	if (moveType == TYPE_STELLAR && IsMonTerastal(monDef))
+		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
+
+	UpdateMoveResultFlags(multiplier, flags);
+
+	if (multiplier != TYPE_MUL_NORMAL)
+		gBattleMoveDamage = MathMax(1, (gBattleMoveDamage * multiplier) / 10);
 }
 
-static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 bankDef, u8 atkAbility, u8* flags, struct Pokemon* monDef)
+static u8 ModulateDmgByType(const u16 move, const u8 moveType, const u8 defType, const u8 bankDef, u8 atkAbility, struct Pokemon* monDef)
 {
+	u8 multiplier = gTypeEffectiveness[moveType][defType];
 	bool8 checkMonDef = monDef != NULL;
+
+	if (multiplier == TYPE_MUL_NO_DATA)
+		multiplier = TYPE_MUL_NORMAL;
 
 	if (IsInverseBattle())
 	{
@@ -1491,22 +1582,19 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 	{
 		if ((defType == TYPE_GHOST && (moveType == TYPE_NORMAL || moveType == TYPE_FIGHTING))
 		&& (gBattleMons[bankDef].status2 & STATUS2_FORESIGHT || atkAbility == ABILITY_SCRAPPY))
-			return; //Foresight breaks ghost immunity
+			multiplier = TYPE_MUL_NORMAL; //Foresight breaks ghost immunity
 
 		if (moveType == TYPE_PSYCHIC && defType == TYPE_DARK && (gStatuses3[bankDef] & STATUS3_MIRACLE_EYED))
-			return; //Miracle Eye causes normal damage hits
+			multiplier = TYPE_MUL_NORMAL; //Miracle Eye causes normal damage hits
 	}
 	else if (checkMonDef)
 	{
 		if (atkAbility == ABILITY_SCRAPPY
 		&& (defType == TYPE_GHOST && (moveType == TYPE_NORMAL || moveType == TYPE_FIGHTING)))
-			return; //Foresight breaks ghost immunity
+			multiplier = TYPE_MUL_NORMAL; //Foresight breaks ghost immunity
 	}
 
 	if (move == MOVE_FREEZEDRY && defType == TYPE_WATER) //Always Super-Effective, even in Inverse Battles
-		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
-
-	if (moveType == TYPE_FIRE && gNewBS->tarShotBits & gBitTable[bankDef]) //Fire always Super-Effective if covered in tar
 		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
 
 	if (defType == TYPE_FLYING && multiplier == TYPE_MUL_SUPER_EFFECTIVE && gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL && move != MOVE_STEALTHROCK && WEATHER_HAS_EFFECT)
@@ -1541,65 +1629,14 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 			if (CheckGrounding(bankDef))
 				multiplier = TYPE_MUL_NORMAL;
 			else if (move == MOVE_THOUSANDARROWS)
-			{
 				multiplier = TYPE_MUL_NORMAL;
-
-				if (defType == TYPE_FLYING)
-				{
-					//Does neutral damage regardless of secondary type
-
-					if (*flags & MOVE_RESULT_SUPER_EFFECTIVE) //Super Effective on the first type
-					{
-						*flags &= ~MOVE_RESULT_SUPER_EFFECTIVE;
-						multiplier = TYPE_MUL_NOT_EFFECTIVE; //Counteract the boost given earlier
-						goto SKIP_FLAG_CHANGE;
-					}
-					else if (*flags & MOVE_RESULT_NOT_VERY_EFFECTIVE)
-					{
-						*flags &= ~MOVE_RESULT_NOT_VERY_EFFECTIVE;
-						multiplier = TYPE_MUL_SUPER_EFFECTIVE; //Counteract the boost given earlier
-						goto SKIP_FLAG_CHANGE;
-					}
-				}
-			}
 		}
 	}
 
-	switch (multiplier) {
-		case TYPE_MUL_NO_EFFECT:
-			*flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
-			*flags &= ~(MOVE_RESULT_NOT_VERY_EFFECTIVE | MOVE_RESULT_SUPER_EFFECTIVE);
-			break;
+	if (multiplier == TYPE_MUL_NO_EFFECT)
+		multiplier = 0;
 
-		case TYPE_MUL_NOT_EFFECTIVE:
-			if (SPLIT(move) != SPLIT_STATUS && !(*flags & MOVE_RESULT_NO_EFFECT))
-			{
-				if (*flags & MOVE_RESULT_SUPER_EFFECTIVE)
-					*flags &= ~MOVE_RESULT_SUPER_EFFECTIVE;
-				else
-					*flags |= MOVE_RESULT_NOT_VERY_EFFECTIVE;
-			}
-			break;
-
-		case TYPE_MUL_SUPER_EFFECTIVE:
-			if (SPLIT(move) != SPLIT_STATUS && !(*flags & MOVE_RESULT_NO_EFFECT))
-			{
-				if (*flags & MOVE_RESULT_NOT_VERY_EFFECTIVE)
-					*flags &= ~MOVE_RESULT_NOT_VERY_EFFECTIVE;
-				else
-					*flags |= MOVE_RESULT_SUPER_EFFECTIVE;
-			}
-			break;
-	}
-
-	SKIP_FLAG_CHANGE:
-	if (multiplier != TYPE_MUL_NO_DATA && multiplier != TYPE_MUL_NORMAL)
-	{
-		if (multiplier == TYPE_MUL_NO_EFFECT)
-			multiplier = 0; //Set to 0 properly
-
-		gBattleMoveDamage = MathMax(1, (gBattleMoveDamage * multiplier) / 10);
-	}
+	return multiplier;
 }
 
 void ModulateByTypeEffectiveness(u8 moveType, u8 defType1, u8 defType2, u8* var)
@@ -1809,7 +1846,7 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 			}
 			else
 			{
-				if (atkTeraType != TYPE_BLANK)
+				if (atkTeraType != TYPE_BLANK && atkTeraType != TYPE_STELLAR)
 					moveType = atkTeraType;
 				else if (atkType1 != TYPE_MYSTERY && atkType1 != TYPE_ROOSTLESS)
 					moveType = atkType1;
@@ -3376,7 +3413,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_LASTRESPECTS:
-			if (gNewBS->FaintedCounters[SIDE(bankAtk)])
+			if (!useMonAtk && gNewBS->FaintedCounters[SIDE(bankAtk)])
 				power = 50 + (50 * gNewBS->FaintedCounters[SIDE(bankAtk)]);
 			break;
 
@@ -3386,7 +3423,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_RAGEFIST:
-			if (gNewBS->rageFistCounter[SIDE(bankAtk)][gBattlerPartyIndexes[bankAtk]])
+			if (!useMonAtk && gNewBS->rageFistCounter[SIDE(bankAtk)][gBattlerPartyIndexes[bankAtk]])
 				power = 50 + (50 * gNewBS->rageFistCounter[SIDE(bankAtk)][gBattlerPartyIndexes[bankAtk]]);
 			break;
 
@@ -3407,6 +3444,11 @@ static u16 GetBasePower(struct DamageCalc* data)
 		case MOVE_TEMPERFLARE:
 			if (!useMonAtk && gNewBS->StompingTantrumTimers[bankAtk])
 				power *= 2;
+			break;
+
+		case MOVE_TERABLAST:
+			if (!useMonAtk && GetBattlerTeraType(bankAtk) == TYPE_STELLAR)
+				power = 100;
 			break;
 
 		case MOVE_VENOSHOCK:

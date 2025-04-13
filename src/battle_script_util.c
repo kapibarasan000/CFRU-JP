@@ -2562,3 +2562,9 @@ void SkipUseNextPkmnPromptIfCantRun(void)
 	if (AreAllKindsOfRunningPrevented())
 		gBattlescriptCurrInstr = BattleScript_FaintedMonTryChooseAnother - 5;
 }
+
+void TeraBlastFunc(void)
+{
+	if (GetBattlerTeraType(gBankAttacker) == TYPE_STELLAR)
+		gBattlescriptCurrInstr = BattleScript_LowerAtkSpAtk - 5;
+}

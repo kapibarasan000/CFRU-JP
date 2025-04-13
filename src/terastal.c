@@ -62,6 +62,7 @@ static const u16 sTeraTypeColor[NUMBER_OF_MON_TYPES] =
     RGB(31, 31, 31),
     RGB(31, 31, 31),
     RGB(31, 15, 21),
+	RGB(31, 31, 31),
 };
 
 
@@ -263,4 +264,25 @@ bool8 DoesTerastalUsageStopMegaEvolution(u8 bank)
 bool8 TeraTypeActive(u8 bank)
 {
 	return IsTerastal(bank) || gNewBS->terastalData.chosen[bank];
+}
+
+void SetStellarBoostFlag(u8 bank, u8 type)
+{
+    if (type < 32)
+	{
+		gNewBS->terastalData.stellarBoosted[bank] |= gBitTable[type];
+
+		if ((SIDE(bank) == B_SIDE_PLAYER && !(gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER))
+		||  (SIDE(bank) == B_SIDE_OPPONENT && !(gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)))
+			gNewBS->terastalData.stellarBoosted[PARTNER(bank)] |= gBitTable[type];
+	}
+        
+}
+
+bool8 CanStellarBoost(u8 bank, u8 type)
+{
+    if (type < 32)
+		return !(gNewBS->terastalData.stellarBoosted[bank] & gBitTable[type]);
+    else
+        return FALSE;
 }

@@ -113,6 +113,7 @@ const u16* const Terastal_TriggerPals[] =
 	Terastal_TriggerPal,
 	Terastal_TriggerPal,
 	Terastal_Trigger_FairyPal,
+	Terastal_TriggerPal,
 };
 
 static bool8 IsIgnoredTriggerColour(u16 colour);
@@ -210,6 +211,7 @@ static const struct SpritePalette sTerastalTriggerPalette[NUMBER_OF_MON_TYPES] =
 	{Terastal_TriggerPal, GFX_TAG_TERASTAL_TRIGGER},
 	{Terastal_TriggerPal, GFX_TAG_TERASTAL_TRIGGER},
 	{Terastal_Trigger_FairyPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_TriggerPal, GFX_TAG_TERASTAL_TRIGGER},
 };
 
 static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet0[NUMBER_OF_MON_TYPES] = 
@@ -238,6 +240,7 @@ static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet0[NUMBER_
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR},
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR},
 	{Terastal_Indicator_FairyTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR},
 };
 
 static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet1[NUMBER_OF_MON_TYPES] = 
@@ -266,6 +269,7 @@ static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet1[NUMBER_
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
 	{Terastal_Indicator_FairyTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
 };
 
 static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet2[NUMBER_OF_MON_TYPES] = 
@@ -294,6 +298,7 @@ static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet2[NUMBER_
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
 	{Terastal_Indicator_FairyTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
 };
 
 static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet3[NUMBER_OF_MON_TYPES] = 
@@ -322,6 +327,7 @@ static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet3[NUMBER_
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
 	{Terastal_Indicator_FairyTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
 };
 
 static const struct CompressedSpriteSheet* sTerastalIndicatorSpriteSheet[] = 
@@ -358,6 +364,7 @@ static const struct SpritePalette sTerastalIndicatorPalette0[NUMBER_OF_MON_TYPES
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR},
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR},
 	{Terastal_Indicator_FairyPal, GFX_TAG_TERASTAL_INDICATOR},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR},
 };
 
 static const struct SpritePalette sTerastalIndicatorPalette1[NUMBER_OF_MON_TYPES] = 
@@ -386,6 +393,7 @@ static const struct SpritePalette sTerastalIndicatorPalette1[NUMBER_OF_MON_TYPES
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
 	{Terastal_Indicator_FairyPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
 };
 
 static const struct SpritePalette sTerastalIndicatorPalette2[NUMBER_OF_MON_TYPES] = 
@@ -414,6 +422,7 @@ static const struct SpritePalette sTerastalIndicatorPalette2[NUMBER_OF_MON_TYPES
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
 	{Terastal_Indicator_FairyPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
 };
 
 static const struct SpritePalette sTerastalIndicatorPalette3[NUMBER_OF_MON_TYPES] = 
@@ -442,6 +451,7 @@ static const struct SpritePalette sTerastalIndicatorPalette3[NUMBER_OF_MON_TYPES
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
 	{Terastal_Indicator_FairyPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
 };
 
 static const struct SpritePalette* sTerastalIndicatorPalette[] = 

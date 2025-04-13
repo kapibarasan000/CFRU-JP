@@ -326,8 +326,6 @@ BattleScript_DancerActivated:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MultiHitPrintStrings:
-	resultmessage
-	waitmessage DELAY_1SECOND
 	copyarray 0x2022A28 MULTIHIT_STRING 0x6
 	printstring 0x22
 	waitmessage DELAY_1SECOND

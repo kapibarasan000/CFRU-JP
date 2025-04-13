@@ -298,6 +298,10 @@ static bool8 ProcessPreAttackAnimationFuncs(void)
 		}
 	}
 
+
+	if (GetBattlerTeraType(gBankAttacker) == TYPE_STELLAR && gMultiHitCounter <= 1)
+		SetStellarBoostFlag(gBankAttacker, gBattleStruct->dynamicMoveType);
+
 	if (gNewBS->terastalBoost)
 	{
 		gBattleScripting.bank = gBankAttacker;

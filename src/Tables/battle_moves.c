@@ -15578,7 +15578,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_TERABLAST] =
     {	
-		.effect = EFFECT_HIT,
+		.effect = EFFECT_TERA_BLAST,
 		.power = 80,
 		.type = TYPE_NORMAL,
 		.accuracy = 100,
