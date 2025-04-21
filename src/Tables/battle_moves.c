@@ -15450,7 +15450,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_REVIVALBLESSING] =
 	{
-		.effect = EFFECT_HEAL_BELL,
+		.effect = EFFECT_REVIVAL_BLESSING,
 		.power = 0,
 		.type = TYPE_NORMAL,
 		.accuracy = 0,

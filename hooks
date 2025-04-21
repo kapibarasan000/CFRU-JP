@@ -206,6 +206,8 @@ FieldMoveBadgeHook 8124F80 0
 ItemUseCB_MedicineStep 8125D14 2
 Task_DoLearnedMoveFanfareAfterText 812663C 1
 DrawLevelUpWindowPg2Hook 811F15C 4
+ChooseFaintedMonHook 81203D4 0
+ChooseFaintedMonCancelHook 8120578 2
 
 ##Battle Animation Hooks
 TryHandleLaunchBattleTableAnimationHook 8033792 4

@@ -58,6 +58,7 @@ enum
 #define PARTY_ACTION_MOVE_TUTOR         12
 #define PARTY_ACTION_MINIGAME           13
 #define PARTY_ACTION_REUSABLE_ITEM      14
+#define PARTY_ACTION_CHOOSE_FAINTED_MON 15
 
 // IDs for DisplayPartyMenuStdMessage, to display the message at the bottom of the party menu
 #define PARTY_MSG_CHOOSE_MON                0
@@ -161,3 +162,5 @@ bool8 __attribute__((long_call)) some_other_kind_of_link_test(void);
 void __attribute__((long_call)) InitChooseHalfPartyForBattle(u8 a1);
 u8 __attribute__((long_call)) GetItemEffectType(u16 item);
 void __attribute__((long_call)) PartyMenuModifyHP(u8 taskId, u8 slot, s8 hpIncrement, s16 hpDifference, TaskFunc task);
+bool8 __attribute__((long_call)) IsSelectedMonNotEgg(u8 *slotPtr);
+

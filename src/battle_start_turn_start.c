@@ -3,6 +3,7 @@
 #include "../include/battle_transition.h"
 #include "../include/battle_setup.h"
 #include "../include/event_data.h"
+#include "../include/party_menu.h"
 #include "../include/random.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
@@ -492,6 +493,7 @@ void BattleBeginFirstTurn(void)
 				gBattleStruct->turncountersTracker = 0;
 				gMoveResultFlags = 0;
 				gRandomTurnNumber = Random();
+				gSelectedMonPartyId = PARTY_SIZE; // Revival Blessing
 				CalculateShellSideArmSplits(); //Only done at the beginning of each turn
 				*state = 0;
 		}

@@ -361,6 +361,9 @@ void atk4D_switchindataupdate(void)
 	ClearSwitchBytes(gActiveBattler);
 	ClearSwitchBits(gActiveBattler);
 	gNewBS->AttackerDidDamageAtLeastOnce = FALSE; //Helps with Throat Spray
+	
+	// Clear selected party ID so Revival Blessing doesn't get confused.
+    gSelectedMonPartyId = PARTY_SIZE;
 
 	//gNewBS->LastUsedMoves[gActiveBattler] = 0;
 	//gNewBS->LastUsedTypes[gActiveBattler] = TYPE_BLANK;

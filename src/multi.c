@@ -3,6 +3,7 @@
 #include "../include/battle_anim.h"
 #include "../include/event_data.h"
 #include "../include/m4a.h"
+#include "../include/party_menu.h"
 #include "../include/pokeball.h"
 #include "../include/sound.h"
 #include "../include/random.h"
@@ -19,6 +20,7 @@
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/multi.h"
+#include "../include/new/new_bs_commands.h"
 #include "../include/new/switching.h"
 /*
 multi.c
@@ -776,7 +778,6 @@ static void PlayerPartnerHandlePrintSelectionString(void)
 		PlayerPartnerBufferExecComplete();
 }
 
-void __attribute__((long_call)) PlayerHandleChoosePokemon(void);
 static void PlayerPartnerHandleChooseAction(void)
 {
 	if (IsMockBattle())
@@ -821,6 +822,7 @@ static void PlayerPartnerHandleChooseAction(void)
 	PlayerPartnerBufferExecComplete();
 }
 
+void __attribute__((long_call)) PlayerHandleChoosePokemon(void);
 static void PlayerPartnerHandleChoosePokemon(void)
 {
 	u8 chosenMonId;
@@ -831,7 +833,12 @@ static void PlayerPartnerHandleChoosePokemon(void)
 		return;
 	}
 
-	if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
+	// Choosing Revival Blessing target
+    if ((gBattleBufferA[gActiveBattler][1] & 0xF) == PARTY_ACTION_CHOOSE_FAINTED_MON)
+    {
+        chosenMonId = gSelectedMonPartyId = GetFirstFaintedPartyIndex(gActiveBattler);
+    }
+	else if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
 	{
 		u8 battlerIn1, battlerIn2, firstId, lastId;
 		struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);

@@ -1347,3 +1347,45 @@ LoadMapFromCameraTransition_DNSFixHook2:
 	bl TryLoadTileset2OnCameraTransition
 	ldr r0, =0x80551A2 | 1
 	bx r0
+
+.pool
+@0x81203D4 with r0
+ChooseFaintedMonHook:
+	ldr r0, =0x203B014
+	ldrb r0, [r0, #0xB]
+	sub r0, #0x3
+	cmp r0, #0xC
+	beq ChooseFaintedMonMenu
+	cmp r0, #0xA
+	bls ChooseFaintedMonReturn
+	ldr r0, =0x812053A | 1
+	bx r0
+
+ChooseFaintedMonMenu:
+	add r0, r6, #0x0
+	add r1, r5, #0x0
+	bl ChooseFaintedMon
+	ldr r0, =0x8120546 | 1
+	bx r0
+
+ChooseFaintedMonReturn:
+	ldr r1, =0x81203E0 | 1
+	bx r1
+
+.pool
+@0x8120578 with r0
+ChooseFaintedMonCancelHook:
+	push {r4-r5, lr}
+	add r5, r1, #0x0
+	lsl r0, r0, #0x18
+	lsr r4, r0, #0x18
+	ldr r0, =0x203B014
+	ldrb r0, [r0, #0xB]
+	cmp r0, #0xF
+	beq NotCancel
+	ldr r0, =0x8120580 | 1
+	bx r0
+
+NotCancel:
+	ldr r0, =0x81205A2 | 1
+	bx r0

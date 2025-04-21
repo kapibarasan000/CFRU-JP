@@ -297,6 +297,7 @@ void __attribute__((long_call)) ActionSelectionCreateCursorAt(u8 cursorPos, u8 u
 void __attribute__((long_call)) ActionSelectionDestroyCursorAt(u8 cursorPos);
 void __attribute__((long_call)) InitMoveSelectionsVarsAndStrings(void);
 void __attribute__((long_call)) PlayerHandlePrintSelectionString(void);
+void __attribute__((long_call)) OpenPartyMenuToChooseMon(void);
 
 // recorded player controller
 void __attribute__((long_call)) SetControllerToRecordedPlayer(void);

@@ -183,6 +183,9 @@
 #org @gText_ShedTailString
 [ATTACKER]は\nしっぽを きって みがわりにした！
 
+#org @gText_RevivalBlessing
+[BUFFER][00]は ふっかつして\nたたかえるように なった！
+
 //Status Strings
 
 #org @gText_TargetStaysAwake

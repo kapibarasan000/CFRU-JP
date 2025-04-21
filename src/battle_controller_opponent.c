@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
+#include "../include/party_menu.h"
 #include "../include/pokeball.h"
 #include "../include/random.h"
 #include "../include/constants/trainers.h"
@@ -13,6 +14,7 @@
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/multi.h"
+#include "../include/new/new_bs_commands.h"
 #include "../include/new/switching.h"
 
 /*
@@ -250,8 +252,13 @@ void OpponentHandleTrainerSlide(void)
 void OpponentHandleChoosePokemon(void)
 {
 	u8 chosenMonId;
-
-	if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
+	
+	// Choosing Revival Blessing target
+    if ((gBattleBufferA[gActiveBattler][1] & 0xF) == PARTY_ACTION_CHOOSE_FAINTED_MON)
+    {
+        chosenMonId = gSelectedMonPartyId = GetFirstFaintedPartyIndex(gActiveBattler);
+    }
+	else if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
 	{
 		u8 battlerIn1, battlerIn2, firstId, lastId;
 		struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);

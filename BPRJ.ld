@@ -43,7 +43,7 @@ gPartyMenu = 0x203B014;
 sPartyMenuBoxes = 0x203B028;
 gPartyMenuUseExitCallback = 0x203B034;
 gPostMenuFieldCallback = 0x203B038;
-gSelectedMonPartyId = 0203B01D;
+gSelectedMonPartyId = 0x203B01D;
 
 /* Battle RAM */
 gEnigmaBerries = 0x2023EB4;
@@ -657,7 +657,8 @@ IsThisTrainerRematchable = 0x810DB5C | 1;
 SwitchPartyOrderLinkMulti = 0x81287FC | 1;
 GetPartyIdFromBattleSlot = 0x81288B4 | 1;
 SwitchPartyMonSlots = 0x812892C | 1;
-
+OpenPartyMenuToChooseMon = 0x802FDA8 | 1;
+IsSelectedMonNotEgg = 0x812054C | 1;
 
 /* Battle Animation Functions */
 EmitBallThrowAnim = 0x800DB88 | 1;
@@ -1405,6 +1406,8 @@ GetItemEffectType = 0x81275A4 | 1;
 InitChooseHalfPartyForBattle = 0x8127DE0 | 1;
 sub_813AC38 = 0x813AC38 | 1;
 some_other_kind_of_link_test = 0x80C0918 |1;
+GetCurrentPartySlotPtr = 0x8120394 | 1;
+HandleChooseMonSelection = 0x81203B4 | 1;
 
 /* Evolution Functions */
 CB2_BeginEvolutionScene = 0x80CEE70 | 1;

@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "defines_battle.h"
 #include "../include/evolution_scene.h"
 #include "../include/field_control_avatar.h"
 #include "../include/field_player_avatar.h"
@@ -101,6 +102,7 @@ void __attribute__((long_call)) DisplayPartyPokemonLevelCheck(struct Pokemon*, s
 void __attribute__((long_call)) DisplayPartyPokemonGenderNidoranCheck(struct Pokemon*, struct PartyMenuBox*, u8);
 void __attribute__((long_call)) DisplayPartyPokemonOtherText(u8, struct PartyMenuBox*, u8);
 void __attribute__((long_call)) UpdatePartyMonHeldItemSprite(struct Pokemon *mon, struct PartyMenuBox* ptr);
+void __attribute__((long_call)) HandleChooseMonSelection(u8 taskId, s8 *slotPtr);
 void __attribute__((long_call)) HandleChooseMonCancel(u8 taskId, s8 *ptr);
 s8 __attribute__((long_call)) GetNewSlotDoubleLayout(s8 a, s8 b);
 void __attribute__((long_call)) Task_ReturnToChooseMonAfterText(u8 taskId);
@@ -124,6 +126,7 @@ void __attribute__((long_call)) ShiftMoveSlot(struct Pokemon *mon, u8 slotTo, u8
 void __attribute__((long_call)) PartyMenuTryEvolution(u8 taskId);
 void __attribute__((long_call)) FreePartyPointers(void);
 void __attribute__((long_call)) PartyMenuDisplayYesNoMenu(void);
+s8 __attribute__((long_call)) *GetCurrentPartySlotPtr(void);
 
 //This file's functions:
 static void OpenSummary(u8 taskId);
@@ -2569,4 +2572,22 @@ void FieldUseFunc_ExpShare(u8 taskId)
 {
     sItemUseOnFieldCB = Task_ExpShareField;
     sub_80A2310(taskId);
+}
+
+void ChooseFaintedMon(u8 taskId, s8 *slotPtr)
+{
+    u8 partyId = GetPartyIdFromBattleSlot((u8)*slotPtr);
+    if (GetMonData(&gPlayerParty[*slotPtr], MON_DATA_HP, NULL) > 0
+        || GetMonData(&gPlayerParty[*slotPtr], MON_DATA_SPECIES2, NULL) == SPECIES_EGG
+        || ((gBattleTypeFlags & BATTLE_TYPE_MULTI) && partyId >= (PARTY_SIZE / 2)))
+    {
+        // Can't select if egg, alive, or doesn't belong to you
+         PlaySE(SE_ERROR);
+    }
+    else
+    {
+        PlaySE(SE_SELECT);
+        gSelectedMonPartyId = partyId;
+        Task_ClosePartyMenu(taskId);
+    }
 }

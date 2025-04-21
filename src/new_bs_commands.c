@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/battle_string_ids.h"
+#include "../include/party_menu.h"
 #include "../include/random.h"
 #include "../include/constants/items.h"
 
@@ -2093,4 +2094,92 @@ void atkFF36_trygetcottondowntarget(void)
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 	else
 		gBattlescriptCurrInstr += 5;
+}
+
+u8 GetFirstFaintedPartyIndex(u8 bank)
+{
+    u32 i;
+    u32 start = 0;
+    u32 end = PARTY_SIZE;
+    struct Pokemon *party = (SIDE(bank) == B_SIDE_OPPONENT) ? gEnemyParty : gPlayerParty;
+
+    // Check whether partner is separate trainer.
+    if ((GetBattlerSide(bank) == B_SIDE_PLAYER && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+        || (GetBattlerSide(bank) == B_SIDE_OPPONENT && gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
+    {
+        if (GetBattlerPosition(bank) == B_POSITION_OPPONENT_LEFT
+            || GetBattlerPosition(bank) == B_POSITION_PLAYER_LEFT)
+        {
+            end = PARTY_SIZE / 2;
+        }
+        else
+        {
+            start = PARTY_SIZE / 2;
+        }
+    }
+
+    // Loop through to find fainted battler.
+    for (i = start; i < end; ++i)
+    {
+        u32 species = GetMonData(&party[i], MON_DATA_SPECIES2, NULL);
+        if (species != SPECIES_NONE
+            && species != SPECIES_EGG
+            && GetMonData(&party[i], MON_DATA_HP, NULL) == 0)
+        {
+            return i;
+        }
+    }
+
+    // Returns PARTY_SIZE if none found.
+    return PARTY_SIZE;
+}
+
+void atkFF37_TryRevivalBlessing(void)
+{
+	u8 side = GetBattlerSide(gBankAttacker);
+    u8 index = GetFirstFaintedPartyIndex(gBankAttacker);
+
+    // Move fails if there are no battlers to revive.
+    if (index == PARTY_SIZE)
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        return;
+    }
+
+	u8 backupActiveBattler = gActiveBattler;
+    // Battler selected! Revive and go to next instruction.
+    if (gSelectedMonPartyId != PARTY_SIZE)
+    {
+		gActiveBattler = gBankAttacker;
+        struct Pokemon *party = (side == B_SIDE_OPPONENT) ? gEnemyParty : gPlayerParty;
+
+        u16 hp = GetMonData(&party[gSelectedMonPartyId], MON_DATA_MAX_HP, NULL) / 2;
+        EmitSetMonData(0, REQUEST_HP_BATTLE, gBitTable[gSelectedMonPartyId], sizeof(hp), &hp);
+		gActiveBattler = backupActiveBattler;
+        MarkBufferBankForExecution(gBankAttacker);
+        PREPARE_SPECIES_BUFFER(gBattleTextBuff1, GetMonData(&party[gSelectedMonPartyId], MON_DATA_SPECIES, NULL));
+
+        // If an on-field battler is revived, it needs to be sent out again.
+        if (IsDoubleBattle() &&
+            gBattlerPartyIndexes[PARTNER(gBankAttacker)] == gSelectedMonPartyId)
+        {
+            u8 i = PARTNER(gBankAttacker);
+            gAbsentBattlerFlags &= ~(gBitTable[i]);
+            gBattleStruct->monToSwitchIntoId[i] = gSelectedMonPartyId;
+            gBattleScripting.bank = i;
+            gBattleCommunication[MULTIUSE_STATE] = TRUE;
+        }
+
+        gSelectedMonPartyId = PARTY_SIZE;
+        gBattlescriptCurrInstr += 5;
+    }
+    else
+    {
+		gActiveBattler = gBankAttacker;
+        // Open party menu, wait to go to next instruction.
+        EmitChoosePokemon(0, PARTY_ACTION_CHOOSE_FAINTED_MON, PARTY_SIZE, ABILITY_NONE, gBattleStruct->battlerPartyOrders[gBankAttacker]);
+		gActiveBattler = backupActiveBattler;
+        MarkBufferBankForExecution(gBankAttacker);
+		gBattlescriptCurrInstr -= 1;
+    }
 }

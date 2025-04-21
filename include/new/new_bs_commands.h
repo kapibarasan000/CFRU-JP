@@ -148,6 +148,8 @@ void atkFF2D_addindicatorforattackerswitchineffects(void);
 //setmoveeffect2
 void atkFF2E_setmoveeffect2(void);
 
+u8 GetFirstFaintedPartyIndex(u8 bank);
+
 //Exported Constants
 enum Counters
 {

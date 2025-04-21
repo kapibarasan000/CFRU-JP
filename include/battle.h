@@ -644,7 +644,7 @@ struct BattleStruct
 	u8 field_88;
 	u8 field_89;
 	u8 field_8A;
-	u8 field_8B;
+	u8 playerPartyIdx;
 	u8 field_8C;
 	u8 field_8D;
 	u8 stringMoveType;

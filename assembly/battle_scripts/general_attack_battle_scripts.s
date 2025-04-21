@@ -6146,9 +6146,28 @@ LowerSpAtk:
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_249_Blank
-BS_249_Blank:
-	goto BS_STANDARD_HIT
+.global BS_249_RevivalBlessing
+BS_249_RevivalBlessing:
+	attackcanceler
+	attackstring
+	ppreduce
+	tryrevivalblessing FAILED
+	attackanimation
+	waitanimation
+	setword BATTLE_STRING_LOADER gText_RevivalBlessing
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	jumpifbyte EQUALS BATTLE_COMMUNICATION 0x1 RevivalBlessingSendOut
+	goto BS_MOVE_END
+
+RevivalBlessingSendOut:
+	getswitchedmondata BANK_SCRIPTING
+	switchindataupdate BANK_SCRIPTING
+	hpthresholds BANK_SCRIPTING
+	switchinanim BANK_SCRIPTING 0x0
+	waitstateatk
+	switchineffects BANK_SCRIPTING
+	goto BS_MOVE_END
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
