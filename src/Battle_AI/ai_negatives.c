@@ -307,7 +307,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				break;
 
 			case ABILITY_DAZZLING:
-			//case ABILITY_QUEENLYMAJESTY:
+			case ABILITY_QUEENLYMAJESTY:
 				if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Check if right num
 				{
 					DECREASE_VIABILITY(10);
@@ -361,7 +361,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 			case ABILITY_CLEARBODY:
 			case ABILITY_FULLMETALBODY:
-			//case ABILITY_WHITESMOKE:
+			case ABILITY_WHITESMOKE:
 				if (CheckTableForMoveEffect(move, gStatLoweringMoveEffects))
 				{
 					DECREASE_VIABILITY(10);
@@ -495,7 +495,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					break;
 
 				case ABILITY_DAZZLING:
-				//case ABILITY_QUEENLYMAJESTY:
+				case ABILITY_QUEENLYMAJESTY:
 					if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Check if right num
 					{
 						DECREASE_VIABILITY(10);
@@ -1380,7 +1380,7 @@ MOVESCR_CHECK_0:
 				case MOVE_LASERFOCUS:
 					if (IsLaserFocused(bankAtk))
 						DECREASE_VIABILITY(10);
-					else if (data->defAbility == ABILITY_SHELLARMOR)
+					else if (data->defAbility == ABILITY_SHELLARMOR || data->defAbility == ABILITY_BATTLEARMOR)
 						DECREASE_VIABILITY(8);
 					break;
 
@@ -2813,7 +2813,7 @@ static void AI_Flee(void)
 
 u8 AIScript_Roaming(const u8 bankAtk, const unusedArg u8 bankDef, const unusedArg u16 move, const u8 originalViability, unusedArg struct AIScript* data)
 {
-	u8 atkAbility = ABILITY(bankAtk);
+	u16 atkAbility = ABILITY(bankAtk);
 	u8 atkItemEffect = ITEM_EFFECT(bankAtk);
 
 	if (atkAbility == ABILITY_RUNAWAY

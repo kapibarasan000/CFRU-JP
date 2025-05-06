@@ -107,13 +107,13 @@ ability_t GetRecordedAbility(u8 bank)
 	if (IsAbilitySuppressed(bank))
 		return ABILITY_NONE;
 
-	if (BATTLE_HISTORY->abilities[bank] != ABILITY_NONE)
-		return BATTLE_HISTORY->abilities[bank];
+	if (gNewBS->ai.abilities[bank] != ABILITY_NONE)
+		return gNewBS->ai.abilities[bank];
 
 	u16 species = SPECIES(bank);
-	u8 ability1 = GetAbility1(species);
-	u8 ability2 = GetAbility2(species);
-	u8 hiddenAbility = GetHiddenAbility(species);
+	u16 ability1 = GetAbility1(species);
+	u16 ability2 = GetAbility2(species);
+	u16 hiddenAbility = GetHiddenAbility(species);
 
 	if (ability1 == ability2 && hiddenAbility == ABILITY_NONE)
 		return ability1;
@@ -161,14 +161,14 @@ ability_t* GetAbilityLocationIgnoreNeutralizingGas(u8 bank)
 		return &gBattleMons[bank].ability;
 }
 
-void RecordAbilityBattle(u8 bank, u8 ability)
+void RecordAbilityBattle(u8 bank, u16 ability)
 {
-	BATTLE_HISTORY->abilities[bank] = ability;
+	gNewBS->ai.abilities[bank] = ability;
 }
 
 void ClearBattlerAbilityHistory(u8 bank)
 {
-	BATTLE_HISTORY->abilities[bank] = ABILITY_NONE;
+	gNewBS->ai.abilities[bank] = ABILITY_NONE;
 }
 
 item_effect_t GetBankItemEffect(u8 bank)
@@ -308,7 +308,7 @@ bool8 CheckGrounding(u8 bank)
 	return GROUNDED;
 }
 
-bool8 NonInvasiveCheckGrounding(u8 bank, u8 defAbility, u8 defType1, u8 defType2, u8 defType3)
+bool8 NonInvasiveCheckGrounding(u8 bank, u16 defAbility, u8 defType1, u8 defType2, u8 defType3)
 {
 	if (BATTLER_SEMI_INVULNERABLE(bank)) //Apparently a thing
 		return IN_AIR;
@@ -346,7 +346,7 @@ bool8 CheckMonGrounding(struct Pokemon* mon)
 	return GROUNDED;
 }
 
-bool8 CheckGroundingByDetails(u16 species, u16 item, u8 ability)
+bool8 CheckGroundingByDetails(u16 species, u16 item, u16 ability)
 {
 	if (ability != ABILITY_KLUTZ && ItemId_GetHoldEffect(item) == ITEM_EFFECT_IRON_BALL)
 		return GROUNDED;
@@ -358,7 +358,7 @@ bool8 CheckGroundingByDetails(u16 species, u16 item, u8 ability)
 	return GROUNDED;
 }
 
-bool8 IsDamageHalvedDueToFullHP(u8 bank, u8 defAbility, u16 move, u8 atkAbility)
+bool8 IsDamageHalvedDueToFullHP(u8 bank, u16 defAbility, u16 move, u16 atkAbility)
 {
 	if (BATTLER_MAX_HP(bank))
 	{
@@ -618,7 +618,7 @@ u8 CountBoosts(u8 bank)
 
 u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check)
 {
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 	u8 holdEffect = ITEM_EFFECT(bank);
 	u16 choicedMove = CHOICED_MOVE(bank);
 	int i;
@@ -637,7 +637,7 @@ u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check)
 	return unusableMoves;
 }
 
-bool8 IsUnusableMove(u16 move, u8 bank, u8 check, u8 pp, u8 ability, u8 holdEffect, u16 choicedMove)
+bool8 IsUnusableMove(u16 move, u8 bank, u8 check, u8 pp, u16 ability, u8 holdEffect, u16 choicedMove)
 {
 	bool8 isMaxMove = IsAnyMaxMove(move);
 
@@ -741,11 +741,11 @@ bool8 IsMoveRedirectedByFollowMe(u16 move, u8 bankAtk, u8 defSide)
 	return TRUE;
 }
 
-bool8 IsMoveRedirectionPrevented(u16 move, u8 atkAbility)
+bool8 IsMoveRedirectionPrevented(u16 move, u16 atkAbility)
 {
 	return move == MOVE_SKYDROP
 		|| (move != MOVE_NONE && gBattleMoves[move].effect == EFFECT_SKY_DROP)
-//		|| atkAbility == ABILITY_PROPELLERTAIL
+		|| atkAbility == ABILITY_PROPELLERTAIL
 		|| atkAbility == ABILITY_STALWART;
 }
 
@@ -756,7 +756,7 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget)
 	u8 bankDef = 0;
 	u8 atkSide, defSide;
 	u8 chosen = FALSE;
-	u8 atkAbility = ABILITY(bankAtk);
+	u16 atkAbility = ABILITY(bankAtk);
 
 	if (useMoveTarget)
 		moveTarget = useMoveTarget - 1;
@@ -1266,7 +1266,7 @@ bool8 CanTransferItem(u16 species, u16 item)
 }
 
 //Make sure the input bank is any bank on the specific mon's side
-bool8 CanFling(u16 item, u16 species, u8 ability, u8 bankOnSide, u8 embargoTimer)
+bool8 CanFling(u16 item, u16 species, u16 ability, u8 bankOnSide, u8 embargoTimer)
 {
 	u8 itemEffect = ItemId_GetHoldEffect(item);
 
@@ -1370,7 +1370,7 @@ bool8 IsAffectedByPowder(u8 bank)
 		return IsAffectedByPowderByDetails(gBattleMons[bank].type1, gBattleMons[bank].type2, gBattleMons[bank].type3, ABILITY(bank), ITEM_EFFECT(bank));
 }
 
-bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u8 ability, u8 itemEffect)
+bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u16 ability, u8 itemEffect)
 {
 	return ability != ABILITY_OVERCOAT
 		&& itemEffect != ITEM_EFFECT_SAFETY_GOGGLES
@@ -1379,7 +1379,7 @@ bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u8 ability, u8 i
 		&& type3 != TYPE_GRASS;
 }
 
-bool8 MoveIgnoresSubstitutes(u16 move, u8 atkAbility)
+bool8 MoveIgnoresSubstitutes(u16 move, u16 atkAbility)
 {
 	return CheckSoundMove(move)
 		|| (atkAbility == ABILITY_INFILTRATOR && move != MOVE_TRANSFORM && gBattleMoves[move].effect != EFFECT_SKY_DROP)
@@ -1776,7 +1776,7 @@ bool8 WeatherHasEffect(void)
 
 	for (i = 0; i < gBattlersCount; ++i)
 	{
-		u8 ability = ABILITY(i);
+		u16 ability = ABILITY(i);
 
 		if ((ability == ABILITY_CLOUDNINE
 		#ifdef ABILITY_AIRLOCK
@@ -1874,7 +1874,7 @@ bool8 DoesSleepClausePrevent(u8 bank)
 	return FALSE;
 }
 
-bool8 CanBeGeneralStatused(u8 bankDef, u8 defAbility, u8 atkAbility, bool8 checkFlowerVeil)
+bool8 CanBeGeneralStatused(u8 bankDef, u16 defAbility, u16 atkAbility, bool8 checkFlowerVeil)
 {
 	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
 	{
@@ -1923,8 +1923,8 @@ bool8 CanBeGeneralStatused(u8 bankDef, u8 defAbility, u8 atkAbility, bool8 check
 
 bool8 CanBePutToSleep(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 {
-	u8 atkAbility = ABILITY(bankAtk);
-	u8 defAbility = ABILITY(bankDef);
+	u16 atkAbility = ABILITY(bankAtk);
+	u16 defAbility = ABILITY(bankDef);
 
 	if (!CanBeGeneralStatused(bankDef, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
@@ -1967,11 +1967,11 @@ bool8 CanBeYawned(u8 bankDef, u8 bankAtk)
 	if (!(gStatuses3[bankDef] & STATUS3_YAWN))
 		return FALSE;
 
-	u8 atkAbility = ABILITY(bankAtk);
+	u16 atkAbility = ABILITY(bankAtk);
 	if (BankSideHasSafeguard(bankDef) && atkAbility != ABILITY_INFILTRATOR && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
 		return FALSE;
 
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
 	{
 		switch (defAbility) {
@@ -2021,8 +2021,8 @@ bool8 CanBeYawned(u8 bankDef, u8 bankAtk)
 
 bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 {
-	u8 atkAbility = (bankAtk > gBattlersCount) ? 0 : ABILITY(bankAtk); //bankAtk == 0xFF means no attacker - eg. Toxic Spikes
-	u8 defAbility = ABILITY(bankDef);
+	u16 atkAbility = (bankAtk > gBattlersCount) ? 0 : ABILITY(bankAtk); //bankAtk == 0xFF means no attacker - eg. Toxic Spikes
+	u16 defAbility = ABILITY(bankDef);
 
 	if (!CanBeGeneralStatused(bankDef, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
@@ -2050,8 +2050,8 @@ bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 
 bool8 CanBeParalyzed(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 {
-	u8 atkAbility = ABILITY(bankAtk);
-	u8 defAbility = ABILITY(bankDef);
+	u16 atkAbility = ABILITY(bankAtk);
+	u16 defAbility = ABILITY(bankDef);
 
 	if (!CanBeGeneralStatused(bankDef, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
@@ -2072,8 +2072,8 @@ bool8 CanBeParalyzed(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 
 bool8 CanBeBurned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 {
-	u8 atkAbility = ABILITY(bankAtk);
-	u8 defAbility = ABILITY(bankDef);
+	u16 atkAbility = ABILITY(bankAtk);
+	u16 defAbility = ABILITY(bankDef);
 
 	if (!CanBeGeneralStatused(bankDef, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
@@ -2100,8 +2100,8 @@ bool8 CanBeBurned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 
 bool8 CanBeFrozen(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 {
-	u8 atkAbility = ABILITY(bankAtk);
-	u8 defAbility = ABILITY(bankDef);
+	u16 atkAbility = ABILITY(bankAtk);
+	u16 defAbility = ABILITY(bankDef);
 
 	if (!CanBeGeneralStatused(bankDef, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
@@ -2136,8 +2136,8 @@ bool8 CanBeConfused(u8 bankDef, u8 bankAtk, u8 checkSafeguard)
 	if (gTerrainType == MISTY_TERRAIN && CheckGrounding(bankDef))
 		return FALSE;
 
-	u8 atkAbility = ABILITY(bankAtk);
-	u8 defAbility = ABILITY(bankDef);
+	u16 atkAbility = ABILITY(bankAtk);
+	u16 defAbility = ABILITY(bankDef);
 	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
 	{
 		switch (defAbility) {

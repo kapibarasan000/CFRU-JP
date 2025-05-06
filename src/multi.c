@@ -822,7 +822,22 @@ static void PlayerPartnerHandleChooseAction(void)
 	PlayerPartnerBufferExecComplete();
 }
 
-void __attribute__((long_call)) PlayerHandleChoosePokemon(void);
+void PlayerHandleChoosePokemon(void)
+{
+    s32 i;
+
+    gBattleControllerData[gActiveBattler] = CreateTask(TaskDummy, 0xFF);
+    gTasks[gBattleControllerData[gActiveBattler]].data[0] = gBattleBufferA[gActiveBattler][1] & 0xF;
+    *(&gBattleStruct->battlerPreventingSwitchout) = gBattleBufferA[gActiveBattler][1] >> 4;
+    *(&gBattleStruct->playerPartyIdx) = gBattleBufferA[gActiveBattler][2];
+    *(&gNewBS->abilityPreventingSwitchout) = (gBattleBufferA[gActiveBattler][3] & 0xFF) | (gBattleBufferA[gActiveBattler][8] << 8);
+    for (i = 0; i < 3; ++i)
+        gBattlePartyCurrentOrder[i] = gBattleBufferA[gActiveBattler][4 + i];
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
+    gBattlerControllerFuncs[gActiveBattler] = OpenPartyMenuToChooseMon;
+    gBattlerInMenuId = gActiveBattler;
+}
+
 static void PlayerPartnerHandleChoosePokemon(void)
 {
 	u8 chosenMonId;

@@ -496,7 +496,7 @@ extern struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT];
 struct BattleHistory //0x20003D0
 {
     /*0x00*/ u16 usedMoves[2][8]; // 0xFFFF means move not used (confuse self hit, etc)
-    /*0x20*/ u8 abilities[MAX_BATTLERS_COUNT/* / 2*/];
+    /*0x20*/ u8 unused[MAX_BATTLERS_COUNT/* / 2*/];
     /*0x22*/ //u8 itemEffects[MAX_BATTLERS_COUNT / 2]; //Moved to gNewBS
     /*0x24*/ u16 trainerItems[MAX_BATTLERS_COUNT]; //0x20003F4
     /*0x2C*/ u8 itemsNo;
@@ -750,9 +750,9 @@ struct NewBattleStruct
 	u8 LastUsedTypes[MAX_BATTLERS_COUNT];
 	u8 lastTargeted[MAX_BATTLERS_COUNT];
 	u8 usedMoveIndices[MAX_BATTLERS_COUNT];
-	u8 DisabledMoldBreakerAbilities[MAX_BATTLERS_COUNT];
-	u8 SuppressedAbilities[MAX_BATTLERS_COUNT];
-	u8 neutralizingGasBlockedAbilities[MAX_BATTLERS_COUNT];
+	u16 DisabledMoldBreakerAbilities[MAX_BATTLERS_COUNT];
+	u16 SuppressedAbilities[MAX_BATTLERS_COUNT];
+	u16 neutralizingGasBlockedAbilities[MAX_BATTLERS_COUNT];
 	u8 skyDropAttackersTarget[MAX_BATTLERS_COUNT]; //skyDropAttackersTarget[gBankAttacker] = gBankTarget
 	u8 skyDropTargetsAttacker[MAX_BATTLERS_COUNT]; //skyDropTargetsAttacker[gBankTarget] = gBankAttacker
 	u8 pickupStack[MAX_BATTLERS_COUNT];
@@ -824,7 +824,8 @@ struct NewBattleStruct
 	u8 savedObjId;
 	u8 lastFainted;
 	s8 intimidateActive;
-	u8 backupAbility;
+	u16 abilityPreventingSwitchout;
+	u16 backupAbility;
 	u8 switchOutBankLooper;
 	u8 skipBankStatAnim;
 	u8 maxGoldrushUses;
@@ -998,6 +999,7 @@ struct NewBattleStruct
 		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //~0x2017B5B
 		u8 typeAbsorbSwitchingCooldown[MAX_BATTLERS_COUNT]; //Prevent a type absorb switching loop
 		u8 itemEffects[MAX_BATTLERS_COUNT];
+		u16 abilities[MAX_BATTLERS_COUNT];
 		u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef]
 		u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
 		bool8 moveKnocksOut1Hit[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut1Hit[bankAtk][bankDef][monMoveIndex]
@@ -1505,7 +1507,7 @@ extern s32 gBattleMoveDamage;
 extern s32 gHpDealt;
 extern s32 gTakenDmg[MAX_BATTLERS_COUNT];
 extern u16 gLastUsedItem;
-extern u8 gLastUsedAbility;
+extern u16 gLastUsedAbility;
 extern u8 gBankAttacker;
 extern u8 gBankTarget;
 extern u8 gBankFainted;

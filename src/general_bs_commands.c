@@ -171,7 +171,7 @@ void atk02_attackstring(void)
 
 		if (gCurrentMove != MOVE_STRUGGLE && !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE))
 		{
-			if (ABILITY(gBankAttacker) == ABILITY_PROTEAN
+			if ((ABILITY(gBankAttacker) == ABILITY_PROTEAN || ABILITY(gBankAttacker) == ABILITY_LIBERO)
 			&& !(gMoveResultFlags & MOVE_RESULT_FAILED)
 			&& !CheckTableForMove(gCurrentMove, gMovesThatCallOtherMoves))
 			{
@@ -382,7 +382,7 @@ static bool8 IsDoubleSpreadMove(void)
 static bool8 DoesBankNegateDamage(u8 bank, unusedArg u16 move)
 {
 	unusedArg u16 species = SPECIES(bank);
-	unusedArg u8 ability = ABILITY(bank);
+	unusedArg u16 ability = ABILITY(bank);
 
 	#ifdef SPECIES_MIMIKYU
 	if (ability == ABILITY_DISGUISE && species == SPECIES_MIMIKYU && !IS_TRANSFORMED(bank))
@@ -611,7 +611,7 @@ static void DoublesHPBarReduction(void)
 
 void atk0B_healthbarupdate(void)
 {
-	u8 ability;
+	u16 ability;
 
 	if (gBattleExecBuffer) return;
 
@@ -1493,7 +1493,7 @@ void atk1B_cleareffectsonfaint(void) {
 
 			case Faint_ReceiverActivate:
 				gNewBS->ReceiverActivated = FALSE;
-				u8 partnerAbility = ABILITY(partner);
+				u16 partnerAbility = ABILITY(partner);
 
 				if (IS_DOUBLE_BATTLE
 				&& (partnerAbility == ABILITY_RECEIVER
@@ -1774,8 +1774,8 @@ void atk1F_jumpifsideaffecting(void)
 void atk1E_jumpifability(void)
 {
 	u8 battlerId;
-	u8 ability = gBattlescriptCurrInstr[2];
-	const u8* jumpPtr = T2_READ_PTR(gBattlescriptCurrInstr + 3);
+	u16 ability = T1_READ_16(gBattlescriptCurrInstr + 2);
+	const u8* jumpPtr = T2_READ_PTR(gBattlescriptCurrInstr + 4);
 
 	if (gBattlescriptCurrInstr[1] == BS_GET_ATTACKER_SIDE)
 	{
@@ -1788,7 +1788,7 @@ void atk1E_jumpifability(void)
 			gBattleScripting.bankWithAbility = battlerId - 1;
 		}
 		else
-			gBattlescriptCurrInstr += 7;
+			gBattlescriptCurrInstr += 8;
 	}
 	else if (gBattlescriptCurrInstr[1] == BS_GET_NOT_ATTACKER_SIDE)
 	{
@@ -1801,7 +1801,7 @@ void atk1E_jumpifability(void)
 			gBattleScripting.bankWithAbility = battlerId - 1;
 		}
 		else
-			gBattlescriptCurrInstr += 7;
+			gBattlescriptCurrInstr += 8;
 	}
 	else
 	{
@@ -1814,7 +1814,7 @@ void atk1E_jumpifability(void)
 			gBattleScripting.bankWithAbility = battlerId;
 		}
 		else
-			gBattlescriptCurrInstr += 7;
+			gBattlescriptCurrInstr += 8;
 	}
 }
 
@@ -1870,6 +1870,15 @@ void atk42_jumpiftype2(void) //u8 bank, u8 type, *ptr
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 	else
 		gBattlescriptCurrInstr += 7;
+}
+
+void atk43_jumpifabilitypresent(void)
+{
+	u16 ability = T1_READ_16(gBattlescriptCurrInstr + 1);
+    if (AbilityBattleEffects(ABILITYEFFECT_CHECK_ON_FIELD, 0, ability, 0, 0))
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+    else
+        gBattlescriptCurrInstr += 7;
 }
 
 #define CASE_PLUS(by, stat) case (STAT_ANIM_PLUS##by + stat - 1): value = STAT_ANIM_MINUS##by + stat - 1; break;
@@ -2766,8 +2775,8 @@ void atk84_jumpifcantmakeasleep(void)
 {
 	u8 bankDef = gBankTarget;
 	u8 defPartner = PARTNER(bankDef);
-	u8 defAbility = ABILITY(bankDef);
-	u8 defPartnerAbility = ABILITY(defPartner);
+	u16 defAbility = ABILITY(bankDef);
+	u16 defPartnerAbility = ABILITY(defPartner);
 
 	u8* jump_loc = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 
@@ -3044,8 +3053,8 @@ void atk93_tryKO(void)
 	u8 bankAtk = gBankAttacker;
 	u8 bankDef = gBankTarget;
 
-	u8 atkAbility = ABILITY(bankAtk);
-	u8 defAbility = ABILITY(bankDef);
+	u16 atkAbility = ABILITY(bankAtk);
+	u16 defAbility = ABILITY(bankDef);
 	u8 defEffect = ITEM_EFFECT(bankDef);
 	u8 defQuality = ITEM_QUALITY(bankDef);
 	u8 mystery = ItemId_GetMystery2(ITEM(bankDef));
@@ -3219,7 +3228,7 @@ void atk95_setsandstorm(void)
 
 static bool8 TakesGeneralWeatherDamage(u8 bank)
 {
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 	u8 effect = ITEM_EFFECT(bank);
 
 	return WEATHER_HAS_EFFECT
@@ -3231,7 +3240,7 @@ static bool8 TakesGeneralWeatherDamage(u8 bank)
 
 bool8 SandstormHurts(u8 bank)
 {
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 
 	if (TakesGeneralWeatherDamage(bank))
 	{
@@ -3256,7 +3265,7 @@ bool8 TakesDamageFromSandstorm(u8 bank)
 
 bool8 HailHurts(u8 bank)
 {
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 
 	if (TakesGeneralWeatherDamage(bank))
 	{
@@ -4029,7 +4038,7 @@ void atkAE_healpartystatus(void)
 
 			if (species != SPECIES_NONE && species != SPECIES_EGG)
 			{
-				u8 ability;
+				u16 ability;
 
 				if (i == gBattlerPartyIndexes[gBankAttacker])
 					ability = ABILITY(gBankAttacker);
@@ -5051,8 +5060,8 @@ void atkD3_trycopyability(void) //Role Play
 {
 	if (gBattleExecBuffer) return;
 
-	u8* atkAbilityLoc, *defAbilityLoc;
-	u8 atkAbility, defAbility;
+	u16* atkAbilityLoc, *defAbilityLoc;
+	u16 atkAbility, defAbility;
 
 	//Get correct location of ability
 	atkAbilityLoc = GetAbilityLocation(gBankAttacker);
@@ -5122,8 +5131,8 @@ void atkD8_setdamagetohealthdifference(void)
 
 void atkDA_tryswapabilities(void) //Skill Swap
 {
-	u8* atkAbilityLoc, *defAbilityLoc;
-	u8 atkAbility, defAbility;
+	u16* atkAbilityLoc, *defAbilityLoc;
+	u16 atkAbility, defAbility;
 
 	//Get correct location of ability
 	atkAbilityLoc = GetAbilityLocation(gBankAttacker);
@@ -5435,7 +5444,7 @@ u8 CastformDataTypeChange(unusedArg u8 bank)
 	if (SPECIES(bank) != SPECIES_CASTFORM || !BATTLER_ALIVE(bank))
 		return formChange;
 
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 	bool8 weatherHasEffect = WEATHER_HAS_EFFECT;
 
 	if (gBattleMonForms[bank] != CASTFORM_NORMAL

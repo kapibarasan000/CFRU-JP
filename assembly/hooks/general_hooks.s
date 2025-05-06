@@ -608,10 +608,13 @@ ExpandedItemNameFixPokemonStorageSystemHook:
 @0x80D860C with r0
 ExpandedAbilityNamesBattle2:
 	add r0, r5, r7
-	ldrb r0, [r0, #0x1]
+	ldrb r1, [r0, #0x1]
+	ldrb r0, [r0, #0x2]
+	lsl r0, r0, #0x8
+	orr r0, r1
 	bl GetAbilityName
 	mov r1, r0
-	ldr r0, =0x80D966A | 1
+	ldr r0, =0x80D96DE | 1
 	bx r0
 
 @.pool

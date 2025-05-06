@@ -64,7 +64,7 @@ dexnav.c
 #define IS_NEWER_UNOWN_LETTER(species) (species >= SPECIES_UNOWN_B && species <= SPECIES_UNOWN_QUESTION)
 
 //This file's functions:
-static void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain);
+static void DexNavGetMon(u16 species, u8 potential, u8 level, u16 ability, u16* moves, u8 searchLevel, u8 chain);
 static u8 FindHeaderIndexWithLetter(u16 species, u8 letter);
 static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan);
 static u8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
@@ -81,12 +81,12 @@ static void Task_ManageDexNavHUD(u8 taskId);
 static u8 GetEncounterLevel(u16 species, u8 environment);
 static u8 DexNavGenerateMonLevel(u16 species, u8 chainLevel, u8 environment);
 static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel);
-static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel);
+static u16 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel);
 static u8 DexNavGeneratePotential(u8 searchLevel);
 static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveLoc);
 static void DexNavDrawBlackBars(u8* spriteIdAddr);
 static void DexNavDrawSight(u8 sight_lvl, u8* spriteIdAddr);
-static void DexNavDrawAbility(u8 ability, u8* spriteIdAddr);
+static void DexNavDrawAbility(u16 ability, u8* spriteIdAddr);
 static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr);
 static void DexNavDrawPotential(u8 potential, u8* spriteIdAddr);
 static void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr);
@@ -131,7 +131,7 @@ static void CB2_DexNav(void);
 // ===== Dex Nav Pokemon Generator ===== //
 // ===================================== //
 
-void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain)
+void DexNavGetMon(u16 species, u8 potential, u8 level, u16 ability, u16* moves, u8 searchLevel, u8 chain)
 {
 	struct Pokemon* mon = &gEnemyParty[0];
 
@@ -1051,7 +1051,7 @@ static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel)
 }
 
 
-static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel)
+static u16 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel)
 {
 	bool8 genAbility = FALSE;
 	u16 randVal = Random() % 100;
@@ -1106,9 +1106,9 @@ static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel)
 	else
 	{
 		//Pick a normal ability of that Pokemon
-		u8 ability;
-		u8 ability1 = GetAbility1(species);
-		u8 ability2 = GetAbility2(species);
+		u16 ability;
+		u16 ability1 = GetAbility1(species);
+		u16 ability2 = GetAbility2(species);
 		
 		if (ability2 != ABILITY_NONE)
 			ability = (randVal & 1) == 0 ? ability1 : ability2;
@@ -1310,7 +1310,7 @@ static void DexNavDrawBButton(u8* spriteIdAddr)
 	*spriteIdAddr = spriteId;
 };
 
-static void DexNavDrawAbility(u8 ability, u8* spriteIdAddr)
+static void DexNavDrawAbility(u16 ability, u8* spriteIdAddr)
 {
 	LoadCompressedSpriteSheetUsingHeap(&sAbilityCanvasSpriteSheet);
 	LoadSpritePalette(&sHeldItemSpritePalette);

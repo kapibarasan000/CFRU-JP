@@ -417,7 +417,7 @@ u8 IsRunningFromBattleImpossible(void)
 	{
 		if (side != SIDE(i))
 		{
-			u8 ability = ABILITY(i);
+			u16 ability = ABILITY(i);
 			if (IsTrappedByAbility(gActiveBattler, ability))
 			{
 				gBattleScripting.bank = i;

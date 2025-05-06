@@ -35,6 +35,34 @@ loop_label:
 	.byte 0x0, 0x0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x11DFA, 0xFF
+	lsl r1, r0, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x11E1E, 0xFF
+	lsl r1, r0, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x1278E, 0xFF
+	lsl r0, r2, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x12964, 0xFF
+	lsl r0, r1, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x1297E, 0xFF
+	lsl r0, r1, #0x5
+	mov r8, r8
+	mov r8, r8
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Pokedex Flags Banned Battle Types
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -43,6 +71,19 @@ loop_label:
 
 .org 0x12B50, 0xFF
 .word BATTLE_WIRELESS | BATTLE_OLD_MAN | BATTLE_E_READER | BATTLE_GHOST | BATTLE_TRAINER_TOWER | BATTLE_FRONTIER
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion gBattleMons Fix
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x13D28, 0xFF
+	add r0, #0x38
+	ldrh r0, [r0]
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion gLastUsedAbility Fix
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x13D76, 0xFF
+	ldrh r3, [r0]
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Vanilla Roamer Bug Fix
@@ -58,6 +99,14 @@ SetRoamerInactiveCall:
 */
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x1623C, 0xFF
+	lsl r1, r0, #0x5
+	mov r8, r8
+	mov r8, r8
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Safari Zone Ball Count
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x162EA, 0xFF
@@ -66,10 +115,38 @@ SetRoamerInactiveCall:
 	strh r0, [r1]
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion gBattleMons Fix
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x166F0, 0xFF
+	add r0, #0x38
+	ldrh r0, [r0]
+
+.org 0x167F2, 0xFF
+	add r1, #0x38
+	ldrh r1, [r1]
+
+.org 0x1690C, 0xFF
+	add r0, #0x38
+	ldrh r0, [r0]
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Limiters
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x1CF70, 0xFF @Replaced Attackcanceler
 GetEventObjectGraphicsInfoByEventObj:
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x1E7FE, 0xFF
+	lsl r0, r1, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x213E8, 0xFF
+	lsl r0, r2, #0x5
+	mov r8, r8
+	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Limiters
@@ -83,11 +160,32 @@ MaxLevelChange3:
 	.byte MAX_LEVEL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x237AA, 0xFF
+	lsl r0, r1, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x237C2, 0xFF
+	lsl r0, r2, #0x5
+	mov r8, r8
+	mov r8, r8
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Pokedex Flags Banned Battle Types
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .org 0x2396C, 0xFF
 .word BATTLE_WIRELESS | BATTLE_OLD_MAN | BATTLE_E_READER | BATTLE_GHOST | BATTLE_TRAINER_TOWER | BATTLE_FRONTIER
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion gBattleMons Fix
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x26598, 0xFF
+	add r6, #0x38
+	mov r5, #0x0
+	ldrh r0, [r6]
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Various Something
@@ -97,8 +195,8 @@ HiddenAbilityChange2:
 	mov r8, r8
 	mov r0, r4 @mon
 	bl HiddenAbilityChange2 + 0x19E1C @0x0804042C
-	lsl r0, r0, #0x18
-	lsr r0, r0, #0x18
+	lsl r0, r0, #0x10
+	lsr r0, r0, #0x10
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Various Something
@@ -111,8 +209,8 @@ HiddenAbilityChange3:
 	mov r8, r8
 	mov r0, r4 @mon
 	bl HiddenAbilityChange3 + 0x19D84 @0x0804042C
-	lsl r0, r0, #0x18
-	lsr r0, r0, #0x18
+	lsl r0, r0, #0x10
+	lsr r0, r0, #0x10
 	cmp r0, #ABILITY_SOUNDPROOF
 	beq HiddenAbilityChange3 + 0x20
 	mov r0, #0x1
@@ -141,8 +239,55 @@ HiddenAbilityChange4_2:
 	mov r8, r8
 	mov r0, r4
 	bl HiddenAbilityChange4_2 + 0x163C4 @0x0804042C
-	lsl r0, #0x18
-	lsr r0, #0x18
+	lsl r0, #0x10
+	lsr r0, #0x10
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x2B1E6, 0xFF
+	lsl r1, r0, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x2B238, 0xFF
+	lsl r1, r2, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x2C65A, 0xFF
+	lsl r0, r5, #0x5
+	mov r8, r8
+	mov r8, r8
+	add r0, r8
+	ldrh r0, [r0, #0x1A]
+
+.org 0x2C670, 0xFF
+	lsl r0, r5, #0x5
+	mov r8, r8
+	mov r8, r8
+	add r0, r8
+	ldrh r0, [r0, #0x16]
+
+.org 0x2CCEE, 0xFF
+	lsl r0, r1, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x2F6AA, 0xFF
+	lsl r1, r5, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x2F80A, 0xFF
+	lsl r0, r5, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x2F912, 0xFF
+	lsl r1, r0, #0x5
+	mov r8, r8
+	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Limiter
@@ -160,6 +305,44 @@ TransformedPersonalityPlayerFix:
 	mov r2, r4 @Use current personality
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x38CB8, 0xFF
+	lsl r0, r4, #0x5
+	mov r8, r8
+	mov r8, r8
+	add r0, r9
+	ldrh r0, [r0, #0x1A]
+
+.org 0x38CD4, 0xFF
+	lsl r0, r4, #0x5
+	mov r8, r8
+	mov r8, r8
+	add r0, r9
+	ldrh r0, [r0, #0x16]
+
+.org 0x3910E, 0xFF
+	lsl r0, r4, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x39118, 0xFF
+	ldrh r2, [r0, #0x1A]
+
+.org 0x3912C, 0xFF
+	lsl r0, r4, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x39136, 0xFF
+	ldrh r2, [r0, #0x16]
+
+.org 0x396F2, 0xFF
+	lsl r0, r5, #0x5
+	mov r8, r8
+	mov r8, r8
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ AI Vanilla Item Use Bug Fix
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -169,15 +352,68 @@ AIVanillaItemUseBugFix:
 	lsr r0, #0x10
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x3D35A, 0xFF
+	lsl r0, r1, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x3D384, 0xFF
+	lsl r0, r1, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x3D4CA, 0xFF
+	lsl r0, r1, #0x5
+	mov r8, r8
+	mov r8, r8
+	add r0, r0, r2
+	ldrh r0, [r0, #0x1A]
+
+.org 0x3DF54, 0xFF
+	lsl r0, r4, #0x5
+	mov r8, r8
+	mov r8, r8
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Limiters
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x3DF72, 0xFF
 MaxLevelChange4:
 	.byte MAX_LEVEL
 
+.org 0x3DFC0, 0xFF
+	lsl r0, r4, #0x5
+	mov r8, r8
+	mov r8, r8
+
 .org 0x3DFDE, 0xFF
 MaxLevelChange5:
 	.byte MAX_LEVEL
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x3EEBA, 0xFF
+	lsl r0, r5, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x3EED6, 0xFF
+	lsl r0, r5, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x3EF02, 0xFF
+	lsl r0, r2, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x3EF1C, 0xFF
+	lsl r0, r2, #0x5
+	mov r8, r8
+	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Roamer IVs Fix
@@ -192,6 +428,19 @@ RoamerIVsFix:
 RoamerIVsFixEnd:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x409E6, 0xFF
+	lsl r0, r1, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x409F8, 0xFF
+	lsl r0, r1, #0x5
+	mov r8, r8
+	mov r8, r8
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Summary Screen
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x040A08, 0xFF
@@ -202,8 +451,8 @@ HiddenAbilityChange5:
 	mov r0, r4 @mon
 	bl HiddenAbilityChange5 - 0x5DC @0x0804042C
 	mov r1, r7
-	add r1, #0x20
-	strb r0, [r1]
+	add r1, #0x38
+	strh r0, [r1]
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Limiters
@@ -211,6 +460,11 @@ HiddenAbilityChange5:
 .org 0x40F24, 0xFF
 MaxLevelChange6:
 	.byte MAX_LEVEL
+
+.org 0x40F46, 0xFF
+	lsl r1, r0, #0x5
+	mov r8, r8
+	mov r8, r8
 
 .org 0x411FE, 0xFF
 VitaminChange1:
@@ -241,6 +495,19 @@ VitaminChange6:
 	.byte EV_CAP - 1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x43842, 0xFF
+	lsl r1, r0, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x43A6E, 0xFF
+	lsl r3, r0, #0x5
+	mov r8, r8
+	mov r8, r8
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level - Limiter
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x44C48, 0xFF
@@ -248,11 +515,27 @@ MaxLevelChange12:
 	.byte MAX_LEVEL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x497A6, 0xFF
+	lsl r0, r5, #0x5
+	mov r8, r8
+	mov r8, r8
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Hack - Limiter
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x49AF2, 0xFF
 MaxLevelChange1:
 	.byte MAX_LEVEL	
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x4F440, 0xFF
+	lsl r1, r7, #0x5
+	mov r8, r8
+	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Fix Slow Camera Update
@@ -521,6 +804,53 @@ VeryTallGrassFix:
 	ldrh r0, [r0]
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion gBattleMons Fix
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0xC9656, 0xFF
+	add r0, #0x38
+	ldrh r0, [r0]
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0xC9688, 0xFF
+	lsl r1, r0, #0x5
+	mov r8, r8
+	mov r8, r8
+	add r2, r1, r4
+	ldrh r0, [r2, #0x16]
+
+.org 0xC9696, 0xFF
+	ldrh r0, [r2, #0x1A]
+
+.org 0xC96AE, 0xFF
+	lsl r0, r1, #0x5
+	mov r8, r8
+	mov r8, r8
+	add r0, r0, r4
+	ldrh r0, [r0, #0x16]
+
+.org 0xC96C6, 0xFF
+	lsl r0, r1, #0x5
+	mov r8, r8
+	mov r8, r8
+	add r0, r0, r4
+	ldrh r0, [r0, #0x1A]
+
+.org 0xC96D4, 0xFF
+	ldrh r0, [r2, #0x16]
+
+.org 0xC96DC, 0xFF
+	ldrh r0, [r2, #0x1A]
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion gBattleMons Fix
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0xC96F0, 0xFF
+	add r0, #0x38
+	ldrh r0, [r0]
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes & More OW Sprites: Field Effects
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0xCA978, 0xFF	@16 bit sprite ids
@@ -530,6 +860,11 @@ VeryTallGrassFix:
 .org 0xCAB1C, 0xFF	@16 bit sprite ids
 	lsl r1, #0x10
 	lsr r1, #0x10
+
+.org 0xCBA04, 0xFF
+	lsl r1, r0, #0x5
+	mov r8, r8
+	mov r8, r8
 
 .org 0xDBE2A, 0xFF
 	mov r0, r0
@@ -596,6 +931,34 @@ VeryTallGrassFix:
 	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0xE8E2E, 0xFF
+	lsl r1, r5, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0xE8F8E, 0xFF
+	lsl r0, r5, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0xE9096, 0xFF
+	lsl r1, r0, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x10483A, 0xFF
+	lsl r4, r5, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x107044, 0xFF
+	lsl r4, r2, #0x5
+	mov r8, r8
+	mov r8, r8
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Remove Caught Mon Pokedex 151 Limiter
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x107386, 0xFF
@@ -604,6 +967,14 @@ VeryTallGrassFix:
 .org 0x1076D8, 0xFF
 RemoveCaughtMonPokedex151Limiter:
 	b RemoveCaughtMonPokedex151Limiter + 0x24 @0x106BA4
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x11B674, 0xFF
+	lsl r0, r1, #0x5
+	mov r8, r8
+	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Remove TM Animation
@@ -658,11 +1029,27 @@ RareCandiesPostUseFix:
 	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x1369A2, 0xFF
+	lsl r0, r4, #0x5
+	mov r8, r8
+	mov r8, r8
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Hack - Summary Screen
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x136E6C, 0xFF
 SummaryScreenExpDisplay1:
 	.byte MAX_LEVEL - 1
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x136E88, 0xFF
+	lsl r1, r0, #0x5
+	mov r8, r8
+	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Ability Names
@@ -672,8 +1059,8 @@ HiddenAbilityChange5_SummaryScreen:
 	ldr r0, [r6]
 	add r0, r8
 	bl HiddenAbilityChange5_SummaryScreen - 0xF6AA6 @0x0804042C
-	lsl r0, r0, #0x18
-	lsr r4, r0, #0x18
+	lsl r0, r0, #0x10
+	lsr r4, r0, #0x10
 	ldr r0, [r6]
 	b HiddenAbilityChange5_SummaryScreen + 0x24 @0x08136710
 .hword 0xAAAA, 0xAAAA, 0xAAAA, 0xAAAA, 0xAAAA, 0xAAAA, 0xAAAA, 0xAAAA, 0xAAAA, 0xAAAA
@@ -684,6 +1071,14 @@ HiddenAbilityChange5_SummaryScreen:
 .org 0x13B1BA, 0xFF
 SummaryScreenExpDisplay2:
 	.byte MAX_LEVEL - 1, 0x2D, 0x0, 0xD9
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x13B1C8, 0xFF
+	lsl r0, r4, #0x5
+	mov r8, r8
+	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes & More OW Sprites
@@ -719,6 +1114,24 @@ SummaryScreenExpDisplay2:
 .org 0x153882, 0xff	@16 bit sprite ids
 	lsl r1, #0x10
 	lsr r1, #0x10
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ability Expansion Base Stats
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x159C66, 0xFF
+	lsl r1, r5, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x159DC6, 0xFF
+	lsl r0, r5, #0x5
+	mov r8, r8
+	mov r8, r8
+
+.org 0x159ECE, 0xFF
+	lsl r1, r0, #0x5
+	mov r8, r8
+	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Losing Trainer Battle 9

@@ -92,7 +92,7 @@ static void SavePartyItems(void);
 static void TryPrepareTotemBoostInBattleSands(void);
 static void TrySetupRaidBossRepeatedAttack(u8 turnActionNumber);
 static u8 GetWhoStrikesFirstUseLastBracketCalc(u8 bank1, u8 bank2);
-static u32 BoostSpeedInWeather(u8 ability, u8 itemEffect, u32 speed);
+static u32 BoostSpeedInWeather(u16 ability, u8 itemEffect, u32 speed);
 static u32 BoostSpeedByItemEffect(u8 itemEffect, u8 itemQuality, u16 species, u32 speed, bool8 isDynamaxed);
 
 const u8 gText_EmptyString[] = {EOS};
@@ -1328,7 +1328,7 @@ void HandleAction_UseMove(void)
 	moveType = gBattleStruct->dynamicMoveType;
 
 //Get Move Target
-	u8 atkAbility = ABILITY(gBankAttacker);
+	u16 atkAbility = ABILITY(gBankAttacker);
 	u8 moveTarget = GetBaseMoveTarget(gCurrentMove, gBankAttacker);
 	side = SIDE(gBankAttacker) ^ BIT_SIDE;
 	bank_t selectedTarget = gBattleStruct->moveTarget[gBankAttacker];
@@ -1958,7 +1958,7 @@ bool8 QuickClawActivatesThisTurn(u8 bank)
 s32 BracketCalc(u8 bank, unusedArg u8 action, unusedArg u16 move)
 {
 	u8 itemEffect = ITEM_EFFECT(bank);
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 
 	gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
 	gNewBS->quickDrawIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
@@ -2008,7 +2008,7 @@ s32 BracketCalc(u8 bank, unusedArg u8 action, unusedArg u16 move)
 	return 0;
 }
 
-static u32 BoostSpeedInWeather(u8 ability, u8 itemEffect, u32 speed)
+static u32 BoostSpeedInWeather(u16 ability, u8 itemEffect, u32 speed)
 {
 	if (WEATHER_HAS_EFFECT) {
 		switch (ability) {
@@ -2062,7 +2062,7 @@ u32 SpeedCalc(u8 bank)
 	if (!BATTLER_ALIVE(bank))
 		return 0;
 
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 	u8 itemEffect = ITEM_EFFECT(bank);
 	u8 itemQuality = ITEM_QUALITY(bank);
 
@@ -2126,7 +2126,7 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon)
 		return 0;
 
 	u8 itemEffect;
-	u8 ability = GetMonAbilityAfterTrace(mon, FOE(side));
+	u16 ability = GetMonAbilityAfterTrace(mon, FOE(side));
 	u32 speed = mon->speed;
 	u8 statVal = 6;
 

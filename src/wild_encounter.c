@@ -70,7 +70,7 @@ static bool8 DoWildEncounterRateTest(u32 encounterRate, bool8 ignoreAbility);
 static bool8 DoWildEncounterRateDiceRoll(u16 encounterRate);
 static bool8 IsAbilityAllowingEncounter(u8 level);
 static bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon* wildMon, u8 type, u8 numMon, u8* monIndex);
-static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u8 ability, u8* monIndex, u8 monsCount);
+static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u16 ability, u8* monIndex, u8 monsCount);
 static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* specialMoves, bool8 firstMon);
 static const struct WildPokemonInfo* LoadProperMonsPointer(const struct WildPokemonHeader* header, const u8 type);
 
@@ -132,8 +132,8 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 	//Check ability for max level mon
 	if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
 	{
-		u8 ability = GetMonAbility(&gPlayerParty[0]);
-		if (ability == ABILITY_HUSTLE || ability == ABILITY_PRESSURE)
+		u16 ability = GetMonAbility(&gPlayerParty[0]);
+		if (ability == ABILITY_HUSTLE || ability == ABILITY_PRESSURE || ability == ABILITY_VITALSPIRIT)
 		{
 			if (Random() % 2 == 0)
 				return max;
@@ -644,7 +644,7 @@ bool8 DoesFishBite(void)
 
 		if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
 		{
-			u8 ability = GetMonAbility(&gPlayerParty[0]);
+			u16 ability = GetMonAbility(&gPlayerParty[0]);
 			if (ability == ABILITY_SUCTIONCUPS || ability  == ABILITY_STICKYHOLD)
 				chance = 85; //85% chance with abilities
 		}
@@ -699,17 +699,17 @@ u8 GetAbilityEncounterRateModType(void)
 
     if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
     {
-        u8 ability = GetMonAbility(&gPlayerParty[0]);
+        u16 ability = GetMonAbility(&gPlayerParty[0]);
 
 		switch (ability) {
-			//case ABILITY_WHITESMOKE:
+			case ABILITY_WHITESMOKE:
 			case ABILITY_STENCH:
 			case ABILITY_QUICKFEET:
 			case ABILITY_INFILTRATOR:
 				sWildEncounterData.abilityEffect = 1;
 				break;
 			case ABILITY_ARENATRAP:
-			//case ABILITY_ILLUMINATE:
+			case ABILITY_ILLUMINATE:
 			case ABILITY_NOGUARD:
 			case ABILITY_SWARM:
 				sWildEncounterData.abilityEffect = 2;
@@ -1024,7 +1024,7 @@ bool8 StartRandomWildEncounter(bool8 waterMon)
 
 static bool8 IsAbilityAllowingEncounter(u8 level)
 {
-	u8 ability;
+	u16 ability;
 
 	if (GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
 		return TRUE;
@@ -1061,7 +1061,7 @@ static bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon* wildMon, u
 	return TRUE;
 }
 
-static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u8 ability, u8* monIndex, u8 monsCount)
+static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u16 ability, u8* monIndex, u8 monsCount)
 {
 	if (GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
 		return FALSE;

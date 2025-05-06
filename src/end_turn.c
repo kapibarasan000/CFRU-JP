@@ -521,6 +521,7 @@ u8 TurnBasedEffects(void)
 								case ABILITY_SHEDSKIN:
 								case ABILITY_HYDRATION:
 								case ABILITY_HEALER:
+								case ABILITY_WIMPOUT:
 								case ABILITY_EMERGENCYEXIT:
 									if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
 										effect++;
@@ -617,6 +618,7 @@ u8 TurnBasedEffects(void)
 				if (BATTLER_ALIVE(gActiveBattler))
 				{
 					switch(ABILITY(gActiveBattler)) {
+						case ABILITY_WIMPOUT:
 						case ABILITY_EMERGENCYEXIT:
 							if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
 								effect++;
@@ -1445,7 +1447,7 @@ u8 TurnBasedEffects(void)
 					struct Pokemon* mon = GetBankPartyData(gActiveBattler);
 					u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 					u16 newSpecies = SPECIES_NONE;
-					u8 ability = ABILITY(gActiveBattler);
+					u16 ability = ABILITY(gActiveBattler);
 					u8 itemEffect = ITEM_EFFECT(gActiveBattler);
 					bool8 changedForm = FALSE;
 					bool8 reloadType = FALSE;
@@ -1706,7 +1708,7 @@ u32 GetLeechSeedDamage(u8 bank)
 u32 GetPoisonDamage(u8 bank)
 {
 	u32 damage = 0;
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 
 	if (ability != ABILITY_MAGICGUARD
 	&& ability != ABILITY_POISONHEAL)
@@ -1734,7 +1736,7 @@ u32 GetPoisonDamage(u8 bank)
 u32 GetBurnDamage(u8 bank)
 {
 	u32 damage = 0;
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 
 	if (gBattleMons[bank].status1 & STATUS_BURN
 	&& ability != ABILITY_MAGICGUARD)

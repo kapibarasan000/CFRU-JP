@@ -26,6 +26,7 @@
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
+#include "../include/new/party_menu.h"
 #include "../include/new/switching.h"
 #include "../include/new/trainer_sliding.h"
 #include "../include/new/z_move_battle_scripts.h"
@@ -61,8 +62,8 @@ enum SwitchInStates
 };
 
 //This file's functions:
-static bool8 TryRemovePrimalWeather(u8 bank, u8 ability);
-static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability, bool8 leftField);
+static bool8 TryRemovePrimalWeather(u8 bank, u16 ability);
+static bool8 TryRemoveNeutralizingGas(u8 bank, u16 ability, bool8 leftField);
 static bool8 TryRemoveUnnerve(u8 bank);
 static bool8 TryActivateFlowerGift(u8 leavingBank);
 static bool8 TryDoForceSwitchOut(void);
@@ -130,7 +131,7 @@ void atkE2_switchoutabilities(void)
 	}
 }
 
-bool8 HandleSpecialSwitchOutAbilities(u8 bank, u8 ability, bool8 leftField)
+bool8 HandleSpecialSwitchOutAbilities(u8 bank, u16 ability, bool8 leftField)
 {
 	return TryRemovePrimalWeather(bank, ability)
 		|| TryRemoveNeutralizingGas(bank, ability, leftField)
@@ -138,7 +139,7 @@ bool8 HandleSpecialSwitchOutAbilities(u8 bank, u8 ability, bool8 leftField)
 		|| TryActivateFlowerGift(bank);
 }
 
-static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
+static bool8 TryRemovePrimalWeather(u8 bank, u16 ability)
 {
 	int i;
 	gBattleStringLoader = NULL;
@@ -178,7 +179,7 @@ static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 	return FALSE;
 }
 
-static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability, bool8 leftField)
+static bool8 TryRemoveNeutralizingGas(u8 bank, u16 ability, bool8 leftField)
 {
 	if (ability == ABILITY_NEUTRALIZINGGAS)
 	{
@@ -203,7 +204,7 @@ static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability, bool8 leftField)
 
 			if (gNewBS->neutralizingGasBlockedAbilities[bank] != ABILITY_NONE)
 			{
-				u8 ability = *GetAbilityLocationIgnoreNeutralizingGas(bank) = gNewBS->neutralizingGasBlockedAbilities[bank]; //Restore ability
+				u16 ability = *GetAbilityLocationIgnoreNeutralizingGas(bank) = gNewBS->neutralizingGasBlockedAbilities[bank]; //Restore ability
 				gNewBS->neutralizingGasBlockedAbilities[bank] = ABILITY_NONE;
 				gNewBS->SlowStartTimers[bank] = 0;
 				gDisableStructs[gBankTarget].truantCounter = 0;
@@ -233,7 +234,7 @@ static bool8 TryRemoveUnnerve(u8 bank)
 {
 	u8 side = SIDE(bank);
 	bool8 ret = FALSE;
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 
 	if (IsUnnerveAbility(ability))
 	{
@@ -519,7 +520,7 @@ void atk52_switchineffects(void)
 	UpdateSentPokesToOpponentValue(gActiveBattler);
 	gHitMarker &= ~(HITMARKER_FAINTED(gActiveBattler));
 	gSpecialStatuses[gActiveBattler].flag40 = 0;
-	u8 ability = ABILITY(gActiveBattler);
+	u16 ability = ABILITY(gActiveBattler);
 	u8 itemEffect = ITEM_EFFECT(gActiveBattler);
 
 	if (gBattleMons[gActiveBattler].hp == 0)
@@ -586,7 +587,7 @@ void atk52_switchineffects(void)
 			&& !CheckTableForAbility(ABILITY(gActiveBattler), gNeutralizingGasBannedAbilities)
 			&& AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BANK, gActiveBattler, ABILITY_NEUTRALIZINGGAS, 0, 0))
 			{
-				u8* abilityLoc = GetAbilityLocation(gActiveBattler);
+				u16* abilityLoc = GetAbilityLocation(gActiveBattler);
 				gNewBS->neutralizingGasBlockedAbilities[gActiveBattler] = *abilityLoc;
 				*abilityLoc = 0;
 				gNewBS->SlowStartTimers[gActiveBattler] = 0;
@@ -772,7 +773,7 @@ void atk52_switchineffects(void)
 
 		case SwitchIn_EmergencyExit:
 			if (ABILITY(gActiveBattler) == ABILITY_EMERGENCYEXIT
-			/*||  ABILITY(gActiveBattler) == ABILITY_WIMPOUT*/)
+			||  ABILITY(gActiveBattler) == ABILITY_WIMPOUT)
 			{
 				if (gBattleMons[gActiveBattler].hp > 0
 				&&  gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2
@@ -1410,4 +1411,23 @@ u32 GetMonEntryHazardDamage(struct Pokemon* mon, u8 side)
 bool8 WillFaintFromEntryHazards(struct Pokemon* mon, u8 side)
 {
 	return GetMonEntryHazardDamage(mon, side) >= mon->hp;
+}
+
+#define gText_PkmnsXPreventsSwitching (const u8*) 0x083C3004
+void SetMonPreventsSwitchingString(void)
+{
+    gLastUsedAbility = gNewBS->abilityPreventingSwitchout;
+    gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    gBattleTextBuff1[1] = B_BUFF_MON_NICK_WITH_PREFIX;
+    gBattleTextBuff1[2] = gBattleStruct->battlerPreventingSwitchout;
+    gBattleTextBuff1[4] = B_BUFF_EOS;
+
+    if (GetBattlerSide(gBattleStruct->battlerPreventingSwitchout) == B_SIDE_PLAYER)
+        gBattleTextBuff1[3] = GetPartyIdFromBattleSlot(gBattlerPartyIndexes[gBattleStruct->battlerPreventingSwitchout]);
+    else
+        gBattleTextBuff1[3] = gBattlerPartyIndexes[gBattleStruct->battlerPreventingSwitchout];
+
+    PREPARE_MON_NICK_WITH_PREFIX_BUFFER(gBattleTextBuff2, gBattlerInMenuId, GetPartyIdFromBattleSlot(gBattlerPartyIndexes[gBattlerInMenuId]))
+
+    BattleStringExpandPlaceholders(gText_PkmnsXPreventsSwitching, gStringVar4);
 }

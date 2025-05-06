@@ -7,7 +7,7 @@ void __attribute__((long_call)) BattleAI_HandleItemUseBeforeAISetup(u8 defaultSc
 void __attribute__((long_call)) BattleAI_SetupAIData(u8 defaultScoreMoves);
 //u8 __attribute__((long_call)) BattleAI_ChooseMoveOrAction(void);
 void __attribute__((long_call)) ClearBankMoveHistory(u8 bank);
-void __attribute__((long_call)) RecordAbilityBattle(u8 bank, u8 abilityId);
+void __attribute__((long_call)) RecordAbilityBattle(u8 bank, u16 abilityId);
 void __attribute__((long_call)) ClearBankAbilityHistory(u8 bank);
 void __attribute__((long_call)) RecordItemEffectBattle(u8 bank, u8 itemEffect);
 void __attribute__((long_call)) ClearBankItemEffectHistory(u8 bank);

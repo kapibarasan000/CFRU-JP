@@ -10,7 +10,7 @@
 //#define DEBUG_HMS //HMs can always be used from the party screen, Surf, Waterfall, and Rock Climb can always be used
 //#define DEBUG_OBEDIENCE //Traded Pokemon never have obedience issues
 //#define DEBUG_DYNAMAX //Dynamax can be used in Dynamax battles without a Dynamax Band
-#define DEBUG_TERASTAL
+//#define DEBUG_TERASTAL
 
 /*===== General Vars =====*/
 #define VAR_TERRAIN 0x5000 //Set to a terrain type for a battle to begin with the given terrain
@@ -225,7 +225,7 @@ enum //These vars need to be one after the other (hence the enum)
 //#define SET_HEALING_PLACE_HACK  //Uncomment this if you want custom map/bank whiteout respawn locations
 //#define FOSSIL_IMAGE_HACK   //Uncommenting includes JPANs fossil image hack (see EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS)
 #define EVO_HOLD_ITEM_REMOVAL //Comment this out if you want leveling up/hold item evolution (eg. sneasel) to remove the item (like normal)
-//#define EXPAND_MOVESETS //Comment this out if you're using the Dynamic Pokemon Expansion repo to expand the movesets
+#define EXPAND_MOVESETS //Comment this out if you're using the Dynamic Pokemon Expansion repo to expand the movesets
 //#define FATHER_PASSES_TMS //Uncomment this out if you want TMs the father knows to be passed through breeding
 //#define INHERIT_MASTER_CHERISH_BALL  //Uncomment this if you want Master and Cherish balls to be inherited by daycare offspring
 //#define GIVEPOKEMON_CUSTOM_HACK //Alows custom Pokemon to be given by setting the second last byte of the givepokemon scripting command
@@ -256,6 +256,7 @@ enum //These vars need to be one after the other (hence the enum)
 //#define FADE_NPCS_IN_FOG //Blends the NPC palettes in foggy weather to create the illusion that they're under the fog. Breaks FR Pokemon Tower healing zone
 #define FRIENDSHIP_HEART_ON_SUMMARY_SCREEN //Creates a heart sprite on the summary screen if the current Pokemon has max Friendship (position requires adjusting)
 #define POKEMON_NAME_6
+#define BASE_STATS_EXPANSION
 
 /*===== Misc Battle Effect Options =====*/
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16

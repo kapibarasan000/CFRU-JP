@@ -1031,14 +1031,14 @@ void EmitPrintSelectionString(u8 bufferId, u16 stringID)
 	PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, sizeof(struct BattleMsgData) + 4);
 }
 
-const u8* GetAbilityName(const u8 ability)
+const u8* GetAbilityName(const u16 ability)
 {
 	const u8* ptr = gAbilityNames[ability];
 
 	return ptr;
 }
 
-void CopyAbilityName(u8* dst, const u8 ability)
+void CopyAbilityName(u8* dst, const u16 ability)
 {
 	StringCopy(dst, GetAbilityName(ability));
 }

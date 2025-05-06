@@ -297,7 +297,7 @@ u8 GetBankFightingStyle(u8 bank)
 
 u8 PredictBankFightingStyle(u8 bank)
 {
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 	u8 itemEffect = ITEM_EFFECT(bank);
 
 	if (IsDynamaxed(bank))
@@ -312,7 +312,7 @@ u8 PredictBankFightingStyle(u8 bank)
 	return PredictFightingStyle(gBattleMons[bank].moves, ability, itemEffect, bank);
 }
 
-u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemEffect, const u8 bank)
+u8 PredictFightingStyle(const u16* const moves, const u16 ability, const u8 itemEffect, const u8 bank)
 {
 	int i;
 	u8 class = FIGHT_CLASS_NONE;
@@ -787,7 +787,7 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 			break;
 
 		case EFFECT_PROTECT: ;
-			u8 ability = ABILITY(bankAtk);
+			u16 ability = ABILITY(bankAtk);
 			u8 itemEffect = ITEM_EFFECT(bankAtk);
 
 			//maxHp = baseMaxHP;
@@ -878,7 +878,7 @@ bool8 ShouldRecover(u8 bankAtk, u8 bankDef, u16 move)
 
 static bool8 BankHoldingUsefulItemToProtectFor(u8 bank)
 {
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 	u8 itemEffect = ITEM_EFFECT(bank);
 
 	if (itemEffect == ITEM_EFFECT_TOXIC_ORB
@@ -903,7 +903,7 @@ static bool8 BankHoldingUsefulItemToProtectFor(u8 bank)
 
 static bool8 BankHasAbilityUsefulToProtectFor(u8 bankAtk, u8 bankDef)
 {
-	u8 ability = ABILITY(bankAtk);
+	u16 ability = ABILITY(bankAtk);
 
 	switch (ability) {
 		case ABILITY_MOODY:
@@ -925,7 +925,7 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 {
 	u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk);
 	u8 predictedMoveEffect = gBattleMoves[predictedMove].effect;
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 	bool8 isAtkDynamaxed = IsDynamaxed(bankAtk);
 
 	if (WillFaintFromSecondaryDamage(bankAtk)
@@ -1254,7 +1254,7 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 	u8 switchScore = GetMostSuitableMonToSwitchIntoScore();
 	gActiveBattler = backupBattler;
 
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 
 	if (WillTakeSignificantDamageFromEntryHazards(bankAtk, 4)) //Don't switch out if you'll do a quarter or more damage to yourself on switch in
 		return DONT_PIVOT;

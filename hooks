@@ -97,6 +97,7 @@ PlayerHandleTrainerSlide 8031B9C 0
 TagTeamBackspritePalHook 8032CA4 0
 Task_PlayerStartSendOutAnim 8032DD4 1
 Task_OpponentStartSendOutAnim 8038530 1
+PlayerHandleChoosePokemon 80324C4 0
 
 ##AI Hooks
 AIHandleItemUseHook 800CCF0 0
@@ -208,6 +209,7 @@ Task_DoLearnedMoveFanfareAfterText 812663C 1
 DrawLevelUpWindowPg2Hook 811F15C 4
 ChooseFaintedMonHook 81203D4 0
 ChooseFaintedMonCancelHook 8120578 2
+EmitChoosePokemon 800DF44 5
 
 ##Battle Animation Hooks
 TryHandleLaunchBattleTableAnimationHook 8033792 4
@@ -327,6 +329,7 @@ PartySpreadPokerus 80431FC 1
 SetMonExpWithMaxLevelCheck 8043204 2
 GiveRandomFrontierMonByTier 8028014 3
 RandomizerShowPokepicHook 809CD34 3
+SetMonPreventsSwitchingString 8043990 0
 
 ##DNS
 TransferPlttBuffer 806FC18 0

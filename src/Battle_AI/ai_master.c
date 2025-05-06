@@ -371,7 +371,7 @@ u8 BattleAI_ChooseMoveOrAction(void)
 	PopulateAIScriptStructWithBaseAttackerData(&aiScriptData, gBankAttacker);
 
 	struct BattlePokemon backupMonAtk, backupMonDef;
-	u8 backupAbilityAtk = ABILITY_NONE; u8 backupAbilityDef = ABILITY_NONE;
+	u16 backupAbilityAtk = ABILITY_NONE; u16 backupAbilityDef = ABILITY_NONE;
 	u16 backupSpeciesAtk = SPECIES_NONE; u16 backupSpeciesDef = SPECIES_NONE;
 
 	TryTempMegaEvolveBank(gBankAttacker, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
@@ -391,7 +391,7 @@ u8 BattleAI_ChooseMoveOrAction(void)
 	return ret;
 }
 
-void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility)
+void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u16* backupAbility)
 {
 	if (gNewBS->ai.megaPotential[bank] != NULL) //Mon will probably mega evolve
 	{
@@ -421,7 +421,7 @@ void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backup
 	}
 }
 
-void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility)
+void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u16* backupAbility)
 {
 	if (*backupSpecies != SPECIES_NONE)
 	{
@@ -691,7 +691,7 @@ void AI_TrySwitchOrUseItem(void)
 	bool8 ret = FALSE;
 
 	struct BattlePokemon backupMonAtk;
-	u8 backupAbilityAtk = ABILITY_NONE;
+	u16 backupAbilityAtk = ABILITY_NONE;
 	u16 backupSpeciesAtk = SPECIES_NONE;
 
 	if (RAID_BATTLE_END)
@@ -969,7 +969,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 	u8 battlerIn1, battlerIn2;
 	u8 foe1, foe2;
 	u16 predictedMove1, predictedMove2;
-	u8 absorbingTypeAbility1, absorbingTypeAbility2, absorbingTypeAbility3;
+	u16 absorbingTypeAbility1, absorbingTypeAbility2, absorbingTypeAbility3;
 	u8 firstId, lastId;
 	struct Pokemon *party;
 	int i;
@@ -1054,7 +1054,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 			return FALSE;
 	}
 
-	u8 atkAbility = GetPredictedAIAbility(gActiveBattler, foe1);
+	u16 atkAbility = GetPredictedAIAbility(gActiveBattler, foe1);
 	if (atkAbility == absorbingTypeAbility1
 	||  atkAbility == absorbingTypeAbility2
 	||  atkAbility == absorbingTypeAbility3)
@@ -1065,7 +1065,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 	for (i = firstId; i < lastId; i++)
 	{
 		u16 species = party[i].species;
-		u8 monAbility = GetMonAbility(&party[i]);
+		u16 monAbility = GetMonAbility(&party[i]);
 
 		if (party[i].hp == 0
 		||  species == SPECIES_NONE
@@ -1489,7 +1489,7 @@ static bool8 IsYawned(void)
 			return FALSE;
 
 		//Don't switch if you can fight through the sleep
-		u8 ability = ABILITY(gActiveBattler);
+		u16 ability = ABILITY(gActiveBattler);
 		u8 itemEffect = ITEM_EFFECT(gActiveBattler);
 		if (itemEffect == ITEM_EFFECT_CURE_SLP
 		|| itemEffect == ITEM_EFFECT_CURE_STATUS
@@ -1722,7 +1722,7 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 
 			if (SPLIT(move) != SPLIT_STATUS)
 			{
-				u8 atkAbility = GetAIAbility(bankAtk, bankDef, move);
+				u16 atkAbility = GetAIAbility(bankAtk, bankDef, move);
 				if (atkAbility == ABILITY_MOLDBREAKER
 				||  atkAbility == ABILITY_TERAVOLT
 				||  atkAbility == ABILITY_TURBOBLAZE)
@@ -2078,7 +2078,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 				&& (j == 0 || foes[0] != foes[j])) //Don't check same opponent twice
 				{
 					u8 typeEffectiveness = 0;
-					u8 ability = GetMonAbility(&party[i]);
+					u16 ability = GetMonAbility(&party[i]);
 					bool8 isWeakToMove = FALSE;
 					bool8 isNormalEffectiveness = FALSE;
 
@@ -2569,7 +2569,7 @@ static void UpdateStrongestMoves(void)
 	for (bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
 	{
 		struct BattlePokemon backupMonAtk;
-		u8 backupAbilityAtk = ABILITY_NONE;
+		u16 backupAbilityAtk = ABILITY_NONE;
 		u16 backupSpeciesAtk = SPECIES_NONE;
 
 		if (!IS_TRANSFORMED(bankAtk)
@@ -2593,7 +2593,7 @@ static void UpdateStrongestMoves(void)
 					continue; //Don't bother calculating for these Pokemon. Never used
 
 				struct BattlePokemon backupMonDef;
-				u8 backupAbilityDef = ABILITY_NONE;
+				u16 backupAbilityDef = ABILITY_NONE;
 				u16 backupSpeciesDef = SPECIES_NONE;
 				TryTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
 

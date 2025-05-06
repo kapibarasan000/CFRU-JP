@@ -41,8 +41,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	//Get relevant params
 	u16 move = TryReplaceMoveWithZMove(bankAtk, bankDef, originalMove);
 
-	u8 atkAbility = GetAIAbility(bankAtk, bankDef, move);
-	u8 defAbility = GetAIAbility(bankDef, bankAtk, predictedMove);
+	u16 atkAbility = GetAIAbility(bankAtk, bankDef, move);
+	u16 defAbility = GetAIAbility(bankDef, bankAtk, predictedMove);
 
 	if (!NO_MOLD_BREAKERS(atkAbility, move)
 	&& gMoldBreakerIgnoredAbilities[defAbility])

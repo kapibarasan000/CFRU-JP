@@ -1380,7 +1380,7 @@ static void ItemUseCB_DNASplicersStep(u8 taskId, TaskFunc func);
 static void Task_TryLearnPostFormeChangeMove(u8 taskId);
 static struct Pokemon* GetBaseMonForFusedSpecies(u16 species);
 static void ItemUseCB_AbilityCapsule(u8 taskId, TaskFunc func);
-static u8 GetAbilityCapsuleNewAbility(struct Pokemon* mon);
+static u16 GetAbilityCapsuleNewAbility(struct Pokemon* mon);
 static void Task_OfferAbilityChange(u8 taskId);
 static void Task_HandleAbilityChangeYesNoInput(u8 taskId);
 static void Task_ChangeAbility(u8 taskId);
@@ -2295,7 +2295,7 @@ extern const u8 gText_AbilityCapsuleChangedAbility[];
 static void ItemUseCB_AbilityCapsule(u8 taskId, TaskFunc func)
 {
 	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
-	u8 changeTo = GetAbilityCapsuleNewAbility(mon); //Pick Ability to change to
+	u16 changeTo = GetAbilityCapsuleNewAbility(mon); //Pick Ability to change to
 
 	PlaySE(SE_SELECT);
 	if (changeTo != ABILITY_NONE) //Ability can be changed
@@ -2316,13 +2316,13 @@ static void ItemUseCB_AbilityCapsule(u8 taskId, TaskFunc func)
 	}
 }
 
-static u8 GetAbilityCapsuleNewAbility(struct Pokemon* mon)
+static u16 GetAbilityCapsuleNewAbility(struct Pokemon* mon)
 {
 	u16 item = Var800E;
 	u8 abilityType = ItemId_GetHoldEffectParam(item);
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-	u8 ability = GetMonAbility(mon);
-	u8 changeTo = ABILITY_NONE;
+	u16 ability = GetMonAbility(mon);
+	u16 changeTo = ABILITY_NONE;
 
 	if (abilityType != 0) //Hidden Ability Capsule
 	{
@@ -2590,4 +2590,18 @@ void ChooseFaintedMon(u8 taskId, s8 *slotPtr)
         gSelectedMonPartyId = partyId;
         Task_ClosePartyMenu(taskId);
     }
+}
+
+void EmitChoosePokemon(u8 bufferId, u8 caseId, u8 slotId, u16 abilityId, u8 *data)
+{
+    s32 i;
+
+    gBattleBuffersTransferData[0] = CONTROLLER_CHOOSEPOKEMON;
+    gBattleBuffersTransferData[1] = caseId;
+    gBattleBuffersTransferData[2] = slotId;
+    gBattleBuffersTransferData[3] = abilityId;
+	gBattleBuffersTransferData[8] = (abilityId & 0xFF00) >> 8;
+    for (i = 0; i < 3; i++)
+        gBattleBuffersTransferData[4 + i] = data[i];
+    PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, 9);
 }

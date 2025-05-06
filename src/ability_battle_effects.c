@@ -54,7 +54,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_AURABREAK] = 3,
 	[ABILITY_BADDREAMS] = 4,
 	[ABILITY_BATTERY] = 0,
-//	[ABILITY_BATTLEARMOR] = 2,
+	[ABILITY_BATTLEARMOR] = 2,
 	[ABILITY_BATTLEBOND] = 6,
 	[ABILITY_BEASTBOOST] = 7,
 	[ABILITY_BERSERK] = 5,
@@ -93,7 +93,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_ELECTRICSURGE] = 8,
 	[ABILITY_EMERGENCYEXIT] = 3,
 	[ABILITY_FAIRYAURA] = 6,
-//	[ABILITY_FILTER] = 6,
+	[ABILITY_FILTER] = 6,
 	[ABILITY_FLAMEBODY] = 4,
 	[ABILITY_FLAREBOOST] = 5,
 	[ABILITY_FLASHFIRE] = 6,
@@ -124,7 +124,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_HYDRATION] = 4,
 	[ABILITY_HYPERCUTTER] = 3,
 	[ABILITY_ICEBODY] = 3,
-//	[ABILITY_ILLUMINATE] = 0,
+	[ABILITY_ILLUMINATE] = 0,
 	[ABILITY_ILLUSION] = 8,
 	[ABILITY_IMMUNITY] = 4,
 	[ABILITY_IMPOSTER] = 9,
@@ -140,6 +140,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_KLUTZ] = -1,
 	[ABILITY_LEAFGUARD] = 2,
 	[ABILITY_LEVITATE] = 7,
+	[ABILITY_LIBERO] = 8,
 	[ABILITY_LIGHTMETAL] = 2,
 	[ABILITY_LIGHTNINGROD] = 7,
 	[ABILITY_LIMBER] = 3,
@@ -179,17 +180,17 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_POISONHEAL] = 8,
 	[ABILITY_POISONPOINT] = 4,
 	[ABILITY_POISONTOUCH] = 4,
-	[ABILITY_PORTALPOWER] = 8,
 	[ABILITY_POWERCONSTRUCT] = 10,
-//	[ABILITY_POWEROFALCHEMY] = 0,
+	[ABILITY_POWEROFALCHEMY] = 0,
 	[ABILITY_PRANKSTER] = 8,
 	[ABILITY_PRESSURE] = 5,
 	[ABILITY_PRIMORDIALSEA] = 10,
 	[ABILITY_PRISMARMOR] = 6,
+	[ABILITY_PROPELLERTAIL] = 2,
 	[ABILITY_PROTEAN] = 8,
 	[ABILITY_PSYCHICSURGE] = 8,
-//	[ABILITY_PUREPOWER] = 10,
-//	[ABILITY_QUEENLYMAJESTY] = 6,
+	[ABILITY_PUREPOWER] = 10,
+	[ABILITY_QUEENLYMAJESTY] = 6,
 	[ABILITY_QUICKFEET] = 5,
 	[ABILITY_RAINDISH] = 3,
 	[ABILITY_RATTLED] = 3,
@@ -250,7 +251,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_SYMBIOSIS] = 0,
 	[ABILITY_SYNCHRONIZE] = 4,
 	[ABILITY_TANGLEDFEET] = 2,
-//	[ABILITY_TANGLINGHAIR] = 5,
+	[ABILITY_TANGLINGHAIR] = 5,
 	[ABILITY_TECHNICIAN] = 8,
 	[ABILITY_TELEPATHY] = 0,
 	[ABILITY_TERAVOLT] = 7,
@@ -268,15 +269,15 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_UNBURDEN] = 7,
 	[ABILITY_UNNERVE] = 3,
 	[ABILITY_VICTORYSTAR] = 6,
-//	[ABILITY_VITALSPIRIT] = 4,
+	[ABILITY_VITALSPIRIT] = 4,
 	[ABILITY_VOLTABSORB] = 7,
 	[ABILITY_WATERABSORB] = 7,
 	[ABILITY_WATERBUBBLE] = 8,
 	[ABILITY_WATERCOMPACTION] = 4,
 	[ABILITY_WATERVEIL] = 4,
 	[ABILITY_WEAKARMOR] = 2,
-//	[ABILITY_WHITESMOKE] = 4,
-//	[ABILITY_WIMPOUT] = 3,
+	[ABILITY_WHITESMOKE] = 4,
+	[ABILITY_WIMPOUT] = 3,
 	[ABILITY_WONDERGUARD] = 10,
 	[ABILITY_WONDERSKIN] = 4,
 	[ABILITY_ZENMODE] = -1,
@@ -299,19 +300,19 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_NEUTRALIZINGGAS] = 5,
 	[ABILITY_HUNGERSWITCH] = 2,
 	[ABILITY_PASTELVEIL] = 4,
-	[ABILITY_STEELY_SPIRIT] = 2,
-	[ABILITY_PERISH_BODY] = -1,
-	[ABILITY_WANDERING_SPIRIT] = 2,
+	[ABILITY_STEELYSPIRIT] = 2,
+	[ABILITY_PERISHBODY] = -1,
+	[ABILITY_WANDERINGSPIRIT] = 2,
 	[ABILITY_GORILLATACTICS] = 4,
 };
 
 const bool8 gMoldBreakerIgnoredAbilities[] =
 {
-//	[ABILITY_BATTLEARMOR] =		TRUE,
+	[ABILITY_BATTLEARMOR] =		TRUE,
 	[ABILITY_CLEARBODY] =		TRUE,
 	[ABILITY_DAMP] =			TRUE,
 	[ABILITY_DRYSKIN] =			TRUE,
-//	[ABILITY_FILTER] =			TRUE,
+	[ABILITY_FILTER] =			TRUE,
 	[ABILITY_FLASHFIRE] =		TRUE,
 	[ABILITY_FLOWERGIFT] =		TRUE,
 	[ABILITY_HEATPROOF] =		TRUE,
@@ -343,11 +344,11 @@ const bool8 gMoldBreakerIgnoredAbilities[] =
 	[ABILITY_TANGLEDFEET] =		TRUE,
 	[ABILITY_THICKFAT] =		TRUE,
 	[ABILITY_UNAWARE] =			TRUE,
-//	[ABILITY_VITALSPIRIT] =		TRUE,
+	[ABILITY_VITALSPIRIT] =		TRUE,
 	[ABILITY_VOLTABSORB] =		TRUE,
 	[ABILITY_WATERABSORB] =		TRUE,
 	[ABILITY_WATERVEIL] =		TRUE,
-//	[ABILITY_WHITESMOKE] =		TRUE,
+	[ABILITY_WHITESMOKE] =		TRUE,
 	[ABILITY_WONDERGUARD] =		TRUE,
 	[ABILITY_BIGPECKS] =		TRUE,
 	[ABILITY_CONTRARY] =		TRUE,
@@ -368,9 +369,8 @@ const bool8 gMoldBreakerIgnoredAbilities[] =
 	[ABILITY_DAZZLING] =		TRUE,
 	[ABILITY_DISGUISE] =		TRUE,
 	[ABILITY_FLUFFY] =			TRUE,
-//	[ABILITY_QUEENLYMAJESTY] =	TRUE,
+	[ABILITY_QUEENLYMAJESTY] =	TRUE,
 	[ABILITY_WATERBUBBLE] =		TRUE,
-	[ABILITY_PORTALPOWER] =		TRUE,
 	[ABILITY_MIRRORARMOR] =		TRUE,
 	[ABILITY_PUNKROCK] =		TRUE,
 	[ABILITY_ICESCALES] =		TRUE,
@@ -414,7 +414,7 @@ static bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string);
 static bool8 CanBeAffectedByIntimidate(u8 bank);
 static bool8 AllMainStatsButOneAreMinned(u8 bank);
 
-u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
+u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveArg)
 {
 	int i;
 	u8 effect = 0;
@@ -1004,7 +1004,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 
 		case ABILITY_INSOMNIA:
-		//case ABILITY_VITALSPIRIT:
+		case ABILITY_VITALSPIRIT:
 			effect = ImmunityAbilityCheck(bank, STATUS1_SLEEP, gStatusConditionString_Sleep);
 			break;
 
@@ -1229,7 +1229,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& ABILITY(i) != ABILITY_NONE
 				&& !CheckTableForAbility(ABILITY(i), gNeutralizingGasBannedAbilities))
 				{
-					u8* abilityLoc = GetAbilityLocation(i);
+					u16* abilityLoc = GetAbilityLocation(i);
 					gNewBS->neutralizingGasBlockedAbilities[i] = *abilityLoc;
 					*abilityLoc = 0;
 					gNewBS->SlowStartTimers[i] = 0;
@@ -1239,6 +1239,23 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			gBattleStringLoader = gText_NeutralizingGasActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_NeutralizingGas);
 			effect++;
+			break;
+
+		case ABILITY_CURIOUSMEDICINE:
+			if (IS_DOUBLE_BATTLE)
+			{
+				u8 partner = PARTNER(bank);
+				if (BATTLER_ALIVE(partner))
+				{
+					for (i = 0; i < BATTLE_STATS_NO - 1; ++i)
+						gBattleMons[partner].statStages[i] = 6;
+
+					gBankTarget = partner;
+					gBattleStringLoader = gText_CuriousMedicineActivate;
+					BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
+					effect++;
+				}
+			}
 			break;
 		}
 
@@ -1499,7 +1516,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					}
 					break;
 			
-				//case ABILITY_WIMPOUT:
+				case ABILITY_WIMPOUT:
 				case ABILITY_EMERGENCYEXIT:
 					if (!(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
 					&& gNewBS->turnDamageTaken[bank] > 0
@@ -1536,7 +1553,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						break;
 
 					case ABILITY_DAZZLING: //Cannot use
-					//case ABILITY_QUEENLYMAJESTY: //Cannot use
+					case ABILITY_QUEENLYMAJESTY: //Cannot use
 						if (PriorityCalc(gBankAttacker, ACTION_USE_MOVE, move) > 0
 						&& !CheckTableForMove(move, gSpecialWholeFieldMoves)
 						&& !(gBattleMoves[move].target & MOVE_TARGET_OPPONENTS_FIELD) //Spikes are never affected
@@ -1570,7 +1587,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			{
 				switch (gLastUsedAbility) {
 					case ABILITY_DAZZLING:
-					//case ABILITY_QUEENLYMAJESTY:
+					case ABILITY_QUEENLYMAJESTY:
 						if (PriorityCalc(gBankAttacker, ACTION_USE_MOVE, move) > 0)
 							effect = 1;
 						break;
@@ -1952,7 +1969,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				}
 				break;
 
-			case ABILITY_WANDERING_SPIRIT:
+			case ABILITY_WANDERINGSPIRIT:
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
 				&& (BATTLER_ALIVE(gBankAttacker) || BATTLER_ALIVE(gBankTarget))
@@ -2016,7 +2033,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				}
 				break;
 
-			//case ABILITY_TANGLINGHAIR:
+			case ABILITY_TANGLINGHAIR:
 			case ABILITY_GOOEY:
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
@@ -2143,7 +2160,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				}
 				break;
 
-			case ABILITY_PERISH_BODY:
+			case ABILITY_PERISHBODY:
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
 				&& gBankAttacker != bank
@@ -2214,7 +2231,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					}
 					break;
 				case ABILITY_INSOMNIA:
-				//case ABILITY_VITALSPIRIT:
+				case ABILITY_VITALSPIRIT:
 					if (gBattleMons[bank].status1 & STATUS1_SLEEP)
 					{
 						gBattleMons[bank].status2 &= ~(STATUS2_NIGHTMARE);
@@ -2987,7 +3004,7 @@ void AnimTask_LoadAbilityPopUp(u8 taskId)
 {
 	const s16 (*coords)[2];
 	u8 spriteId1, spriteId2, battlerPosition, destroyerTaskId;
-	u8 ability = gAbilityPopUpHelper; //Preceded by transfer of proper ability
+	u16 ability = gAbilityPopUpHelper; //Preceded by transfer of proper ability
 
 	LoadSpriteSheet((const struct SpriteSheet*) &gBattleAnimPicTable[ANIM_TAG_ABILITY_POP_UP - ANIM_SPRITES_START]);
 	LoadSpritePalette((const struct SpritePalette*) &gBattleAnimPaletteTable[ANIM_TAG_ABILITY_POP_UP - ANIM_SPRITES_START]);
@@ -3145,10 +3162,10 @@ void TransferAbilityPopUpHelperAsWanderingSpirit(void)
 		return;
 	}
 
-	TransferAbilityPopUp(gBattleScripting.bank, ABILITY_WANDERING_SPIRIT);
+	TransferAbilityPopUp(gBattleScripting.bank, ABILITY_WANDERINGSPIRIT);
 }
 
-void TransferAbilityPopUp(u8 bank, u8 ability)
+void TransferAbilityPopUp(u8 bank, u16 ability)
 {
 	gActiveBattler = bank;
 	gAbilityPopUpHelper = ability;

@@ -101,10 +101,13 @@
 すべての バリアが なくなった！
 
 #org @gText_NeutralizingGasActivate
-あたりに かがくへんかガスが じゅうまんした！
+あたりに かがくへんかガスが\nじゅうまんした！
 
 #org @gText_NeutralizingGasEnd
 かがくへんかガスの こうかが きれた！
+
+#org @gText_CuriousMedicineActivate
+[TARGET]の\nのうりょくへんかが もとに もどった！
 
 #org @gText_PkmnHurtsWith
 [ATTACKER]は\nきずついた！

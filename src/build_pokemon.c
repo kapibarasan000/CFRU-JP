@@ -168,7 +168,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerNum, 
 static void BuildFrontierMultiParty(u8 multiId);
 static void BuildRaidMultiParty(void);
 static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct BattleTowerSpread* spread, const u16 trainerId, const u8 trainerNum, const u8 trainerGender, const bool8 forPlayer);
-static u8 ConvertFrontierAbilityNumToAbility(const u8 abilityNum, const u16 species);
+static u16 ConvertFrontierAbilityNumToAbility(const u8 abilityNum, const u16 species);
 static bool8 BaseStatsTotalGEAlreadyOnTeam(const u16 toCheck, const u8 partySize, u16* speciesArray);
 static bool8 SpeciesAlreadyOnTeam(const u16 species, const u8 partySize, const species_t* const speciesArray);
 static bool8 ItemAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray);
@@ -178,9 +178,9 @@ static bool8 TooManyLegendariesOnGSCupTeam(const u16 species, const u8 partySize
 static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArray, u8 monsCount, u16 trainerId, u8 tier, bool8 forPlayer);
 static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread, const struct TeamBuilder* const builder, bool8 forPlayer);
 static void AddPlayerMoveTypesToBuilder(struct TeamBuilder* builder, u8 monsCount);
-static void UpdateBuilderAfterSpread(struct TeamBuilder* builder, const struct BattleTowerSpread* spread, u16 species, u8 ability, u16 item, u8 itemEffect, u32 partyId);
+static void UpdateBuilderAfterSpread(struct TeamBuilder* builder, const struct BattleTowerSpread* spread, u16 species, u16 ability, u16 item, u8 itemEffect, u32 partyId);
 static bool8 CareAboutTeamWeaknessesInTier(u8 tier);
-static bool8 IsSpreadWeakToType(u8 moveType, u8 defType1, u8 defType2, u8 ability);
+static bool8 IsSpreadWeakToType(u8 moveType, u8 defType1, u8 defType2, u16 ability);
 static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct BattleTowerSpread* const spreadTable, const u16 numSpreads);
 static const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const struct BattleTowerSpread* const spreads, const u16 numSpreads);
 static void TryGetSpecialSpeciesSpreadTable(u16 species, const struct BattleTowerSpread** table, u16* spreadCount);
@@ -1471,7 +1471,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 	{
 		bool8 loop = TRUE;
 		u16 species, dexNum, item;
-		u8 ability, itemEffect;
+		u16 ability, itemEffect;
 		const struct BattleTowerSpread* spread = NULL;
 
 		do
@@ -2281,9 +2281,9 @@ void GiveMonXPerfectIVs(struct Pokemon* mon, u8 totalPerfectStats)
 	}
 }
 
-static u8 ConvertFrontierAbilityNumToAbility(const u8 abilityNum, const u16 species)
+static u16 ConvertFrontierAbilityNumToAbility(const u8 abilityNum, const u16 species)
 {
-	u8 ability = ABILITY_NONE;
+	u16 ability = ABILITY_NONE;
 
 	switch (abilityNum) {
 		case FRONTIER_ABILITY_1:
@@ -2525,7 +2525,7 @@ static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread,
 {
 	int i;
 
-	u8 ability = (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_ABILITY_SUPPRESSION) ? 0
+	u16 ability = (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_ABILITY_SUPPRESSION) ? 0
 			   : ConvertFrontierAbilityNumToAbility(spread->ability, spread->species);
 	u8 itemEffect = (ability == ABILITY_KLUTZ
 				 || (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_MAGIC_ROOM)) ? 0 : ItemId_GetHoldEffect(spread->item);
@@ -2811,7 +2811,7 @@ static void AddPlayerMoveTypesToBuilder(struct TeamBuilder* builder, u8 monsCoun
 	}
 }
 
-static void UpdateBuilderAfterSpread(struct TeamBuilder* builder, const struct BattleTowerSpread* spread, u16 species, u8 ability, u16 item, u8 itemEffect, u32 partyId)
+static void UpdateBuilderAfterSpread(struct TeamBuilder* builder, const struct BattleTowerSpread* spread, u16 species, u16 ability, u16 item, u8 itemEffect, u32 partyId)
 {
 	u32 j;
 	u8 class = PredictFightingStyle(spread->moves, ability, itemEffect, 0xFF);
@@ -2958,7 +2958,7 @@ static bool8 CareAboutTeamWeaknessesInTier(u8 tier)
 		&& !IsCamomonsTier(tier); //Weaknesses get shuffled anyway
 }
 
-static bool8 IsSpreadWeakToType(u8 moveType, u8 defType1, u8 defType2, u8 ability)
+static bool8 IsSpreadWeakToType(u8 moveType, u8 defType1, u8 defType2, u16 ability)
 {
 	u8 typeDmg = 10;
 	ModulateByTypeEffectiveness(moveType, defType1, defType2, &typeDmg);
@@ -4275,9 +4275,9 @@ void CalculateMonStatsNew(struct Pokemon *mon)
 	SetMonData(mon, MON_DATA_HP, &currentHP);
 }
 
-u8 GetMonAbility(const struct Pokemon* mon)
+u16 GetMonAbility(const struct Pokemon* mon)
 {
-	u8 ability;
+	u16 ability;
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 
 	if (mon->hiddenAbility && gBaseStats[species].hiddenAbility != ABILITY_NONE)

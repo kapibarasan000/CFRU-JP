@@ -709,7 +709,7 @@ bool8 IsMegaZMoveBannedBattle(void)
 bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const struct Pokemon* const mon, const u8 tier, const u8 checkFromLocationType)
 {
 	u32 i;
-	u8 ability;
+	u16 ability;
 	const u16* moveLoc;
 
 	if (species == SPECIES_EGG)

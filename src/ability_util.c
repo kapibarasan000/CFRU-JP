@@ -12,17 +12,17 @@
 #include "../include/new/util.h"
 
 
-bool8 IsTargetAbilityIgnored(u8 defAbility, u8 atkAbility, u16 move)
+bool8 IsTargetAbilityIgnored(u16 defAbility, u16 atkAbility, u16 move)
 {
 	return IS_MOLD_BREAKER(atkAbility, move) && gMoldBreakerIgnoredAbilities[defAbility];
 }
 
-bool8 IsTargetAbilityIgnoredNoMove(u8 defAbility, u8 atkAbility)
+bool8 IsTargetAbilityIgnoredNoMove(u16 defAbility, u16 atkAbility)
 {
 	return IsMoldBreakerAbility(atkAbility) && gMoldBreakerIgnoredAbilities[defAbility];
 }
 
-bool8 IsClearBodyAbility(u8 ability)
+bool8 IsClearBodyAbility(u16 ability)
 {
 	return ability == ABILITY_CLEARBODY
 		#ifdef ABILITY_FULLMETALBODY
@@ -34,7 +34,7 @@ bool8 IsClearBodyAbility(u8 ability)
 		;
 }
 
-bool8 IsMoldBreakerAbility(u8 ability)
+bool8 IsMoldBreakerAbility(u16 ability)
 {
 	return ability == ABILITY_MOLDBREAKER
 		#ifdef ABILITY_TURBOBLAZE
@@ -46,7 +46,7 @@ bool8 IsMoldBreakerAbility(u8 ability)
 		;
 }
 
-bool8 AbilityBlocksIntimidate(u8 ability)
+bool8 AbilityBlocksIntimidate(u16 ability)
 {
 	return ability == ABILITY_INNERFOCUS
 		|| ability == ABILITY_OWNTEMPO
@@ -54,14 +54,14 @@ bool8 AbilityBlocksIntimidate(u8 ability)
 		|| ability == ABILITY_SCRAPPY;
 }
 
-bool8 AbilityPreventsLoweringAtk(u8 ability)
+bool8 AbilityPreventsLoweringAtk(u16 ability)
 {
 	return ability == ABILITY_HYPERCUTTER
 		|| ability == ABILITY_MIRRORARMOR
 		|| IsClearBodyAbility(ability);
 }
 
-bool8 AbilityPreventsLoweringStat(u8 ability, u8 statId)
+bool8 AbilityPreventsLoweringStat(u16 ability, u8 statId)
 {
 	switch (ability)
 	{
@@ -76,7 +76,7 @@ bool8 AbilityPreventsLoweringStat(u8 ability, u8 statId)
 	}
 }
 
-bool8 IsAffectedBySturdy(u8 defAbility, u8 bankDef)
+bool8 IsAffectedBySturdy(u16 defAbility, u8 bankDef)
 {
 	return defAbility == ABILITY_STURDY
 		&& BATTLER_MAX_HP(bankDef);
@@ -86,11 +86,11 @@ bool8 IsAffectedByBadDreams(u8 bank)
 {
 	return BATTLER_ALIVE(bank)
 		&& (gBattleMons[bank].status1 & STATUS_SLEEP
-		 || ABILITY(FOE(bank)) == ABILITY_COMATOSE)
+		 || ABILITY(bank) == ABILITY_COMATOSE)
 		&& ABILITY(bank) != ABILITY_MAGICGUARD;
 }
 
-bool8 IsTrappedByAbility(u8 bankDef, u8 trapAbility)
+bool8 IsTrappedByAbility(u8 bankDef, u16 trapAbility)
 {
 	if (!CanBeTrapped(bankDef))
 		return FALSE;
@@ -108,7 +108,7 @@ bool8 IsTrappedByAbility(u8 bankDef, u8 trapAbility)
 	}
 }
 
-bool8 IsPriorityBlockingAbility(u8 ability)
+bool8 IsPriorityBlockingAbility(u16 ability)
 {
 	switch (ability)
 	{
@@ -122,7 +122,7 @@ bool8 IsPriorityBlockingAbility(u8 ability)
 	}
 }
 
-bool8 IsUnnerveAbility(u8 ability)
+bool8 IsUnnerveAbility(u16 ability)
 {
 	return ability == ABILITY_UNNERVE
 		#ifdef ABILITY_ASONE_GRIM
@@ -146,7 +146,7 @@ bool8 UnnerveOnOpposingField(u8 bank)
 		;
 }
 
-bool8 AbilityIncreasesWildItemChance(u8 ability)
+bool8 AbilityIncreasesWildItemChance(u16 ability)
 {
 	return ability == ABILITY_COMPOUNDEYES || ability == ABILITY_SUPERLUCK;
 }

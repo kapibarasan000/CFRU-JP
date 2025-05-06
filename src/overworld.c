@@ -1822,7 +1822,7 @@ s32 DoPoisonFieldEffect(void)
 	for (i = 0; i < PARTY_SIZE; i++)
 	{
 		mon = &gPlayerParty[i];
-		u8 ability = GetMonAbility(mon);
+		u16 ability = GetMonAbility(mon);
 		if (GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE
 		&& GetMonPrimaryAilments(mon->condition) == AILMENT_PSN
 		&& ability != ABILITY_POISONHEAL && ability != ABILITY_MAGICGUARD)

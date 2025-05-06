@@ -86,7 +86,7 @@
 /*u8*/ //#define gSafariBallNumber 	(*((u8*) 0x0203990C))	// see src/scripting.c
 /*u16*/ #define gSafariSteps	   (*((u16*) 0x0203990E))
 
-/*u8*/  #define gAbilitiesPerBank ((u8*) 0x20399A8)
+/*u8*/  //#define gAbilitiesPerBank ((u8*) 0x20399A8)
 		//#define gStringInfo ((struct BattleMsgData*) *((u32*) 0x2039A34))
 
 		#define sHofFadingRelated (*((u32*) 0x0203AAAC))
@@ -176,7 +176,7 @@ extern u16 gLastUsedBall;
 //extern struct CompressedPokemon gBox21[30] //0x203D210
 //extern struct CompressedPokemon gBox22[30] //0x203D8DC
 
-#define gPokeBackupPtr (*((const void**) 0x203DFAC))
+#define gPokeBackupPtr (*((const void**) 0x203DFAD))
 //#define sDexNavStatePtr/sFrontierRecordsPtr/gNewBS //0x203E038
 extern bool8 gInShop; //0x203E043
 #define gBattleCircusFlags (*((u32*) 0x203DFBC))

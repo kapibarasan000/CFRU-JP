@@ -1357,8 +1357,8 @@ void AbilityChangeBSFunc(void)
 		return;
 	}
 
-	u8* atkAbilityLoc, *defAbilityLoc;
-	u8 atkAbility, defAbility;
+	u16* atkAbilityLoc, *defAbilityLoc;
+	u16 atkAbility, defAbility;
 
 	//Get correct location of ability
 	atkAbilityLoc = GetAbilityLocation(gBankAttacker);

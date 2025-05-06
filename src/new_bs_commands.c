@@ -22,6 +22,7 @@
 #include "../include/new/move_tables.h"
 #include "../include/new/multi.h"
 #include "../include/new/new_bs_commands.h"
+#include "../include/new/party_menu.h"
 #include "../include/new/set_effect.h"
 #include "../include/new/stat_buffs.h"
 #include "../include/new/terastal.h"
@@ -96,8 +97,8 @@ void atkFC_clearspecialstatusbit(void)
 //jumpifabilitypresenttargetfield ABILITY ROM_OFFSET
 void atkFD_jumpifabilitypresenttargetfield(void)
 {
-	u8 ability = gBattlescriptCurrInstr[1];
-	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	u16 ability = T1_READ_16(gBattlescriptCurrInstr + 1);
+	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 
 	if (ABILITY(gBankTarget) == ability)
 		gBattleScripting.bank = gBankTarget;
@@ -105,7 +106,7 @@ void atkFD_jumpifabilitypresenttargetfield(void)
 		gBattleScripting.bank = PARTNER(gBankTarget);
 	else
 	{
-		gBattlescriptCurrInstr += 6;
+		gBattlescriptCurrInstr += 7;
 		return;
 	}
 
@@ -520,7 +521,7 @@ void atkFF09_jumpifcounter(void)
 void atkFF0A_setability(void)
 {
 	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
-	u8 ability = gBattlescriptCurrInstr[2];
+	u16 ability = T1_READ_16(gBattlescriptCurrInstr + 2);
 	*GetAbilityLocation(bank) = ability;
 	gBattlescriptCurrInstr += 3;
 }
@@ -702,7 +703,8 @@ void atkFF14_jumpiftypepresent(void)
 //jumpifstatcanbelowered BANK STAT ROM_ADDRESS
 void atkFF15_jumpifstatcanbemodified(void)
 {
-	u8 statId, ability;
+	u8 statId;
+	u16 ability;
 	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	ability = ABILITY(gActiveBattler);
 	statId = gBattlescriptCurrInstr[2];
@@ -805,13 +807,13 @@ void atkFF19_formchange(void)
 //jumpifabilitypresentattackerfield ABILITY ROM_OFFSET
 void atkFF1A_jumpifabilitypresentattackerfield(void)
 {
-	u8 ability = gBattlescriptCurrInstr[1];
-	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	u16 ability = T1_READ_16(gBattlescriptCurrInstr + 1);
+	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 
 	if (AbilityBattleEffects(ABILITYEFFECT_CHECK_BANK_SIDE, gBankAttacker, ability, 0, 0))
 		gBattlescriptCurrInstr = ptr;
 	else
-		gBattlescriptCurrInstr += 6;
+		gBattlescriptCurrInstr += 7;
 }
 
 //tryactivateswitchinability
@@ -922,7 +924,7 @@ void atkFF21_tryspectralthiefsteal(void)
 {
 	s8 increment = 1;
 	bool8 success = FALSE;
-	u8 atkAbility = ABILITY(gBankAttacker);
+	u16 atkAbility = ABILITY(gBankAttacker);
 
 	for (int i = 0; i < BATTLE_STATS_NO-1; ++i)
 	{
@@ -1341,7 +1343,7 @@ void atkFF27_tryactivateprotean(void)
 {
 	u8 moveType = gBattleStruct->dynamicMoveType;
 
-	if (ABILITY(gBankAttacker) == ABILITY_PROTEAN
+	if ((ABILITY(gBankAttacker) == ABILITY_PROTEAN || ABILITY(gBankAttacker) == ABILITY_LIBERO)
 	&& !(gMoveResultFlags & MOVE_RESULT_FAILED)
 	&& gCurrentMove != MOVE_STRUGGLE
 	&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)

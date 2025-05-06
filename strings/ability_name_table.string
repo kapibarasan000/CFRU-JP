@@ -14,8 +14,8 @@ FILL_FF=True
 #org @NAME_SPEED_BOOST
 かそく
 
-#org @NAME_UNSEENFIST
-ふかしのこぶし
+#org @NAME_BATTL_EARMOR
+カブトアーマー
 
 #org @NAME_STURDY
 がんじょう
@@ -107,8 +107,8 @@ FILL_FF=True
 #org @NAME_CHLOROPHYLL
 ようりょくそ
 
-#org @NAME_DRAGONSMAW
-りゅうのあぎと
+#org @NAME_ILLUMINATE
+はっこう
 
 #org @NAME_TRACE
 トレース
@@ -218,353 +218,110 @@ FILL_FF=True
 #org @NAME_ARENA_TRAP
 ありじごく
 
-#org @NAME_TRANSISTOR
-トランジスタ
+#org @NAME_VITAL_SPIRIT
+やるき
 
-#org @NAME_FULL_METAL_BODY
-メタルプロテクト
+#org @NAME_WHITE_SMOKE
+しろいけむり
 
-#org @NAME_NEUTRALISING_GAS
-かがくへんかガス
+#org @NAME_PURE_POWER
+ヨガパワー
 
 #org @NAME_SHELL_ARMOR
 シェルアーマー
 
-#org @NAME_HUNGER_SWITCH
-はらぺこスイッチ
-
 #org @NAME_AIR_LOCK
 エアロック
-
-#org @NAME_SWEET_VEIL
-スイートベール
-
-#org @NAME_SKILL_LINK
-スキルリンク
-
-#org @NAME_MOTOR_DRIVE
-でんきエンジン
-
-#org @NAME_MULTISCALE
-マルチスケイル
-
-#org @NAME_TECHNICIAN
-テクニシャン
-
-#org @NAME_SCRAPPY
-きもったま
-
-#org @NAME_SUPER_LUCK
-きょううん
-
-#org @NAME_SNIPER
-スナイパー
-
-#org @NAME_REGENERATOR
-さいせいりょく
-
-#org @NAME_PRANKSTER
-いたずらごころ
-
-#org @NAME_ADAPTABILITY
-てきおうりょく
-
-#org @NAME_BIG_PECKS
-はとむね
-
-#org @NAME_MAGIC_BOUNCE
-マジックミラー
-
-#org @NAME_RECKLESS
-すてみ
-
-#org @NAME_SHEER_FORCE
-ちからずく
-
-#org @NAME_IRON_FIST
-てつのこぶし
-
-#org @NAME_RIVALRY
-とうそうしん
-
-#org @NAME_SAND_FORCE
-すなのちから
-
-#org @NAME_SOLAR_POWER
-サンパワー
-
-#org @NAME_HEATPROOF
-たいねつ
-
-#org @NAME_DRY_SKIN
-かんそうはだ
-
-#org @NAME_TINTED_LENS
-いろめがね
-
-#org @NAME_SOLID_ROCK
-ハードロック
-
-#org @NAME_CHILLINGNEIGH
-しろのいななき
-
-#org @NAME_INFILTRATOR
-すりぬけ
-
-#org @NAME_DOWNLOAD
-ダウンロード
-
-#org @NAME_POISON_HEAL
-ポイズンヒール
-
-#org @NAME_ICE_BODY
-アイスボディ
-
-#org @NAME_MOODY
-ムラっけ
-
-#org @NAME_HYDRATION
-うるおいボディ
-
-#org @NAME_HEALER
-いやしのこころ
-
-#org @NAME_SNOW_CLOAK
-ゆきがくれ
 
 #org @NAME_TANGLED_FEET
 ちどりあし
 
-#org @NAME_SNOW_WARNING
-ゆきふらし
+#org @NAME_MOTOR_DRIVE
+でんきエンジン
 
-#org @NAME_QUICK_FEET
-はやあし
+#org @NAME_RIVALRY
+とうそうしん
 
-#org @NAME_SAP_SIPPER
-そうしょく
+#org @NAME_STEADFAST
+ふくつのこころ
 
-#org @NAME_OVERCOAT
-ぼうじん
+#org @NAME_SNOW_CLOAK
+ゆきがくれ
 
-#org @NAME_MAGIC_GUARD
-マジックガード
+#org @NAME_GLUTTONY
+くいしんぼう
 
-#org @NAME_BULLETPROOF
-ぼうだん
-
-#org @NAME_GALE_WINGS
-はやてのつばさ
-
-#org @NAME_MOXIE
-じしんかじょう
-
-#org @NAME_AFTERMATH
-ゆうばく
-
-#org @NAME_CURSED_BODY
-のろわれボディ
-
-#org @NAME_GOOEY
-ぬめぬめ
-
-#org @NAME_MUMMY
-ミイラ
-
-#org @NAME_IRON_BARBS
-てつのトゲ
-
-#org @NAME_SAND_RUSH
-すなかき
-
-#org @NAME_ANALYTIC
-アナライズ
-
-#org @NAME_NO_GUARD
-ノーガード
-
-#org @NAME_MEGA_LAUNCHER
-メガランチャー
-
-#org @NAME_TOUGH_CLAWS
-かたいツメ
-
-#org @NAME_STRONG_JAW
-がんじょうあご
-
-#org @NAME_VICTORY_STAR
-しょうりのほし
-
-#org @NAME_STORM_DRAIN
-よびみず
-
-#org @NAME_DARK_AURA
-ダークオーラ
-
-#org @NAME_FAIRY_AURA
-フェアリーオーラ
-
-#org @NAME_AURA_BREAK
-オーラブレイク
-
-#org @NAME_REFRIGERATE
-フリーズスキン
-
-#org @NAME_PIXILATE
-フェアリースキン
-
-#org @NAME_AERILATE
-スカイスキン
-
-#org @NAME_NORMALIZE
-ノーマルスキン
+#org @NAME_ANGER_POINT
+いかりのつぼ
 
 #org @NAME_UNBURDEN
 かるわざ
 
+#org @NAME_HEATPROOF
+たいねつ
+
 #org @NAME_SIMPLE
 たんじゅん
 
-#org @NAME_UNAWARE
-てんねん
+#org @NAME_DRY_SKIN
+かんそうはだ
 
-#org @NAME_DEFIANT
-まけんき
+#org @NAME_DOWNLOAD
+ダウンロード
 
-#org @NAME_COMPETITIVE
-かちき
+#org @NAME_IRON_FIST
+てつのこぶし
 
-#org @NAME_DEFEATIST
-よわき
+#org @NAME_POISON_HEAL
+ポイズンヒール
 
-#org @NAME_SLOW_START
-スロースタート
+#org @NAME_ADAPTABILITY
+てきおうりょく
 
-#org @NAME_TOXIC_BOOST
-どくぼうそう
+#org @NAME_SKILL_LINK
+スキルリンク
 
-#org @NAME_FLARE_BOOST
-ねつぼうそう
+#org @NAME_HYDRATION
+うるおいボディ
 
-#org @NAME_FUR_COAT
-ファーコート
+#org @NAME_SOLAR_POWER
+サンパワー
 
-#org @NAME_WONDER_SKIN
-ミラクルスキン
+#org @NAME_QUICK_FEET
+はやあし
 
-#org @NAME_PROTEAN
-へんげんじざい
+#org @NAME_NORMALIZE
+ノーマルスキン
 
-#org @NAME_PARENTAL_BOND
-おやこあい
+#org @NAME_SNIPER
+スナイパー
 
-#org @NAME_MOLD_BREAKER
-かたやぶり
+#org @NAME_MAGIC_GUARD
+マジックガード
 
-#org @NAME_TURBOBLAZE
-ターボブレイズ
-
-#org @NAME_TERAVOLT
-テラボルテージ
-
-#org @NAME_ZEN_MODE
-ダルマモード
-
-#org @NAME_BATTLE_BOND
-きずなへんげ
-
-#org @NAME_BEAST_BOOST
-ビーストブースト
-
-#org @NAME_CORROSION
-ふしょく
-
-#org @NAME_DISGUISE
-ばけのかわ
-
-#org @NAME_EMERGENCY_EXIT
-ききかいひ
-
-#org @NAME_FLUFFY
-もふもふ
-
-#org @NAME_STEELY_SPIRIT
-はがねのせいしん
-
-#org @NAME_PERISH_BODY
-ほろびのボディ
-
-#org @NAME_WANDERING_SPIRIT
-さまようたましい
-
-#org @NAME_POWER_CONSTRUCT
-スワームチェンジ
-
-#org @NAME_PRISM_ARMOR
-プリズムアーマー
-
-#org @NAME_RKS_SYSTEM
-ARシステム
-
-#org @NAME_SCHOOLING
-ぎょぐん
-
-#org @NAME_SHADOW_SHIELD
-ファントムガード
-
-#org @NAME_SHIELDS_DOWN
-リミットシールド
-
-#org @NAME_SLUSH_RUSH
-ゆきかき
-
-#org @NAME_SOULHEART
-ソウルハート
-
-#org @NAME_STAMINA
-じきゅうりょく
-
-#org @NAME_STEELWORKER
-はがねつかい
-
-#org @NAME_GRIMNEIGH
-くろのいななき
-
-#org @NAME_TRIAGE
-ヒーリングシフト
-
-#org @NAME_WATER_BUBBLE
-すいほう
-
-#org @NAME_WATER_COMPACTION
-みずがため
+#org @NAME_NO_GUARD
+ノーガード
 
 #org @NAME_STALL
 あとだし
 
-#org @NAME_MULTITYPE
-マルチタイプ
+#org @NAME_TECHNICIAN
+テクニシャン
 
-#org @NAME_ELECTRIC_SURGE
-エレキメイカー
+#org @NAME_LEAF_GUARD
+リーフガード
 
-#org @NAME_GRASSY_SURGE
-グラスメイカー
+#org @NAME_KLUTZ
+ぶきよう
 
-#org @NAME_MISTY_SURGE
-ミストメイカー
+#org @NAME_MOLD_BREAKER
+かたやぶり
 
-#org @NAME_PSYCHIC_SURGE
-サイコメイカー
+#org @NAME_SUPER_LUCK
+きょううん
 
-#org @NAME_SURGE_SURFER
-サーフテール
-
-#org @NAME_GRASS_PELT
-くさのけがわ
-
-#org @NAME_ANGER_POINT
-いかりのつぼ
+#org @NAME_AFTERMATH
+ゆうばく
 
 #org @NAME_ANTICIPATION
 きけんよち
@@ -572,50 +329,44 @@ ARシステム
 #org @NAME_FOREWARN
 よちむ
 
+#org @NAME_UNAWARE
+てんねん
+
+#org @NAME_TINTED_LENS
+いろめがね
+
+#org @NAME_FILTER
+フィルター
+
+#org @NAME_SLOW_START
+スロースタート
+
+#org @NAME_SCRAPPY
+きもったま
+
+#org @NAME_STORM_DRAIN
+よびみず
+
+#org @NAME_ICE_BODY
+アイスボディ
+
+#org @NAME_SOLID_ROCK
+ハードロック
+
+#org @NAME_SNOW_WARNING
+ゆきふらし
+
+#org @NAME_HONEY_GATHER
+みつあつめ
+
 #org @NAME_FRISK
 おみとおし
 
-#org @NAME_CONTRARY
-あまのじゃく
+#org @NAME_RECKLESS
+すてみ
 
-#org @NAME_UNNERVE
-きんちょうかん
-
-#org @NAME_WEAK_ARMOR
-くだけるよろい
-
-#org @NAME_HEAVY_METAL
-ヘヴィメタル
-
-#org @NAME_LIGHT_METAL
-ライトメタル
-
-#org @NAME_STEADFAST
-ふくつのこころ
-
-#org @NAME_IMPOSTER
-かわりもの
-
-#org @NAME_JUSTIFIED
-せいぎのこころ
-
-#org @NAME_RATTLED
-びびり
-
-#org @NAME_MERCILESS
-ひとでなし
-
-#org @NAME_AROMA_VEIL
-アロマベール
-
-#org @NAME_FLOWER_VEIL
-フラワーベール
-
-#org @NAME_LEAF_GUARD
-リーフガード
-
-#org @NAME_KLUTZ
-ぶきよう
+#org @NAME_MULTITYPE
+マルチタイプ
 
 #org @NAME_FLOWER_GIFT
 フラワーギフト
@@ -626,17 +377,197 @@ ARシステム
 #org @NAME_PICKPOCKET
 わるいてぐせ
 
-#org @NAME_PORTAL_POWER
-ポータルパワー
+#org @NAME_SHEER_FORCE
+ちからずく
+
+#org @NAME_CONTRARY
+あまのじゃく
+
+#org @NAME_UNNERVE
+きんちょうかん
+
+#org @NAME_DEFIANT
+まけんき
+
+#org @NAME_DEFEATIST
+よわき
+
+#org @NAME_CURSED_BODY
+のろわれボディ
+
+#org @NAME_HEALER
+いやしのこころ
+
+#org @NAME_FRIEND_GUARD
+フレンドガード
+
+#org @NAME_WEAK_ARMOR
+くだけるよろい
+
+#org @NAME_HEAVY_METAL
+ヘヴィメタル
+
+#org @NAME_LIGHT_METAL
+ライトメタル
+
+#org @NAME_MULTISCALE
+マルチスケイル
+
+#org @NAME_TOXIC_BOOST
+どくぼうそう
+
+#org @NAME_FLARE_BOOST
+ねつぼうそう
+
+#org @NAME_HARVEST
+しゅうかく
+
+#org @NAME_TELEPATHY
+テレパシー
+
+#org @NAME_MOODY
+ムラっけ
+
+#org @NAME_OVERCOAT
+ぼうじん
 
 #org @NAME_POISON_TOUCH
 どくしゅ
 
+#org @NAME_REGENERATOR
+さいせいりょく
+
+#org @NAME_BIG_PECKS
+はとむね
+
+#org @NAME_SAND_RUSH
+すなかき
+
+#org @NAME_WONDER_SKIN
+ミラクルスキン
+
+#org @NAME_ANALYTIC
+アナライズ
+
+#org @NAME_ILLUSION
+イリュージョン
+
+#org @NAME_IMPOSTER
+かわりもの
+
+#org @NAME_INFILTRATOR
+すりぬけ
+
+#org @NAME_MUMMY
+ミイラ
+
+#org @NAME_MOXIE
+じしんかじょう
+
+#org @NAME_JUSTIFIED
+せいぎのこころ
+
+#org @NAME_RATTLED
+びびり
+
+#org @NAME_MAGIC_BOUNCE
+マジックミラー
+
+#org @NAME_SAP_SIPPER
+そうしょく
+
+#org @NAME_PRANKSTER
+いたずらごころ
+
+#org @NAME_SAND_FORCE
+すなのちから
+
+#org @NAME_IRON_BARBS
+てつのトゲ
+
+#org @NAME_ZEN_MODE
+ダルマモード
+
+#org @NAME_VICTORY_STAR
+しょうりのほし
+
+#org @NAME_TURBOBLAZE
+ターボブレイズ
+
+#org @NAME_TERAVOLT
+テラボルテージ
+
+#org @NAME_AROMA_VEIL
+アロマベール
+
+#org @NAME_FLOWER_VEIL
+フラワーベール
+
+#org @NAME_CHEEK_POUCH
+ほおぶくろ
+
+#org @NAME_PROTEAN
+へんげんじざい
+
+#org @NAME_FUR_COAT
+ファーコート
+
 #org @NAME_MAGICIAN
 マジシャン
 
+#org @NAME_BULLETPROOF
+ぼうだん
+
+#org @NAME_COMPETITIVE
+かちき
+
+#org @NAME_STRONG_JAW
+がんじょうあご
+
+#org @NAME_REFRIGERATE
+フリーズスキン
+
+#org @NAME_SWEET_VEIL
+スイートベール
+
 #org @NAME_STANCE_CHANGE
 バトルスイッチ
+
+#org @NAME_GALE_WINGS
+はやてのつばさ
+
+#org @NAME_MEGA_LAUNCHER
+メガランチャー
+
+#org @NAME_GRASS_PELT
+くさのけがわ
+
+#org @NAME_SYMBIOSIS
+きょうせい
+
+#org @NAME_TOUGH_CLAWS
+かたいツメ
+
+#org @NAME_PIXILATE
+フェアリースキン
+
+#org @NAME_GOOEY
+ぬめぬめ
+
+#org @NAME_AERILATE
+スカイスキン
+
+#org @NAME_PARENTAL_BOND
+おやこあい
+
+#org @NAME_DARK_AURA
+ダークオーラ
+
+#org @NAME_FAIRY_AURA
+フェアリーオーラ
+
+#org @NAME_AURA_BREAK
+オーラブレイク
 
 #org @NAME_PRIMORDIAL_SEA
 はじまりのうみ
@@ -647,11 +578,38 @@ ARシステム
 #org @NAME_DELTA_STREAM
 デルタストリーム
 
-#org @NAME_GORILLA_TACTICS
-ごりむちゅう
+#org @NAME_STAMINA
+じきゅうりょく
+
+#org @NAME_WIMP_OUT
+にげごし
+
+#org @NAME_EMERGENCY_EXIT
+ききかいひ
+
+#org @NAME_WATER_COMPACTION
+みずがため
+
+#org @NAME_MERCILESS
+ひとでなし
+
+#org @NAME_SHIELDS_DOWN
+リミットシールド
+
+#org @NAME_STAKEOUT
+はりこみ
+
+#org @NAME_WATER_BUBBLE
+すいほう
+
+#org @NAME_STEELWORKER
+はがねつかい
 
 #org @NAME_BERSERK
 ぎゃくじょう
+
+#org @NAME_SLUSH_RUSH
+ゆきかき
 
 #org @NAME_LONG_REACH
 えんかく
@@ -659,44 +617,38 @@ ARシステム
 #org @NAME_LIQUID_VOICE
 うるおいボイス
 
-#org @NAME_ASONE_CHILLING
-じんばいったい
+#org @NAME_TRIAGE
+ヒーリングシフト
 
-#org @NAME_INNARDS_OUT
-とびだすなかみ
+#org @NAME_GALVANIZE
+エレキスキン
 
-#org @NAME_DAZZLING
-ビビッドボディ
+#org @NAME_SURGE_SURFER
+サーフテール
 
-#org @NAME_GLUTTONY
-くいしんぼう
+#org @NAME_SCHOOLING
+ぎょぐん
 
-#org @NAME_HONEY_GATHER
-みつあつめ
+#org @NAME_DISGUISE
+ばけのかわ
 
-#org @NAME_FRIEND_GUARD
-フレンドガード
+#org @NAME_BATTLE_BOND
+きずなへんげ
 
-#org @NAME_HARVEST
-しゅうかく
+#org @NAME_POWER_CONSTRUCT
+スワームチェンジ
 
-#org @NAME_TELEPATHY
-テレパシー
-
-#org @NAME_ILLUSION
-イリュージョン
-
-#org @NAME_CHEEK_POUCH
-ほおぶくろ
-
-#org @NAME_SYMBIOSIS
-きょうせい
-
-#org @NAME_STAKEOUT
-はりこみ
+#org @NAME_CORROSION
+ふしょく
 
 #org @NAME_COMATOSE
 ぜったいねむり
+
+#org @NAME_QUEENLY_MAJESTY
+じょおうのいげん
+
+#org @NAME_INNARDS_OUT
+とびだすなかみ
 
 #org @NAME_DANCER
 おどりこ
@@ -704,17 +656,53 @@ ARシステム
 #org @NAME_BATTERY
 バッテリー
 
+#org @NAME_FLUFFY
+もふもふ
+
+#org @NAME_DAZZLING
+ビビッドボディ
+
+#org @NAME_SOUL_HEART
+ソウルハート
+
+#org @NAME_TANGLING_HAIR
+カーリーヘアー
+
 #org @NAME_RECEIVER
 レシーバー
 
-#org @NAME_ASONE_GRIM
-じんばいったい
+#org @NAME_POWER_OF_ALCHEMY
+かがくのちから
+
+#org @NAME_BEAST_BOOST
+ビーストブースト
+
+#org @NAME_RKS_SYSTEM
+ARシステム
+
+#org @NAME_ELECTRIC_SURGE
+エレキメイカー
+
+#org @NAME_PSYCHIC_SURGE
+サイコメイカー
+
+#org @NAME_MISTY_SURGE
+ミストメイカー
+
+#org @NAME_GRASSY_SURGE
+グラスメイカー
+
+#org @NAME_FULL_METAL_BODY
+メタルプロテクト
+
+#org @NAME_SHADOW_SHIELD
+ファントムガード
+
+#org @NAME_PRISM_ARMOR
+プリズムアーマー
 
 #org @NAME_NEUROFORCE
 ブレインフォース
-
-#org @NAME_GALVANIZE
-エレキスキン
 
 #org @NAME_INTREPID_SWORD
 ふとうのけん
@@ -722,16 +710,22 @@ ARシステム
 #org @NAME_DAUNTLESS_SHIELD
 ふくつのたて
 
+#org @NAME_LIBERO
+リベロ
+
 #org @NAME_BALL_FETCH
 たまひろい
 
 #org @NAME_COTTON_DOWN
 わたげ
 
+#org @NAME_PROPELLER_TAIL
+スクリューおびれ
+
 #org @NAME_MIRROR_ARMOR
 ミラーアーマー
 
-#org @NAME_GULP_MISSLE
+#org @NAME_GULP_MISSILE
 うのミサイル
 
 #org @NAME_STALWART
@@ -764,5 +758,179 @@ ARシステム
 #org @NAME_SCREEN_CLEANER
 バリアフリー
 
+#org @NAME_STEELY_SPIRIT
+はがねのせいしん
+
+#org @NAME_PERISH_BODY
+ほろびのボディ
+
+#org @NAME_WANDERING_SPIRIT
+さまようたましい
+
+#org @NAME_GORILLA_TACTICS
+ごりむちゅう
+
+#org @NAME_NEUTRALIZING_GAS
+かがくへんかガス
+
 #org @NAME_PASTEL_VEIL
 パステルベール
+
+#org @NAME_HUNGER_SWITCH
+はらぺこスイッチ
+
+#org @NAME_QUICK_DRAW
+クイックドロウ
+
+#org @NAME_UNSEEN_FIST
+ふかしのこぶし
+
+#org @NAME_CURIOUS_MEDICINE
+きみょうなくすり
+
+#org @NAME_TRANSISTOR
+トランジスタ
+
+#org @NAME_DRAGONS_MAW
+りゅうのあぎと
+
+#org @NAME_CHILLING_NEIGH
+しろのいななき
+
+#org @NAME_GRIM_NEIGH
+くろのいななき
+
+#org @NAME_AS_ONE_CHILLING
+じんばいったい
+
+#org @NAME_AS_ONE_GRIM
+じんばいったい
+
+#org @NAME_LINGERING_AROMA
+とれないにおい
+
+#org @NAME_SEED_SOWER
+こぼれダネ
+
+#org @NAME_THERMAL_EXCHANGE
+ねつこうかん
+
+#org @NAME_ANGER_SHELL
+いかりのこうら
+
+#org @NAME_PURIFYING_SALT
+きよめのしお
+
+#org @NAME_WELL_BAKED_BODY
+こんがりボディ
+
+#org @NAME_WIND_RIDER
+かぜのり
+
+#org @NAME_GUARD_DOG
+ばんけん
+
+#org @NAME_ROCKY_PAYLOAD
+いわはこび
+
+#org @NAME_WIND_POWER
+ふうりょくでんき
+
+#org @NAME_ZERO_TO_HERO
+マイティチェンジ
+
+#org @NAME_COMMANDER
+しれいとう
+
+#org @NAME_ELECTROMORPHOSIS
+でんきにかえる
+
+#org @NAME_PROTOSYNTHESIS
+こだいかっせい
+
+#org @NAME_QUARK_DRIVE
+クォークチャージ
+
+#org @NAME_GOOD_AS_GOLD
+おうごんのからだ
+
+#org @NAME_VESSEL_OF_RUIN
+わざわいのうつわ
+
+#org @NAME_SWORD_OF_RUIN
+わざわいのつるぎ
+
+#org @NAME_TABLETS_OF_RUIN
+わざわいのおふだ
+
+#org @NAME_BEADS_OF_RUIN
+わざわいのたま
+
+#org @NAME_ORICHALCUM_PULSE
+ひひいろのこどう
+
+#org @NAME_HADRON_ENGINE
+ハドロンエンジン
+
+#org @NAME_OPPORTUNIST
+びんじょう
+
+#org @NAME_CUD_CHEW
+はんすう
+
+#org @NAME_SHARPNESS
+きれあじ
+
+#org @NAME_SUPREME_OVERLORD
+そうだいしょう
+
+#org @NAME_COSTAR
+きょうえん
+
+#org @NAME_TOXIC_DEBRIS
+どくげしょう
+
+#org @NAME_ARMOR_TAIL
+テイルアーマー
+
+#org @NAME_EARTH_EATER
+どしょく
+
+#org @NAME_MYCELIUM_MIGHT
+きんしのちから
+
+#org @NAME_HOSPITALITY
+おもてなし
+
+#org @NAME_MINDS_EYE
+しんがん
+
+#org @NAME_EMBODY_ASPECT_TEAL_MASK
+おもかげやどし
+
+#org @NAME_EMBODY_ASPECT_HEARTHFLAME_MASK
+おもかげやどし
+
+#org @NAME_EMBODY_ASPECT_WELLSPRING_MASK
+おもかげやどし
+
+#org @NAME_EMBODY_ASPECT_CORNERSTONE_MASK
+おもかげやどし
+
+#org @NAME_TOXIC_CHAIN
+どくのくさり
+
+#org @NAME_SUPERSWEET_SYRUP
+かんろなミツ
+
+#org @NAME_TERA_SHIFT
+テラスチェンジ
+
+#org @NAME_TERA_SHELL
+テラスシェル
+
+#org @NAME_TERAFORM_ZERO
+ゼロフォーミング
+
+#org @NAME_POISON_PUPPETEER
+どくくぐつ

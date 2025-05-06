@@ -1886,8 +1886,8 @@ static void HighlightPossibleTargets(void)
 
 u8 TrySetCantSelectMoveBattleScript(void)
 {
-	u8 limitations, ability, holdEffect, isAnyMaxMove;
-	u16 move, *choicedMove;
+	u8 limitations, holdEffect, isAnyMaxMove;
+	u16 move, *choicedMove, ability;
 
 	limitations = 0; isAnyMaxMove = FALSE;
 	ability = ABILITY(gActiveBattler);

@@ -43,8 +43,8 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 	u16 partnerMove = data->partnerMove;
 
 	u8 atkPartnerItemEffect = ITEM_EFFECT(bankAtkPartner);
-	u8 atkAbility = GetAIAbility(bankAtk, data->foe1, move);
-	u8 atkPartnerAbility = data->atkPartnerAbility;
+	u16 atkAbility = GetAIAbility(bankAtk, data->foe1, move);
+	u16 atkPartnerAbility = data->atkPartnerAbility;
 
 	if (!NO_MOLD_BREAKERS(atkAbility, move)
 	&& gMoldBreakerIgnoredAbilities[atkPartnerAbility])

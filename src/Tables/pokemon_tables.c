@@ -1289,10 +1289,10 @@ const move_t gSmogonAverageMons_MoveBanList[] =
 	MOVE_TABLES_TERMIN
 };
 
-const u8 gSmogonAverageMons_AbilityBanList[] =
+const ability_t gSmogonAverageMons_AbilityBanList[] =
 {
 	ABILITY_HUGEPOWER,
-//	ABILITY_PUREPOWER,
+	ABILITY_PUREPOWER,
 	ABILITY_SHADOWTAG,
 	ABILITY_ARENATRAP,
 	ABILITY_TABLES_TERMIN
@@ -1313,7 +1313,7 @@ const item_t gSmogon350Cup_ItemBanList[] =
 	ITEM_TABLES_TERMIN
 };
 
-const u8 gSmogon350Cup_AbilityBanList[] =
+const ability_t gSmogon350Cup_AbilityBanList[] =
 {
 	ABILITY_SHADOWTAG,
 	ABILITY_ARENATRAP,
@@ -1343,7 +1343,7 @@ const item_t gSmogonScalemons_ItemBanList[] =
 	ITEM_TABLES_TERMIN
 };
 
-const u8 gSmogonScalemons_AbilityBanList[] =
+const ability_t gSmogonScalemons_AbilityBanList[] =
 {
 	ABILITY_SHADOWTAG,
 	ABILITY_HUGEPOWER,

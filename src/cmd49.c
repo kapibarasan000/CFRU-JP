@@ -1301,7 +1301,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 					if (bank != gBankAttacker)
 					{
-						if ((/*ABILITY(bank) == ABILITY_WIMPOUT ||*/ ABILITY(bank) == ABILITY_EMERGENCYEXIT)
+						if ((ABILITY(bank) == ABILITY_WIMPOUT || ABILITY(bank) == ABILITY_EMERGENCYEXIT)
 						&&  !(gNewBS->ResultFlags[bank] & MOVE_RESULT_NO_EFFECT)
 						&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 						&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
@@ -1322,7 +1322,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					}
 					else //Self inflicted damage
 					{
-						if ((/*ABILITY(bank) == ABILITY_WIMPOUT ||*/ ABILITY(bank) == ABILITY_EMERGENCYEXIT)
+						if ((ABILITY(bank) == ABILITY_WIMPOUT || ABILITY(bank) == ABILITY_EMERGENCYEXIT)
 						&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
 						&&  BATTLER_ALIVE(bank)
 						&&  (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2 || gNewBS->lessThanHalfHPBeforeShellBell) //Ignore Shell Bell Recovery
