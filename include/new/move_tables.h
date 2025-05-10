@@ -28,6 +28,7 @@ extern const move_t gRecklessBoostedMoves[];
 extern const move_t gPunchingMoves[];
 extern const move_t gPulseAuraMoves[];
 extern const move_t gBitingMoves[];
+extern const move_t gSlicingMoves[];
 extern const move_t gBallBombMoves[];
 extern const move_t gDanceMoves[];
 extern const move_t gPowderMoves[];

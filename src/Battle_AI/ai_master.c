@@ -1050,6 +1050,11 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 			absorbingTypeAbility2 = ABILITY_SAPSIPPER;
 			absorbingTypeAbility3 = ABILITY_SAPSIPPER;
 			break;
+		case TYPE_GROUND:
+			absorbingTypeAbility1 = ABILITY_EARTHEATER;
+			absorbingTypeAbility2 = ABILITY_EARTHEATER;
+			absorbingTypeAbility3 = ABILITY_EARTHEATER;
+			break;
 		default:
 			return FALSE;
 	}
@@ -1485,7 +1490,8 @@ static bool8 IsYawned(void)
 		//Don't switch if invested in Evasion and it'll hold up
 		if (STAT_STAGE(gActiveBattler, STAT_STAGE_EVASION) >= 6 + 3
 		&& !ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_UNAWARE)
-		&& !ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_KEENEYE))
+		&& !ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_KEENEYE)
+		&& !ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_MINDSEYE))
 			return FALSE;
 
 		//Don't switch if you can fight through the sleep

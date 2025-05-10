@@ -44,6 +44,7 @@ enum
 	ATK49_ATTACKER_ABILITIES,
 	ATK49_ADVERSE_PROTECTION,
 	ATK49_RAGE,
+	ATK49_TOOK_DAMAGE_COUNT,
 	ATK49_SYNCHRONIZE_TARGET,
 	ATK49_BEAK_BLAST_BURN,
 	ATK49_SYNCHRONIZE_ATTACKER,
@@ -197,6 +198,19 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 							gBattlescriptCurrInstr = BattleScript_PoisonTouch;
 							effect = TRUE;
 						}
+						break;
+
+					case ABILITY_TOXICCHAIN:
+						if (ABILITY(gBankTarget) != ABILITY_SHIELDDUST
+						&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
+						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
+						&& umodsi(Random(), 100) < 30)
+						{
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_ToxicChain;
+							effect = TRUE;
+						}
+						break;
 				}
 			}
 			gBattleScripting.atk49_state++;
@@ -313,6 +327,16 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				gBattlescriptCurrInstr = BattleScript_RageIsBuilding;
 				effect = TRUE;
 			}
+			gBattleScripting.atk49_state++;
+			break;
+
+		case ATK49_TOOK_DAMAGE_COUNT:
+			if (MOVE_HAD_EFFECT
+			&& TOOK_DAMAGE(gBankTarget)
+			&& gBankAttacker != gBankTarget
+			&& (SPLIT(gCurrentMove) == SPLIT_PHYSICAL || SPLIT_SPECIAL)
+			&& gNewBS->rageFistCounter[SIDE(gBankTarget)][gBattlerPartyIndexes[gBankTarget]] < 6)
+				gNewBS->rageFistCounter[SIDE(gBankTarget)][gBattlerPartyIndexes[gBankTarget]]++;
 			gBattleScripting.atk49_state++;
 			break;
 

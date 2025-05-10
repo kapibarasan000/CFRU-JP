@@ -70,6 +70,7 @@ bool8 AbilityPreventsLoweringStat(u16 ability, u8 statId)
 		case ABILITY_BIGPECKS:
 			return statId == STAT_STAGE_DEF;
 		case ABILITY_KEENEYE:
+		case ABILITY_MINDSEYE:
 			return statId == STAT_STAGE_ACC;
 		default:
 			return FALSE;
@@ -113,9 +114,8 @@ bool8 IsPriorityBlockingAbility(u16 ability)
 	switch (ability)
 	{
 		case ABILITY_DAZZLING:
-		#ifdef ABILITY_QUEENLYMAJESTY
 		case ABILITY_QUEENLYMAJESTY:
-		#endif
+		case ABILITY_ARMORTAIL:
 			return TRUE;
 		default:
 			return FALSE;

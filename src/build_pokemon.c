@@ -2534,10 +2534,10 @@ static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread,
 	bool8 hasTailwinder = builder->moveOnTeam[MOVE_TAILWIND];
 	bool8 hasTrickRoomer = builder->moveOnTeam[MOVE_TRICKROOM];
 	bool8 hasRainSetter = builder->abilityOnTeam[ABILITY_DRIZZLE] || builder->moveOnTeam[MOVE_RAINDANCE];
-	bool8 hasSunSetter = builder->abilityOnTeam[ABILITY_DROUGHT] || builder->moveOnTeam[MOVE_SUNNYDAY];
+	bool8 hasSunSetter = builder->abilityOnTeam[ABILITY_DROUGHT] || builder->abilityOnTeam[ABILITY_ORICHALCUMPULSE] || builder->moveOnTeam[MOVE_SUNNYDAY];
 	bool8 hasSandSetter = builder->abilityOnTeam[ABILITY_SANDSTREAM] || builder->moveOnTeam[MOVE_SANDSTORM];
 	bool8 hasHailSetter = builder->abilityOnTeam[ABILITY_SNOWWARNING] || builder->moveOnTeam[MOVE_HAIL];
-	bool8 hasElectricTerrainSetter = builder->abilityOnTeam[ABILITY_ELECTRICSURGE] || builder->moveOnTeam[MOVE_ELECTRICTERRAIN];
+	bool8 hasElectricTerrainSetter = builder->abilityOnTeam[ABILITY_ELECTRICSURGE] || builder->abilityOnTeam[ABILITY_HADRONENGINE] || builder->moveOnTeam[MOVE_ELECTRICTERRAIN];
 	bool8 hasPsychicTerrainSetter = builder->abilityOnTeam[ABILITY_PSYCHICSURGE] || builder->moveOnTeam[MOVE_PSYCHICTERRAIN];
 	bool8 hasWonderGuard = builder->abilityOnTeam[ABILITY_WONDERGUARD];
 	bool8 hasJustified = builder->abilityOnTeam[ABILITY_JUSTIFIED];
@@ -2612,6 +2612,7 @@ static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread,
 			break;
 
 		case ABILITY_DROUGHT:
+		case ABILITY_ORICHALCUMPULSE:
 			if (hasRainSetter || hasSandSetter || hasHailSetter)
 				return TRUE;
 			break;
@@ -2878,6 +2879,7 @@ static void UpdateBuilderAfterSpread(struct TeamBuilder* builder, const struct B
 			break;
 
 		case ABILITY_ELECTRICSURGE:
+		case ABILITY_HADRONENGINE:
 			builder->partyIndex[ELECTRIC_TERRAIN_SETTER] = partyId;
 			break;
 
@@ -2912,6 +2914,7 @@ static void UpdateBuilderAfterSpread(struct TeamBuilder* builder, const struct B
 				break;
 
 			case ABILITY_LEVITATE:
+			case ABILITY_EARTHEATER:
 				if (itemEffect != ITEM_EFFECT_IRON_BALL)
 					builder->partyIndex[GROUND_IMMUNITY] = partyId;
 				break;
@@ -2966,6 +2969,7 @@ static bool8 IsSpreadWeakToType(u8 moveType, u8 defType1, u8 defType2, u16 abili
 	switch (ability)
 	{
 		case ABILITY_LEVITATE:
+		case ABILITY_EARTHEATER:
 			if (moveType == TYPE_GROUND)
 				typeDmg = 0; //This assumes there's no Iron Ball on the spread
 			break;
@@ -2983,6 +2987,7 @@ static bool8 IsSpreadWeakToType(u8 moveType, u8 defType1, u8 defType2, u16 abili
 				typeDmg *= 2;
 			break;
 		case ABILITY_DROUGHT:
+		case ABILITY_ORICHALCUMPULSE:
 			if (moveType == TYPE_WATER)
 				typeDmg /= 2;
 			break;
@@ -3315,12 +3320,14 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 			case ABILITY_DROUGHT:
 			case ABILITY_SANDSTREAM:
 			case ABILITY_SNOWWARNING:
+			case ABILITY_ORICHALCUMPULSE:
 				weatherIndex = i;
 				break;
 			case ABILITY_ELECTRICSURGE:
 			case ABILITY_GRASSYSURGE:
 			case ABILITY_MISTYSURGE:
 			case ABILITY_PSYCHICSURGE:
+			case ABILITY_HADRONENGINE:
 				terrainIndex = i;
 				break;
 			case ABILITY_DEFIANT:

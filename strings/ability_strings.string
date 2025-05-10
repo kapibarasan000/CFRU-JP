@@ -46,6 +46,12 @@
 #org @gText_FogIsDeep
 きりが ふかい
 
+#org @gText_OrichalcumPulseSunActivate
+[SCRIPTING_BANK]は\nひざしを つよめ\lこだいの こどうが あばれだす！！
+
+#org @gText_OrichalcumPulseActivate
+[SCRIPTING_BANK]は\nひざしを うけて\lこだいの こどうが あばれだす！！
+
 #org @gText_PrimordialSeaActivate
 つよい あめが ふりはじめた！
 
@@ -114,3 +120,15 @@
 
 #org @gText_AbilityIncreasedSpeedBracket
 [SCRIPTING_BANK]は\nこうどうが はやくなった！
+
+#org @gText_LingeringAromaActivate
+[ATTACKER]は においが\nうつって とれなくなっちゃった！
+
+#org @gText_EmbodyAspectActivate
+[ATTACKER]は [LAST_ITEM]を\nかがやかせ [BUFFER][00]が [BUFFER][01]
+
+#org @gText_HadronEngineSetString
+[SCRIPTING_BANK]は\nエレキフィールドを はり\lみらいの きかんを やくどうさせる！！
+
+#org @gText_HadronEngineActivate
+[SCRIPTING_BANK]は\nエレキフィールドで\lみらいの きかんを やくどうさせる！！

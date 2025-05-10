@@ -1692,6 +1692,39 @@ static void InitSpritePosToGivenTargetRespectPicOffsets(struct Sprite* sprite, u
 	sprite->pos2.y = gBattleAnimArgs[1];
 }
 
+void SetAverageBattlerPositions(u8 battlerId, bool8 respectMonPicOffsets, s16 *x, s16 *y)
+{
+	u8 xCoordType, yCoordType;
+	s16 battlerX, battlerY;
+	s16 partnerX, partnerY;
+
+	if (!respectMonPicOffsets)
+	{
+		xCoordType = BATTLER_COORD_X;
+		yCoordType = BATTLER_COORD_Y;
+	}
+	else
+	{
+		xCoordType = BATTLER_COORD_X_2;
+		yCoordType = BATTLER_COORD_Y_PIC_OFFSET;
+	}
+
+	battlerX = GetBattlerSpriteCoord(battlerId, xCoordType);
+	battlerY = GetBattlerSpriteCoord(battlerId, yCoordType);
+	if (IsDoubleBattle() && (!IsRaidBattle() || SIDE(battlerId) == B_SIDE_PLAYER))
+	{
+		partnerX = GetBattlerSpriteCoord(BATTLE_PARTNER(battlerId), xCoordType);
+		partnerY = GetBattlerSpriteCoord(BATTLE_PARTNER(battlerId), yCoordType);
+	}
+	else
+	{
+		partnerX = battlerX;
+		partnerY = battlerY;
+	}
+
+	*x = (battlerX + partnerX) / 2;
+	*y = (battlerY + partnerY) / 2;
+}
 
 void SpriteCB_CoreEnforcerHits(struct Sprite* sprite)
 {

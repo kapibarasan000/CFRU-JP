@@ -120,6 +120,11 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				}
 				break;
 
+			case ABILITY_EARTHEATER:
+				if (moveType == TYPE_GROUND)
+					IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
+				break;
+
 			// Dark
 			case ABILITY_JUSTIFIED:
 				if (moveType == TYPE_DARK
@@ -167,7 +172,8 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				break;
 
 			//Mummy
-			case ABILITY_MUMMY: ;
+			case ABILITY_MUMMY:
+			case ABILITY_LINGERINGAROMA: ;
 				u8 atkSpd = SpeedCalc(bankAtk);
 				if (SpeedCalc(data->foe1) < atkSpd) //Attacker is faster than foe 1
 				{

@@ -1880,6 +1880,7 @@ bool8 CanBeGeneralStatused(u8 bankDef, u16 defAbility, u16 atkAbility, bool8 che
 	{
 		switch (defAbility) {
 			case ABILITY_COMATOSE:
+			case ABILITY_PURIFYINGSALT:
 				return FALSE;
 
 			case ABILITY_LEAFGUARD:
@@ -1981,6 +1982,7 @@ bool8 CanBeYawned(u8 bankDef, u8 bankAtk)
 			#endif
 			case ABILITY_SWEETVEIL:
 			case ABILITY_COMATOSE:
+			case ABILITY_PURIFYINGSALT:
 				return FALSE;
 			case ABILITY_LEAFGUARD:
 				if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && ITEM_EFFECT(bankDef) != ITEM_EFFECT_UTILITY_UMBRELLA)
@@ -2001,7 +2003,7 @@ bool8 CanBeYawned(u8 bankDef, u8 bankAtk)
 
 	if (IS_DOUBLE_BATTLE)
 	{
-		u8 defPartnerAbility = ABILITY(PARTNER(bankDef));
+		u16 defPartnerAbility = ABILITY(PARTNER(bankDef));
 
 		if (!IsTargetAbilityIgnoredNoMove(defPartnerAbility, atkAbility)) //Target partner's Ability is not ignored
 		{
@@ -2091,6 +2093,7 @@ bool8 CanBeBurned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 		switch (defAbility) {
 			case ABILITY_WATERVEIL:
 			case ABILITY_WATERBUBBLE:
+			case ABILITY_THERMALEXCHANGE:
 				return FALSE;
 		}
 	}

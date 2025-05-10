@@ -1074,7 +1074,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}
 			else
 			{
-				if (atkAbility == ABILITY_SCRAPPY)
+				if (atkAbility == ABILITY_SCRAPPY || atkAbility == ABILITY_MINDSEYE)
 					break;
 				else if (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6
 				|| (IsOfType(bankDef, TYPE_GHOST)

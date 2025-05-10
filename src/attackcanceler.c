@@ -919,7 +919,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		case CANCELLER_MULTIHIT_MOVES:
 			if (CheckTableForMove(gCurrentMove, gTwoToFiveStrikesMoves))
 			{
-				u8 ability = ABILITY(gBankAttacker);
+				u16 ability = ABILITY(gBankAttacker);
 
 				if (ability == ABILITY_SKILLLINK)
 				{

@@ -202,7 +202,7 @@ void BattleBeginFirstTurn(void)
 				break;
 
 			case BTSTART_ACTIVATE_OW_WEATHER:
-				if (!gBattleStruct->overworldWeatherDone && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFF, 0))
+				if (!gBattleStruct->overworldWeatherDone && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFFFF, 0))
 				{
 					gBattleStruct->overworldWeatherDone = TRUE;
 					return;

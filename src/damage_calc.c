@@ -1583,7 +1583,7 @@ static u8 ModulateDmgByType(const u16 move, const u8 moveType, const u8 defType,
 	if (!checkMonDef && multiplier == TYPE_MUL_NO_EFFECT)
 	{
 		if ((defType == TYPE_GHOST && (moveType == TYPE_NORMAL || moveType == TYPE_FIGHTING))
-		&& (gBattleMons[bankDef].status2 & STATUS2_FORESIGHT || atkAbility == ABILITY_SCRAPPY))
+		&& (gBattleMons[bankDef].status2 & STATUS2_FORESIGHT || atkAbility == ABILITY_SCRAPPY || atkAbility == ABILITY_MINDSEYE))
 			multiplier = TYPE_MUL_NORMAL; //Foresight breaks ghost immunity
 
 		if (moveType == TYPE_PSYCHIC && defType == TYPE_DARK && (gStatuses3[bankDef] & STATUS3_MIRACLE_EYED))
@@ -1591,7 +1591,7 @@ static u8 ModulateDmgByType(const u16 move, const u8 moveType, const u8 defType,
 	}
 	else if (checkMonDef)
 	{
-		if (atkAbility == ABILITY_SCRAPPY
+		if ((atkAbility == ABILITY_SCRAPPY || atkAbility == ABILITY_MINDSEYE)
 		&& (defType == TYPE_GHOST && (moveType == TYPE_NORMAL || moveType == TYPE_FIGHTING)))
 			multiplier = TYPE_MUL_NORMAL; //Foresight breaks ghost immunity
 	}
@@ -2361,8 +2361,10 @@ void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data)
 		data->defStatus3 = 0;
 		data->defSideStatus = gSideStatuses[side];
 		
-		if (data->defAbility == ABILITY_DAUNTLESSSHIELD)
+		if (data->defAbility == ABILITY_DAUNTLESSSHIELD || data->defAbility == ABILITY_EMBODYASPECT_CORNERSTONEMASK)
 			data->defBuff = min(data->defBuff + 1, STAT_STAGE_MAX);
+		else if (data->defAbility == ABILITY_EMBODYASPECT_WELLSPRINGMASK)
+			data->spDefBuff = min(data->spDefBuff + 1, STAT_STAGE_MAX);
 
 		TryBoostMonDefensesForTotemBoost(data, bankDef);
 
@@ -2485,7 +2487,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				}
 
 				//Factor in Abilities that will activate on switch-in
-				if (atkAbility == ABILITY_DAUNTLESSSHIELD)
+				if (atkAbility == ABILITY_DAUNTLESSSHIELD || atkAbility == ABILITY_EMBODYASPECT_CORNERSTONEMASK)
 					data->atkBuff = min(data->atkBuff + 1, STAT_STAGE_MAX);
 
 				TryBoostMonOffensesForTotemBoost(data, bankAtk, TRUE); //Check the Defense Totem Buff
@@ -2503,7 +2505,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				}
 
 				//Factor in Abilities that will activate on switch-in
-				if (atkAbility == ABILITY_INTREPIDSWORD)
+				if (atkAbility == ABILITY_INTREPIDSWORD || atkAbility == ABILITY_EMBODYASPECT_HEARTHFLAMEMASK)
 					data->atkBuff = min(data->atkBuff + 1, STAT_STAGE_MAX);
 				else if (atkAbility == ABILITY_DOWNLOAD)
 				{
@@ -2603,14 +2605,14 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 					data->atkBuff = STAT_STAGE(imposterBank, STAT_STAGE_ATK);
 					data->spAtkBuff = STAT_STAGE(imposterBank, STAT_STAGE_SPATK);
 					
-					if (defAbility == ABILITY_INTREPIDSWORD)
+					if (defAbility == ABILITY_INTREPIDSWORD || defAbility == ABILITY_EMBODYASPECT_HEARTHFLAMEMASK)
 						data->atkBuff = min(data->atkBuff + 1, STAT_STAGE_MAX);
 				}
 				else
 				{
 					attack = monDef->attack;
 					spAttack = monDef->spAttack;
-					data->atkBuff = (defAbility == ABILITY_INTREPIDSWORD) ? 7 : 6; //Party mon has no buffs usually
+					data->atkBuff = (defAbility == ABILITY_INTREPIDSWORD || defAbility == ABILITY_EMBODYASPECT_HEARTHFLAMEMASK) ? 7 : 6; //Party mon has no buffs usually
 					data->spAtkBuff = 6;
 				}
 
@@ -2750,6 +2752,55 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			if (!IsDynamaxed(bankAtk))
 				attack = (attack * 15) / 10;
 			break;
+
+		case ABILITY_STEELWORKER:
+		//1.5x Boost
+			if (data->moveType == TYPE_STEEL)
+			{
+				attack = (attack * 15) / 10;
+				spAttack = (spAttack * 15) / 10;
+			}
+			break;
+
+		case ABILITY_ROCKYPAYLOAD:
+		//1.5x Boost
+			if (data->moveType == TYPE_ROCK)
+			{
+				attack = (attack * 15) / 10;
+				spAttack = (spAttack * 15) / 10;
+			}
+			break;
+
+		case ABILITY_TRANSISTOR:
+		//1.5x Boost
+			if (data->moveType == TYPE_ELECTRIC)
+			{
+				attack = (attack * 15) / 10;
+				spAttack = (spAttack * 15) / 10;
+			}
+			break;
+
+		case ABILITY_DRAGONSMAW:
+		//1.5x Boost
+			if (data->moveType == TYPE_DRAGON)
+			{
+				attack = (attack * 15) / 10;
+				spAttack = (spAttack * 15) / 10;
+			}
+			break;
+
+		case ABILITY_ORICHALCUMPULSE:
+		//1.33x Boost
+			if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)
+			&& data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+				attack = (attack * 4) / 3;
+			break;
+
+		case ABILITY_HADRONENGINE:
+		//1.33x Boost
+			if (gTerrainType == ELECTRIC_TERRAIN)
+				spAttack = (spAttack * 4) / 3;
+			break;
 	}
 
 	switch (data->atkPartnerAbility) {
@@ -2777,6 +2828,25 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		case ABILITY_THICKFAT:
 		//0.5x Decrement
 			if (data->moveType == TYPE_FIRE || data->moveType == TYPE_ICE)
+			{
+				attack /= 2;
+				spAttack /= 2;
+			}
+			break;
+
+		case ABILITY_HEATPROOF:
+		case ABILITY_WATERBUBBLE:
+		//0.5x Decrement
+			if (data->moveType == TYPE_FIRE)
+			{
+				attack /= 2;
+				spAttack /= 2;
+			}
+			break;
+
+		case ABILITY_PURIFYINGSALT:
+		//0.5x Decrement
+			if (data->moveType == TYPE_GHOST)
 			{
 				attack /= 2;
 				spAttack /= 2;
@@ -3140,13 +3210,6 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		//0.75x Decrement
 			if (data->resultFlags & MOVE_RESULT_SUPER_EFFECTIVE)
 				damage = (damage * 75) / 100;
-			break;
-
-		case ABILITY_HEATPROOF:
-		case ABILITY_WATERBUBBLE:
-		//0.5x Decrement
-			if (data->moveType == TYPE_FIRE)
-				damage /= 2;
 			break;
 
 		case ABILITY_MULTISCALE:
@@ -3958,6 +4021,12 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 				power = (power * 15) / 10;
 			break;
 
+		case ABILITY_SHARPNESS:
+		//1.5x Boost
+			if (CheckTableForMove(move, gSlicingMoves))
+				power = (power * 15) / 10;
+			break;
+
 		case ABILITY_TOUGHCLAWS:
 		//1.3x Boost
 			if (((!useMonAtk && IsContactMove(move, bankAtk, bankDef))
@@ -3978,7 +4047,6 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 				power *= 2;
 			break;
 
-		case ABILITY_STEELWORKER:
 		case ABILITY_STEELYSPIRIT:
 		//1.5x Boost
 			if (data->moveType == TYPE_STEEL)
@@ -4001,18 +4069,6 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 		//1.3x Boost
 			if (CheckSoundMove(move))
 				power = (power * 13) / 10;
-			break;
-
-		case ABILITY_TRANSISTOR:
-		//1.5x Boost
-			if (data->moveType == TYPE_ELECTRIC)
-				power = (power * 15) / 10;
-			break;
-
-		case ABILITY_DRAGONSMAW:
-		//1.5x Boost
-			if (data->moveType == TYPE_DRAGON)
-				power = (power * 15) / 10;
 			break;
 	}
 

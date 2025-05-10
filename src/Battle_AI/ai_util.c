@@ -1615,6 +1615,7 @@ bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk)
 		|| (defAbility == ABILITY_TOXICBOOST && PhysicalMoveInMoveset(bankDef))
 		|| (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
 		|| (atkAbility == ABILITY_POISONTOUCH && ContactMovesThatAffectTargetInMoveset(bankAtk, bankDef)) //Just poison it using attacker's ability
+		||  atkAbility == ABILITY_TOXICCHAIN
 		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
 		||  MoveInMoveset(MOVE_FACADE, bankDef)
@@ -1807,6 +1808,7 @@ bool8 GoodIdeaToLowerAccuracy(u8 bankDef, u8 bankAtk, u16 move)
 		&& defAbility != ABILITY_WHITESMOKE
 		&& defAbility != ABILITY_FULLMETALBODY
 		&& defAbility != ABILITY_KEENEYE
+		&& defAbility != ABILITY_MINDSEYE
 		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 

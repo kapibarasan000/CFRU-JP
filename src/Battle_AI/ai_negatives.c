@@ -264,6 +264,17 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				}
 				break;
 
+			case ABILITY_EARTHEATER:
+				if (moveType == TYPE_GROUND)
+				{
+					if (!TARGETING_PARTNER) //Good idea to attack partner
+					{
+						DECREASE_VIABILITY(20);
+						return viability;
+					}
+				}
+				break;
+
 			// Dark
 			case ABILITY_JUSTIFIED:
 				if (moveType == TYPE_DARK && moveSplit != SPLIT_STATUS)
@@ -308,6 +319,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 			case ABILITY_DAZZLING:
 			case ABILITY_QUEENLYMAJESTY:
+			case ABILITY_ARMORTAIL:
 				if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Check if right num
 				{
 					DECREASE_VIABILITY(10);
@@ -379,6 +391,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				break;
 
 			case ABILITY_KEENEYE:
+			case ABILITY_MINDSEYE:
 				if (moveEffect == EFFECT_ACCURACY_DOWN
 				||  moveEffect == EFFECT_ACCURACY_DOWN_2)
 				{
@@ -496,6 +509,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 				case ABILITY_DAZZLING:
 				case ABILITY_QUEENLYMAJESTY:
+				case ABILITY_ARMORTAIL:
 					if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Check if right num
 					{
 						DECREASE_VIABILITY(10);

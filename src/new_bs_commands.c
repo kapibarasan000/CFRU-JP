@@ -523,7 +523,7 @@ void atkFF0A_setability(void)
 	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u16 ability = T1_READ_16(gBattlescriptCurrInstr + 2);
 	*GetAbilityLocation(bank) = ability;
-	gBattlescriptCurrInstr += 3;
+	gBattlescriptCurrInstr += 4;
 }
 
 //jumpiftargetpartner ROM_OFFSET
@@ -1022,6 +1022,19 @@ void atkFE_prefaintmoveendeffects(void)
 							gBattlescriptCurrInstr = BattleScript_PoisonTouch;
 							effect = TRUE;
 						}
+						break;
+
+					case ABILITY_TOXICCHAIN:
+						if (ABILITY(gBankTarget) != ABILITY_SHIELDDUST
+						&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
+						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
+						&& umodsi(Random(), 100) < 30)
+						{
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_ToxicChain;
+							effect = TRUE;
+						}
+						break;
 				}
 			}
 			gNewBS->preFaintEffectsState++;
@@ -1139,6 +1152,16 @@ void atkFE_prefaintmoveendeffects(void)
 				gBattlescriptCurrInstr = BattleScript_RageIsBuilding;
 				effect = TRUE;
 			}
+			gNewBS->preFaintEffectsState++;
+			break;
+
+		case FAINT_TOOK_DAMAGE_COUNT:
+			if (MOVE_HAD_EFFECT
+			&& TOOK_DAMAGE(gBankTarget)
+			&& gBankAttacker != gBankTarget
+			&& (SPLIT(gCurrentMove) == SPLIT_PHYSICAL || SPLIT_SPECIAL)
+			&& gNewBS->rageFistCounter[SIDE(gBankTarget)][gBattlerPartyIndexes[gBankTarget]] < 6)
+				gNewBS->rageFistCounter[SIDE(gBankTarget)][gBattlerPartyIndexes[gBankTarget]]++;
 			gNewBS->preFaintEffectsState++;
 			break;
 
@@ -1516,6 +1539,7 @@ void atkFF29_trysetsleep(void)
 				}
 				break;
 			case ABILITY_COMATOSE:
+			case ABILITY_PURIFYINGSALT:
 				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 				return;
 			case ABILITY_SHIELDSDOWN:
@@ -1628,6 +1652,7 @@ void atkD7_setyawn(void)
 				}
 				break;
 			case ABILITY_COMATOSE:
+			case ABILITY_PURIFYINGSALT:
 				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 				return;
 			case ABILITY_SHIELDSDOWN:
@@ -1740,6 +1765,7 @@ void atkFF2A_trysetparalysis(void)
 				break;
 			case ABILITY_LIMBER:
 			case ABILITY_COMATOSE:
+			case ABILITY_PURIFYINGSALT:
 				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 				return;
 			case ABILITY_SHIELDSDOWN:
@@ -1829,6 +1855,8 @@ void atkFF2B_trysetburn(void)
 			case ABILITY_WATERVEIL:
 			case ABILITY_WATERBUBBLE:
 			case ABILITY_COMATOSE:
+			case ABILITY_THERMALEXCHANGE:
+			case ABILITY_PURIFYINGSALT:
 				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 				return;
 			case ABILITY_SHIELDSDOWN:
@@ -1938,6 +1966,7 @@ void atkFF2C_trysetpoison(void)
 				break;
 			case ABILITY_IMMUNITY:
 			case ABILITY_COMATOSE:
+			case ABILITY_PURIFYINGSALT:
 				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 				return;
 			case ABILITY_SHIELDSDOWN:

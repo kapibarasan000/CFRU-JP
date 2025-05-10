@@ -2731,6 +2731,7 @@ void atk81_trysetrest(void)
 				}
 				break;
 			case ABILITY_COMATOSE:
+			case ABILITY_PURIFYINGSALT:
 				gBattlescriptCurrInstr = BattleScript_ButItFailed;
 				fail = TRUE;
 				break;
@@ -2794,6 +2795,7 @@ void atk84_jumpifcantmakeasleep(void)
 	#endif
 	|| defAbility == ABILITY_COMATOSE
 	|| defAbility == ABILITY_SWEETVEIL
+	|| defAbility == ABILITY_PURIFYINGSALT
 	|| (defAbility == ABILITY_LEAFGUARD && WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
 	|| (defAbility == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS) && gCurrentMove != MOVE_REST))
 	{

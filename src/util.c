@@ -418,6 +418,7 @@ bool8 CanPartyMonBeGeneralStatused(struct Pokemon* mon)
 
 	switch (GetMonAbility(mon)) {
 		case ABILITY_COMATOSE:
+		case ABILITY_PURIFYINGSALT:
 			return FALSE;
 
 		case ABILITY_FLOWERVEIL:
@@ -477,6 +478,7 @@ bool8 CanPartyMonBeParalyzed(struct Pokemon* mon)
 
 	switch (GetMonAbility(mon)) {
 		case ABILITY_LIMBER:
+		case ABILITY_PURIFYINGSALT:
 			return FALSE;
 	}
 
@@ -498,6 +500,7 @@ bool8 CanPartyMonBeBurned(struct Pokemon* mon)
 	switch (GetMonAbility(mon)) {
 		case ABILITY_WATERVEIL:
 		case ABILITY_WATERBUBBLE:
+		case ABILITY_THERMALEXCHANGE:
 			return FALSE;
 	}
 

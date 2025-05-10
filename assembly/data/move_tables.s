@@ -63,6 +63,7 @@ move_tables.s
 .global gMovesThatLiftProtectTable
 .global gMovesWithQuietBGM
 .global gTerastalPowerBoostBannedMoves
+.global gSlicingMoves
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1325,4 +1326,35 @@ gTerastalPowerBoostBannedMoves:
 .hword MOVE_TWINBEAM
 .hword MOVE_TRIPLEDIVE
 .hword MOVE_POPULATIONBOMB
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+gSlicingMoves:
+.hword MOVE_AQUACUTTER
+.hword MOVE_CUT
+.hword MOVE_AIRCUTTER
+.hword MOVE_AIRSLASH
+.hword MOVE_STONEAXE
+.hword MOVE_BEHEMOTHBLADE
+.hword MOVE_SLASH
+.hword MOVE_CROSSPOISON
+.hword MOVE_PSYCHOCUT
+.hword MOVE_PSYBLADE
+.hword MOVE_RAZORSHELL
+.hword MOVE_XSCISSOR
+.hword MOVE_SECRETSWORD
+.hword MOVE_SACREDSWORD
+.hword MOVE_SOLARBLADE
+.hword MOVE_TACHYONCUTTER
+.hword MOVE_NIGHTSLASH
+.hword MOVE_AERIALACE
+.hword MOVE_KOWTOWCLEAVE
+.hword MOVE_POPULATIONBOMB
+.hword MOVE_RAZORLEAF
+.hword MOVE_MIGHTYCLEAVE
+.hword MOVE_CEASELESSEDGE
+.hword MOVE_BITTERBLADE
+.hword MOVE_LEAFBLADE
+.hword MOVE_FURYCUTTER
 .hword MOVE_TABLES_TERMIN

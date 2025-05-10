@@ -23,6 +23,7 @@ ability_battle_scripts.s
 .global BattleScript_TerrainFromAbility
 .global BattleScript_ImposterActivates
 .global BattleScript_AttackerAbilityStatRaiseEnd3
+.global BattleScript_EmbodyAspect
 .global BattleScript_NeutralizingGas
 .global BattleScript_SwitchInAbilityMsg
 .global BattleScript_End3
@@ -64,6 +65,7 @@ ability_battle_scripts.s
 .global BattleScript_WeakArmorActivates
 .global BattleScript_CursedBodyActivates
 .global BattleScript_MummyActivates
+.global BattleScript_LingeringAromaActivates
 .global BattleScript_WanderingSpiritActivates
 .global BattleScript_GooeyActivates
 .global BattleScript_IllusionBroken
@@ -315,6 +317,17 @@ BattleScript_AttackerAbilityStatRaise:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_EmbodyAspect:
+	call BattleScript_AbilityPopUp
+	setgraphicalstatchangevalues
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -768,6 +781,24 @@ BattleScript_MummyActivates:
 	setability BANK_ATTACKER ABILITY_MUMMY
 	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER MummyString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_LingeringAromaActivates:
+	call BattleScript_AbilityPopUp
+	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
+	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
+	call BattleScript_AbilityPopUp
+	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
+	setability BANK_ATTACKER ABILITY_LINGERINGAROMA
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_LingeringAromaActivate
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
