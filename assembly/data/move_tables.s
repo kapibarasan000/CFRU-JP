@@ -64,6 +64,7 @@ move_tables.s
 .global gMovesWithQuietBGM
 .global gTerastalPowerBoostBannedMoves
 .global gSlicingMoves
+.global gWindMoves
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1357,4 +1358,25 @@ gSlicingMoves:
 .hword MOVE_BITTERBLADE
 .hword MOVE_LEAFBLADE
 .hword MOVE_FURYCUTTER
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+gWindMoves:
+.hword MOVE_AIRCUTTER
+.hword MOVE_AEROBLAST
+.hword MOVE_GUST
+.hword MOVE_WILDBOLTSTORM
+.hword MOVE_BLEAKWINDSTORM
+.hword MOVE_ICYWIND
+.hword MOVE_TWISTER
+.hword MOVE_SANDSEARSTORM
+.hword MOVE_HEATWAVE
+.hword MOVE_PETALBLIZZARD
+.hword MOVE_SPRINGTIDESTORM
+.hword MOVE_BLIZZARD
+.hword MOVE_HURRICANE
+.hword MOVE_FAIRYWIND
+.hword MOVE_SILVERWIND
+.hword MOVE_OMINOUSWIND
 .hword MOVE_TABLES_TERMIN

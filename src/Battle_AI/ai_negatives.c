@@ -236,6 +236,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 			// Fire
 			case ABILITY_FLASHFIRE:
+			case ABILITY_WELLBAKEDBODY:
 				if (moveType == TYPE_FIRE)
 				{
 					if (!TARGETING_PARTNER) //Good idea to attack partner
@@ -314,6 +315,17 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				{
 					DECREASE_VIABILITY(10);
 					return viability;
+				}
+				break;
+
+			case ABILITY_WINDRIDER:
+				if (CheckTableForMove(move, gWindMoves))
+				{
+					if (!TARGETING_PARTNER) //Good idea to attack partner
+					{
+						DECREASE_VIABILITY(20);
+						return viability;
+					}
 				}
 				break;
 

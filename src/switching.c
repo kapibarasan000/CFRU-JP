@@ -1197,6 +1197,7 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->disguisedAs[bank] = 0;
 	gNewBS->SyrupBombTimers[bank] = 0;
 	gNewBS->DragonCheerRanks[bank] = 0;
+	gNewBS->supremeOverlordMultiplier[bank] = 0;
 
 	gProtectStructs[bank].KingsShield = 0;	//Necessary because could be sent away with Roar
 	gProtectStructs[bank].SpikyShield = 0;

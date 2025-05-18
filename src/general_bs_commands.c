@@ -4006,23 +4006,67 @@ void atkAE_healpartystatus(void)
 		else
 			party = gEnemyParty;
 
-		if (ABILITY(gBankAttacker) != ABILITY_SOUNDPROOF)
-		{
-			gBattleMons[gBankAttacker].status1 = 0;
-			gBattleMons[gBankAttacker].status2 &= ~(STATUS2_NIGHTMARE);
-		}
-		else
-		{
-			RecordAbilityBattle(gBankAttacker, ABILITY(gBankAttacker));
-			gBattleCommunication[MULTISTRING_CHOOSER] |= 1;
-		}
+		gBattleMons[gBankAttacker].status1 = 0;
+		gBattleMons[gBankAttacker].status2 &= ~(STATUS2_NIGHTMARE);
 
 		gActiveBattler = gBattleScripting.bank = GetBattlerAtPosition(GetBattlerPosition(gBankAttacker) ^ BIT_FLANK);
 
 		if (IS_DOUBLE_BATTLE
 		&& !(gAbsentBattlerFlags & gBitTable[gActiveBattler]))
 		{
-			if (ABILITY(gActiveBattler) != ABILITY_SOUNDPROOF)
+			if (ABILITY(gActiveBattler) != ABILITY_SOUNDPROOF
+			&& ABILITY(gActiveBattler) != ABILITY_GOODASGOLD)
+			{
+				gBattleMons[gActiveBattler].status1 = 0;
+				gBattleMons[gActiveBattler].status2 &= ~(STATUS2_NIGHTMARE);
+			}
+			else
+			{
+				RecordAbilityBattle(gActiveBattler, ABILITY(gActiveBattler));
+				gBattleCommunication[MULTISTRING_CHOOSER] |= 1;
+			}
+		}
+
+		for (i = 0; i < PARTY_SIZE; ++i)
+		{
+			u16 species = GetMonData(&party[i], MON_DATA_SPECIES2, NULL);
+
+			if (species != SPECIES_NONE && species != SPECIES_EGG)
+			{
+				u16 ability = 0;
+
+				if (IS_DOUBLE_BATTLE
+				&& i == gBattlerPartyIndexes[gActiveBattler]
+				&& !(gAbsentBattlerFlags & gBitTable[gActiveBattler]))
+					ability = ABILITY(gActiveBattler);
+
+				if (ability != ABILITY_SOUNDPROOF && ability != ABILITY_GOODASGOLD)
+					toHeal |= (1 << i);
+			}
+		}
+	}
+	else if (gBattleStruct->dynamicMoveType == TYPE_GRASS) // Aromatherapy
+	{
+		int i;
+		struct Pokemon *party;
+
+		gBattleCommunication[MULTISTRING_CHOOSER] = 4;
+
+		if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
+			party = gPlayerParty;
+		else
+			party = gEnemyParty;
+
+		gBattleMons[gBankAttacker].status1 = 0;
+		gBattleMons[gBankAttacker].status2 &= ~(STATUS2_NIGHTMARE);
+
+		gActiveBattler = gBattleScripting.bank = GetBattlerAtPosition(GetBattlerPosition(gBankAttacker) ^ BIT_FLANK);
+		
+		if (IS_DOUBLE_BATTLE
+		&& !(gAbsentBattlerFlags & gBitTable[gActiveBattler]))
+		{
+			if (ABILITY(gActiveBattler) != ABILITY_SAPSIPPER
+			&& ABILITY(gActiveBattler) != ABILITY_GOODASGOLD)
 			{
 				gBattleMons[gActiveBattler].status1 = 0;
 				gBattleMons[gActiveBattler].status2 &= ~(STATUS2_NIGHTMARE);
@@ -4040,23 +4084,19 @@ void atkAE_healpartystatus(void)
 
 			if (species != SPECIES_NONE && species != SPECIES_EGG)
 			{
-				u16 ability;
+				u16 ability = 0;
 
-				if (i == gBattlerPartyIndexes[gBankAttacker])
-					ability = ABILITY(gBankAttacker);
-				else if (IS_DOUBLE_BATTLE
+				if (IS_DOUBLE_BATTLE
 				&& i == gBattlerPartyIndexes[gActiveBattler]
 				&& !(gAbsentBattlerFlags & gBitTable[gActiveBattler]))
 					ability = ABILITY(gActiveBattler);
-				else
-					ability = GetMonAbility(&party[i]);
 
-				if (ability != ABILITY_SOUNDPROOF)
+				if (ability != ABILITY_SAPSIPPER && ability != ABILITY_GOODASGOLD)
 					toHeal |= (1 << i);
 			}
 		}
 	}
-	else // Aromatherapy
+	else
 	{
 		gBattleCommunication[MULTISTRING_CHOOSER] = 4;
 		toHeal = 0x3F;
@@ -4089,6 +4129,8 @@ void atkAF_cursetarget(void)
 	|| (BATTLER_SEMI_INVULNERABLE(gBankTarget) && !CanHitSemiInvulnerableTarget(gBankAttacker, gBankTarget, gCurrentMove))
 	|| HasRaidShields(gBankTarget))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	else if (ABILITY(gBankTarget) == ABILITY_GOODASGOLD)
+		gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 	else
 	{
 		gBattleMons[gBankTarget].status2 |= STATUS2_CURSED;
@@ -4204,6 +4246,7 @@ void atkB2_trysetperishsong(void)
 	{
 		if (gStatuses3[i] & STATUS3_PERISH_SONG
 		|| ABILITY(i) == ABILITY_SOUNDPROOF
+		|| ABILITY(i) == ABILITY_GOODASGOLD
 		|| (priority > 0 && i != gBankAttacker && ((gTerrainType == PSYCHIC_TERRAIN && CheckGrounding(i)) || defAbilityBlocksPriority)) //Not affected by priority moves
 		|| (attackerIsPrankster && IsOfType(i, TYPE_DARK)))
 		{
@@ -4861,6 +4904,18 @@ void atkCA_setforcedtarget(void) //Follow me
 	gBattlescriptCurrInstr++;
 }
 
+void atkCB_setcharge(void)
+{
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
+	gStatuses3[bank] |= STATUS3_CHARGED_UP;
+	#ifdef GEN9_CHARGE
+	gDisableStructs[bank].chargeTimer = 0;
+	#else
+    gDisableStructs[bank].chargeTimer = 2;
+	#endif
+    gBattlescriptCurrInstr += 2;
+}
+
 void atkCC_callterrainattack(void) //nature power
 {
 	gCurrentMove = GetNaturePowerMove();
@@ -4979,7 +5034,11 @@ void atkD1_trysethelpinghand(void)
 {
     gBankTarget = PARTNER(gBankAttacker);
 
-    if (IS_DOUBLE_BATTLE
+	if (ABILITY(gBankTarget) == ABILITY_GOODASGOLD)
+	{
+		gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+	}
+    else if (IS_DOUBLE_BATTLE
 	&& !(gAbsentBattlerFlags & gBitTable[gBankTarget])
 	&& !gProtectStructs[gBankAttacker].helpingHand
 	&& !gProtectStructs[gBankTarget].helpingHand
@@ -5242,7 +5301,10 @@ void atkE1_trygetintimidatetarget(void)
 	}
 
 	if (gBankTarget >= gBattlersCount)
+	{
+		gBankTarget = gNewBS->originalTargetBackup; //Prevent problems during Neutralizing Gas
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	}
 	else
 		gBattlescriptCurrInstr += 5;
 }

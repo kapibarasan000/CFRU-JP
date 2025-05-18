@@ -15,7 +15,7 @@
 #define ABILITYEFFECT_ABSORBING                 0x3
 #define ABILITYEFFECT_CONTACT                   0x4
 #define ABILITYEFFECT_IMMUNITY                  0x5
-#define ABILITYEFFECT_FORECAST                  0x6
+#define ABILITYEFFECT_MOVE_END_ATTACKER         0x6
 #define ABILITYEFFECT_SYNCHRONIZE               0x7
 #define ABILITYEFFECT_ATK_SYNCHRONIZE           0x8
 #define ABILITYEFFECT_INTIMIDATE1               0x9

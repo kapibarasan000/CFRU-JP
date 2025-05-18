@@ -109,6 +109,14 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 					IncreaseHelpingHandViability(&viability, class);
 				}
 				break;
+			case ABILITY_WELLBAKEDBODY:
+				if (moveType == TYPE_FIRE
+				&&  SpecialMoveInMoveset(bankAtkPartner)
+				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_DEF))
+				{
+					IncreaseHelpingHandViability(&viability, class);
+				}
+				break;
 
 			// Grass
 			case ABILITY_SAPSIPPER:

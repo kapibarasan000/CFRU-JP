@@ -171,47 +171,10 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 
 		case ATK49_ATTACKER_ABILITIES:
-			if (arg1 != ARG_IN_FUTURE_ATTACK
-			&& TOOK_DAMAGE(gBankTarget)
-			&& MOVE_HAD_EFFECT
-			&& BATTLER_ALIVE(gBankTarget)
-			&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
-			&& !gProtectStructs[gBankAttacker].confusionSelfDmg)
+			if (arg1 != ARG_IN_FUTURE_ATTACK)
 			{
-				switch (ABILITY(gBankAttacker)) {
-					case ABILITY_STENCH: //Check for Stench is taken care of in King's Rock check
-						if (umodsi(Random(), 100) < 10
-						&& gCurrentTurnActionNumber < GetBattlerTurnOrderNum(gBankTarget)) //Attacker moved before target
-						{
-							gBattleMons[gBankTarget].status2 |= STATUS2_FLINCHED;
-						}
-						break;
-
-					case ABILITY_POISONTOUCH:
-						if (CheckContact(gCurrentMove, gBankAttacker, gBankTarget)
-						&& ABILITY(gBankTarget) != ABILITY_SHIELDDUST
-						&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
-						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
-						&& umodsi(Random(), 100) < 30)
-						{
-							BattleScriptPushCursor();
-							gBattlescriptCurrInstr = BattleScript_PoisonTouch;
-							effect = TRUE;
-						}
-						break;
-
-					case ABILITY_TOXICCHAIN:
-						if (ABILITY(gBankTarget) != ABILITY_SHIELDDUST
-						&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
-						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
-						&& umodsi(Random(), 100) < 30)
-						{
-							BattleScriptPushCursor();
-							gBattlescriptCurrInstr = BattleScript_ToxicChain;
-							effect = TRUE;
-						}
-						break;
-				}
+				if (AbilityBattleEffects(ABILITYEFFECT_MOVE_END_ATTACKER, gBankAttacker, 0, 0, 0))
+					effect = TRUE;
 			}
 			gBattleScripting.atk49_state++;
 			break;
@@ -1528,6 +1491,11 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->rolloutFinalHit = FALSE;
 			gNewBS->dontActivateMoldBreakersAnymoreThisTurn = FALSE;
 			gNewBS->printedStrongWindsWeakenedAttack = FALSE;
+			gNewBS->poisonPuppeteerConfusion = FALSE;
+			#ifdef GEN9_CHARGE
+			if (moveType == TYPE_ELECTRIC)
+				gStatuses3[gBankAttacker] &= ~STATUS3_CHARGED_UP;
+			#endif
 			gBattleScripting.atk49_state++;
 			break;
 

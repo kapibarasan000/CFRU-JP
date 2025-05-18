@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/battle_anim.h"
+#include "../include/battle_string_ids.h"
 #include "../include/random.h"
 #include "../include/constants/songs.h"
 
@@ -259,7 +260,8 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 	else
 		bank = gBankAttacker;
 
-	if (IsMoldBreakerAbility(ABILITY(bank)))
+	if (IsMoldBreakerAbility(ABILITY(bank))
+	|| (ABILITY(bank) == ABILITY_MYCELIUMMIGHT && SPLIT(gCurrentMove) == SPLIT_STATUS))
 	{
 		if (gMoldBreakerIgnoredAbilities[ABILITY(gBankSwitching)])
 		{
@@ -1521,14 +1523,17 @@ void BurnUpFunc(void)
 
 void DoubleShockFunc(void)
 {
-	if (gBattleMons[gBankAttacker].type1 == TYPE_ELECTRIC)
-		gBattleMons[gBankAttacker].type1 = TYPE_MYSTERY;
+	if (!IsTerastal(gBankAttacker))
+	{
+		if (gBattleMons[gBankAttacker].type1 == TYPE_ELECTRIC)
+			gBattleMons[gBankAttacker].type1 = TYPE_MYSTERY;
 
-	if (gBattleMons[gBankAttacker].type2 == TYPE_ELECTRIC)
-		gBattleMons[gBankAttacker].type2 = TYPE_MYSTERY;
+		if (gBattleMons[gBankAttacker].type2 == TYPE_ELECTRIC)
+			gBattleMons[gBankAttacker].type2 = TYPE_MYSTERY;
 
-	if (gBattleMons[gBankAttacker].type3 == TYPE_ELECTRIC)
-		gBattleMons[gBankAttacker].type3 = TYPE_BLANK;
+		if (gBattleMons[gBankAttacker].type3 == TYPE_ELECTRIC)
+			gBattleMons[gBankAttacker].type3 = TYPE_BLANK;
+	}
 }
 
 void SeedRoomServiceLooper(void)
@@ -1575,16 +1580,6 @@ bool8 CanUseLastResort(u8 bank)
 		return FALSE;
 
 	return TRUE;
-}
-
-void GigatonHammerFunc(void)
-{
-    if(gLastUsedMoves[gBankAttacker] == MOVE_GIGATONHAMMER)
-        gBattlescriptCurrInstr = BattleScript_ButItFailed - 2 - 5;
-
-	else if(gLastUsedMoves[gBankAttacker] == MOVE_BLOODMOON)
-        gBattlescriptCurrInstr = BattleScript_ButItFailed - 2 - 5;
-    
 }
 
 void SynchronoiseFunc(void)
@@ -2567,4 +2562,30 @@ void TeraBlastFunc(void)
 {
 	if (GetBattlerTeraType(gBankAttacker) == TYPE_STELLAR)
 		gBattlescriptCurrInstr = BattleScript_LowerAtkSpAtk - 5;
+}
+
+void TryWindRiderPower(void)
+{
+	u8 bank = gBanksByTurnOrder[*gSeedHelper];
+
+	if (SIDE(bank) == SIDE(gBankAttacker))
+	{
+		if (ABILITY(bank) == ABILITY_WINDPOWER)
+		{
+			gBattleScripting.bank = bank;
+			BattleScriptPush(gBattlescriptCurrInstr + 5);
+			gBattlescriptCurrInstr = BattleScript_ElectromorphosisActivates - 5;
+		}
+		else if (ABILITY(bank) == ABILITY_WINDRIDER && STAT_STAGE(bank, STAT_STAGE_ATK) < STAT_STAGE_MAX)
+		{
+			gBankTarget = bank;
+			gBattleScripting.bank = bank;
+			STAT_STAGE(bank, STAT_STAGE_ATK)++;
+			gBattleScripting.statChanger = STAT_STAGE_ATK | INCREASE_1;
+			PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_ATK);
+			PREPARE_STAT_ROSE(gBattleTextBuff2);
+			BattleScriptPush(gBattlescriptCurrInstr + 5);
+			gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaise - 5;
+		}
+	}
 }

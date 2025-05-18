@@ -46,6 +46,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_AIRLOCK] = 5,
 	[ABILITY_ANALYTIC] = 5,
 	[ABILITY_ANGERPOINT] = 4,
+	[ABILITY_ANGERSHELL] = 5,
 	[ABILITY_ANTICIPATION] = 2,
 	[ABILITY_ARENATRAP] = 9,
 	[ABILITY_ARMORTAIL] = 5,
@@ -57,6 +58,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_BATTERY] = 0,
 	[ABILITY_BATTLEARMOR] = 2,
 	[ABILITY_BATTLEBOND] = 6,
+	[ABILITY_BEADSOFRUIN] = 10,
 	[ABILITY_BEASTBOOST] = 7,
 	[ABILITY_BERSERK] = 5,
 	[ABILITY_BIGPECKS] = 1,
@@ -73,6 +75,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_COMPOUNDEYES] = 7,
 	[ABILITY_CONTRARY] = 8,
 	[ABILITY_CORROSION] = 5,
+	[ABILITY_COSTAR] = 2,
 	[ABILITY_CURSEDBODY] = 4,
 	[ABILITY_CUTECHARM] = 2,
 	[ABILITY_DAMP] = 2,
@@ -93,6 +96,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_EARTHEATER] = 7,
 	[ABILITY_EFFECTSPORE] = 4,
 	[ABILITY_ELECTRICSURGE] = 8,
+	[ABILITY_ELECTROMORPHOSIS] = 4,
 	[ABILITY_EMBODYASPECT_TEALMASK] = 3,
 	[ABILITY_EMBODYASPECT_HEARTHFLAMEMASK] = 3,
 	[ABILITY_EMBODYASPECT_WELLSPRINGMASK] = 3,
@@ -115,6 +119,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_GALEWINGS] = 6,
 	[ABILITY_GALVANIZE] = 8,
 	[ABILITY_GLUTTONY] = 3,
+	[ABILITY_GOODASGOLD] = 10,
 	[ABILITY_GOOEY] = 5,
 	[ABILITY_GRASSPELT] = 2,
 	[ABILITY_GRASSYSURGE] = 8,
@@ -126,6 +131,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_HEATPROOF] = 5,
 	[ABILITY_HEAVYMETAL] = -1,
 	[ABILITY_HONEYGATHER] = 0,
+	[ABILITY_HOSPITALITY] = 4,
 	[ABILITY_HUGEPOWER] = 10,
 	[ABILITY_HUSTLE] = 7,
 	[ABILITY_HYDRATION] = 4,
@@ -173,6 +179,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_MULTISCALE] = 8,
 	[ABILITY_MULTITYPE] = 8,
 	[ABILITY_MUMMY] = 5,
+	[ABILITY_MYCELIUMMIGHT] = 5,
 	[ABILITY_NATURALCURE] = 7,
 	[ABILITY_NEUROFORCE] = 6,
 	[ABILITY_NOGUARD] = 8,
@@ -188,6 +195,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_PIXILATE] = 8,
 	[ABILITY_PLUS] = 0,
 	[ABILITY_POISONHEAL] = 8,
+	[ABILITY_POISONPUPPETEER] = 4,
 	[ABILITY_POISONPOINT] = 4,
 	[ABILITY_POISONTOUCH] = 4,
 	[ABILITY_POWERCONSTRUCT] = 10,
@@ -258,12 +266,16 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_STURDY] = 6,
 	[ABILITY_SUCTIONCUPS] = 2,
 	[ABILITY_SUPERLUCK] = 3,
+	[ABILITY_SUPERSWEETSYRUP] = 4,
+	[ABILITY_SUPREMEOVERLORD] = 5,
 	[ABILITY_SURGESURFER] = 4,
 	[ABILITY_SWARM] = 5,
 	[ABILITY_SWEETVEIL] = 4,
 	[ABILITY_SWIFTSWIM] = 6,
+	[ABILITY_SWORDOFRUIN] = 10,
 	[ABILITY_SYMBIOSIS] = 0,
 	[ABILITY_SYNCHRONIZE] = 4,
+	[ABILITY_TABLETSOFRUIN] = 10,
 	[ABILITY_TANGLEDFEET] = 2,
 	[ABILITY_TANGLINGHAIR] = 5,
 	[ABILITY_TECHNICIAN] = 8,
@@ -275,6 +287,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_TORRENT] = 5,
 	[ABILITY_TOXICBOOST] = 6,
 	[ABILITY_TOXICCHAIN] = 5,
+	[ABILITY_TOXICDEBRIS] = 8,
 	[ABILITY_TOUGHCLAWS] = 7,
 	[ABILITY_TRACE] = 6,
 	[ABILITY_TRANSISTOR] = 6,
@@ -284,6 +297,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_UNAWARE] = 6,
 	[ABILITY_UNBURDEN] = 7,
 	[ABILITY_UNNERVE] = 3,
+	[ABILITY_VESSELOFRUIN] = 10,
 	[ABILITY_VICTORYSTAR] = 6,
 	[ABILITY_VITALSPIRIT] = 4,
 	[ABILITY_VOLTABSORB] = 7,
@@ -292,7 +306,10 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_WATERCOMPACTION] = 4,
 	[ABILITY_WATERVEIL] = 4,
 	[ABILITY_WEAKARMOR] = 2,
+	[ABILITY_WELLBAKEDBODY] = 7,
 	[ABILITY_WHITESMOKE] = 4,
+	[ABILITY_WINDPOWER] = 3,
+	[ABILITY_WINDRIDER] = 7,
 	[ABILITY_WIMPOUT] = 3,
 	[ABILITY_WONDERGUARD] = 10,
 	[ABILITY_WONDERSKIN] = 4,
@@ -303,14 +320,14 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_COTTONDOWN] = 3,
 	[ABILITY_MIRRORARMOR] = 6,
 	[ABILITY_GULPMISSILE] = 3,
-	[ABILITY_STALWART] = 2, //Also Propellor Tail
+	[ABILITY_STALWART] = 2,
 	[ABILITY_STEAMENGINE] = 3,
 	[ABILITY_PUNKROCK] = 2,
 	[ABILITY_SANDSPIT] = 5,
 	[ABILITY_ICESCALES] = 7,
 	[ABILITY_RIPEN] = 4,
 	[ABILITY_ICEFACE] = 4,
-	[ABILITY_POWERSPOT] = 2, //UPDATE
+	[ABILITY_POWERSPOT] = 2,
 	[ABILITY_MIMICRY] = 2,
 	[ABILITY_SCREENCLEANER] = 3,
 	[ABILITY_NEUTRALIZINGGAS] = 5,
@@ -333,6 +350,7 @@ const bool8 gMoldBreakerIgnoredAbilities[] =
 	[ABILITY_FILTER] =			TRUE,
 	[ABILITY_FLASHFIRE] =		TRUE,
 	[ABILITY_FLOWERGIFT] =		TRUE,
+	[ABILITY_GOODASGOLD] =		TRUE,
 	[ABILITY_HEATPROOF] =		TRUE,
 	[ABILITY_HYPERCUTTER] =		TRUE,
 	[ABILITY_IMMUNITY] =		TRUE,
@@ -369,6 +387,7 @@ const bool8 gMoldBreakerIgnoredAbilities[] =
 	[ABILITY_WATERABSORB] =		TRUE,
 	[ABILITY_WATERVEIL] =		TRUE,
 	[ABILITY_WHITESMOKE] =		TRUE,
+	[ABILITY_WINDRIDER] =		TRUE,
 	[ABILITY_WONDERGUARD] =		TRUE,
 	[ABILITY_BIGPECKS] =		TRUE,
 	[ABILITY_CONTRARY] =		TRUE,
@@ -392,6 +411,7 @@ const bool8 gMoldBreakerIgnoredAbilities[] =
 	[ABILITY_FLUFFY] =			TRUE,
 	[ABILITY_QUEENLYMAJESTY] =	TRUE,
 	[ABILITY_WATERBUBBLE] =		TRUE,
+	[ABILITY_WELLBAKEDBODY] =	TRUE,
 	[ABILITY_MIRRORARMOR] =		TRUE,
 	[ABILITY_PUNKROCK] =		TRUE,
 	[ABILITY_ICESCALES] =		TRUE,
@@ -489,6 +509,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 				case ABILITY_IMPOSTER:
 				case ABILITY_ASONE_GRIM:
 				case ABILITY_ASONE_CHILLING:
+				case ABILITY_SUPERSWEETSYRUP:
 					return FALSE;
 			}
 		}
@@ -505,6 +526,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			case ABILITY_IMPOSTER:
 			case ABILITY_ANTICIPATION:
 			case ABILITY_FRISK:
+			case ABILITY_SUPERSWEETSYRUP:
 				gStatuses3[bank] |= STATUS3_SWITCH_IN_ABILITY_DONE;
 				break;
 			case ABILITY_TRACE: //Trace is the only ability that activates after a U-Turn + faint switch-in
@@ -662,7 +684,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			{
 				gBattleStringLoader = gText_OrichalcumPulseSunActivate;
 				effect = ActivateWeatherAbility(WEATHER_SUN_PERMANENT | WEATHER_SUN_TEMPORARY,
-												ITEM_EFFECT_HEAT_ROCK, bank, B_ANIM_SUN_CONTINUES, 4, FALSE);
+												ITEM_EFFECT_HEAT_ROCK, bank, B_ANIM_SUN_CONTINUES, 2, FALSE);
 			}
 			else if (gBattleWeather & WEATHER_PRIMAL_ANY && !(gBattleWeather & WEATHER_SUN_ANY))
 			{
@@ -723,6 +745,18 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 		case ABILITY_INTIMIDATE:
 			if (CanBeAffectedByIntimidate(FOE(bank)) || (IS_DOUBLE_BATTLE && CanBeAffectedByIntimidate(PARTNER(FOE(bank)))))
 			{
+				BattleScriptPushCursorAndCallback(BattleScript_IntimidateActivatesEnd3);
+				gBattleStruct->intimidateBank = bank;
+				gNewBS->intimidateActive = bank + 1;
+				effect++;
+			}
+			break;
+
+		case ABILITY_SUPERSWEETSYRUP:
+			if (!(gNewBS->supersweetSyrupDone[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
+			&& (CanBeAffectedByIntimidate(FOE(bank)) || (IS_DOUBLE_BATTLE && CanBeAffectedByIntimidate(PARTNER(FOE(bank))))))
+			{
+				gNewBS->supersweetSyrupDone[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
 				BattleScriptPushCursorAndCallback(BattleScript_IntimidateActivatesEnd3);
 				gBattleStruct->intimidateBank = bank;
 				gNewBS->intimidateActive = bank + 1;
@@ -1257,6 +1291,34 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			}
 			break;
 
+		case ABILITY_VESSELOFRUIN:
+			PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_SPATK);
+			gBattleStringLoader = gText_RuinAbilityActivate;
+			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
+			effect++;
+			break;
+
+		case ABILITY_SWORDOFRUIN:
+			PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_DEF);
+			gBattleStringLoader = gText_RuinAbilityActivate;
+			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
+			effect++;
+			break;
+
+		case ABILITY_TABLETSOFRUIN:
+			PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_ATK);
+			gBattleStringLoader = gText_RuinAbilityActivate;
+			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
+			effect++;
+			break;
+
+		case ABILITY_BEADSOFRUIN:
+			PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_SPDEF);
+			gBattleStringLoader = gText_RuinAbilityActivate;
+			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
+			effect++;
+			break;
+
 		case ABILITY_EMBODYASPECT_HEARTHFLAMEMASK:
 			if (STAT_STAGE(bank, STAT_STAGE_ATK) < STAT_STAGE_MAX)
 			{
@@ -1317,6 +1379,34 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			}
 			break;
 
+		case ABILITY_WINDRIDER:
+			if (gNewBS->TailwindTimers[SIDE(bank)] && STAT_STAGE(bank, STAT_STAGE_ATK) < STAT_STAGE_MAX)
+			{
+				gBankAttacker = bank;
+				STAT_STAGE(bank, STAT_STAGE_ATK)++;
+				gBattleScripting.statChanger = STAT_STAGE_ATK | INCREASE_1;
+				PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_ATK);
+				PREPARE_STAT_ROSE(gBattleTextBuff2);
+				BattleScriptPushCursorAndCallback(BattleScript_AttackerAbilityStatRaiseEnd3);
+				effect++;
+			}
+			break;
+
+		case ABILITY_SUPREMEOVERLORD:
+			if (gNewBS->FaintedCounters[SIDE(bank)])
+			{
+				u8 fainted = gNewBS->FaintedCounters[SIDE(bank)];
+
+				if (fainted > 5)
+					fainted = 5;
+				
+				gNewBS->supremeOverlordMultiplier[bank] = fainted + 10;
+				gBattleStringLoader = gText_SupremeOverlordActivate;
+				BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
+				effect++;
+			}
+			break;
+
 		case ABILITY_SCREENCLEANER:
 			RemoveScreensFromSide(B_SIDE_PLAYER);
 			RemoveScreensFromSide(B_SIDE_OPPONENT);
@@ -1359,6 +1449,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			if (IS_DOUBLE_BATTLE)
 			{
 				u8 partner = PARTNER(bank);
+
 				if (BATTLER_ALIVE(partner))
 				{
 					for (i = 0; i < BATTLE_STATS_NO - 1; ++i)
@@ -1368,6 +1459,46 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 					gBattleStringLoader = gText_CuriousMedicineActivate;
 					BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 					effect++;
+				}
+			}
+			break;
+
+		case ABILITY_COSTAR:
+			if (IS_DOUBLE_BATTLE)
+			{
+				u8 partner = PARTNER(bank);
+
+				if (BATTLER_ALIVE(partner))
+				{
+					for (i = 0; i < BATTLE_STATS_NO - 1; ++i)
+						gBattleMons[bank].statStages[i] = gBattleMons[partner].statStages[i];
+
+					gBattleMons[bank].status2 &= ~STATUS2_FOCUS_ENERGY; //Remove old boost if had
+					gBattleMons[bank].status2 |= (gBattleMons[partner].status2 & STATUS2_FOCUS_ENERGY); //Give boost if opponent has
+					gNewBS->chiStrikeCritBoosts[bank] = gNewBS->chiStrikeCritBoosts[partner];
+					gNewBS->DragonCheerRanks[bank] = gNewBS->DragonCheerRanks[partner];
+
+					gBankTarget = partner;
+					gBattleStringLoader = gText_CostarActivate;
+					BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
+					effect++;
+				}
+			}
+			break;
+
+		case ABILITY_HOSPITALITY:
+			if (IS_DOUBLE_BATTLE)
+			{
+				u8 partner = PARTNER(bank);
+
+				if (BATTLER_ALIVE(partner)
+				&& !IsHealBlocked(partner)
+				&& !BATTLER_MAX_HP(partner))
+				{
+					gBankTarget = partner;
+					gBattleMoveDamage = (GetBaseMaxHP(partner) / 4) * -1;
+					BattleScriptPushCursorAndCallback(BattleScript_HospitalityActivates);
+                	effect++;
 				}
 			}
 			break;
@@ -1681,6 +1812,17 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 						&& gBankAttacker == PARTNER(bank))
 							effect = 1;
 						break;
+
+					case ABILITY_GOODASGOLD:
+						if (SPLIT(move) == SPLIT_STATUS)
+						{
+							u8 moveTarget = gBattleMoves[move].target;
+
+							if (!(moveTarget & MOVE_TARGET_OPPONENTS_FIELD)
+							&& !(moveTarget & MOVE_TARGET_USER))
+								effect = 1;
+						}
+						break;
 				}
 
 				if (effect)
@@ -1722,7 +1864,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 		case ABILITYEFFECT_ABSORBING: // 3
 			if (move == MOVE_NONE) break;
 
-			u8 statId = 0;
+			u8 statId, amount = 0;
 			gBattleScripting.bank = bank;
 			switch (gLastUsedAbility) {
 				case ABILITY_VOLTABSORB:
@@ -1743,22 +1885,32 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 
 				case ABILITY_MOTORDRIVE:
 					if (moveType == TYPE_ELECTRIC)
-						effect = 2, statId = STAT_SPEED;
+						effect = 2, statId = STAT_SPEED, amount = INCREASE_1;
 					break;
 
 				case ABILITY_LIGHTNINGROD:
 					if (moveType == TYPE_ELECTRIC)
-						effect = 2, statId = STAT_SPATK;
+						effect = 2, statId = STAT_SPATK, amount = INCREASE_1;
 					break;
 
 				case ABILITY_STORMDRAIN:
 					if (moveType == TYPE_WATER)
-						effect = 2, statId = STAT_SPATK;
+						effect = 2, statId = STAT_SPATK, amount = INCREASE_1;
 					break;
 
 				case ABILITY_SAPSIPPER:
 					if (moveType == TYPE_GRASS)
-						effect = 2, statId = STAT_ATK;
+						effect = 2, statId = STAT_ATK, amount = INCREASE_1;
+					break;
+
+				case ABILITY_WELLBAKEDBODY:
+					if (moveType == TYPE_FIRE)
+						effect = 2, statId = STAT_DEF, amount = INCREASE_2;
+					break;
+
+				case ABILITY_WINDRIDER:
+					if(CheckTableForMove(move, gWindMoves))
+						effect = 2, statId = STAT_ATK, amount = INCREASE_1;
 					break;
 
 				case ABILITY_FLASHFIRE:
@@ -1803,7 +1955,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 						else
 							gBattlescriptCurrInstr = BattleScript_MoveStatDrain_PPLoss;
 
-						gBattleScripting.statChanger = statId | INCREASE_1;
+						gBattleScripting.statChanger = statId | amount;
 					}
 					break;
 
@@ -2166,7 +2318,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
 				&& BATTLER_ALIVE(bank)
-				&& gBattleMons[bank].hp < gBattleMons[bank].maxHP / 2
+				&& gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2
 				&& gBattleMons[bank].hp + gHpDealt > gBattleMons[bank].maxHP / 2 //Hp fell below half
 				&& gBattleMons[bank].statStages[STAT_SPATK - 1] < 12
 				&& !SheerForceCheck())
@@ -2174,6 +2326,21 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 					gBattleScripting.statChanger = STAT_SPATK | INCREASE_1;
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaise;
+					effect++;
+				}
+				break;
+
+			case ABILITY_ANGERSHELL:
+				if (MOVE_HAD_EFFECT
+				&& TOOK_DAMAGE(bank)
+				&& BATTLER_ALIVE(bank)
+				&& gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2
+				&& gBattleMons[bank].hp + gHpDealt > gBattleMons[bank].maxHP / 2 //Hp fell below half
+				&& AngerShellStatsCheck(bank)
+				&& !SheerForceCheck())
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_AngerShellActivates;
 					effect++;
 				}
 				break;
@@ -2342,6 +2509,45 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 				}
 				break;
 
+			case ABILITY_ELECTROMORPHOSIS:
+				if (MOVE_HAD_EFFECT
+				&& TOOK_DAMAGE(bank)
+				&& BATTLER_ALIVE(bank)
+				&& gBankAttacker != bank)
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_ElectromorphosisActivates;
+					effect++;
+				}
+				break;
+
+			case ABILITY_WINDPOWER:
+				if (MOVE_HAD_EFFECT
+				&& TOOK_DAMAGE(bank)
+				&& gBankAttacker != bank
+				&& CheckTableForMove(move, gWindMoves))
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_ElectromorphosisActivates;
+					effect++;
+				}
+				break;
+
+			case ABILITY_TOXICDEBRIS:
+				if (MOVE_HAD_EFFECT
+				&& TOOK_DAMAGE(bank)
+				&& gBankAttacker != bank
+				&& CalcMoveSplit(gBankAttacker, gCurrentMove, bank) == SPLIT_PHYSICAL
+				&& gSideTimers[SIDE(gBankAttacker)].tspikesAmount < 2)
+				{
+					gSideStatuses[SIDE(gBankAttacker)] |= SIDE_STATUS_SPIKES;
+					gSideTimers[SIDE(gBankAttacker)].tspikesAmount++;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_ToxicDebrisActivates;
+					effect++;
+				}
+				break;
+
 			#if (defined SPECIES_CRAMORANT && defined SPECIES_CRAMORANT_GORGING && defined SPECIES_CRAMORANT_GULPING)
 			case ABILITY_GULPMISSILE:
 				if (MOVE_HAD_EFFECT
@@ -2466,8 +2672,75 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 				}
 			}
 			break;
-		case ABILITYEFFECT_FORECAST: // 6
+
+		case ABILITYEFFECT_MOVE_END_ATTACKER: // 6
+			gBattleScripting.bank = bank;
+
+			switch (gLastUsedAbility)
+			{
+			case ABILITY_STENCH: //Check for Stench is taken care of in King's Rock check
+				if (TOOK_DAMAGE(gBankTarget)
+				&& MOVE_HAD_EFFECT
+				&& BATTLER_ALIVE(gBankTarget)
+				&& !MoveBlockedBySubstitute(gCurrentMove, bank, gBankTarget)
+				&& !gProtectStructs[bank].confusionSelfDmg
+				&& umodsi(Random(), 100) < 10
+				&& gCurrentTurnActionNumber < GetBattlerTurnOrderNum(gBankTarget))
+				{
+					gBattleMons[gBankTarget].status2 |= STATUS2_FLINCHED;
+				}
+				break;
+
+			case ABILITY_POISONTOUCH:
+				if (TOOK_DAMAGE(gBankTarget)
+				&& MOVE_HAD_EFFECT
+				&& BATTLER_ALIVE(gBankTarget)
+				&& !MoveBlockedBySubstitute(gCurrentMove, bank, gBankTarget)
+				&& !gProtectStructs[bank].confusionSelfDmg
+				&& CheckContact(gCurrentMove, bank, gBankTarget)
+				&& ABILITY(gBankTarget) != ABILITY_SHIELDDUST
+				&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
+				&& CanBePoisoned(gBankTarget, bank, TRUE)
+				&& umodsi(Random(), 100) < 30)
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_PoisonTouch;
+					effect++;
+				}
+				break;
+
+			case ABILITY_TOXICCHAIN:
+				if (TOOK_DAMAGE(gBankTarget)
+				&& MOVE_HAD_EFFECT
+				&& BATTLER_ALIVE(gBankTarget)
+				&& !MoveBlockedBySubstitute(gCurrentMove, bank, gBankTarget)
+				&& !gProtectStructs[bank].confusionSelfDmg
+				&& ABILITY(gBankTarget) != ABILITY_SHIELDDUST
+				&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
+				&& CanBePoisoned(gBankTarget, bank, TRUE)
+				&& umodsi(Random(), 100) < 30)
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_ToxicChain;
+					effect++;
+				}
+				break;
+
+			case ABILITY_POISONPUPPETEER:
+				if (gNewBS->poisonPuppeteerConfusion
+				&& CanBeConfused(gBankTarget, bank, TRUE))
+				{
+					gNewBS->poisonPuppeteerConfusion = FALSE;
+					gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_CONFUSION;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_AbilityApplySecondaryEffect;
+					gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked earlier
+					effect++;
+				}
+				break;
+			}
 			break;
+
 		case ABILITYEFFECT_SYNCHRONIZE: // 7
 			if (gLastUsedAbility == ABILITY_SYNCHRONIZE
 			&& gNewBS->synchronizeTarget[bank] > 0)
@@ -2601,7 +2874,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			break;
 		}
 
-	if (effect && caseID < ABILITYEFFECT_CHECK_OTHER_SIDE && gLastUsedAbility != 0xFF)
+	if (effect && caseID < ABILITYEFFECT_CHECK_OTHER_SIDE && gLastUsedAbility != 0xFEFE)
 		RecordAbilityBattle(bank, gLastUsedAbility);
 
 	return effect;

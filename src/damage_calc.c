@@ -2811,6 +2811,12 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			break;
 	}
 
+	if (ABILITY_ON_FIELD(ABILITY_VESSELOFRUIN) && data->atkAbility != ABILITY_VESSELOFRUIN)
+		spAttack = (spAttack * 3) / 4;
+
+	if (ABILITY_ON_FIELD(ABILITY_TABLETSOFRUIN) && data->atkAbility != ABILITY_TABLETSOFRUIN)
+		attack = (attack * 3) / 4;
+
 //Target Ability Checks
 	switch (data->defAbility) {
 		case ABILITY_MARVELSCALE:
@@ -2858,6 +2864,12 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			defense *= 2;
 			break;
 	}
+
+	if (ABILITY_ON_FIELD(ABILITY_SWORDOFRUIN) && data->defAbility != ABILITY_SWORDOFRUIN)
+		defense = (defense * 3) / 4;
+
+	if (ABILITY_ON_FIELD(ABILITY_BEADSOFRUIN) && data->defAbility != ABILITY_BEADSOFRUIN)
+		spDefense = (spDefense * 3) / 4;
 
 //Attacker Item Checks
 	switch (data->atkItemEffect) {
@@ -4069,6 +4081,11 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 		//1.3x Boost
 			if (CheckSoundMove(move))
 				power = (power * 13) / 10;
+			break;
+
+		case ABILITY_SUPREMEOVERLORD:
+			if (gNewBS->supremeOverlordMultiplier[bankAtk])
+				power = (power * gNewBS->supremeOverlordMultiplier[bankAtk]) / 10;
 			break;
 	}
 

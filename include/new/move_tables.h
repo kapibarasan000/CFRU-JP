@@ -33,6 +33,7 @@ extern const move_t gBallBombMoves[];
 extern const move_t gDanceMoves[];
 extern const move_t gPowderMoves[];
 extern const move_t gSoundMoves[];
+extern const move_t gWindMoves[];
 
 //Other Moves
 extern const move_t gSubstituteBypassMoves[];

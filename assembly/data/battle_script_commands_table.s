@@ -217,7 +217,7 @@ gBattleScriptingCommandsTable:
 .word atkC8_sethail
 .word atkC9_jumpifattackandspecialattackcannotfall
 .word atkCA_setforcedtarget
-.word 0x802B58D					@setcharge
+.word atkCB_setcharge
 .word atkCC_callterrainattack
 .word atkCD_cureifburnedparalysedorpoisoned
 .word atkCE_settorment

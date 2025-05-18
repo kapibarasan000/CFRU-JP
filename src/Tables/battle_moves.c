@@ -15146,7 +15146,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_GIGATONHAMMER] =
     {	
-		.effect = EFFECT_LAST_RESORT,
+		.effect = EFFECT_HIT,
 		.power = 160,
 		.type = TYPE_STEEL,
 		.accuracy = 100,

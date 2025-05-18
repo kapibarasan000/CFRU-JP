@@ -1194,8 +1194,9 @@
 	.byte 0xca
 	.endm
 
-	.macro setcharge
+	.macro setcharge bank
 	.byte 0xcb
+	.byte \bank
 	.endm
 
 	.macro callterrainattack

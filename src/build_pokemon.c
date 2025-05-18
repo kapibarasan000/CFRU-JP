@@ -2906,6 +2906,7 @@ static void UpdateBuilderAfterSpread(struct TeamBuilder* builder, const struct B
 				break;
 
 			case ABILITY_FLASHFIRE:
+			case ABILITY_WELLBAKEDBODY:
 				builder->partyIndex[FIRE_IMMUNITY] = partyId;
 				break;
 
@@ -3005,6 +3006,7 @@ static bool8 IsSpreadWeakToType(u8 moveType, u8 defType1, u8 defType2, u16 abili
 				typeDmg = 0;
 			break;
 		case ABILITY_FLASHFIRE:
+		case ABILITY_WELLBAKEDBODY:
 			if (moveType == TYPE_FIRE)
 				typeDmg = 0;
 			break;

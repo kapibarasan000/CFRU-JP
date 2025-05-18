@@ -37,6 +37,7 @@ ability_battle_scripts.s
 .global BattleScript_AbilityTransformed
 .global BattleScript_TransformedEnd2
 .global BattleScript_TransformedEnd3
+.global BattleScript_HospitalityActivates
 
 .global BattleScript_RainDishActivates
 .global BattleScript_DrySkinDamage
@@ -72,6 +73,9 @@ ability_battle_scripts.s
 .global BattleScript_IllusionBrokenFaint
 .global BattleScript_AngerPointActivates
 .global BattleScript_SynchronizeActivates
+.global BattleScript_AngerShellActivates
+.global BattleScript_ElectromorphosisActivates
+.global BattleScript_ToxicDebrisActivates
 
 .global BattleScript_AbilityChangedType
 .global BattleScript_AbilityChangedTypeContact
@@ -125,9 +129,17 @@ BattleScript_NewWeatherAbilityActivatesCall:
 	printfromtable gWeatherAbilityStrings
 	waitstateatk
 	playanimation2 BANK_SCRIPTING ANIM_ARG_1 0x0
+	jumpifability BANK_SCRIPTING ABILITY_ORICHALCUMPULSE OrichalcumPulseMsg
+
+BattleScript_NewWeatherAbilityActivatesReturn:
 	call BattleScript_AbilityPopUpRevert
 	call 0x81BD298 @;BattleScript_WeatherFormChanges
 	return
+
+OrichalcumPulseMsg:
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BattleScript_NewWeatherAbilityActivatesReturn
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -173,8 +185,13 @@ BattleScript_IntimidateActivatesEnd3:
 BattleScript_PauseIntimidateActivates:
 	call BattleScript_AbilityPopUp
 	setbyte TARGET_BANK 0x0
+	jumpifability BANK_SCRIPTING ABILITY_INTIMIDATE BS_IntimidateActivatesLoop
+	setword BATTLE_STRING_LOADER gText_SupersweetSyrupActivate
+	printstring 0x184
+	waitmessage DELAY_1SECOND
 
 BS_IntimidateActivatesLoop:
+	jumpifability BANK_SCRIPTING ABILITY_SUPERSWEETSYRUP SupersweetSyrupActivates
 	setstatchanger STAT_ATK | DECREASE_1
 	trygetintimidatetarget BattleScript_IntimidateActivatesReturn
 	jumpifbehindsubstitute BANK_TARGET IntimidateActivatesLoopIncrement
@@ -220,6 +237,18 @@ BattleScript_IntimidateActivatesReturn:
 	callasm TryRemoveIntimidateAbilityPopUp @;In case the battle scripting bank is changed
 	callasm RemoveIntimidateActive
 	return
+
+SupersweetSyrupActivates:
+	setstatchanger STAT_EVASION | DECREASE_1
+	trygetintimidatetarget BattleScript_IntimidateActivatesReturn
+	jumpifbehindsubstitute BANK_TARGET IntimidateActivatesLoopIncrement
+	statbuffchange STAT_TARGET | STAT_NOT_PROTECT_AFFECTED | STAT_BS_PTR IntimidateActivatesLoopIncrement
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_IntimidatePrevented
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatDownStringIds
+	waitmessage DELAY_1SECOND
+	goto IntimidateActivatesLoopIncrement
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -916,6 +945,103 @@ SynchronizeReturn:
 	call BattleScript_AbilityPopUpRevert
 	callasm RestoreBanksFromSynchronize
 	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_AngerShellActivates:
+	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX AngerShellRiseAtk
+	jumpifstat BANK_TARGET LESSTHAN STAT_SPATK STAT_MAX AngerShellRiseAtk
+	jumpifstat BANK_TARGET LESSTHAN STAT_SPD STAT_MAX AngerShellRiseAtk
+	jumpifstat BANK_TARGET GREATERTHAN STAT_DEF STAT_MIN AngerShellRiseAtk
+	jumpifstat BANK_TARGET EQUALS STAT_SPDEF STAT_MIN AngerShellReturn
+
+AngerShellRiseAtk:
+	call BattleScript_AbilityPopUp
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange BANK_TARGET | STAT_CERTAIN AngerShellRiseSpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellRiseSpAtk
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+AngerShellRiseSpAtk:
+	setstatchanger STAT_SPATK | INCREASE_1
+	statbuffchange BANK_TARGET | STAT_CERTAIN AngerShellRiseSpd
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellRiseSpd
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+AngerShellRiseSpd:
+	setstatchanger STAT_SPD | INCREASE_1
+	statbuffchange BANK_TARGET | STAT_CERTAIN AngerShellLowerDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellLowerDef
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+AngerShellLowerDef:
+	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
+	setstatchanger STAT_DEF | DECREASE_1
+	statbuffchange BANK_TARGET | STAT_BS_PTR | STAT_CERTAIN AngerShellLowerSpDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellLowerSpDef
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+AngerShellLowerSpDef:
+	setstatchanger STAT_SPDEF | DECREASE_1
+	statbuffchange BANK_TARGET | STAT_BS_PTR | STAT_CERTAIN AngerShellRevertPopUp
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellRevertPopUp
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	
+AngerShellRevertPopUp:
+	bicword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
+	call BattleScript_AbilityPopUpRevert
+
+AngerShellReturn:
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_ElectromorphosisActivates:
+	call BattleScript_AbilityPopUp
+	setcharge BANK_SCRIPTING
+	setword BATTLE_STRING_LOADER gText_ElectromorphosisActivates
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_ToxicDebrisActivates:
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_ToxicSpikesLayAttacker
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_HospitalityActivates:
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_HospitalityRestoration
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
+	healthbarupdate BANK_TARGET
+	datahpupdate BANK_TARGET
+	call BattleScript_AbilityPopUpRevert
+	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

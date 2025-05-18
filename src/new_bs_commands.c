@@ -883,7 +883,8 @@ void atkFF1F_flowershieldlooper(void)
 				gBattleCommunication[MULTISTRING_CHOOSER] = 5; //Protected by Psychic Terrain
 				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
 			}
-			else if (priority && gBankAttacker != bank && IsPriorityBlockingAbility(ABILITY(bank)))
+			else if ((priority && gBankAttacker != bank && IsPriorityBlockingAbility(ABILITY(bank)))
+			|| (gBankAttacker != bank && ABILITY(bank) == ABILITY_GOODASGOLD))
 			{
 				gBattleScripting.bank = bank;
 				gBattleCommunication[MULTISTRING_CHOOSER] = 4; //Protected by Ability
@@ -995,47 +996,10 @@ void atkFE_prefaintmoveendeffects(void)
 			break;
 
 		case FAINT_ATTACKER_ABILITIES:
-			if (arg1 != ARG_IN_FUTURE_ATTACK
-			&& TOOK_DAMAGE(gBankTarget)
-			&& MOVE_HAD_EFFECT
-			&& BATTLER_ALIVE(gBankTarget)
-			&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
-			&& !gProtectStructs[gBankAttacker].confusionSelfDmg)
+			if (arg1 != ARG_IN_FUTURE_ATTACK)
 			{
-				switch (ABILITY(gBankAttacker)) {
-					case ABILITY_STENCH: //Check for Stench is taken care of in King's Rock check
-						if (umodsi(Random(), 100) < 10
-						&& gCurrentTurnActionNumber < GetBattlerTurnOrderNum(gBankTarget)) //Attacker moved before target
-						{
-							gBattleMons[gBankTarget].status2 |= STATUS2_FLINCHED;
-						}
-						break;
-
-					case ABILITY_POISONTOUCH:
-						if (CheckContact(gCurrentMove, gBankAttacker, gBankTarget)
-						&& ABILITY(gBankTarget) != ABILITY_SHIELDDUST
-						&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
-						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
-						&& umodsi(Random(), 100) < 30)
-						{
-							BattleScriptPushCursor();
-							gBattlescriptCurrInstr = BattleScript_PoisonTouch;
-							effect = TRUE;
-						}
-						break;
-
-					case ABILITY_TOXICCHAIN:
-						if (ABILITY(gBankTarget) != ABILITY_SHIELDDUST
-						&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
-						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
-						&& umodsi(Random(), 100) < 30)
-						{
-							BattleScriptPushCursor();
-							gBattlescriptCurrInstr = BattleScript_ToxicChain;
-							effect = TRUE;
-						}
-						break;
-				}
+				if (AbilityBattleEffects(ABILITYEFFECT_MOVE_END_ATTACKER, gBankAttacker, 0, 0, 0))
+					effect = TRUE;
 			}
 			gNewBS->preFaintEffectsState++;
 			break;

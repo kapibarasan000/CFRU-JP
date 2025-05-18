@@ -12,8 +12,6 @@
 #define BattleScript_DefrostedViaFireMove (const u8*) 0x81BD054
 #define BattleScript_Recoil (const u8*) 0x81BD1FF
 
-extern const u8 BattleScript_PoisonTouch[];
-extern const u8 BattleScript_ToxicChain[];
 extern const u8 BattleScript_KingsShield[];
 extern const u8 BattleScript_SpikyShield[];
 extern const u8 BattleScript_BanefulBunker[];

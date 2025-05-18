@@ -318,6 +318,7 @@ HowlPrintAttackerString:
 
 HowlTryPartnerBS:
 	callasm SetTargetPartner
+	jumpifability BANK_TARGET ABILITY_GOODASGOLD BattleScript_ProtectedByAbility
 	jumpifbehindsubstitute BANK_TARGET BS_MOVE_END
 	jumpiffainted BANK_TARGET BS_MOVE_END
 	jumpifability BANK_TARGET ABILITY_SOUNDPROOF BattleScript_ProtectedByAbility
@@ -423,6 +424,7 @@ BS_014_RaiseUserSpDef1:
 AromaticMistBS:
 	jumpifbyte NOTANDS BATTLE_TYPE BATTLE_DOUBLE FAILED
 	callasm SetTargetPartner
+	jumpifability BANK_TARGET ABILITY_GOODASGOLD BattleScript_ProtectedByAbility
 	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED
 	jumpiffainted BANK_TARGET FAILED
 	jumpifprotectedbycraftyshield BANK_TARGET FAILED
@@ -796,6 +798,7 @@ LifeDewBS:
 
 LifeDewRestorePartnerHPBS:
 	callasm SetTargetPartner
+	jumpifability BANK_TARGET ABILITY_GOODASGOLD BattleScript_ProtectedByAbility
 	jumpiffainted BANK_TARGET BS_MOVE_END
 	jumpifcounter BANK_TARGET HEAL_BLOCK_TIMERS NOTEQUALS 0x0 BattleScript_NoHealTargetAfterHealBlock
 	accuracycheck LifeDewMissedPartnerBS 0x0
@@ -822,6 +825,7 @@ BattleScript_LifeDewFail:
 	printstring 0x4C @;STRINGID_PKMNHPFULL
 	waitmessage DELAY_1SECOND
 	callasm SetTargetPartner
+	jumpifability BANK_TARGET ABILITY_GOODASGOLD BattleScript_ProtectedByAbility
 	jumpiffainted BANK_TARGET BS_MOVE_END
 LifeDewPartnerFullHealthBS:
 	printstring 0x4C @;STRINGID_PKMNHPFULL
@@ -855,6 +859,7 @@ JungleHealingTryClearAttackerStatusBS:
 
 JungleHealingRestorePartnerHPBS:
 	callasm SetTargetPartner
+	jumpifability BANK_TARGET ABILITY_GOODASGOLD BattleScript_ProtectedByAbility
 	jumpiffainted BANK_TARGET BS_MOVE_END
 	jumpifcounter BANK_TARGET HEAL_BLOCK_TIMERS NOTEQUALS 0x0 BattleScript_NoHealPartnerAfterHealBlock_JungleHealing
 	accuracycheck JungleHealingMissedPartnerBS 0x0
@@ -2069,19 +2074,7 @@ BS_102_HealBell:
 	waitanimation
 	printfromtable 0x83C45B0
 	waitmessage DELAY_1SECOND
-	jumpifmove MOVE_AROMATHERAPY AromatherapySapSipperCheckBS
-	jumpifnotmove MOVE_HEALBELL BattleScript_PartyHealEnd
-	jumpifbyte NOTANDS MULTISTRING_CHOOSER 0x1 BattleScript_CheckHealBellMon2Unaffected
-	copybyte FORM_COUNTER BATTLE_SCRIPTING_BANK
-	copybyte BATTLE_SCRIPTING_BANK USER_BANK
-	call BattleScript_AbilityPopUp
-	printstring 0x15E @;STRINGID_PKMNSXBLOCKSY2
-	waitmessage DELAY_1SECOND
-	call BattleScript_AbilityPopUpRevert
-	copybyte BATTLE_SCRIPTING_BANK FORM_COUNTER
-
-BattleScript_CheckHealBellMon2Unaffected:
-	jumpifbyte NOTANDS MULTISTRING_CHOOSER 0x2 BattleScript_PartyHealEnd
+	jumpifbyte NOTANDS MULTISTRING_CHOOSER 0x1 AromatherapySapSipperCheckBS
 	call BattleScript_AbilityPopUp
 	printstring 0x15E @;STRINGID_PKMNSXBLOCKSY2
 	waitmessage DELAY_1SECOND
@@ -2093,6 +2086,7 @@ BattleScript_PartyHealEnd:
 	goto BS_MOVE_END
 
 AromatherapySapSipperCheckBS:
+	jumpifbyte NOTANDS MULTISTRING_CHOOSER 0x2 BattleScript_PartyHealEnd
 	callasm TryActivatePartnerSapSipper
 	goto BattleScript_PartyHealEnd
 	
@@ -2331,6 +2325,7 @@ BS_114_PerishSong:
 	
 PerishSongLoopBS:
 	jumpifability BANK_SCRIPTING ABILITY_SOUNDPROOF BattleScript_PerishSongNotAffected
+	jumpifability BANK_SCRIPTING ABILITY_GOODASGOLD BattleScript_PerishSongNotAffected
 	
 BattleScript_PerishSongLoopIncrement:
 	addbyte BATTLE_SCRIPTING_BANK 0x1
@@ -3774,7 +3769,7 @@ BS_174_Charge:
 	attackcanceler
 	attackstring
 	ppreduce
-	setcharge
+	setcharge BANK_ATTACKER
 	attackanimation
 	waitanimation
 	printstring 0xA5
@@ -3854,6 +3849,7 @@ Decorate_SpAtk:
 BS_Coaching:
 	jumpifbyte NOTANDS BATTLE_TYPE BATTLE_DOUBLE FAILED_PRE
 	callasm SetTargetPartner
+	jumpifability BANK_TARGET ABILITY_GOODASGOLD BattleScript_ProtectedByAbility
 	jumpiffainted BANK_TARGET FAILED_PRE
 	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED_PRE
 	attackstring
@@ -4590,9 +4586,17 @@ GearUpStatsWontGoHigher:
 	goto BattleScript_GearUpLoop
 
 BattleScript_GearUpDidntWork:
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 4 BattleScript_GearUpDidntWork_ShowAbility
 	printfromtable gFlowerShieldStringIds
 	waitmessage DELAY_1SECOND
 	goto BattleScript_GearUpLoop
+
+BattleScript_GearUpDidntWork_ShowAbility:
+	call BattleScript_AbilityPopUp
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BattleScript_RototillerLoop
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -4859,9 +4863,17 @@ MagneticFluxStatsWontGoHigher:
 	goto BattleScript_MagneticFluxLoop
 
 BattleScript_MagneticFluxDidntWork:
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 4 BattleScript_MagneticFluxDidntWork_ShowAbility
 	printfromtable gFlowerShieldStringIds
 	waitmessage DELAY_1SECOND
 	goto BattleScript_MagneticFluxLoop
+
+BattleScript_MagneticFluxDidntWork_ShowAbility:
+	call BattleScript_AbilityPopUp
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BattleScript_RototillerLoop
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -5929,6 +5941,17 @@ BS_239_TeamEffectsAndMagnetRise:
 	waitanimation
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	jumpifmove MOVE_TAILWIND TailWindAbilitiesLoopStart
+	goto BS_MOVE_END
+
+TailWindAbilitiesLoopStart:
+	setbyte SEED_HELPER 0
+	copyhword BACKUP_HWORD USER_BANK @;Backup original atatcker + target
+TailWindAbilitiesLoop:
+	callasm TryWindRiderPower
+	addbyte SEED_HELPER 1
+	jumpifbytenotequal SEED_HELPER, NUM_POKEMON, TailWindAbilitiesLoop
+	copyhword USER_BANK BACKUP_HWORD @;Restore original attacker + target
 	goto BS_MOVE_END
 	
 MagnetRiseBS:
@@ -5983,19 +6006,9 @@ BS_241_FlameBurst:
 
 .global BS_242_LastResort
 BS_242_LastResort:
-	jumpifmove MOVE_GIGATONHAMMER GigatonHammerBS
-	jumpifmove MOVE_BLOODMOON GigatonHammerBS
-	jumpifmove MOVE_LASTRESORT LastResortBS
-
-LastResortBS:
 	attackcanceler
 	callasm LastResortFunc
 	goto BS_STANDARD_HIT + 1
-
-GigatonHammerBS:
-	attackcanceler
-    callasm GigatonHammerFunc
-	goto 0x81BA8E3
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

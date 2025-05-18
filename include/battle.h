@@ -772,6 +772,7 @@ struct NewBattleStruct
 	u8 rageFistCounter[NUM_BATTLE_SIDES][PARTY_SIZE];
 	u8 SyrupBombTimers[MAX_BATTLERS_COUNT];
 	u8 DragonCheerRanks[MAX_BATTLERS_COUNT];
+	u8 supremeOverlordMultiplier[MAX_BATTLERS_COUNT];
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -803,6 +804,7 @@ struct NewBattleStruct
 	//Bit Fields for Party
 	u8 canBelch[NUM_BATTLE_SIDES];
 	u8 corrodedItems[NUM_BATTLE_SIDES];
+	u8 supersweetSyrupDone[NUM_BATTLE_SIDES];
 
 	//Other Helpers
 	u8 switchOutAbilitiesState; //For tracking effects that happen on switch-out
@@ -897,6 +899,7 @@ struct NewBattleStruct
 	bool8 cramorantTransformed : 1;
 	bool8 activateTemperFlare : 1;
 	bool8 terastalBoost : 1;
+	bool8 poisonPuppeteerConfusion : 1;
 
 	//Other
 	u16 LastUsedMove;

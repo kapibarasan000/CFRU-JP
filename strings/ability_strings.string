@@ -124,6 +124,12 @@
 #org @gText_LingeringAromaActivate
 [ATTACKER]は においが\nうつって とれなくなっちゃった！
 
+#org @gText_ToxicSpikesLayAttacker
+[FD][36] あしもとに\nどくびしが ちらばった！
+
+#org @gText_RuinAbilityActivate
+[SCRIPTING_BANK]の\n[SCRIPTING_BANK_ABILITY]で\lまわりの [BUFFER][00]が よわまった！
+
 #org @gText_EmbodyAspectActivate
 [ATTACKER]は [LAST_ITEM]を\nかがやかせ [BUFFER][00]が [BUFFER][01]
 
@@ -132,3 +138,18 @@
 
 #org @gText_HadronEngineActivate
 [SCRIPTING_BANK]は\nエレキフィールドで\lみらいの きかんを やくどうさせる！！
+
+#org @gText_ElectromorphosisActivates
+[SCRIPTING_BANK]は\n[CURRENT_MOVE]を うけて\lじゅうでん した！
+
+#org @gText_CostarActivate
+[SCRIPTING_BANK]は\n[TARGET]の\lのうりょくへんかを コピーした！
+
+#org @gText_HospitalityRestoration
+[SCRIPTING_BANK]が たてた おちゃを\n[TARGET]は のみほした！
+
+#org @gText_SupremeOverlordActivate
+[SCRIPTING_BANK]は たおされた\nなかまから ちからを もらった！
+
+#org @gText_SupersweetSyrupActivate
+[SCRIPTING_BANK]の ミツから\nあまいかおりが ただよっている！

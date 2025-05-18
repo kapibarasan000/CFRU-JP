@@ -23,3 +23,4 @@ bool8 IsPriorityBlockingAbility(u16 ability);
 bool8 IsUnnerveAbility(u16 ability);
 bool8 UnnerveOnOpposingField(u8 bank);
 bool8 AbilityIncreasesWildItemChance(u16 ability);
+bool8 AngerShellStatsCheck(u8 bank);

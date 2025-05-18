@@ -308,6 +308,10 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					gNewBS->synchronizeTarget[gEffectBank] = gBankAttacker + 1;
 				}
 			}
+
+			if (gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_POISON || gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_TOXIC)
+				gNewBS->poisonPuppeteerConfusion = TRUE;
+
 			return;
 		}
 		else

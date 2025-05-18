@@ -1964,7 +1964,9 @@ s32 BracketCalc(u8 bank, unusedArg u8 action, unusedArg u16 move)
 	gNewBS->quickDrawIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
 	if (BATTLER_ALIVE(bank))
 	{
-		if (gNewBS->ateCustapBerry & gBitTable[bank]) //Already ate the Berry
+		if (ability == ABILITY_MYCELIUMMIGHT && SPLIT(move) == SPLIT_STATUS)
+			return -1;
+		else if (gNewBS->ateCustapBerry & gBitTable[bank]) //Already ate the Berry
 			return 1;
 		else
 		{
@@ -1997,7 +1999,7 @@ s32 BracketCalc(u8 bank, unusedArg u8 action, unusedArg u16 move)
 					break;
 
 				case ITEM_EFFECT_LAGGING_TAIL:
-					return -2;
+					return -1;
 			}
 		}
 

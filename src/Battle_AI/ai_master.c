@@ -1032,7 +1032,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 	switch (moveType) {
 		case TYPE_FIRE:
 			absorbingTypeAbility1 = ABILITY_FLASHFIRE;
-			absorbingTypeAbility2 = ABILITY_FLASHFIRE;
+			absorbingTypeAbility2 = ABILITY_WELLBAKEDBODY;
 			absorbingTypeAbility3 = ABILITY_FLASHFIRE;
 			break;
 		case TYPE_ELECTRIC:

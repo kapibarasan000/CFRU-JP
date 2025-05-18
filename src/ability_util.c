@@ -19,31 +19,22 @@ bool8 IsTargetAbilityIgnored(u16 defAbility, u16 atkAbility, u16 move)
 
 bool8 IsTargetAbilityIgnoredNoMove(u16 defAbility, u16 atkAbility)
 {
-	return IsMoldBreakerAbility(atkAbility) && gMoldBreakerIgnoredAbilities[defAbility];
+	return (IsMoldBreakerAbility(atkAbility) && gMoldBreakerIgnoredAbilities[defAbility])
+		|| (atkAbility == ABILITY_MYCELIUMMIGHT && gMoldBreakerIgnoredAbilities[defAbility] && SPLIT(gCurrentMove) == SPLIT_STATUS);
 }
 
 bool8 IsClearBodyAbility(u16 ability)
 {
 	return ability == ABILITY_CLEARBODY
-		#ifdef ABILITY_FULLMETALBODY
 		|| ability == ABILITY_FULLMETALBODY
-		#endif
-		#ifdef ABILITY_WHITESMOKE
-		|| ability == ABILITY_WHITESMOKE
-		#endif
-		;
+		|| ability == ABILITY_WHITESMOKE;
 }
 
 bool8 IsMoldBreakerAbility(u16 ability)
 {
 	return ability == ABILITY_MOLDBREAKER
-		#ifdef ABILITY_TURBOBLAZE
 		|| ability == ABILITY_TURBOBLAZE
-		#endif
-		#ifdef ABILITY_TERAVOLT
-		|| ability == ABILITY_TERAVOLT
-		#endif
-		;
+		|| ability == ABILITY_TERAVOLT;
 }
 
 bool8 AbilityBlocksIntimidate(u16 ability)
@@ -149,4 +140,13 @@ bool8 UnnerveOnOpposingField(u8 bank)
 bool8 AbilityIncreasesWildItemChance(u16 ability)
 {
 	return ability == ABILITY_COMPOUNDEYES || ability == ABILITY_SUPERLUCK;
+}
+
+bool8 AngerShellStatsCheck(u8 bank)
+{
+    return (STAT_STAGE(bank, STAT_ATK) != STAT_STAGE_MAX
+         || STAT_STAGE(bank, STAT_SPATK) != STAT_STAGE_MAX
+         || STAT_STAGE(bank, STAT_SPEED) != STAT_STAGE_MAX
+         || STAT_STAGE(bank, STAT_DEF) > STAT_STAGE_MIN
+         || STAT_STAGE(bank, STAT_SPDEF) > STAT_STAGE_MIN);
 }
