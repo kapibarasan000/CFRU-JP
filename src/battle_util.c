@@ -906,6 +906,12 @@ u8 GetBaseMoveTarget(u16 move, u8 bankAtk)
 	&& gTerrainType == PSYCHIC_TERRAIN
 	&& CheckGrounding(bankAtk))
 		return MOVE_TARGET_BOTH; //Special property of Expanding Force in Doubles
+
+	if (move == MOVE_TERASTARSTORM
+	&& IS_DOUBLE_BATTLE
+	&& (SPECIES(bankAtk) == SPECIES_TERAPAGOS_STELLAR
+	|| (SPECIES(bankAtk) == SPECIES_TERAPAGOS_TERASTAL && TeraTypeActive(bankAtk))))
+		return MOVE_TARGET_BOTH;
 	
 	return gBattleMoves[move].target;
 }
@@ -1239,6 +1245,13 @@ bool8 CanTransferItem(u16 species, u16 item)
 			break;
 		#endif
 
+		#ifdef NATIONAL_DEX_OGERPON
+		case ITEM_EFFECT_MASKS:
+			if (dexNum == NATIONAL_DEX_OGERPON)
+				return FALSE;
+			break;
+		#endif
+
 		case ITEM_EFFECT_MEGA_STONE:
 			for (i = 0; i < EVOS_PER_MON; ++i)
 			{
@@ -1552,6 +1565,8 @@ void ResetVarsForAbilityChange(u8 bank)
 {
 	gNewBS->SlowStartTimers[bank] = 0;
 	gDisableStructs[gBankTarget].truantCounter = 0;
+	gNewBS->cudChewBerries[bank] = 0;
+	gNewBS->cudChewTimers[bank] = 0;
 	gStatuses3[bank] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
 	TryRemoveUnburdenBoost(bank);
 }
@@ -2379,4 +2394,32 @@ u8 GetCriticalRank(u8 bankAtk, u32 atkStatus2)
 	}
 
 	return rank;
+}
+
+u8 GetBankFaintCounter(u8 bank)
+{
+    return (SIDE(bank) == B_SIDE_PLAYER) ? gBattleResults.playerFaintCounter : gBattleResults.opponentFaintCounter;
+}
+
+u8 GetHighestStatId(u8 bank)
+{
+	u8 highestId;
+	u16 def, spDef;
+	u16 stats[STAT_SPDEF + 1];
+
+	APPLY_STAT_MOD(stats[STAT_ATK], &gBattleMons[bank], gBattleMons[bank].attack, STAT_ATK);
+	def = !IsWonderRoomActive() ? gBattleMons[bank].defense : gBattleMons[bank].spDefense;
+	APPLY_STAT_MOD(stats[STAT_DEF], &gBattleMons[bank], def, STAT_DEF);
+	APPLY_STAT_MOD(stats[STAT_SPATK], &gBattleMons[bank], gBattleMons[bank].spAttack, STAT_SPATK);
+	spDef = !IsWonderRoomActive() ? gBattleMons[bank].spDefense : gBattleMons[bank].defense;
+	APPLY_STAT_MOD(stats[STAT_SPDEF], &gBattleMons[bank], spDef, STAT_SPDEF);
+	APPLY_STAT_MOD(stats[STAT_SPEED], &gBattleMons[bank], gBattleMons[bank].speed, STAT_SPEED);
+
+	highestId = STAT_ATK;
+	for (u8 i = STAT_DEF; i < NELEMS(stats); ++i)
+	{
+		if (stats[i] > stats[highestId])
+			highestId = i;
+	}	
+	return highestId;
 }

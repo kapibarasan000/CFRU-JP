@@ -32,8 +32,15 @@ extern const u8 BattleScript_RaidBattleStart_NoDynamax[];
 extern const u8 BattleScript_RaidShieldsBattleStart[];
 extern const u8 BattleScript_RaidBattleStorm[];
 extern const u8 BattleScript_DynamaxEnergySwirl[];
+extern const u8 BattleScript_WeatherEnd[];
+extern const u8 BattleScript_TerrainEndRet[];
+extern const u8 BattleScript_ActivateTeraformZero[];
 
 extern const u8 gText_CamomonsTypeReveal[];
 extern const u8 gText_CamomonsTypeRevealDualType[];
 extern const u8 gText_RaidBattleReveal[];
 extern const u8 gText_DynamaxUsable[];
+extern const u8 gText_ElectricTerrainEnd[];
+extern const u8 gText_GrassyTerrainEnd[];
+extern const u8 gText_MistyTerrainEnd[];
+extern const u8 gText_PsychicTerrainEnd[];

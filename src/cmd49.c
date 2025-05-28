@@ -21,6 +21,7 @@
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/set_effect.h"
+#include "../include/new/terastal.h"
 #include "../include/new/util.h"
 
 /*
@@ -531,7 +532,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			||  !CanKnockOffItem(gBankTarget)
 			||  gBattleMoves[gCurrentMove].effect != EFFECT_KNOCK_OFF) //Don't activate items that should be knocked off
 			{
-				if (ItemBattleEffects(ItemEffects_EndTurn, gBankTarget, TRUE, FALSE))
+				if (ItemBattleEffects(ItemEffects_Normal, gBankTarget, TRUE, FALSE))
 					effect = TRUE;
 			}
 			gBattleScripting.atk49_state++;
@@ -550,7 +551,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_ITEM_EFFECTS_END_TURN_ATTACKER:
 		case ATK49_ITEM_EFFECTS_END_TURN_ATTACKER_2:
 		case ATK49_ITEM_EFFECTS_END_TURN_ATTACKER_3:
-			if (ItemBattleEffects(ItemEffects_EndTurn, gBankAttacker, TRUE, FALSE))
+			if (ItemBattleEffects(ItemEffects_Normal, gBankAttacker, TRUE, FALSE))
 				effect = TRUE;
 			gBattleScripting.atk49_state++;
 			break;
@@ -1453,6 +1454,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				gNewBS->missStringId[i] = 0;
 				gNewBS->noResultString[i] = 0;
 				gNewBS->statFellThisTurn[i] = 0;
+				gSpecialStatuses[i].distortedTypeMatchups = FALSE;
+				gSpecialStatuses[i].teraShellDone = FALSE;
 			}
 
 			gNewBS->totalDamageGiven = 0;
@@ -1477,6 +1480,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				}
 			}
 
+			if (GetBattlerTeraType(gBankAttacker) == TYPE_STELLAR && gNewBS->terastalBoostAnimationPlayed)
+				SetStellarBoostFlag(gBankAttacker, gBattleStruct->dynamicMoveType);
+
 			gNewBS->zMoveData.active = FALSE;
 			gNewBS->zMoveData.effectApplied = FALSE;
 			gNewBS->zMoveData.toBeUsed[gBankAttacker] = 0;
@@ -1491,6 +1497,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->rolloutFinalHit = FALSE;
 			gNewBS->dontActivateMoldBreakersAnymoreThisTurn = FALSE;
 			gNewBS->printedStrongWindsWeakenedAttack = FALSE;
+			gNewBS->terastalBoost = FALSE;
+			gNewBS->terastalBoostAnimationPlayed = FALSE;
 			gNewBS->poisonPuppeteerConfusion = FALSE;
 			#ifdef GEN9_CHARGE
 			if (moveType == TYPE_ELECTRIC)

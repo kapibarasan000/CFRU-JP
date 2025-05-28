@@ -19,6 +19,7 @@
 #include "../include/new/util.h"
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"
+#include "../include/new/terastal.h"
 /*
 catching.c
 	handles the catch probability logic, expands pokeballs, etc.
@@ -569,6 +570,7 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 	TryFormRevert(mon);
 	TryRevertMega(mon);
 	TryRevertGigantamax(mon);
+	TryRevertTerastalForm(mon);
 
 	SetMonData(mon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
 	SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
@@ -646,6 +648,7 @@ void atkF1_trysetcaughtmondexflags(void)
 
 	TryRevertMega(mon); //Megas aren't set in the habitat table
 	TryRevertGigantamax(mon); //Gigantamaxes aren't set in the habitat table
+	TryRevertTerastalForm(mon);
 	TryFormRevert(mon);
 
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);

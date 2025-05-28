@@ -39,7 +39,9 @@ enum SwitchInStates
 {
 	SwitchIn_HandleAICooldown,
 	SwitchIn_CamomonsReveal,
+	SwitchIn_TeraShift,
 	SwitchIn_NeutralizingGasRemoveAbility,
+	SwitchIn_Unnerve,
 	SwitchIn_HealingWish,
 	SwitchIn_ZHealingWish,
 	SwitchIn_Spikes,
@@ -53,6 +55,10 @@ enum SwitchInStates
 	SwitchIn_Abilities,
 	SwitchIn_Items,
 	SwitchIn_AirBalloon,
+	SwitchIn_Abilities2,
+	SwitchIn_Items2,
+	SwitchIn_Abilities3,
+	SwitchIn_BoosterEnergy,
 	SwitchIn_TotemPokemon,
 	SwitchIn_LastPokemonMusic,
 	SwitchIn_TrainerMessage,
@@ -248,7 +254,7 @@ static bool8 TryRemoveUnnerve(u8 bank)
 
 			if (IsBerry(ITEM(bank)))
 			{
-				if (ItemBattleEffects(ItemEffects_EndTurn, bank, TRUE, FALSE))
+				if (ItemBattleEffects(ItemEffects_Normal, bank, TRUE, FALSE))
 				{
 					ret = TRUE;
 					break;
@@ -275,7 +281,7 @@ static bool8 TryActivateFlowerGift(u8 leavingBank)
 		if (bank == leavingBank)
 			continue; //Don't do this form change if you're the bank switching out
 
-		if ((ABILITY(bank) == ABILITY_FLOWERGIFT || ABILITY(bank) == ABILITY_FORECAST)) //Just in case someone with Air Lock/Cloud Nine switches out
+		if ((ABILITY(bank) == ABILITY_FLOWERGIFT || ABILITY(bank) == ABILITY_FORECAST || ABILITY(bank) == ABILITY_PROTOSYNTHESIS)) //Just in case someone with Air Lock/Cloud Nine switches out
 		{
 			gStatuses3[bank] &= ~STATUS3_SWITCH_IN_ABILITY_DONE;
 
@@ -581,6 +587,15 @@ void atk52_switchineffects(void)
 			++gNewBS->switchInEffectsState;
 			break;
 
+		case SwitchIn_TeraShift:
+			if (ability == ABILITY_TERASHIFT)
+			{
+				if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
+					return;
+			}
+			++gNewBS->switchInEffectsState;
+		__attribute__ ((fallthrough));
+
 		case SwitchIn_NeutralizingGasRemoveAbility:
 			if (!IsAbilitySuppressed(gActiveBattler) //Gastro Acid has higher priority
 			&& ABILITY(gActiveBattler) != ABILITY_NONE
@@ -594,6 +609,15 @@ void atk52_switchineffects(void)
 			}
 			++gNewBS->switchInEffectsState;
 			break;
+
+		case SwitchIn_Unnerve:
+			if (IsUnnerveAbility(ability))
+			{
+				if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
+					return;
+			}
+			++gNewBS->switchInEffectsState;
+		__attribute__ ((fallthrough));
 
 		case SwitchIn_HealingWish:
 			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP
@@ -817,18 +841,29 @@ void atk52_switchineffects(void)
 					return;
 			}
 
-			if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
+			if (SWITCH_IN_ABILITY1(ability) && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
+			{
+				++gNewBS->switchInEffectsState;
 				return;
+			}
 
 			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_Items:
-			if (ItemBattleEffects(ItemEffects_SwitchIn, gActiveBattler, TRUE, FALSE))
+			if (ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_DOUBLE_PRIZE
+			&& ItemBattleEffects(ItemEffects_SwitchIn, gActiveBattler, TRUE, FALSE))
+			{
+				++gNewBS->switchInEffectsState;
 				return;
+			}
 
-			if (ItemBattleEffects(ItemEffects_EndTurn, gActiveBattler, TRUE, FALSE))
+			if (ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_RESTORE_STATS
+			&& ItemBattleEffects(ItemEffects_Normal, gActiveBattler, TRUE, FALSE))
+			{
+				++gNewBS->switchInEffectsState;
 				return;
+			}
 			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
@@ -842,6 +877,48 @@ void atk52_switchineffects(void)
 				++gNewBS->switchInEffectsState;
 				return;
 			}
+			++gNewBS->switchInEffectsState;
+		__attribute__ ((fallthrough));
+
+		case SwitchIn_Abilities2:
+			if (SWITCH_IN_ABILITY2(ability) && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
+			{
+				++gNewBS->switchInEffectsState;
+				return;
+			}
+
+			++gNewBS->switchInEffectsState;
+		__attribute__ ((fallthrough));
+
+		case SwitchIn_Items2:
+			if ((ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_SEEDS || ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_ROOM_SERVICE)
+			&& ItemBattleEffects(ItemEffects_SwitchIn, gActiveBattler, TRUE, FALSE))
+			{
+				++gNewBS->switchInEffectsState;
+				return;
+			}
+
+			++gNewBS->switchInEffectsState;
+		__attribute__ ((fallthrough));
+
+		case SwitchIn_Abilities3:
+			if (SWITCH_IN_ABILITY3(ability) && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
+			{
+				++gNewBS->switchInEffectsState;
+				return;
+			}
+
+			++gNewBS->switchInEffectsState;
+		__attribute__ ((fallthrough));
+
+		case SwitchIn_BoosterEnergy:
+			if ((ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_BOOSTER_ENERGY)
+			&& ItemBattleEffects(ItemEffects_SwitchIn, gActiveBattler, TRUE, FALSE))
+			{
+				++gNewBS->switchInEffectsState;
+				return;
+			}
+
 			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
@@ -1069,7 +1146,7 @@ static bool8 TryDoForceSwitchOut(void)
 	u8 bankDef = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 bankAtk = GetBankForBattleScript(gBattlescriptCurrInstr[2]);
 
-	if (IsDynamaxed(bankDef)) //Can't force out a Dynamaxed mon
+	if (IsDynamaxed(bankDef) || ABILITY(bankDef) == ABILITY_GUARDDOG) //Can't force out a Dynamaxed mon
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 		return FALSE;
@@ -1198,6 +1275,9 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->SyrupBombTimers[bank] = 0;
 	gNewBS->DragonCheerRanks[bank] = 0;
 	gNewBS->supremeOverlordMultiplier[bank] = 0;
+	gNewBS->cudChewBerries[bank] = 0;
+	gNewBS->cudChewTimers[bank] = 0;
+	gNewBS->paradoxBoostStats[bank] = 0;
 
 	gProtectStructs[bank].KingsShield = 0;	//Necessary because could be sent away with Roar
 	gProtectStructs[bank].SpikyShield = 0;

@@ -21,6 +21,7 @@
 #include "../include/new/util.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
+#include "../include/new/terastal.h"
 /*
 end_battle.c
 	handles all battle termination logic and data resetting/saving
@@ -579,6 +580,7 @@ void EndOfBattleThings(void)
 		FormsRevert(gPlayerParty);
 		MegaRevert(gPlayerParty);
 		GigantamaxRevert(gPlayerParty);
+		TerastalFormRevert(gPlayerParty);
 		UpdateBurmy();
 		EndPartnerBattlePartyRestore();
 		EndSkyBattlePartyRestore();

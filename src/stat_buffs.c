@@ -22,12 +22,17 @@ extern u8 SeverelyString[];
 
 static bool8 IsIntimidateActive(void)
 {
-	return gNewBS->intimidateActive != 0 && !gNewBS->cottonDownActive;
+	return gNewBS->intimidateActive != 0 && !gNewBS->cottonDownActive && !gNewBS->supersweetSyrupActive;
 }
 
 static bool8 IsCottonDownActive(void)
 {
-	return gNewBS->intimidateActive != 0 && gNewBS->cottonDownActive;
+	return gNewBS->intimidateActive != 0 && gNewBS->cottonDownActive && !gNewBS->supersweetSyrupActive;
+}
+
+static bool8 IsSupersweetSyrupActive(void)
+{
+	return gNewBS->intimidateActive != 0 && !gNewBS->cottonDownActive && gNewBS->supersweetSyrupActive;
 }
 
 void atk13_printfromtable(void)
@@ -48,6 +53,7 @@ void atk13_printfromtable(void)
 
 		if (IsIntimidateActive()
 		|| (IsCottonDownActive() && defSide != atkSide)
+		|| IsSupersweetSyrupActive()
 		|| (gNewBS->stickyWebActive && SIDE(gSideTimers[defSide].stickyWebBank) != defSide) //Was set by foe and not Court Change
 		|| defSide != atkSide)
 			DefiantActivation(); //Stat fell from enemy
@@ -392,6 +398,15 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			}
 			return STAT_CHANGE_DIDNT_WORK;
 		}
+		else if (ability == ABILITY_GUARDDOG && IsIntimidateActive() && !certain)
+		{
+			if (flags == STAT_CHANGE_BS_PTR)
+			{
+				gBattleScripting.bank = gActiveBattler;
+				gBattlescriptCurrInstr = BattleScript_GuardDogActivates;
+			}
+			return STAT_CHANGE_DIDNT_WORK;
+		}
 		else if (ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_CLEAR_AMULET
 			&& !certain && gCurrentMove != MOVE_CURSE)
 		{
@@ -406,7 +421,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			}
 			return STAT_CHANGE_DIDNT_WORK;
 		}
-		else if (ability == ABILITY_MIRRORARMOR && (IsIntimidateActive() || IsCottonDownActive()) && !certain)
+		else if (ability == ABILITY_MIRRORARMOR && (IsIntimidateActive() || IsCottonDownActive() || IsSupersweetSyrupActive()) && !certain)
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{

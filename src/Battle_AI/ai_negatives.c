@@ -819,7 +819,7 @@ MOVESCR_CHECK_0:
 					break;
 
 				case MOVE_STUFFCHEEKS:
-					if (gNewBS->SavedConsumedItems[bankAtk] == ITEM_NONE || !IsBerry(gNewBS->SavedConsumedItems[bankAtk]))
+					if (SAVED_CONSUMED_ITEMS(bankAtk) == ITEM_NONE || !IsBerry(SAVED_CONSUMED_ITEMS(bankAtk)))
 						DECREASE_VIABILITY(10);
 					break;
 
@@ -2050,7 +2050,7 @@ MOVESCR_CHECK_0:
 				else
 					goto AI_STANDARD_DAMAGE;
 			}
-			else if (gNewBS->SavedConsumedItems[bankAtk] == ITEM_NONE || data->atkItem != ITEM_NONE)
+			else if (SAVED_CONSUMED_ITEMS(bankAtk) == ITEM_NONE || data->atkItem != ITEM_NONE)
 				DECREASE_VIABILITY(10);
 			break;
 

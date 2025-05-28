@@ -28,6 +28,7 @@
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
 #include "../include/new/general_bs_commands.h"
+#include "../include/new/item.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/mega_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
@@ -65,6 +66,8 @@ tables:
 static bool8 ProcessPreAttackAnimationFuncs(void);
 static bool8 TryStrongWindsWeakenAttack(u8 bank);
 static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags);
+static bool8 TryActivateTeraShell(u8 bankDef);
+static bool8 TryTeastalBoostAnimation(u8 resultFlags);
 static bool8 IsSingleTargetOfDoublesSpreadMove(void);
 static bool8 IsDoubleSpreadMove(void);
 static bool8 DoesBankNegateDamage(u8 bank, u16 move);
@@ -93,6 +96,17 @@ static const u8* const sEntryHazardsStrings[] =
 	ToxicSpikesLayString,
 	StickyWebLayString,
 	gText_SteelsurgeLay,
+};
+
+static const species_t sBannedFaintFormsRevertSpecies[] =
+{
+	SPECIES_MIMIKYU_BUSTED,
+	SPECIES_EISCUE_NOICE,
+	SPECIES_ZACIAN_CROWNED,
+	SPECIES_ZAMAZENTA_CROWNED,
+	SPECIES_PALAFIN_HERO,
+	SPECIES_TERAPAGOS_TERASTAL,
+	SPECIES_TABLES_TERMIN
 };
 
 void TrySetMissStringForSafetyGoggles(u8 bankDef)
@@ -279,6 +293,9 @@ static bool8 ProcessPreAttackAnimationFuncs(void)
 			|| (gNewBS->noResultString[bankDef] && gNewBS->noResultString[bankDef] != 2))
 				continue; //Don't bother with this target
 
+			if (TryActivateTeraShell(bankDef))
+				return TRUE;
+
 			if (TryActivateWeakenessBerry(bankDef, gNewBS->ResultFlags[bankDef]))
 			{
 				gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
@@ -291,24 +308,14 @@ static bool8 ProcessPreAttackAnimationFuncs(void)
 		if (TryStrongWindsWeakenAttack(gBankTarget))
 			return TRUE;
 
+		if (TryActivateTeraShell(gBankTarget))
+			return TRUE;
+
 		if (TryActivateWeakenessBerry(gBankTarget, gMoveResultFlags))
 		{
 			gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
 			return TRUE;
 		}
-	}
-
-
-	if (GetBattlerTeraType(gBankAttacker) == TYPE_STELLAR && gMultiHitCounter <= 1)
-		SetStellarBoostFlag(gBankAttacker, gBattleStruct->dynamicMoveType);
-
-	if (gNewBS->terastalBoost)
-	{
-		gBattleScripting.bank = gBankAttacker;
-		BattleScriptPushCursor();
-		gBattlescriptCurrInstr = BattleScript_TerastalBoost;
-		gNewBS->terastalBoost = FALSE;
-		return TRUE;
 	}
 
 	return FALSE;
@@ -349,6 +356,36 @@ static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags)
 			gBattlescriptCurrInstr = BattleScript_WeaknessBerryActivate - 5;
 			return TRUE;
 		}
+	}
+
+	return FALSE;
+}
+
+static bool8 TryActivateTeraShell(u8 bankDef)
+{
+	if (gSpecialStatuses[bankDef].distortedTypeMatchups && !gSpecialStatuses[bankDef].teraShellDone)
+	{
+		gSpecialStatuses[bankDef].teraShellDone = TRUE;
+		gBattleScripting.bank = bankDef;
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_TeraShellActivate;
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static bool8 TryTeastalBoostAnimation(u8 resultFlags)
+{
+	if (!(resultFlags & MOVE_RESULT_NO_EFFECT)
+	&& SPLIT(gCurrentMove) != SPLIT_STATUS
+	&& gNewBS->terastalBoost
+	&& !gNewBS->terastalBoostAnimationPlayed)
+	{
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_TerastalBoost;
+		gNewBS->terastalBoostAnimationPlayed = TRUE;
+		return TRUE;
 	}
 
 	return FALSE;
@@ -466,6 +503,9 @@ void atk09_attackanimation(void)
 	if (IsDoubleSpreadMove())
 		resultFlags = UpdateEffectivenessResultFlagsForDoubleSpreadMoves(resultFlags);
 
+	if (TryTeastalBoostAnimation(resultFlags))
+		return;
+
 	if (((gHitMarker & HITMARKER_NO_ANIMATIONS)
 	 && (move != MOVE_TRANSFORM && move != MOVE_SUBSTITUTE
 	  && move != MOVE_ELECTRICTERRAIN && move != MOVE_PSYCHICTERRAIN
@@ -539,7 +579,8 @@ void atk09_attackanimation(void)
 				multihit = gMultiHitCounter;
 
 			u8 animTurn = gBattleScripting.animTurn;
-			if (move == MOVE_EXPANDINGFORCE && moveTarget & MOVE_TARGET_BOTH)
+			if ((move == MOVE_EXPANDINGFORCE || move == MOVE_TERASTARSTORM)
+			&& moveTarget & MOVE_TARGET_BOTH)
 				animTurn = 1; //Play doubles animation
 
 			gNewBS->attackAnimationPlayed = TRUE;
@@ -1343,8 +1384,7 @@ void atk19_tryfaintmon(void)
 			gHitMarker |= HITMARKER_FAINTED(gActiveBattler);
 			BattleScriptPush(gBattlescriptCurrInstr + 7);
 			gBattlescriptCurrInstr = BS_ptr;
-			if (SIDE(gActiveBattler) == B_SIDE_PLAYER
-			&& (!IsTagBattle() || GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_LEFT)) //Is player's mon
+			if (SIDE(gActiveBattler) == B_SIDE_PLAYER)
 			{
 				gHitMarker |= HITMARKER_PLAYER_FAINTED;
 				if (gBattleResults.playerFaintCounter < 0xFF)
@@ -1357,6 +1397,9 @@ void atk19_tryfaintmon(void)
 					gBattleResults.opponentFaintCounter++;
 				gBattleResults.lastOpponentSpecies = GetMonData(&gEnemyParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_SPECIES, NULL);
 			}
+
+			if (IsTerastal(gActiveBattler))
+				gNewBS->terastalData.fainted[gActiveBattler] = 1;
 
 			gNewBS->RetaliateCounters[SIDE(gActiveBattler)] = 2;
 
@@ -1441,10 +1484,6 @@ void atk1B_cleareffectsonfaint(void) {
 				gBattleMons[gActiveBattler].status1 = 0;
 				EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 0x4, &gBattleMons[gActiveBattler].status1);
 				MarkBufferBankForExecution(gActiveBattler);
-				if (gNewBS->FaintedCounters[SIDE(gActiveBattler)] < 100)
-					++gNewBS->FaintedCounters[SIDE(gActiveBattler)];
-				if (IsTerastal(gActiveBattler))
-					gNewBS->terastalData.fainted[gActiveBattler] = 1;
 
 				{
 					u32 backupStatus2[gBattlersCount];
@@ -1512,7 +1551,7 @@ void atk1B_cleareffectsonfaint(void) {
 					gBattlescriptCurrInstr = BattleScript_Receiver;
 
 					gAbilityPopUpHelper = gLastUsedAbility;
-					EmitDataTransfer(0, &gAbilityPopUpHelper, 1, &gAbilityPopUpHelper);
+					EmitDataTransfer(0, &gAbilityPopUpHelper, 2, &gAbilityPopUpHelper);
 					MarkBufferBankForExecution(gActiveBattler);
 
 					++gNewBS->faintEffectsState;
@@ -1685,7 +1724,8 @@ void atk1B_cleareffectsonfaint(void) {
 				//Fallthrough
 
 			case Faint_FormsRevert:
-				if (!IsRaidBattle() || gActiveBattler != BANK_RAID_BOSS) //Raid Boss doesn't revert until later
+				if ((!IsRaidBattle() || gActiveBattler != BANK_RAID_BOSS) //Raid Boss doesn't revert until later
+				&& !CheckTableForSpecies(mon->species, sBannedFaintFormsRevertSpecies))
 				{
 					if (TryFormRevert(mon))
 					{
@@ -1710,7 +1750,7 @@ void atk1B_cleareffectsonfaint(void) {
 				oldHP = mon->hp;
 
 				#if (defined SPECIES_ZYGARDE && defined SPECIES_ZYGARDE_10)
-				if (mon->species == SPECIES_ZYGARDE || mon->species == SPECIES_ZYGARDE_10)
+				if (mon->species == SPECIES_ZYGARDE || mon->species == SPECIES_ZYGARDE_10 || mon->species == SPECIES_TERAPAGOS_TERASTAL)
 				{
 					newHP = MathMin(mon->maxHP, oldHP);
 					EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &newHP);
@@ -2277,6 +2317,12 @@ void atk6A_removeitem(void)
 	
 	if (gNewBS->doingPluckItemEffect) //This item removal was triggered by using someone else's item
 	{
+		if (!gNewBS->cudChewActive)
+		{
+			gNewBS->cudChewBerries[bank] = gLastUsedItem;
+			gNewBS->cudChewTimers[bank] = 2;
+		}
+			
 		gNewBS->doingPluckItemEffect = FALSE;
 		gBattlescriptCurrInstr += 2;
 		return;
@@ -2288,6 +2334,11 @@ void atk6A_removeitem(void)
 	{
 		if (!gNewBS->IncinerateCounters[bank]) //Item can be restored
 		{
+			if (IsBerry(gLastUsedItem) && ABILITY(bank) == ABILITY_CUDCHEW)
+			{
+				gNewBS->cudChewBerries[bank] = gLastUsedItem;
+				gNewBS->cudChewTimers[bank] = 2;
+			}
 			CONSUMED_ITEMS(bank) = gLastUsedItem;
 			SAVED_CONSUMED_ITEMS(bank) = gLastUsedItem;
 			AddBankToPickupStack(bank);
@@ -5495,6 +5546,29 @@ void atkE7_trycastformdatachange(void)
 				}
 				break;
 			#endif
+
+			default:
+				if (ABILITY(bank) == ABILITY_PROTOSYNTHESIS
+				&& !gDisableStructs[bank].boosterEnergyActive
+				&& !IS_TRANSFORMED(bank))
+				{
+					if (WEATHER_HAS_EFFECT
+					&& gBattleWeather & WEATHER_SUN_ANY
+					&& gNewBS->paradoxBoostStats[bank] == 0)
+					{
+						u8 statId = GetHighestStatId(bank);
+						gNewBS->paradoxBoostStats[bank] = statId;
+						PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
+						gBattleStringLoader = gText_ProtosynthesisActivate;
+						BattleScriptPushCursorAndCallback(BattleScript_ParadoxAbilityActivates);
+					}
+					else if (!(gBattleWeather & WEATHER_SUN_ANY)
+					&& gNewBS->paradoxBoostStats[bank] != 0)
+					{
+						gNewBS->paradoxBoostStats[bank] = 0;
+						BattleScriptPushCursorAndCallback(BattleScript_ParadoxAbilityEnd);
+					}
+				}
 		}
 	}
 }

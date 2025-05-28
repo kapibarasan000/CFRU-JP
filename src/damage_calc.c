@@ -866,13 +866,7 @@ void atk06_typecalc(void)
 
 			if (gNewBS->ResultFlags[bankDef] & MOVE_RESULT_DOESNT_AFFECT_FOE)
 				gProtectStructs[gBankAttacker].targetNotAffected = 1;
-
-			if (gNewBS->ResultFlags[bankDef] & MOVE_RESULT_NO_EFFECT)
-				gNewBS->terastalBoost = FALSE;
-
-			if (gMultiHitCounter && gBattleScripting.multihitString[4] > 0)
-				gNewBS->terastalBoost = FALSE;
-
+			
 			gNewBS->DamageTaken[bankDef] = gBattleMoveDamage;
 
 			if (!calcSpreadMove)
@@ -1507,6 +1501,16 @@ TYPE_LOOP:
 	if (moveType == TYPE_STELLAR && IsTerastal(bankDef))
 		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
 
+	if (gSpecialStatuses[bankDef].distortedTypeMatchups
+	|| (ABILITY(bankDef) == ABILITY_TERASHELL && BATTLER_MAX_HP(bankDef) && SPLIT(move) != SPLIT_STATUS))
+	{
+		if (multiplier >= TYPE_MUL_NORMAL)
+		{
+			multiplier = TYPE_MUL_NOT_EFFECTIVE;
+			gSpecialStatuses[bankDef].distortedTypeMatchups = TRUE;
+		}
+	}
+		
 	UpdateMoveResultFlags(multiplier, flags);
 
 	if (multiplier != TYPE_MUL_NORMAL)
@@ -1548,6 +1552,12 @@ TYPE_LOOP_AI:
 
 	if (moveType == TYPE_STELLAR && IsMonTerastal(monDef))
 		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
+
+	if (GetMonAbility(monDef) == ABILITY_TERASHELL && monDef->hp == monDef->maxHP)
+	{
+		if (multiplier != TYPE_MUL_NO_EFFECT)
+			multiplier = TYPE_MUL_NOT_EFFECTIVE;
+	}
 
 	UpdateMoveResultFlags(multiplier, flags);
 
@@ -1837,7 +1847,7 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 			u8 atkTeraType = GetBattlerTeraType(bankAtk);
 			if (gNewBS->DancerInProgress)
 			{
-				if (atkTeraType != TYPE_BLANK)
+				if (atkTeraType != TYPE_BLANK && atkTeraType != TYPE_STELLAR)
 					moveType = atkTeraType;
 				else if (atkType1 != TYPE_MYSTERY && atkType1 != TYPE_ROOSTLESS)
 					moveType = atkType1;
@@ -1870,11 +1880,14 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 
 		case MOVE_IVYCUDGEL:
 			#if (defined SPECIES_OGERPON && SPECIES_OGERPON_WELLSPRING_MASK && SPECIES_OGERPON_HEARTHFLAME_MASK && SPECIES_OGERPON_CORNERSTONE_MASK)
-			if (SPECIES(bankAtk) == SPECIES_OGERPON_CORNERSTONE_MASK)
+			if (SPECIES(bankAtk) == SPECIES_OGERPON_CORNERSTONE_MASK
+			|| SPECIES(bankAtk) == SPECIES_OGERPON_CORNERSTONE_TERASTAL)
 				moveType = TYPE_ROCK;
-			else if (SPECIES(bankAtk) == SPECIES_OGERPON_WELLSPRING_MASK)
+			else if (SPECIES(bankAtk) == SPECIES_OGERPON_WELLSPRING_MASK
+			|| SPECIES(bankAtk) == SPECIES_OGERPON_WELLSPRING_TERASTAL)
 				moveType = TYPE_WATER;
-			else if (SPECIES(bankAtk) == SPECIES_OGERPON_HEARTHFLAME_MASK)
+			else if (SPECIES(bankAtk) == SPECIES_OGERPON_HEARTHFLAME_MASK
+			|| SPECIES(bankAtk) == SPECIES_OGERPON_HEARTHFLAME_TERASTAL)
 				moveType = TYPE_FIRE;
 			else
 				moveType = TYPE_GRASS;
@@ -1904,6 +1917,14 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 		case MOVE_TERABLAST:
 			if (TeraTypeActive(bankAtk))
 				moveType = GetTeraType(bankAtk);
+			break;
+
+		case MOVE_TERASTARSTORM:
+			#if (defined SPECIES_TERAPAGOS && SPECIES_TERAPAGOS_TERASTAL && SPECIES_TERAPAGOS_STELLAR)
+			if (SPECIES(bankAtk) == SPECIES_TERAPAGOS_STELLAR
+			|| (TeraTypeActive(bankAtk) && SPECIES(bankAtk) == SPECIES_TERAPAGOS_TERASTAL))
+				moveType = TYPE_STELLAR;
+			#endif
 			break;
 	}
 
@@ -1986,11 +2007,14 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 
 		case MOVE_IVYCUDGEL:
 			#if (defined SPECIES_OGERPON && SPECIES_OGERPON_WELLSPRING_MASK && SPECIES_OGERPON_HEARTHFLAME_MASK && SPECIES_OGERPON_CORNERSTONE_MASK)
-			if (mon->species == SPECIES_OGERPON_CORNERSTONE_MASK)
+			if (mon->species == SPECIES_OGERPON_CORNERSTONE_MASK
+			&& mon->species == SPECIES_OGERPON_CORNERSTONE_TERASTAL)
 				moveType = TYPE_ROCK;
-			else if (mon->species == SPECIES_OGERPON_WELLSPRING_MASK)
+			else if (mon->species == SPECIES_OGERPON_WELLSPRING_MASK
+			&& mon->species == SPECIES_OGERPON_WELLSPRING_TERASTAL)
 				moveType = TYPE_WATER;
-			else if (mon->species == SPECIES_OGERPON_HEARTHFLAME_MASK)
+			else if (mon->species == SPECIES_OGERPON_HEARTHFLAME_MASK
+			&& mon->species == SPECIES_OGERPON_HEARTHFLAME_TERASTAL)
 				moveType = TYPE_FIRE;
 			else
 				moveType = TYPE_GRASS;
@@ -2026,6 +2050,13 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 				if (IsMonTerastal(mon))
 					moveType = mon->teratype;
 			}
+			break;
+
+		case MOVE_TERASTARSTORM:
+			#if (defined SPECIES_TERAPAGOS && SPECIES_TERAPAGOS_TERASTAL && SPECIES_TERAPAGOS_STELLAR)
+			if (mon->species == SPECIES_TERAPAGOS_STELLAR)
+				moveType = TYPE_STELLAR;
+			#endif
 			break;
 	}
 
@@ -2801,6 +2832,15 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			if (gTerrainType == ELECTRIC_TERRAIN)
 				spAttack = (spAttack * 4) / 3;
 			break;
+
+		case ABILITY_PROTOSYNTHESIS:
+		case ABILITY_QUARKDRIVE:
+		//1.3x Boost
+			if (!useMonAtk && gNewBS->paradoxBoostStats[bankAtk] == STAT_ATK)
+				attack = (attack * 13) / 10;
+			else if (!useMonAtk && gNewBS->paradoxBoostStats[bankAtk] == STAT_SPATK)
+				spAttack = (spAttack * 13) / 10;
+			break;
 	}
 
 	switch (data->atkPartnerAbility) {
@@ -2811,10 +2851,12 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			break;
 	}
 
-	if (ABILITY_ON_FIELD(ABILITY_VESSELOFRUIN) && data->atkAbility != ABILITY_VESSELOFRUIN)
+	if ((ABILITY_ON_FIELD(ABILITY_VESSELOFRUIN) && data->atkAbility != ABILITY_VESSELOFRUIN)
+	|| (data->defAbility == ABILITY_VESSELOFRUIN && data->atkAbility != ABILITY_VESSELOFRUIN))
 		spAttack = (spAttack * 3) / 4;
 
-	if (ABILITY_ON_FIELD(ABILITY_TABLETSOFRUIN) && data->atkAbility != ABILITY_TABLETSOFRUIN)
+	if ((ABILITY_ON_FIELD(ABILITY_TABLETSOFRUIN) && data->atkAbility != ABILITY_TABLETSOFRUIN)
+	|| (data->defAbility == ABILITY_TABLETSOFRUIN && data->atkAbility != ABILITY_TABLETSOFRUIN))
 		attack = (attack * 3) / 4;
 
 //Target Ability Checks
@@ -2863,12 +2905,23 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		//2x Boost
 			defense *= 2;
 			break;
+
+		case ABILITY_PROTOSYNTHESIS:
+		case ABILITY_QUARKDRIVE:
+		//1.3x Boost
+			if (!useMonDef && gNewBS->paradoxBoostStats[bankAtk] == STAT_DEF)
+				defense = (defense * 13) / 10;
+			else if (!useMonDef && gNewBS->paradoxBoostStats[bankAtk] == STAT_SPDEF)
+				spDefense = (spDefense * 13) / 10;
+			break;
 	}
 
-	if (ABILITY_ON_FIELD(ABILITY_SWORDOFRUIN) && data->defAbility != ABILITY_SWORDOFRUIN)
+	if ((ABILITY_ON_FIELD(ABILITY_SWORDOFRUIN) && data->defAbility != ABILITY_SWORDOFRUIN)
+	|| (data->atkAbility == ABILITY_SWORDOFRUIN && data->defAbility != ABILITY_SWORDOFRUIN))
 		defense = (defense * 3) / 4;
 
-	if (ABILITY_ON_FIELD(ABILITY_BEADSOFRUIN) && data->defAbility != ABILITY_BEADSOFRUIN)
+	if ((ABILITY_ON_FIELD(ABILITY_BEADSOFRUIN) && data->defAbility != ABILITY_BEADSOFRUIN)
+	|| (data->atkAbility == ABILITY_BEADSOFRUIN && data->defAbility != ABILITY_BEADSOFRUIN))
 		spDefense = (spDefense * 3) / 4;
 
 //Attacker Item Checks
@@ -3309,7 +3362,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	//Spread Move Cut
 	if (IS_DOUBLE_BATTLE)
 	{
-		u8 moveTarget = GetBaseMoveTargetByGrounding(move, data->atkIsGrounded);
+		u8 moveTarget = useMonAtk ? GetBaseMoveTargetByGrounding(move, data->atkIsGrounded) : GetBaseMoveTarget(move, bankAtk);
 		if (moveTarget & MOVE_TARGET_BOTH && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2)
 			damage = (damage * 75) / 100;
 
@@ -3478,8 +3531,8 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_LASTRESPECTS:
-			if (!useMonAtk && gNewBS->FaintedCounters[SIDE(bankAtk)])
-				power = 50 + (50 * gNewBS->FaintedCounters[SIDE(bankAtk)]);
+			if (!useMonAtk)
+				power += (power * min(100, GetBankFaintCounter(bankAtk)));
 			break;
 
 		case MOVE_PSYBLADE:
@@ -3488,8 +3541,8 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_RAGEFIST:
-			if (!useMonAtk && gNewBS->rageFistCounter[SIDE(bankAtk)][gBattlerPartyIndexes[bankAtk]])
-				power = 50 + (50 * gNewBS->rageFistCounter[SIDE(bankAtk)][gBattlerPartyIndexes[bankAtk]]);
+			if (!useMonAtk)
+				power += (power * min(6, gNewBS->rageFistCounter[SIDE(bankAtk)][gBattlerPartyIndexes[bankAtk]]));
 			break;
 
 		case MOVE_ROUND:
@@ -4151,6 +4204,14 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 		//1.2x Boost
 			if (SpeciesToNationalPokedexNum(data->atkSpecies) == NATIONAL_DEX_GIRATINA
 			&& (data->moveType == TYPE_GHOST || data->moveType == TYPE_DRAGON))
+				power = (power * 12) / 10;
+			break;
+		#endif
+
+		#if (defined SPECIES_OGERPON)
+		case ITEM_EFFECT_MASKS:
+		//1.2x Boost
+			if (SpeciesToNationalPokedexNum(data->atkSpecies) == NATIONAL_DEX_OGERPON)
 				power = (power * 12) / 10;
 			break;
 		#endif

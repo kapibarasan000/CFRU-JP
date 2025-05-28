@@ -17,6 +17,7 @@
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/switching.h"
+#include "../include/new/terastal.h"
 #include "../include/new/util.h"
 
 /*
@@ -251,18 +252,21 @@ u8 TurnBasedEffects(void)
 					&& --gWishFutureKnock.weatherDuration == 0)
 					{
 						gBattleWeather &= ~WEATHER_RAIN_ANY;
-						gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+						gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+						gBattlescriptCurrInstr = BattleScript_EndTurnWeatherEnd;
 					}
 					else if (gBattleWeather & WEATHER_RAIN_DOWNPOUR)
 					{
 						gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+						gBattlescriptCurrInstr = BattleScript_RainContinuesOrEnds;
 					}
 					else
 					{
 						gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+						gBattlescriptCurrInstr = BattleScript_RainContinuesOrEnds;
 					}
 
-					BattleScriptExecute(BattleScript_RainContinuesOrEnds);
+					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
 				else if (gBattleWeather & WEATHER_SUN_ANY)
@@ -271,12 +275,14 @@ u8 TurnBasedEffects(void)
 					&& --gWishFutureKnock.weatherDuration == 0)
 					{
 						gBattleWeather &= ~WEATHER_SUN_ANY;
-						gBattlescriptCurrInstr = BattleScript_SunlightFaded;
+						gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+						gBattlescriptCurrInstr = BattleScript_EndTurnWeatherEnd;
 					}
 					else
 					{
 						gBattlescriptCurrInstr = BattleScript_SunlightContinues;
 					}
+
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
@@ -286,15 +292,16 @@ u8 TurnBasedEffects(void)
 					&& --gWishFutureKnock.weatherDuration == 0)
 					{
 						gBattleWeather &= ~WEATHER_SANDSTORM_ANY;
-						gBattlescriptCurrInstr = BattleScript_SandStormHailEnds;
+						gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+						gBattlescriptCurrInstr = BattleScript_EndTurnWeatherEnd;
 					}
 					else
 					{
 						gBattlescriptCurrInstr = BattleScript_SandstormHailContinues;
+						gBattleScripting.animArg1 = B_ANIM_SANDSTORM_CONTINUES;
+						gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 					}
 
-					gBattleScripting.animArg1 = B_ANIM_SANDSTORM_CONTINUES;
-					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
@@ -304,15 +311,16 @@ u8 TurnBasedEffects(void)
 					&& --gWishFutureKnock.weatherDuration == 0)
 					{
 						gBattleWeather &= ~WEATHER_HAIL_ANY;
-						gBattlescriptCurrInstr = BattleScript_SandStormHailEnds;
+						gBattleCommunication[MULTISTRING_CHOOSER] = 3;
+						gBattlescriptCurrInstr = BattleScript_EndTurnWeatherEnd;
 					}
 					else
 					{
 						gBattlescriptCurrInstr = BattleScript_SandstormHailContinues;
+						gBattleScripting.animArg1 = B_ANIM_HAIL_CONTINUES;
+						gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 					}
 
-					gBattleScripting.animArg1 = B_ANIM_HAIL_CONTINUES;
-					gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
@@ -327,7 +335,9 @@ u8 TurnBasedEffects(void)
 					&& --gWishFutureKnock.weatherDuration == 0)
 					{
 						gBattleWeather &= ~WEATHER_FOG_ANY;
-						gBattlescriptCurrInstr = BattleScript_FogEnded;
+						gBattleCommunication[MULTISTRING_CHOOSER] = 4;
+						gBattleStringLoader = gText_DefogBlewAwayFog;
+						gBattlescriptCurrInstr = BattleScript_EndTurnWeatherEnd;
 					}
 					else
 					{
@@ -602,7 +612,7 @@ u8 TurnBasedEffects(void)
 			case ET_Item_Effects11:
 				if (BATTLER_ALIVE(gActiveBattler))
 				{
-					if (ItemBattleEffects(ItemEffects_EndTurn, gActiveBattler, FALSE, FALSE))
+					if (ItemBattleEffects(ItemEffects_Normal, gActiveBattler, FALSE, FALSE))
 						effect++;
 				}
 				break;
@@ -1319,6 +1329,21 @@ u8 TurnBasedEffects(void)
 				gBattleStruct->turnEffectsBank = 0;
 				if (gNewBS->TerrainTimer && --gNewBS->TerrainTimer == 0)
 				{
+					switch (gTerrainType)
+					{
+						case ELECTRIC_TERRAIN:
+							gBattleStringLoader = gText_ElectricTerrainEnd;
+							break;
+						case GRASSY_TERRAIN:
+							gBattleStringLoader = gText_GrassyTerrainEnd;
+							break;
+						case MISTY_TERRAIN:
+							gBattleStringLoader = gText_MistyTerrainEnd;
+							break;
+						case PSYCHIC_TERRAIN:
+							gBattleStringLoader = gText_PsychicTerrainEnd;
+							break;
+					}
 					BattleScriptExecute(BattleScript_TerrainEnd);
 					return ++effect;
 				}
@@ -1361,6 +1386,7 @@ u8 TurnBasedEffects(void)
 								case ABILITY_MOODY:
 								case ABILITY_BADDREAMS:
 								case ABILITY_SLOWSTART:
+								case ABILITY_CUDCHEW:
 									if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
 										effect++;
 									break;
@@ -1626,7 +1652,7 @@ u8 TurnBasedEffects(void)
 
 			case ET_Reactivate_Overworld_Weather:
 				gBattleStruct->turnEffectsBank = gBattlersCount;
-				if (gBattleWeather == 0 && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFF, 0))
+				if (gBattleWeather == 0 && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFFFF, 0))
 				{
 					++effect;
 					return effect;

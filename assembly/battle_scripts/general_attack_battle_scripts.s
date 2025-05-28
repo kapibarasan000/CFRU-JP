@@ -614,7 +614,6 @@ RoarBS:
 	forcerandomswitch BANK_TARGET BANK_ATTACKER FAILED
 
 DragonTailBS:
-	attackcanceler
 	accuracycheck BS_MOVE_MISSED 0x0
 	jumpifbehindsubstitute BANK_TARGET BS_HIT_FROM_ATTACKSTRING
 	call STANDARD_DAMAGE
@@ -623,6 +622,7 @@ DragonTailBS:
 	jumpifdynamaxed BANK_TARGET BattleScript_DragonTailBlockedByDynamax
 	jumpifspecialstatusflag BANK_TARGET STATUS3_ROOTED 0x0 0x81BCEE3 @;BattleScript_PrintMonIsRooted
 	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS BattleScript_AbilityPreventsPhasingOutSkipFail
+	jumpifability BANK_TARGET ABILITY_GUARDDOG BS_MOVE_FAINT
 	jumpifcannotswitch BANK_TARGET | ATK4F_DONT_CHECK_STATUSES BS_MOVE_FAINT
 	setbyte CMD49_STATE 0x0
 	cmd49 0x6 0x0

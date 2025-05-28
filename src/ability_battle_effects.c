@@ -76,6 +76,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_CONTRARY] = 8,
 	[ABILITY_CORROSION] = 5,
 	[ABILITY_COSTAR] = 2,
+	[ABILITY_CUDCHEW] = 2,
 	[ABILITY_CURSEDBODY] = 4,
 	[ABILITY_CUTECHARM] = 2,
 	[ABILITY_DAMP] = 2,
@@ -124,6 +125,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_GRASSPELT] = 2,
 	[ABILITY_GRASSYSURGE] = 8,
 	[ABILITY_GRIMNEIGH] = 7,
+	[ABILITY_GUARDDOG] = 4,
 	[ABILITY_GUTS] = 6,
 	[ABILITY_HADRONENGINE] = 10,
 	[ABILITY_HARVEST] = 5,
@@ -201,6 +203,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_POWERCONSTRUCT] = 10,
 	[ABILITY_POWEROFALCHEMY] = 0,
 	[ABILITY_PRANKSTER] = 8,
+	[ABILITY_PROTOSYNTHESIS] = 8,
 	[ABILITY_PRESSURE] = 5,
 	[ABILITY_PRIMORDIALSEA] = 10,
 	[ABILITY_PRISMARMOR] = 6,
@@ -209,6 +212,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_PSYCHICSURGE] = 8,
 	[ABILITY_PUREPOWER] = 10,
 	[ABILITY_PURIFYINGSALT] = 10,
+	[ABILITY_QUARKDRIVE] = 8,
 	[ABILITY_QUEENLYMAJESTY] = 6,
 	[ABILITY_QUICKFEET] = 5,
 	[ABILITY_RAINDISH] = 3,
@@ -280,6 +284,8 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_TANGLINGHAIR] = 5,
 	[ABILITY_TECHNICIAN] = 8,
 	[ABILITY_TELEPATHY] = 0,
+	[ABILITY_TERASHELL] = 8,
+	[ABILITY_TERASHIFT] = 8,
 	[ABILITY_TERAVOLT] = 7,
 	[ABILITY_THERMALEXCHANGE] = 5,
 	[ABILITY_THICKFAT] = 7,
@@ -314,6 +320,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_WONDERGUARD] = 10,
 	[ABILITY_WONDERSKIN] = 4,
 	[ABILITY_ZENMODE] = -1,
+	[ABILITY_ZEROTOHERO] = 0,
 	[ABILITY_INTREPIDSWORD] = 3,
 	[ABILITY_DAUNTLESSSHIELD] = 3,
 	[ABILITY_BALLFETCH] = 0,
@@ -351,6 +358,7 @@ const bool8 gMoldBreakerIgnoredAbilities[] =
 	[ABILITY_FLASHFIRE] =		TRUE,
 	[ABILITY_FLOWERGIFT] =		TRUE,
 	[ABILITY_GOODASGOLD] =		TRUE,
+	[ABILITY_GUARDDOG] =		TRUE,
 	[ABILITY_HEATPROOF] =		TRUE,
 	[ABILITY_HYPERCUTTER] =		TRUE,
 	[ABILITY_IMMUNITY] =		TRUE,
@@ -398,6 +406,7 @@ const bool8 gMoldBreakerIgnoredAbilities[] =
 	[ABILITY_MULTISCALE] =		TRUE,
 	[ABILITY_SAPSIPPER] =		TRUE,
 	[ABILITY_TELEPATHY] =		TRUE,
+	[ABILITY_TERASHELL] =		TRUE,
 	[ABILITY_THERMALEXCHANGE] =	TRUE,
 	[ABILITY_WONDERSKIN] =		TRUE,
 	[ABILITY_AROMAVEIL] =		TRUE,
@@ -760,6 +769,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 				BattleScriptPushCursorAndCallback(BattleScript_IntimidateActivatesEnd3);
 				gBattleStruct->intimidateBank = bank;
 				gNewBS->intimidateActive = bank + 1;
+				gNewBS->supersweetSyrupActive = TRUE;
 				effect++;
 			}
 			break;
@@ -898,6 +908,17 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			gBattleStringLoader = gText_ComatoseActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
+			break;
+
+		case ABILITY_ZEROTOHERO:
+			if (SPECIES(bank) == SPECIES_PALAFIN_HERO
+			&& !(gNewBS->ZerotoHeroDone[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]]))
+			{
+				gNewBS->ZerotoHeroDone[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
+				gBattleStringLoader = gText_ZerotoHeroActivate;
+				BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
+				effect++;
+			}
 			break;
 
 		case ABILITY_ANTICIPATION:
@@ -1393,14 +1414,14 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			break;
 
 		case ABILITY_SUPREMEOVERLORD:
-			if (gNewBS->FaintedCounters[SIDE(bank)])
+			if (GetBankFaintCounter(bank))
 			{
-				u8 fainted = gNewBS->FaintedCounters[SIDE(bank)];
+				u8 count = GetBankFaintCounter(bank);
 
-				if (fainted > 5)
-					fainted = 5;
+				if (count > 5)
+					count = 5;
 				
-				gNewBS->supremeOverlordMultiplier[bank] = fainted + 10;
+				gNewBS->supremeOverlordMultiplier[bank] = count + 10;
 				gBattleStringLoader = gText_SupremeOverlordActivate;
 				BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 				effect++;
@@ -1500,6 +1521,48 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 					BattleScriptPushCursorAndCallback(BattleScript_HospitalityActivates);
                 	effect++;
 				}
+			}
+			break;
+
+		case ABILITY_PROTOSYNTHESIS:
+			if (WEATHER_HAS_EFFECT
+			&& gBattleWeather & WEATHER_SUN_ANY
+			&& ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA
+			&& !IS_TRANSFORMED(bank)
+			&& gNewBS->paradoxBoostStats[bank] == 0
+			&& !gDisableStructs[bank].boosterEnergyActive)
+			{
+				u8 statId = GetHighestStatId(bank);
+				gNewBS->paradoxBoostStats[bank] = statId;
+				PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
+				gBattleStringLoader = gText_ProtosynthesisActivate;
+				BattleScriptPushCursorAndCallback(BattleScript_ParadoxAbilityActivates);
+                effect++;
+			}
+			break;
+
+		case ABILITY_QUARKDRIVE:
+			if (gTerrainType == ELECTRIC_TERRAIN
+			&& !IS_TRANSFORMED(bank)
+			&& gNewBS->paradoxBoostStats[bank] == 0
+			&& !gDisableStructs[bank].boosterEnergyActive)
+			{
+				u8 statId = GetHighestStatId(bank);
+				gNewBS->paradoxBoostStats[bank] = statId;
+				PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
+				gBattleStringLoader = gText_QuarkDriveActivate;
+				BattleScriptPushCursorAndCallback(BattleScript_ParadoxAbilityActivates);
+                effect++;
+			}
+			break;
+
+		case ABILITY_TERASHIFT:
+			if (SPECIES(bank) == SPECIES_TERAPAGOS)
+			{
+				gNewBS->abilityPopupOverwrite = ABILITY_TERASHIFT;
+				DoFormChange(bank, SPECIES_TERAPAGOS_TERASTAL, FALSE, TRUE, TRUE);
+				BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
+				++effect;
 			}
 			break;
 		}
@@ -1701,6 +1764,18 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 						}
 
 						BattleScriptPushCursorAndCallback(BattleScript_Harvest);
+						++effect;
+					}
+					break;
+
+				case ABILITY_CUDCHEW:
+					if (gNewBS->cudChewTimers[bank] > 0
+					&& --gNewBS->cudChewTimers[bank] == 0
+					&& gNewBS->cudChewBerries[bank]  != ITEM_NONE)
+					{
+						gLastUsedItem = gNewBS->cudChewBerries[bank];
+						gNewBS->cudChewBerries[bank] = ITEM_NONE;
+						BattleScriptPushCursorAndCallback(BattleScript_CudChewActivates);
 						++effect;
 					}
 					break;
@@ -3576,7 +3651,13 @@ void TransferAbilityPopUpHelper(void)
 		return;
 	}
 
-	TransferAbilityPopUp(gBattleScripting.bank, CopyAbility(gBattleScripting.bank));
+	if (gNewBS->abilityPopupOverwrite != 0)
+	{
+		TransferAbilityPopUp(gBattleScripting.bank, gNewBS->abilityPopupOverwrite);
+		gNewBS->abilityPopupOverwrite = 0;
+	}
+	else
+		TransferAbilityPopUp(gBattleScripting.bank, CopyAbility(gBattleScripting.bank));
 	gLastUsedAbility = gAbilityPopUpHelper;
 }
 
@@ -3618,7 +3699,7 @@ void TransferAbilityPopUp(u8 bank, u16 ability)
 	gActiveBattler = bank;
 	gAbilityPopUpHelper = ability;
 
-	EmitDataTransfer(0, &gAbilityPopUpHelper, 1, &gAbilityPopUpHelper);
+	EmitDataTransfer(0, &gAbilityPopUpHelper, 2, &gAbilityPopUpHelper);
 	MarkBufferBankForExecution(gActiveBattler);
 }
 
@@ -3654,6 +3735,11 @@ void RemoveIntimidateActive(void)
 void RemoveCottonDownActive(void)
 {
 	gNewBS->cottonDownActive = 0;
+}
+
+void RemoveSupersweetSyrupActive(void)
+{
+	gNewBS->supersweetSyrupActive = 0;
 }
 
 void TryReactiveIntimidatePopUp(void)

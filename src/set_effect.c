@@ -791,7 +791,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				&& gEffectBank == gBankAttacker) //Don't do Pluck here
 				{
 					gLastUsedItem = ITEM(gEffectBank);
-					if (!ItemBattleEffects(ItemEffects_EndTurn, gBankAttacker, TRUE, TRUE))
+					if (!ItemBattleEffects(ItemEffects_Normal, gBankAttacker, TRUE, TRUE))
 					{
 						//The Berry didn't activate an effect
 						BattleScriptPush(gBattlescriptCurrInstr + 1);

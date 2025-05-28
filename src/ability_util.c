@@ -116,25 +116,15 @@ bool8 IsPriorityBlockingAbility(u16 ability)
 bool8 IsUnnerveAbility(u16 ability)
 {
 	return ability == ABILITY_UNNERVE
-		#ifdef ABILITY_ASONE_GRIM
 		|| ability == ABILITY_ASONE_GRIM
-		#endif
-		#ifdef ABILITY_ASONE_CHILLING
-		|| ability == ABILITY_ASONE_CHILLING
-		#endif
-		;
+		|| ability == ABILITY_ASONE_CHILLING;
 }
 
 bool8 UnnerveOnOpposingField(u8 bank)
 {
 	return ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_UNNERVE)
-		#ifdef ABILITY_ASONE_GRIM
 		|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_GRIM)
-		#endif
-		#ifdef ABILITY_ASONE_CHILLING
-		|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING)
-		#endif
-		;
+		|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING);
 }
 
 bool8 AbilityIncreasesWildItemChance(u16 ability)
@@ -149,4 +139,35 @@ bool8 AngerShellStatsCheck(u8 bank)
          || STAT_STAGE(bank, STAT_SPEED) != STAT_STAGE_MAX
          || STAT_STAGE(bank, STAT_DEF) > STAT_STAGE_MIN
          || STAT_STAGE(bank, STAT_SPDEF) > STAT_STAGE_MIN);
+}
+
+bool8 SwitchInAbilityBlock2(u16 ability)
+{
+	switch (ability)
+	{
+		case ABILITY_MIMICRY:
+		case ABILITY_SCHOOLING:
+		case ABILITY_SHIELDSDOWN:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 SwitchInAbilityBlock3(u16 ability)
+{
+	switch (ability)
+	{
+		case ABILITY_ICEFACE:
+		case ABILITY_COSTAR:
+		case ABILITY_QUARKDRIVE:
+		case ABILITY_PROTOSYNTHESIS:
+		case ABILITY_COMMANDER:
+		case ABILITY_HOSPITALITY:
+		case ABILITY_FORECAST:
+		case ABILITY_FLOWERGIFT:
+			return TRUE;
+		default:
+			return FALSE;
+	}
 }

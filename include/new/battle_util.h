@@ -162,6 +162,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck);
 void EmitDataTransfer(u8 bufferId, void* dst, u16 size, void* data);
 u8 GetCriticalRank(u8 bankAtk, u32 atkStatus2);
+u8 GetBankFaintCounter(u8 bank);
+u8 GetHighestStatId(u8 bank);
 
 //Functions Hooked In
 void ClearTemporarySpeciesSpriteData(u8 bank, bool8 dontClearSubstitute);
@@ -173,6 +175,7 @@ enum {IN_AIR, GROUNDED};
 enum ItemBattleEffectCases
 {
 	ItemEffects_SwitchIn,
+	ItemEffects_Normal,
 	ItemEffects_EndTurn,
 	ItemEffects_ContactTarget,
 	ItemEffects_ContactAttacker

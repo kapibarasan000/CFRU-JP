@@ -46,6 +46,8 @@ item_battle_scripts.s
 .global BattleScript_RoomServiceEnd2
 .global BattleScript_RoomServiceRet
 .global BattleScript_WhiteHerbFling
+.global BattleScript_BoosterEnergyEnd2
+.global BattleScript_BoosterEnergyRet
 
 .global BattleScript_AirBallooonPop
 .global BattleScript_WeaknessPolicy
@@ -636,6 +638,25 @@ BattleScript_ClearAmulet:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_BoosterEnergyRet:
+	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_BoosterEnergyActivate
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	removeitem BANK_SCRIPTING
+	setword BATTLE_STRING_LOADER gText_ParadoxStatRaise
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+BattleScript_BoosterEnergyEnd2:
+	call BattleScript_BoosterEnergyRet
+	end2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

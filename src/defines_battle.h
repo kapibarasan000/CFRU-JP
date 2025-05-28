@@ -35,7 +35,7 @@ defines_battle.h
 #define ITEM_POCKET(bank) GetPocketByItemId(gBattleMons[bank].item)
 #define SPLIT(move) gBattleMoves[move].split
 #define CONSUMED_ITEMS(bank) gBattleStruct->usedHeldItems[bank]
-#define SAVED_CONSUMED_ITEMS(bank) gNewBS->SavedConsumedItems[gBattlerPartyIndexes[bank]]
+#define SAVED_CONSUMED_ITEMS(bank) gNewBS->SavedConsumedItems[gBattlerPartyIndexes[bank]][SIDE(bank)]
 #define CHOICED_MOVE(bank) gBattleStruct->choicedMove[bank]
 #define SECOND_OPPONENT (VarGet(VAR_SECOND_OPPONENT))
 
@@ -44,6 +44,9 @@ defines_battle.h
 #define ABILITY_PRESENT(ability) AbilityBattleEffects(ABILITYEFFECT_CHECK_ON_FIELD, 0, ability, 0, 0)
 #define IS_MOLD_BREAKER(ability, move) (IsMoldBreakerAbility(ability) || CheckTableForMove(move, gMoldBreakerMoves) || (ability == ABILITY_MYCELIUMMIGHT && SPLIT(move) == SPLIT_STATUS))
 #define NO_MOLD_BREAKERS(ability, move) (!IsMoldBreakerAbility(ability) && !CheckTableForMove(move, gMoldBreakerMoves) && !(ability == ABILITY_MYCELIUMMIGHT && SPLIT(move) == SPLIT_STATUS))
+#define SWITCH_IN_ABILITY1(ability) (!SwitchInAbilityBlock2(ability) && !SwitchInAbilityBlock3(ability))
+#define SWITCH_IN_ABILITY2(ability) SwitchInAbilityBlock2(ability)
+#define SWITCH_IN_ABILITY3(ability) SwitchInAbilityBlock3(ability)
 #define IS_BLANK_TYPE(type) (type == TYPE_MYSTERY || type == TYPE_ROOSTLESS || type == TYPE_BLANK)
 #define IS_TRANSFORMED(bank) (gBattleMons[bank].status2 & STATUS2_TRANSFORMED)
 #define IS_BEHIND_SUBSTITUTE(bank) (gBattleMons[bank].status2 & STATUS2_SUBSTITUTE)

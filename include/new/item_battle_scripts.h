@@ -43,6 +43,8 @@ extern const u8 BattleScript_ItemStatChangeEnd2[];
 extern const u8 BattleScript_ItemStatChangeRet[];
 extern const u8 BattleScript_WhiteHerbFling[];
 extern const u8 BattleScript_ItemHealHP_RemoveItemRet[];
+extern const u8 BattleScript_BoosterEnergyEnd2[];
+extern const u8 BattleScript_BoosterEnergyRet[];
 
 extern const u8 BattleScript_AirBallooonPop[];
 extern const u8 BattleScript_AirBalloonSub[];

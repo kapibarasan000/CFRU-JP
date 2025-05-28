@@ -1212,8 +1212,7 @@ void atkFF23_faintpokemonaftermove(void)
 		else
 			gBattlescriptCurrInstr = BattleScript_FaintTarget;
 
-		if (SIDE(gActiveBattler) == B_SIDE_PLAYER
-		&& (!IsTagBattle() || GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_LEFT)) //Is player's mon
+		if (SIDE(gActiveBattler) == B_SIDE_PLAYER)
 		{
 			gHitMarker |= HITMARKER_PLAYER_FAINTED;
 			if (gBattleResults.playerFaintCounter < 0xFF)
@@ -1226,6 +1225,9 @@ void atkFF23_faintpokemonaftermove(void)
 				gBattleResults.opponentFaintCounter++;
 			gBattleResults.lastOpponentSpecies = GetBankPartyData(gActiveBattler)->species;
 		}
+
+		if (IsTerastal(gActiveBattler))
+			gNewBS->terastalData.fainted[gActiveBattler] = 1;
 
 		gNewBS->RetaliateCounters[SIDE(gActiveBattler)] = 2;
 

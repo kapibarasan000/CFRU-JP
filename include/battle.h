@@ -353,7 +353,8 @@ struct DisableStruct
     /*0x18*/ u8 unk18_a_2 : 2;
     /*0x18*/ u8 mimickedMoves : 4;
     /*0x19*/ u8 rechargeTimer;
-    /*0x1A*/ u8 unk1A[2];
+    /*0x1A*/ u8 unk1A;
+	/*0x1B*/ u8 boosterEnergyActive : 1;
 };
 
 extern struct DisableStruct gDisableStructs[BATTLE_BANKS_COUNT];
@@ -421,7 +422,8 @@ struct SpecialStatus
     s32 moveturnLostHP_special;
     u8 moveturnPhysicalBank;
     u8 moveturnSpecialBank;
-    u8 field12 : 1;
+	u8 distortedTypeMatchups : 1;
+    u8 teraShellDone : 1;
     u8 field13;
 };
 
@@ -728,7 +730,6 @@ struct NewBattleStruct
 	u8 maxWildfireTimers[NUM_BATTLE_SIDES];
 	u8 maxCannonadeTimers[NUM_BATTLE_SIDES];
 	u8 maxVolcalithTimers[NUM_BATTLE_SIDES];
-	u8 FaintedCounters[NUM_BATTLE_SIDES];
 	u8 ragePowdered;
 
 	//Personal Counters
@@ -773,6 +774,9 @@ struct NewBattleStruct
 	u8 SyrupBombTimers[MAX_BATTLERS_COUNT];
 	u8 DragonCheerRanks[MAX_BATTLERS_COUNT];
 	u8 supremeOverlordMultiplier[MAX_BATTLERS_COUNT];
+	u16 cudChewBerries[MAX_BATTLERS_COUNT];
+	u8 cudChewTimers[MAX_BATTLERS_COUNT];
+	u8 paradoxBoostStats[MAX_BATTLERS_COUNT];
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -805,6 +809,7 @@ struct NewBattleStruct
 	u8 canBelch[NUM_BATTLE_SIDES];
 	u8 corrodedItems[NUM_BATTLE_SIDES];
 	u8 supersweetSyrupDone[NUM_BATTLE_SIDES];
+	u8 ZerotoHeroDone[NUM_BATTLE_SIDES];
 
 	//Other Helpers
 	u8 switchOutAbilitiesState; //For tracking effects that happen on switch-out
@@ -881,6 +886,7 @@ struct NewBattleStruct
 	bool8 breakDisguiseSpecialDmg : 1;
 	bool8 handlingFaintSwitching : 1;
 	bool8 doingPluckItemEffect : 1;
+	bool8 cudChewActive : 1;
 	bool8 usedXSpDef : 1; //Needed because it's hooked into the X Sp. Atk
 	bool8 lessThanHalfHPBeforeShellBell : 1; //For Emergency Exit
 	bool8 statBuffEffectNotProtectAffected : 1; //For Max Moves
@@ -896,9 +902,10 @@ struct NewBattleStruct
 	bool8 printedStrongWindsWeakenedAttack : 1;
 	bool8 isTrainerBattle : 1;
 	bool8 cottonDownActive : 1;
+	bool8 supersweetSyrupActive : 1;
 	bool8 cramorantTransformed : 1;
-	bool8 activateTemperFlare : 1;
 	bool8 terastalBoost : 1;
+	bool8 terastalBoostAnimationPlayed : 1;
 	bool8 poisonPuppeteerConfusion : 1;
 
 	//Other
@@ -908,10 +915,11 @@ struct NewBattleStruct
 	u32 selfInflictedDamage; //For Emergency Exit
 	u8 DancerTurnOrder[MAX_BATTLERS_COUNT];
 	u8 PayDayByPartyIndices[PARTY_SIZE];
-	item_t SavedConsumedItems[PARTY_SIZE];
+	item_t SavedConsumedItems[PARTY_SIZE][NUM_BATTLE_SIDES];
 	u8 expHelper[MAX_BATTLERS_COUNT];
 	u8 megaIndicatorObjIds[MAX_BATTLERS_COUNT];
 	u8 abilityPopUpIds[MAX_BATTLERS_COUNT][2];
+	u16 abilityPopupOverwrite;
 	u8 backupSynchronizeBanks[2];
 	u16 failedThrownPokeBall;
 	u32 maxGoldrushMoney;

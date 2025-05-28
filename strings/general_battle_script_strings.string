@@ -55,6 +55,18 @@
 #org @PsychicTerrainSetString
 あしもとが ふしぎなかんじに なった！
 
+#org @gText_ElectricTerrainEnd
+あしもとの でんきが きえさった！
+
+#org @gText_GrassyTerrainEnd
+あしもとの くさが きえさった！
+
+#org @gText_MistyTerrainEnd
+あしもとの きりが きえさった！
+
+#org @gText_PsychicTerrainEnd
+あしもとの ふしぎかんが きえさった！
+
 #org @TargetTransformedIntoType
 [TARGET]は\n[BUFFER][00]タイプになった！
 

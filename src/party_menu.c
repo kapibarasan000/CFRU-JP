@@ -1766,26 +1766,26 @@ static bool8 FormFuseItemMatchesSpecies(u16 item, u16 species)
 {
         switch (species)
         {
-                case SPECIES_RESHIRAM:
-                case SPECIES_ZEKROM:
-                case SPECIES_KYUREM:
-                case SPECIES_KYUREM_BLACK:
-                case SPECIES_KYUREM_WHITE:
-                        return item == ITEM_DNA_SPLICERS;
-                case SPECIES_NECROZMA:
-                        return item == ITEM_N_SOLARIZER || item == ITEM_N_LUNARIZER;
-                case SPECIES_SOLGALEO:
-                case SPECIES_NECROZMA_DUSK_MANE:
-                        return item == ITEM_N_SOLARIZER;
-                case SPECIES_LUNALA:
-                case SPECIES_NECROZMA_DAWN_WINGS:
-                        return item == ITEM_N_LUNARIZER;
-                case SPECIES_CALYREX:
-		case SPECIES_GLASTRIER:
-		case SPECIES_SPECTRIER:
-		case SPECIES_CALYREX_ICE_RIDER:
-		case SPECIES_CALYREX_SHADOW_RIDER:
-			return item == ITEM_REINS_OF_UNITY;
+            case SPECIES_RESHIRAM:
+            case SPECIES_ZEKROM:
+            case SPECIES_KYUREM:
+            case SPECIES_KYUREM_BLACK:
+            case SPECIES_KYUREM_WHITE:
+                    return item == ITEM_DNA_SPLICERS;
+            case SPECIES_NECROZMA:
+                    return item == ITEM_N_SOLARIZER || item == ITEM_N_LUNARIZER;
+            case SPECIES_SOLGALEO:
+            case SPECIES_NECROZMA_DUSK_MANE:
+                    return item == ITEM_N_SOLARIZER;
+            case SPECIES_LUNALA:
+            case SPECIES_NECROZMA_DAWN_WINGS:
+                    return item == ITEM_N_LUNARIZER;
+            case SPECIES_CALYREX:
+			case SPECIES_GLASTRIER:
+			case SPECIES_SPECTRIER:
+			case SPECIES_CALYREX_ICE_RIDER:
+			case SPECIES_CALYREX_SHADOW_RIDER:
+				return item == ITEM_REINS_OF_UNITY;
         }
 
         return FALSE;
@@ -1991,9 +1991,9 @@ static struct Pokemon* GetBaseMonForFusedSpecies(u16 species)
 		case SPECIES_NECROZMA_DAWN_WINGS:
 			return &gSaveBlock1->fusedLunala;
 		case SPECIES_CALYREX_ICE_RIDER:
-			return &gSaveBlock1->fusedGlastrier;
+			return &gSaveBlock2->fusedGlastrier;
 		case SPECIES_CALYREX_SHADOW_RIDER:
-			return &gSaveBlock1->fusedSpectrier;
+			return &gSaveBlock2->fusedSpectrier;
 	}
 	
 	return NULL;
@@ -2031,11 +2031,11 @@ static bool8 AlreadyFused(u16 baseSpecies, u16 fuseSpecies)
 		case SPECIES_CALYREX:
 			switch (fuseSpecies) {
 				case SPECIES_SPECTRIER:
-					if (GetMonData(&gSaveBlock1->fusedSpectrier, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
+					if (GetMonData(&gSaveBlock2->fusedSpectrier, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
 						alreadyFused = TRUE;
 					break;
 				case SPECIES_GLASTRIER:
-					if (GetMonData(&gSaveBlock1->fusedGlastrier, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
+					if (GetMonData(&gSaveBlock2->fusedGlastrier, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
 						alreadyFused = TRUE;
 					break;
 			}

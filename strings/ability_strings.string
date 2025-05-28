@@ -127,6 +127,9 @@
 #org @gText_ToxicSpikesLayAttacker
 [FD][36] あしもとに\nどくびしが ちらばった！
 
+#org @gText_ZerotoHeroActivate
+[SCRIPTING_BANK]は\nへんしんして かえってきた！
+
 #org @gText_RuinAbilityActivate
 [SCRIPTING_BANK]の\n[SCRIPTING_BANK_ABILITY]で\lまわりの [BUFFER][00]が よわまった！
 
@@ -153,3 +156,21 @@
 
 #org @gText_SupersweetSyrupActivate
 [SCRIPTING_BANK]の ミツから\nあまいかおりが ただよっている！
+
+#org @gText_TeraShellActivate
+[SCRIPTING_BANK]は\nこうらを かがやかせ\lタイプあいしょうを ゆがめる！！
+
+#org @gText_ProtosynthesisActivate
+[SCRIPTING_BANK]は\nにほんばれで\lこだいかっせいを はつどうした！
+
+#org @gText_QuarkDriveActivate
+[SCRIPTING_BANK]は\nエレキフィールドで\lクォークチャージを はつどうした！
+
+#org @gText_BoosterEnergyActivate
+[SCRIPTING_BANK]は\n[LAST_ITEM]で\l[SCRIPTING_BANK_ABILITY]を はつどうした！
+
+#org @gText_ParadoxStatRaise
+[SCRIPTING_BANK]の\n[BUFFER][00]が たかまった！
+
+#org @gText_ParadoxAbilityEnd
+[SCRIPTING_BANK]は\n[SCRIPTING_BANK_ABILITY]の こうかが きれた！

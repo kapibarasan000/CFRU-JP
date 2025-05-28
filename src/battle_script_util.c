@@ -1493,7 +1493,7 @@ void PluckBerryEat(void)
 {
 	gBattlescriptCurrInstr += 5;
 
-	if (ItemBattleEffects(ItemEffects_EndTurn, gBankAttacker, TRUE, TRUE))
+	if (ItemBattleEffects(ItemEffects_Normal, gBankAttacker, TRUE, TRUE))
 		gNewBS->doingPluckItemEffect = TRUE;
 	else if (ItemBattleEffects(ItemEffects_ContactTarget, gBankAttacker, TRUE, TRUE))
 		gNewBS->doingPluckItemEffect = TRUE;
@@ -1742,7 +1742,7 @@ void DoProteanTypeChange(void)
 void HarvestActivateBerry(void)
 {
 	gBattlescriptCurrInstr += 5; //In case a new battle script is applied on top
-	ItemBattleEffects(ItemEffects_EndTurn, gBattleScripting.bank, TRUE, FALSE);
+	ItemBattleEffects(ItemEffects_Normal, gBattleScripting.bank, TRUE, FALSE);
 	gBattlescriptCurrInstr -= 5; //Either so the new battle script plays properly, or revert the shift done above
 }
 
@@ -1824,7 +1824,7 @@ void TrySetAlternateFlingEffect(void)
 	if (effect == ITEM_EFFECT_CURE_ATTRACT || effect == ITEM_EFFECT_RESTORE_STATS
 	|| IsBerry(ITEM(gBankAttacker)))
 	{
-		if (ItemBattleEffects(ItemEffects_EndTurn, gBankTarget, TRUE, TRUE))
+		if (ItemBattleEffects(ItemEffects_Normal, gBankTarget, TRUE, TRUE))
 			gNewBS->doingPluckItemEffect = TRUE;
 		else if (ItemBattleEffects(ItemEffects_ContactTarget, gBankTarget, TRUE, TRUE))
 			gNewBS->doingPluckItemEffect = TRUE;
@@ -2111,7 +2111,7 @@ void RestoreEffectBankHPStatsAndRemoveBackupSpecies(void)
 
 void TryActivateTargetEndTurnItemEffect(void)
 {
-	if (ItemBattleEffects(ItemEffects_EndTurn, gBankTarget, TRUE, FALSE))
+	if (ItemBattleEffects(ItemEffects_Normal, gBankTarget, TRUE, FALSE))
 		gBattlescriptCurrInstr -= 5;
 }
 
@@ -2290,6 +2290,28 @@ const u8* TryActivateMimicryForBank(u8 bank)
 				PREPARE_TYPE_BUFFER(gBattleTextBuff1, monType);
 				return BattleScript_MimicryTransformed;
 			}
+		}
+	}
+	else if (ABILITY(bank) == ABILITY_QUARKDRIVE
+	&& !gDisableStructs[bank].boosterEnergyActive
+	&& !IS_TRANSFORMED(bank))
+	{
+		if (gTerrainType == ELECTRIC_TERRAIN
+		&& gNewBS->paradoxBoostStats[bank] == 0)
+		{
+			u8 statId = GetHighestStatId(bank);
+			gNewBS->paradoxBoostStats[bank] = statId;
+			PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
+			gBattleScripting.bank = bank;
+			gBattleStringLoader = gText_QuarkDriveActivate;
+			return BattleScript_ParadoxAbilityActivatesRet;
+		}
+		else if (gTerrainType != ELECTRIC_TERRAIN
+		&& gNewBS->paradoxBoostStats[bank] != 0)
+		{
+			gNewBS->paradoxBoostStats[bank] = 0;
+			gBattleScripting.bank = bank;
+			return BattleScript_ParadoxAbilityEndRet;
 		}
 	}
 
@@ -2587,5 +2609,131 @@ void TryWindRiderPower(void)
 			BattleScriptPush(gBattlescriptCurrInstr + 5);
 			gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaise - 5;
 		}
+	}
+}
+
+void CudChewEat(void)
+{
+	u8 effect = 0;
+	gBattlescriptCurrInstr += 5;
+
+	if (ItemBattleEffects(ItemEffects_Normal, gBattleScripting.bank, TRUE, TRUE))
+		effect++;
+	else if (ItemBattleEffects(ItemEffects_ContactTarget, gBattleScripting.bank, TRUE, TRUE))
+		effect++;
+
+	if (effect)
+	{
+		gNewBS->doingPluckItemEffect = TRUE;
+		gNewBS->cudChewActive = TRUE;
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_AbilityPopUp;
+	}
+
+	gBattlescriptCurrInstr -= 5;
+}
+
+void TryRemoveCudChewAbilityPopUp(void)
+{
+	if (gNewBS->cudChewActive)
+	{
+		gNewBS->cudChewActive = FALSE;
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_AbilityPopUpRevert - 5;
+	}
+}
+
+void TryActivateBoosterEnergy(void)
+{
+	if (ITEM_EFFECT(gBattleScripting.bank) == ITEM_EFFECT_BOOSTER_ENERGY)
+	{
+		gBattlescriptCurrInstr += 5;
+		ItemBattleEffects(ItemEffects_SwitchIn, gBattleScripting.bank, TRUE, FALSE);
+		gBattlescriptCurrInstr -= 5;
+	}
+}
+
+const u16 gWeatherEndStringIds[] =
+{
+	STRINGID_RAINSTOPPED,
+	STRINGID_SUNLIGHTFADED,
+	STRINGID_SANDSTORMSUBSIDED,
+	STRINGID_HAILSTOPPED,
+	0x184,
+};
+
+void RemoveWeatherAndTerrain(void)
+{
+	u8 effect = 0;
+
+	if (!(gBattleWeather & (WEATHER_PRIMAL_ANY | WEATHER_PERMANENT_ANY | WEATHER_CIRCUS)))
+	{
+		if (gBattleWeather & WEATHER_RAIN_ANY)
+		{
+			gBattleWeather &= ~WEATHER_RAIN_ANY;	
+			gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+			effect++;
+		}
+		else if (gBattleWeather & WEATHER_SUN_ANY)
+		{
+			gBattleWeather &= ~WEATHER_SUN_ANY;
+			gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+			effect++;
+		}
+		else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
+		{
+			gBattleWeather &= ~WEATHER_SANDSTORM_ANY;
+			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+			effect++;
+		}
+		else if (gBattleWeather & WEATHER_HAIL_ANY)
+		{
+			gBattleWeather &= ~WEATHER_HAIL_ANY;
+			gBattleCommunication[MULTISTRING_CHOOSER] = 3;
+			effect++;
+		}
+		else if (gBattleWeather & WEATHER_FOG_ANY)
+		{
+			gBattleWeather &= ~WEATHER_FOG_ANY;
+			gBattleStringLoader = gText_DefogBlewAwayFog;
+			gBattleCommunication[MULTISTRING_CHOOSER] = 4;
+			effect++;
+		}
+
+		if (effect)
+		{
+			gWishFutureKnock.weatherDuration = 0;
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_WeatherEnd - 5;
+			return;
+		}
+	}
+
+	switch (gTerrainType)
+	{
+		case ELECTRIC_TERRAIN:
+			gBattleStringLoader = gText_ElectricTerrainEnd;
+			effect++;
+			break;
+		case GRASSY_TERRAIN:
+			gBattleStringLoader = gText_GrassyTerrainEnd;
+			effect++;
+			break;
+		case MISTY_TERRAIN:
+			gBattleStringLoader = gText_MistyTerrainEnd;
+			effect++;
+			break;
+		case PSYCHIC_TERRAIN:
+			gBattleStringLoader = gText_PsychicTerrainEnd;
+			effect++;
+			break;
+	}
+
+	if (effect)
+	{
+		gNewBS->TerrainTimer = 0;
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_TerrainEndRet - 5;
+		return;
 	}
 }

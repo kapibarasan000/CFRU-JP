@@ -16,6 +16,7 @@ ability_battle_scripts.s
 .global BattleScript_WeatherAbilityBlockedByPrimalWeather
 .global BattleScript_WeatherAbilityBlockedByPrimalWeatherRet
 .global BattleScript_StrongWindsWeakenedttack
+.global BattleScript_TeraShellActivate
 .global BattleScript_IntimidateActivatesEnd3
 .global BattleScript_TraceActivates
 .global BattleScript_Frisk
@@ -38,6 +39,10 @@ ability_battle_scripts.s
 .global BattleScript_TransformedEnd2
 .global BattleScript_TransformedEnd3
 .global BattleScript_HospitalityActivates
+.global BattleScript_ParadoxAbilityActivates
+.global BattleScript_ParadoxAbilityActivatesRet
+.global BattleScript_ParadoxAbilityEnd
+.global BattleScript_ParadoxAbilityEndRet
 
 .global BattleScript_RainDishActivates
 .global BattleScript_DrySkinDamage
@@ -47,6 +52,7 @@ ability_battle_scripts.s
 .global BattleScript_MoodyRegular
 .global BattleScript_BadDreams
 .global BattleScript_Harvest
+.global BattleScript_CudChewActivates
 .global BattleScript_Pickup
 .global BattleScript_BallFetch
 .global BattleScript_EmergencyExitEnd3
@@ -76,6 +82,7 @@ ability_battle_scripts.s
 .global BattleScript_AngerShellActivates
 .global BattleScript_ElectromorphosisActivates
 .global BattleScript_ToxicDebrisActivates
+.global BattleScript_GuardDogActivates
 
 .global BattleScript_AbilityChangedType
 .global BattleScript_AbilityChangedTypeContact
@@ -176,6 +183,14 @@ BattleScript_StrongWindsWeakenedttack:
 	waitmessage DELAY_1SECOND
 	return
 
+BattleScript_TeraShellActivate:
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_TeraShellActivate
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_IntimidateActivatesEnd3:
@@ -236,6 +251,7 @@ IntimidateActivatesLoopIncrement:
 BattleScript_IntimidateActivatesReturn:
 	callasm TryRemoveIntimidateAbilityPopUp @;In case the battle scripting bank is changed
 	callasm RemoveIntimidateActive
+	callasm RemoveSupersweetSyrupActive
 	return
 
 SupersweetSyrupActivates:
@@ -578,6 +594,13 @@ BattleScript_Harvest:
 
 HarvestBSEnd:
 	setbyte FORM_COUNTER 0x0
+	end3
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_CudChewActivates:
+	callasm CudChewEat
+	callasm TryRemoveCudChewAbilityPopUp
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -949,32 +972,32 @@ SynchronizeReturn:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_AngerShellActivates:
-	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX AngerShellRiseAtk
-	jumpifstat BANK_TARGET LESSTHAN STAT_SPATK STAT_MAX AngerShellRiseAtk
-	jumpifstat BANK_TARGET LESSTHAN STAT_SPD STAT_MAX AngerShellRiseAtk
-	jumpifstat BANK_TARGET GREATERTHAN STAT_DEF STAT_MIN AngerShellRiseAtk
+	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX AngerShellRaiseAtk
+	jumpifstat BANK_TARGET LESSTHAN STAT_SPATK STAT_MAX AngerShellRaiseAtk
+	jumpifstat BANK_TARGET LESSTHAN STAT_SPD STAT_MAX AngerShellRaiseAtk
+	jumpifstat BANK_TARGET GREATERTHAN STAT_DEF STAT_MIN AngerShellRaiseAtk
 	jumpifstat BANK_TARGET EQUALS STAT_SPDEF STAT_MIN AngerShellReturn
 
-AngerShellRiseAtk:
+AngerShellRaiseAtk:
 	call BattleScript_AbilityPopUp
 	setstatchanger STAT_ATK | INCREASE_1
-	statbuffchange BANK_TARGET | STAT_CERTAIN AngerShellRiseSpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellRiseSpAtk
+	statbuffchange BANK_TARGET | STAT_CERTAIN AngerShellRaiseSpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellRaiseSpAtk
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
 	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 
-AngerShellRiseSpAtk:
+AngerShellRaiseSpAtk:
 	setstatchanger STAT_SPATK | INCREASE_1
-	statbuffchange BANK_TARGET | STAT_CERTAIN AngerShellRiseSpd
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellRiseSpd
+	statbuffchange BANK_TARGET | STAT_CERTAIN AngerShellRaiseSpd
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellRaiseSpd
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
 	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 
-AngerShellRiseSpd:
+AngerShellRaiseSpd:
 	setstatchanger STAT_SPD | INCREASE_1
 	statbuffchange BANK_TARGET | STAT_CERTAIN AngerShellLowerDef
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellLowerDef
@@ -1495,6 +1518,57 @@ BattleScript_AbilityPopUp:
 
 BattleScript_AbilityPopUpRevert:
 	playanimation BANK_SCRIPTING ANIM_REMOVE_ABILITY_POP_UP 0x0
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_GuardDogActivates:
+	pause 0x10
+	copybyte FORM_COUNTER BATTLE_SCRIPTING_BANK
+	callasm TryRemoveIntimidateAbilityPopUp
+	callasm TryHideActiveAbilityPopUps
+	copybyte BATTLE_SCRIPTING_BANK FORM_COUNTER
+	call BattleScript_AbilityPopUp
+
+BattleScript_GuardDogRaiseAtk:
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange BANK_TARGET | STAT_CERTAIN BattleScript_GuardDogRevertPopUp
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_GuardDogRevertPopUp
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_GuardDogRevertPopUp:
+	call BattleScript_AbilityPopUpRevert
+	jumpifhelditemeffect BANK_TARGET ITEM_EFFECT_ADRENALINE_ORB BattleScript_AdrenalineOrb
+	goto IntimidateActivatesLoopIncrement
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_ParadoxAbilityActivates:
+	call BattleScript_ParadoxAbilityActivatesRet
+	end3
+
+BattleScript_ParadoxAbilityActivatesRet:
+	call BattleScript_AbilityPopUp
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	setword BATTLE_STRING_LOADER gText_ParadoxStatRaise
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+BattleScript_ParadoxAbilityEnd:
+ 	call BattleScript_ParadoxAbilityEndRet
+	end3
+
+BattleScript_ParadoxAbilityEndRet:
+	setword BATTLE_STRING_LOADER gText_ParadoxAbilityEnd
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	callasm TryActivateBoosterEnergy
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

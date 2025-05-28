@@ -24,6 +24,7 @@
 #include "../include/new/move_tables.h"
 #include "../include/new/set_z_effect.h"
 #include "../include/new/stat_buffs.h"
+#include "../include/new/terastal.h"
 #include "../include/new/util.h"
 
 #define TRAINER_ITEM_COUNT 4
@@ -268,21 +269,125 @@ bool8 TeraTypeActive(u8 bank)
 
 void SetStellarBoostFlag(u8 bank, u8 type)
 {
-    if (type < 32)
+    if (type < NUMBER_OF_MON_TYPES)
 	{
 		gNewBS->terastalData.stellarBoosted[bank] |= gBitTable[type];
 
 		if ((SIDE(bank) == B_SIDE_PLAYER && !(gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER))
 		||  (SIDE(bank) == B_SIDE_OPPONENT && !(gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)))
 			gNewBS->terastalData.stellarBoosted[PARTNER(bank)] |= gBitTable[type];
-	}
-        
+	}      
 }
 
 bool8 CanStellarBoost(u8 bank, u8 type)
 {
-    if (type < 32)
+    if (type < NUMBER_OF_MON_TYPES)
 		return !(gNewBS->terastalData.stellarBoosted[bank] & gBitTable[type]);
     else
         return FALSE;
+}
+
+u16 GetTerastalSpecies(u8 bank)
+{
+	#ifndef TERASTAL_FEATURE
+		return SPECIES_NONE;
+	#else
+	u16 species = SPECIES(bank);
+
+	if (IsBannedHeldItemForTerastal(ITEM(bank)))
+		return SPECIES_NONE;
+
+	if (IsBannedTerastalSpecies(species))
+		return SPECIES_NONE;
+
+	return species;
+	#endif
+}
+
+u16 GetTerastalFormSpecies(u16 species)
+{
+	u32 i;
+	const struct Evolution* evolutions = gEvolutionTable[species];
+
+	for (i = 0; i < EVOS_PER_MON; ++i)
+	{
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_TERASTAL)
+		{
+			//Ignore reversion information
+			if (evolutions[i].param == 0) continue;
+
+			//Any value other than 0 indicates G-Max potential
+			return evolutions[i].targetSpecies;
+		}
+	}
+		
+	return SPECIES_NONE;
+}
+
+const u8* DoTerastal(u8 bank)
+{
+	if (GetTerastalSpecies(bank) == SPECIES_NONE)
+		return NULL;
+
+	struct Pokemon* mon = GetBankPartyData(bank);
+	u16 terastalFormSpecies = GetTerastalFormSpecies(mon->species);
+
+	if (terastalFormSpecies != SPECIES_NONE)
+		DoFormChange(bank, terastalFormSpecies, FALSE, TRUE, TRUE);
+
+	return BattleScript_Terastal;
+}
+
+void TerastalFormRevert(struct Pokemon* party)
+{
+	u32 i;
+
+	for (i = 0; i < PARTY_SIZE; ++i)
+		TryRevertTerastalForm(&party[i]);
+}
+
+void TryRevertTerastalForm(struct Pokemon* mon)
+{
+	u16 baseSpecies = GetTerastalBaseForm(mon->species);
+
+	if (baseSpecies != SPECIES_NONE)
+	{
+		u16 oldHP = mon->hp;
+		mon->species = baseSpecies;
+		CalculateMonStats(mon);
+		if (baseSpecies == SPECIES_TERAPAGOS)
+			mon->hp = MathMin(mon->maxHP, oldHP);
+	}
+}
+
+u16 GetTerastalBaseForm(u16 species)
+{
+	const struct Evolution* evolutions = gEvolutionTable[species];
+
+	for (u8 i = 0; i < EVOS_PER_MON; ++i)
+	{
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_TERASTAL && evolutions[i].param == 0)
+			return evolutions[i].targetSpecies;
+	}
+
+	return SPECIES_NONE;
+}
+
+bool8 IsTerastalFormSpecies(u16 species)
+{
+	const struct Evolution* evolutions = gEvolutionTable[species];
+
+	for (u8 i = 0; i < EVOS_PER_MON; ++i)
+	{
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_TERASTAL && evolutions[i].param == FALSE)
+			return TRUE;
+	}
+
+	return FALSE;
 }

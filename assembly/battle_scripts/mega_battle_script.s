@@ -15,6 +15,7 @@ mega_battle_scripts.s
 .global BattleScript_Dynamax
 .global BattleScript_Terastal
 .global BattleScript_TerastalBoost
+.global BattleScript_ActivateTeraformZero
 
 BattleScript_MegaEvolution:
 	setword BATTLE_STRING_LOADER MegaReactingString
@@ -92,8 +93,16 @@ BattleScript_Terastal:
 	waitmessage DELAY_1SECOND
 	end3
 
+BattleScript_ActivateTeraformZero:
+	call BattleScript_AbilityPopUp
+	callasm RemoveWeatherAndTerrain
+	call BattleScript_AbilityPopUpRevert
+	call BS_WEATHER_FORM_CHANGES
+	callasm TryActivateMimicry
+	end3
+
 BattleScript_TerastalBoost:
-	playanimation BANK_SCRIPTING ANIM_TOTEM_BOOST 0x0
+	playanimation BANK_ATTACKER ANIM_TOTEM_BOOST 0x0
 	waitanimation
 	return
 
