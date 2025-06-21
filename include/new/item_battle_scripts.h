@@ -60,5 +60,9 @@ extern const u8 BattleScript_EjectPackEnd2[];
 extern const u8 BattleScript_EjectPackRet[];
 extern const u8 BattleScript_EjectPackCMD49[];
 extern const u8 BattleScript_ClearAmulet[];
+extern const u8 BattleScript_MirrorHerbCopyStatChangeEnd2[];
+extern const u8 BattleScript_MirrorHerbCopyStatChangeRet[];
+extern const u8 BattleScript_MirrorHerbCopyDragonCheer[];
+extern const u8 BattleScript_MirrorHerbEnd[];
 
 extern const u8 gText_NotAffectedBecauseOfItem[];

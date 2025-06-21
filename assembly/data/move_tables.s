@@ -934,6 +934,7 @@ gTypeChangeExceptionMoves:
 .hword MOVE_RAGINGBULL
 .hword MOVE_TERABLAST
 .hword MOVE_IVYCUDGEL
+.hword MOVE_TERASTARSTORM
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

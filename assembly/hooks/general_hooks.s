@@ -1392,3 +1392,34 @@ ChooseFaintedMonCancelHook:
 NotCancel:
 	ldr r0, =0x81205A2 | 1
 	bx r0
+
+.pool
+@0x8013934 with r0
+HandleTurnActionSelectionStateCommanderHook:
+	ldr r0, =gBattleStruct
+	ldr r0, [r0]
+	add r0, #0x91
+	ldrb r3, [r0]
+	ldr r1, =0x821AE68
+	ldr r4, =0x2023B24
+	ldrb r2, [r4]
+	lsl r0, r2, #0x2
+	add r0, r0, r1
+	ldr r0, [r0]
+	and r3, r0
+	cmp r3, #0x0
+	bne ActionConfirmed
+	mov r0, r2
+	bl CheckCommandingDondozo
+	cmp r0, #0x0
+	bne ActionConfirmed
+	ldr r4, =0x2023B24
+	ldrb r2, [r4]
+	ldr r0, =0x801399C | 1
+	bx r0
+
+ActionConfirmed:
+	ldr r4, =0x2023B24
+	ldrb r2, [r4]
+	ldr r0, =0x801394E | 1
+	bx r0

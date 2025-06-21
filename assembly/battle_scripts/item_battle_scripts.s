@@ -66,6 +66,10 @@ item_battle_scripts.s
 .global BattleScript_Gems
 .global BattleScript_WeaknessBerryActivate
 .global BattleScript_ClearAmulet
+.global BattleScript_MirrorHerbCopyStatChangeEnd2
+.global BattleScript_MirrorHerbCopyStatChangeRet
+.global BattleScript_MirrorHerbCopyDragonCheer
+.global BattleScript_MirrorHerbEnd
 
 .global BattleScript_CheekPouch
 
@@ -503,7 +507,6 @@ BattleScript_EjectPackGiveEXP:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_RedCard:
-	jumpifcannotswitch BANK_ATTACKER | ATK4F_DONT_CHECK_STATUSES RedCardRet
 	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
 	setword BATTLE_STRING_LOADER RedCardString
 	printstring 0x184
@@ -657,6 +660,42 @@ BattleScript_BoosterEnergyRet:
 BattleScript_BoosterEnergyEnd2:
 	call BattleScript_BoosterEnergyRet
 	end2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MirrorHerbCopyStatChangeEnd2:
+	call BattleScript_MirrorHerbCopyStatChangeRet
+	end2
+
+BattleScript_MirrorHerbCopyStatChangeRet:
+	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
+	copyhword BACKUP_HWORD USER_BANK
+	setbyte SEED_HELPER 1
+
+BattleScript_MirrorHerbCopyStatChangeLoop:
+	callasm SetCopyStatChange
+	setgraphicalstatchangevalues
+	playanimation BANK_SCRIPTING ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	addbyte SEED_HELPER 1
+	jumpifbyte LESSTHAN SEED_HELPER 8 BattleScript_MirrorHerbCopyStatChangeLoop
+
+BattleScript_MirrorHerbCopyDragonCheer:
+	callasm SetCopyDragonCheer
+	setword BATTLE_STRING_LOADER gText_DragonCheerString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+
+BattleScript_MirrorHerbEnd:
+	setbyte SEED_HELPER 0
+	copyhword USER_BANK BACKUP_HWORD
+	setword BATTLE_STRING_LOADER gText_MirrorHerbActivate
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	removeitem BANK_SCRIPTING
+	callasm ClearMirrorHerbActive
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

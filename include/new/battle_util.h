@@ -156,7 +156,7 @@ bool8 IsHealBlocked(u8 bank);
 bool8 CantUseSoundMoves(u8 bank);
 bool8 IsLaserFocused(u8 bank);
 bool8 IsAbilitySuppressed(u8 bank);
-bool8 CantScoreACrit(u8 bank, struct Pokemon* mon);
+bool8 CantScoreACrit(struct Pokemon* mon);
 
 u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveArg);
 u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck);
@@ -164,6 +164,8 @@ void EmitDataTransfer(u8 bufferId, void* dst, u16 size, void* data);
 u8 GetCriticalRank(u8 bankAtk, u32 atkStatus2);
 u8 GetBankFaintCounter(u8 bank);
 u8 GetHighestStatId(u8 bank);
+void SetOpportunistStats(u8 bank, s8 statValue, u8 statId);
+void ClearCopyStats(void);
 
 //Functions Hooked In
 void ClearTemporarySpeciesSpriteData(u8 bank, bool8 dontClearSubstitute);
@@ -178,7 +180,8 @@ enum ItemBattleEffectCases
 	ItemEffects_Normal,
 	ItemEffects_EndTurn,
 	ItemEffects_ContactTarget,
-	ItemEffects_ContactAttacker
+	ItemEffects_ContactAttacker,
+	ItemEffects_MirrorHerb
 };
 
 #define MOVE_LIMITATION_ZEROMOVE    (1 << 0)

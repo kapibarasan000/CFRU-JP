@@ -535,7 +535,10 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 		if (gBattleMons[gActiveBattler].statStages[statId - 1] == STAT_STAGE_MAX)
 			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 		else
+		{
 			gBattleCommunication[MULTISTRING_CHOOSER] = (gBankTarget == gActiveBattler);
+			SetOpportunistStats(gActiveBattler, statValue, statId);
+		}
 
 		gNewBS->statRoseThisRound[gActiveBattler] = TRUE;
 	}

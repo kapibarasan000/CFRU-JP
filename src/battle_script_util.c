@@ -62,6 +62,11 @@ void SetScriptingBankPartner(void)
 	gBattleScripting.bank = PARTNER(gBattleScripting.bank);
 }
 
+void SetAbilityPopUpUnnerve(void)
+{
+	gNewBS->abilityPopupOverwrite = ABILITY_UNNERVE;
+}
+
 bool8 CheckCraftyShield(u8 bank)
 {
 	if (gSideStatuses[SIDE(bank)] & SIDE_STATUS_CRAFTY_SHIELD)
@@ -2542,20 +2547,51 @@ void TryFailJungleHealing(void)
 		gBattlescriptCurrInstr = BattleScript_LifeDewFail - 5;
 }
 
+void SetOpportunistDragonCheer(u8 bank, u8 statValue)
+{
+	for (u32 i = 0; i < gBattlersCount; i++)
+	{
+		if (SIDE(i) == SIDE(bank))
+			continue;
+
+		if (gNewBS->opportunistState[i] == 0
+		&& ABILITY(i) == ABILITY_OPPORTUNIST)
+			gNewBS->opportunistState[i] = 1;
+
+		if (gNewBS->opportunistState[i] == 1 || ITEM_EFFECT(i) == ITEM_EFFECT_MIRROR_HERB)
+		{
+			if ((gNewBS->DragonCheerRanks[bank] + statValue) > 3)
+				gNewBS->opportunistBoostStats[i][BATTLE_STATS_NO - 1] += (3 - gNewBS->DragonCheerRanks[bank]);
+			else
+				gNewBS->opportunistBoostStats[i][BATTLE_STATS_NO - 1] += statValue;
+		}
+	}
+}
+
 void DragonCheerFunc(void)
 {
 	u8 bank = PARTNER(gBankAttacker);
 
 	if (IS_DOUBLE_BATTLE 
 	&& !(gBattleMons[bank].status2 & STATUS2_FOCUS_ENERGY)
+	&& gNewBS->DragonCheerRanks[bank] < 3
 	&& !(gStatuses3[bank] & STATUS3_SEMI_INVULNERABLE))
 	{
 		gBattleMons[bank].status2 |= STATUS2_FOCUS_ENERGY;
 
 		if (IsOfType(bank, TYPE_DRAGON))
-			gNewBS->DragonCheerRanks[bank] = 2;
+		{
+			SetOpportunistDragonCheer(bank, 2);
+			gNewBS->DragonCheerRanks[bank] += 2;
+		}
 		else
-			gNewBS->DragonCheerRanks[bank] = 1;
+		{
+			SetOpportunistDragonCheer(bank, 1);
+			gNewBS->DragonCheerRanks[bank] += 1;
+		}
+
+		if (gNewBS->DragonCheerRanks[bank] > 3)
+			gNewBS->DragonCheerRanks[bank] = 3;
 
 		gBattleScripting.bank = bank;
 		gBattleStringLoader = gText_DragonCheerString;
@@ -2584,6 +2620,17 @@ void TeraBlastFunc(void)
 {
 	if (GetBattlerTeraType(gBankAttacker) == TYPE_STELLAR)
 		gBattlescriptCurrInstr = BattleScript_LowerAtkSpAtk - 5;
+}
+
+void FickleBeamFunc(void)
+{
+	gNewBS->fickleBeamBoosted = FALSE;
+
+	if (Random() % 100 < 30)
+	{
+		gNewBS->fickleBeamBoosted = TRUE;
+		gBattlescriptCurrInstr = BattleScript_FickleBeamDoubled - 5;
+	}
 }
 
 void TryWindRiderPower(void)
@@ -2736,4 +2783,179 @@ void RemoveWeatherAndTerrain(void)
 		gBattlescriptCurrInstr = BattleScript_TerrainEndRet - 5;
 		return;
 	}
+}
+
+void TryTerastalAbility(void)
+{
+	if (ABILITY(gBattleScripting.bank) == ABILITY_TERAFORMZERO)
+	{
+		if ((gBattleWeather & WEATHER_ANY
+		&& !(gBattleWeather & (WEATHER_PRIMAL_ANY | WEATHER_PERMANENT_ANY | WEATHER_CIRCUS)))
+		|| gTerrainType != 0)
+		{
+			gBattlescriptCurrInstr += 5;
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_ActivateTeraformZero - 5;
+		}
+	}
+	else
+	{
+		gBattlescriptCurrInstr += 5;
+		AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBattleScripting.bank, 0, 0, 0);
+		gBattlescriptCurrInstr -= 5;
+	}
+}
+
+void SetCopyStatChange(void)
+{
+	gActiveBattler = gBankAttacker = gBattleScripting.bank;
+	
+	for (; *gSeedHelper < BATTLE_STATS_NO; ++*gSeedHelper)
+	{
+		u8 statId = *gSeedHelper;
+		s8 statValue = gNewBS->opportunistBoostStats[gActiveBattler][statId - 1];
+		u32 index = 1;
+
+		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY
+		&& statValue != 0
+		&& gBattleMons[gActiveBattler].statStages[statId - 1] > STAT_STAGE_MIN)
+		{
+			statValue = -statValue;
+
+			gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
+
+			if (statValue == -2)
+			{
+				gBattleTextBuff2[1] = B_BUFF_STRING;
+				gBattleTextBuff2[2] = STRINGID_STATHARSHLY;
+				gBattleTextBuff2[3] = STRINGID_STATHARSHLY >> 8;
+				index = 4;
+			}
+			else if (statValue <= -3)
+			{
+				gBattleTextBuff2[1] = B_BUFF_STRING;
+				gBattleTextBuff2[2] = 0x85;
+				gBattleTextBuff2[3] = 0x1;
+				index = 4;
+			}
+
+			gBattleTextBuff2[index] = B_BUFF_STRING;
+			index++;
+			gBattleTextBuff2[index] = STRINGID_STATFELL;
+			index++;
+			gBattleTextBuff2[index] = STRINGID_STATFELL >> 8;
+			index++;
+			gBattleTextBuff2[index] = B_BUFF_EOS;
+
+			gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+
+			gNewBS->statFellThisTurn[gActiveBattler] = TRUE;
+			gNewBS->statFellThisRound[gActiveBattler] = TRUE;
+			gBattleMons[gActiveBattler].statStages[statId - 1] += statValue;
+
+			if (gBattleMons[gActiveBattler].statStages[statId - 1] < STAT_STAGE_MIN)
+				gBattleMons[gActiveBattler].statStages[statId - 1] = STAT_STAGE_MIN;
+
+			if (statValue < -6)
+				statValue = -6;
+
+			SET_STATCHANGER(statId, statValue, FALSE);
+			PREPARE_STAT_BUFFER(gBattleTextBuff1, statId)
+			return;
+		}
+		else if (statValue != 0 && gBattleMons[gActiveBattler].statStages[statId - 1] < STAT_STAGE_MAX)
+		{
+			if (ABILITY(gActiveBattler) == ABILITY_SIMPLE)
+				statValue *= 2;
+
+			gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
+
+			if (statValue == 2)
+			{
+				gBattleTextBuff2[1] = B_BUFF_STRING;
+				gBattleTextBuff2[2] = STRINGID_STATSHARPLY;
+				gBattleTextBuff2[3] = STRINGID_STATSHARPLY >> 8;
+				index = 4;
+			}
+			if (statValue >= 3)
+			{
+				gBattleTextBuff2[1] = B_BUFF_STRING;
+				gBattleTextBuff2[2] = 0x86;
+				gBattleTextBuff2[3] = 0x1;
+				index = 4;
+			}
+
+			gBattleTextBuff2[index] = B_BUFF_STRING;
+			index++;
+			gBattleTextBuff2[index] = STRINGID_STATROSE;
+			index++;
+			gBattleTextBuff2[index] = STRINGID_STATROSE >> 8;
+			index++;
+			gBattleTextBuff2[index] = B_BUFF_EOS;
+
+			gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+			gNewBS->statRoseThisRound[gActiveBattler] = TRUE;
+			gBattleMons[gActiveBattler].statStages[statId - 1] += statValue;
+
+			if (gBattleMons[gActiveBattler].statStages[statId - 1] > STAT_STAGE_MAX)
+				gBattleMons[gActiveBattler].statStages[statId - 1] = STAT_STAGE_MAX;
+
+			if (statValue > 6)
+				statValue = 6;
+
+			SET_STATCHANGER(statId, statValue, FALSE);
+			PREPARE_STAT_BUFFER(gBattleTextBuff1, statId)
+			return;
+		}
+	}
+
+	if (gNewBS->mirrorHerbActive)
+		gBattlescriptCurrInstr = BattleScript_MirrorHerbCopyDragonCheer - 5;
+	else
+		gBattlescriptCurrInstr = BattleScript_OpportunistCopyDragonCheer - 5;
+}
+
+void SetCopyDragonCheer(void)
+{
+	u8 bank = gBattleScripting.bank;
+
+	if (gNewBS->opportunistBoostStats[bank][BATTLE_STATS_NO - 1] != 0
+	&& gNewBS->DragonCheerRanks[bank] < 3)
+	{
+		gNewBS->DragonCheerRanks[bank] += gNewBS->opportunistBoostStats[bank][BATTLE_STATS_NO - 1];
+		if (gNewBS->DragonCheerRanks[bank] > 3)
+			gNewBS->DragonCheerRanks[bank] = 3;
+		return;
+	}
+
+	if (gNewBS->mirrorHerbActive)
+		gBattlescriptCurrInstr = BattleScript_MirrorHerbEnd - 5;
+	else
+		gBattlescriptCurrInstr = BattleScript_OpportunistEnd - 5;
+}
+
+void ClearMirrorHerbActive(void)
+{
+	gNewBS->mirrorHerbActive = FALSE;
+}
+
+void OrderUpFunc(void)
+{
+	u8 effect = 0;
+
+	switch (gNewBS->commanderActive[gBankAttacker])
+	{
+		case SPECIES_TATSUGIRI:
+            effect = MOVE_EFFECT_ATK_PLUS_1;
+            break;
+        case SPECIES_TATSUGIRI_DROOPY:
+            effect = MOVE_EFFECT_DEF_PLUS_1;
+            break;
+        case SPECIES_TATSUGIRI_STRETCHY:
+            effect = MOVE_EFFECT_SPD_PLUS_1;
+            break;
+	}
+
+	if (effect)
+		gBattleCommunication[MOVE_EFFECT_BYTE] = effect | MOVE_EFFECT_AFFECTS_USER;
 }

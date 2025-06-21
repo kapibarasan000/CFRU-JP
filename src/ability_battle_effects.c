@@ -7,6 +7,7 @@
 #include "../include/string_util.h"
 #include "../include/window.h"
 #include "../include/constants/items.h"
+#include "../include/constants/pokedex.h"
 
 #include "../include/new/ability_battle_effects.h"
 #include "../include/new/ability_battle_scripts.h"
@@ -71,6 +72,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_CLOUDNINE] = 5,
 	[ABILITY_COLORCHANGE] = 2,
 	[ABILITY_COMATOSE] = 6,
+	[ABILITY_COMMANDER] = 4,
 	[ABILITY_COMPETITIVE] = 5,
 	[ABILITY_COMPOUNDEYES] = 7,
 	[ABILITY_CONTRARY] = 8,
@@ -187,6 +189,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_NOGUARD] = 8,
 	[ABILITY_NORMALIZE] = -1,
 	[ABILITY_OBLIVIOUS] = 2,
+	[ABILITY_OPPORTUNIST] = 6,
 	[ABILITY_ORICHALCUMPULSE] = 10,
 	[ABILITY_OVERCOAT] = 5,
 	[ABILITY_OVERGROW] = 5,
@@ -878,11 +881,16 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			break;
 
 		case ABILITY_UNNERVE:
-		case ABILITY_ASONE_GRIM:
-		case ABILITY_ASONE_CHILLING:
 			gBankAttacker = bank;
 			gBattleStringLoader = gText_UnnerveActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
+			effect++;
+			break;
+
+		case ABILITY_ASONE_GRIM:
+		case ABILITY_ASONE_CHILLING:
+			gBankAttacker = bank;
+			BattleScriptPushCursorAndCallback(BattleScript_ActivateAsOne);
 			effect++;
 			break;
 
@@ -1151,7 +1159,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 		if (STAT_STAGE(bank, statId) < STAT_STAGE_MAX)
 		{
 			gBankAttacker = bank;
-			STAT_STAGE(bank, statId)++;
 			gBattleScripting.statChanger = statId | INCREASE_1;
 			PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
 			PREPARE_STAT_ROSE(gBattleTextBuff2);
@@ -1290,7 +1297,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			if (STAT_STAGE(bank, STAT_STAGE_ATK) < STAT_STAGE_MAX)
 			{
 				gBankAttacker = bank;
-				STAT_STAGE(bank, STAT_STAGE_ATK)++;
 				gBattleScripting.statChanger = STAT_STAGE_ATK | INCREASE_1;
 				PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_ATK);
 				PREPARE_STAT_ROSE(gBattleTextBuff2);
@@ -1303,7 +1309,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			if (STAT_STAGE(bank, STAT_STAGE_DEF) < STAT_STAGE_MAX)
 			{
 				gBankAttacker = bank;
-				STAT_STAGE(bank, STAT_STAGE_DEF)++;
 				gBattleScripting.statChanger = STAT_STAGE_DEF | INCREASE_1;
 				PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_DEF);
 				PREPARE_STAT_ROSE(gBattleTextBuff2);
@@ -1344,7 +1349,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			if (STAT_STAGE(bank, STAT_STAGE_ATK) < STAT_STAGE_MAX)
 			{
 				gBankAttacker = bank;
-				STAT_STAGE(bank, STAT_STAGE_ATK)++;
 				gBattleScripting.statChanger = STAT_STAGE_ATK | INCREASE_1;
 				PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_ATK);
 				PREPARE_STAT_ROSE(gBattleTextBuff2);
@@ -1359,7 +1363,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			if (STAT_STAGE(bank, STAT_STAGE_DEF) < STAT_STAGE_MAX)
 			{
 				gBankAttacker = bank;
-				STAT_STAGE(bank, STAT_STAGE_DEF)++;
 				gBattleScripting.statChanger = STAT_STAGE_DEF | INCREASE_1;
 				PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_DEF);
 				PREPARE_STAT_ROSE(gBattleTextBuff2);
@@ -1374,7 +1377,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			if (STAT_STAGE(bank, STAT_STAGE_SPDEF) < STAT_STAGE_MAX)
 			{
 				gBankAttacker = bank;
-				STAT_STAGE(bank, STAT_STAGE_SPDEF)++;
 				gBattleScripting.statChanger = STAT_STAGE_SPDEF | INCREASE_1;
 				PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPDEF);
 				PREPARE_STAT_ROSE(gBattleTextBuff2);
@@ -1389,11 +1391,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			if (STAT_STAGE(bank, STAT_STAGE_SPEED) < STAT_STAGE_MAX)
 			{
 				gBankAttacker = bank;
-				STAT_STAGE(bank, STAT_STAGE_SPEED)++;
 				gBattleScripting.statChanger = STAT_STAGE_SPEED | INCREASE_1;
 				PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPEED);
 				PREPARE_STAT_ROSE(gBattleTextBuff2);
-				gLastUsedItem = ITEM(bank);
+				gLastUsedItem = ITEM_TEAL_MASK;
 				gBattleStringLoader = gText_EmbodyAspectActivate;
 				BattleScriptPushCursorAndCallback(BattleScript_EmbodyAspect);
 				effect++;
@@ -1404,7 +1405,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			if (gNewBS->TailwindTimers[SIDE(bank)] && STAT_STAGE(bank, STAT_STAGE_ATK) < STAT_STAGE_MAX)
 			{
 				gBankAttacker = bank;
-				STAT_STAGE(bank, STAT_STAGE_ATK)++;
 				gBattleScripting.statChanger = STAT_STAGE_ATK | INCREASE_1;
 				PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_ATK);
 				PREPARE_STAT_ROSE(gBattleTextBuff2);
@@ -1524,6 +1524,34 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			}
 			break;
 
+		case ABILITY_COMMANDER:
+			if (IS_DOUBLE_BATTLE)
+			{
+				u8 partner = PARTNER(bank);
+
+				if (BATTLER_ALIVE(bank)
+				&& BATTLER_ALIVE(partner)
+				&& !IS_TRANSFORMED(bank)
+				&& !IS_TRANSFORMED(partner)
+				&& gNewBS->commanderActive[partner] == SPECIES_NONE
+				&& SpeciesToNationalPokedexNum(SPECIES(bank)) == NATIONAL_DEX_TATSUGIRI
+				&& SPECIES(partner) == SPECIES_DONDOZO)
+				{
+					gBankAttacker = partner;
+					gNewBS->commandingDondozo |= gBitTable[bank];
+					gNewBS->commanderActive[partner] = SPECIES(bank);
+					gStatuses3[bank] |= STATUS3_COMMANDER;
+					gNewBS->zMoveData.toBeUsed[bank] = FALSE;
+					gNewBS->megaData.chosen[bank] = FALSE;
+					gNewBS->ultraData.chosen[bank] = FALSE;
+					gNewBS->dynamaxData.toBeUsed[bank] = FALSE;
+					gNewBS->terastalData.chosen[bank] = FALSE;
+					BattleScriptPushCursorAndCallback(BattleScript_CommanderActivates);
+                	effect++;
+				}
+			}
+			break;
+
 		case ABILITY_PROTOSYNTHESIS:
 			if (WEATHER_HAS_EFFECT
 			&& gBattleWeather & WEATHER_SUN_ANY
@@ -1561,7 +1589,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			{
 				gNewBS->abilityPopupOverwrite = ABILITY_TERASHIFT;
 				DoFormChange(bank, SPECIES_TERAPAGOS_TERASTAL, FALSE, TRUE, TRUE);
-				BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
+				BattleScriptPushCursorAndCallback(BattleScript_TeraShiftActivates);
 				++effect;
 			}
 			break;
@@ -1572,6 +1600,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			case ABILITY_FORECAST:
 			case ABILITY_FLOWERGIFT:
 			case ABILITY_TRACE:
+			case ABILITY_COMMANDER:
 			case ABILITYEFFECT_SWITCH_IN_WEATHER:
 				break;
 			default:
@@ -1673,7 +1702,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 				case ABILITY_SPEEDBOOST:
 					if (STAT_STAGE(bank, STAT_SPEED) < STAT_STAGE_MAX && gDisableStructs[bank].isFirstTurn != 2)
 					{
-						gBattleMons[bank].statStages[STAT_SPEED - 1]++;
 						gBattleScripting.statChanger = STAT_SPEED | INCREASE_1;
 						gBattleScripting.animArg1 = 0x11;
 						gBattleScripting.animArg2 = 0;
@@ -2363,6 +2391,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 				&& BATTLER_ALIVE(bank)
 				&& gBattleMons[bank].statStages[STAT_ATK - 1] < 12)
 				{
+					SetOpportunistStats(bank, STAT_STAGE_MAX - gBattleMons[bank].statStages[STAT_ATK - 1], STAT_ATK);
 					gBattleMons[bank].statStages[STAT_ATK - 1] = 12;
 					PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_ATK);
 					BattleScriptPushCursor();
@@ -2847,7 +2876,41 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 		case ABILITYEFFECT_INTIMIDATE1: // 9
 			break;
 
-		case ABILITYEFFECT_TRACE: // 11
+		case ABILITYEFFECT_OPPORTUNIST: // 11
+			for (i = 0; i < gBattlersCount; i++)
+			{
+				bank = gBanksByTurnOrder[i];
+				
+				switch (ABILITY(bank))
+				{
+				case ABILITY_OPPORTUNIST:
+					if (gNewBS->opportunistState[bank])
+					{
+						for (u8 statId = 0; statId < BATTLE_STATS_NO - 1; statId++)
+						{
+							if (gNewBS->opportunistBoostStats[bank][statId] != 0
+							&& gBattleMons[bank].statStages[statId] < STAT_STAGE_MAX)
+							{
+								effect++;
+								break;
+							}
+						}
+
+						if (gNewBS->opportunistBoostStats[bank][BATTLE_STATS_NO - 1] != 0
+						&& gNewBS->DragonCheerRanks[bank] < 3)
+							effect++; 
+					}
+
+					if (effect)
+					{
+						gBattleScripting.bank = bank;
+						gNewBS->opportunistState[bank] = 0;
+						BattleScriptPushCursorAndCallback(BattleScript_OpportunistCopyStatChange);
+						return effect;
+					}
+					break;
+				}
+			}
 			break;
 
 		case ABILITYEFFECT_INTIMIDATE2: // 10

@@ -19,6 +19,9 @@
 #org @gText_UnnerveActivate
 [FD][37] きんちょうして\nきのみが たべられなくなった！
 
+#org @gText_ActivateAsOne
+[SCRIPTING_BANK]は\nふたつの とくせいを あわせもつ！
+
 #org @gText_DarkAuraActivate
 [SCRIPTING_BANK]は\nダークオーラを はなっている！
 
@@ -174,3 +177,6 @@
 
 #org @gText_ParadoxAbilityEnd
 [SCRIPTING_BANK]は\n[SCRIPTING_BANK_ABILITY]の こうかが きれた！
+
+#org @gText_CommanderActivate
+[SCRIPTING_BANK]は\nしれいとう として\l[ATTACKER]に のみこまれた！

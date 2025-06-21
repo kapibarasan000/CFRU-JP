@@ -78,6 +78,7 @@ extern const u8 BattleScript_AllStatsUp[];
 extern const u8 BattleScript_EatEffectBankBerry[];
 extern const u8 BattleScript_SetTerrain[];
 extern const u8 BattleScript_LowerAtkSpAtk[];
+extern const u8 BattleScript_FickleBeamDoubled[];
 extern const u8 BattleScript_MaxMoveRaiseStatTeam[];
 extern const u8 BattleScript_MaxMoveLowerStatFoes[];
 extern const u8 BattleScript_MaxMoveSetWeather[];

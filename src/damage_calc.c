@@ -103,7 +103,7 @@ void atk04_critcalc(void)
 
 		if (defAbility == ABILITY_SHELLARMOR
 		||  defAbility == ABILITY_BATTLEARMOR
-		||  CantScoreACrit(gBankAttacker, NULL)
+		||  CantScoreACrit(NULL)
 		||  gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_OAK_TUTORIAL | BATTLE_TYPE_POKE_DUDE)
 		||  gNewBS->LuckyChantTimers[SIDE(bankDef)])
 		{
@@ -196,7 +196,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 
 	if (defAbility == ABILITY_SHELLARMOR
 	||  defAbility == ABILITY_BATTLEARMOR
-	||  CantScoreACrit(bankAtk, monAtk)
+	||  CantScoreACrit(monAtk)
 	||  gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_OAK_TUTORIAL)
 	||  gNewBS->LuckyChantTimers[SIDE(bankDef)])
 	{
@@ -1505,10 +1505,7 @@ TYPE_LOOP:
 	|| (ABILITY(bankDef) == ABILITY_TERASHELL && BATTLER_MAX_HP(bankDef) && SPLIT(move) != SPLIT_STATUS))
 	{
 		if (multiplier >= TYPE_MUL_NORMAL)
-		{
 			multiplier = TYPE_MUL_NOT_EFFECTIVE;
-			gSpecialStatuses[bankDef].distortedTypeMatchups = TRUE;
-		}
 	}
 		
 	UpdateMoveResultFlags(multiplier, flags);
@@ -1915,16 +1912,9 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 			break;
 
 		case MOVE_TERABLAST:
+		case MOVE_TERASTARSTORM:
 			if (TeraTypeActive(bankAtk))
 				moveType = GetTeraType(bankAtk);
-			break;
-
-		case MOVE_TERASTARSTORM:
-			#if (defined SPECIES_TERAPAGOS && SPECIES_TERAPAGOS_TERASTAL && SPECIES_TERAPAGOS_STELLAR)
-			if (SPECIES(bankAtk) == SPECIES_TERAPAGOS_STELLAR
-			|| (TeraTypeActive(bankAtk) && SPECIES(bankAtk) == SPECIES_TERAPAGOS_TERASTAL))
-				moveType = TYPE_STELLAR;
-			#endif
 			break;
 	}
 
@@ -2045,18 +2035,12 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 			break;
 
 		case MOVE_TERABLAST:
+		case MOVE_TERASTARSTORM:
 			if (gMain.inBattle)
 			{
 				if (IsMonTerastal(mon))
 					moveType = mon->teratype;
 			}
-			break;
-
-		case MOVE_TERASTARSTORM:
-			#if (defined SPECIES_TERAPAGOS && SPECIES_TERAPAGOS_TERASTAL && SPECIES_TERAPAGOS_STELLAR)
-			if (mon->species == SPECIES_TERAPAGOS_STELLAR)
-				moveType = TYPE_STELLAR;
-			#endif
 			break;
 	}
 
@@ -3434,7 +3418,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_FICKLEBEAM:
-			if (Random() % 100 < 30)
+			if (gNewBS->fickleBeamBoosted)
 				power *=2;
 			break;
 

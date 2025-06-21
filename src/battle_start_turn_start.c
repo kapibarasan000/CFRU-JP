@@ -60,6 +60,8 @@ enum BattleBeginStates
 	BTSTART_BOOSTER_ENERGY,
 	BTSTART_TOTEM_POKEMON,
 	BTSTART_WHITE_HERB,
+	BTSTART_OPPORTUNIST,
+	BTSTART_MIRROR_HERB,
 	BTSTART_EJECT_PACK,
 	BTSTART_END,
 };
@@ -567,6 +569,20 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
+			case BTSTART_OPPORTUNIST:
+				if (AbilityBattleEffects(ABILITYEFFECT_OPPORTUNIST, 0, 0, 0, 0))
+					return;
+
+				++*state;
+				break;
+
+			case BTSTART_MIRROR_HERB:
+				if (ItemBattleEffects(ItemEffects_MirrorHerb, 0, FALSE, FALSE))
+					return;
+
+				++*state;
+				break;
+
 			case BTSTART_EJECT_PACK:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
@@ -614,6 +630,7 @@ void BattleBeginFirstTurn(void)
 				BattlePutTextOnWindow(gText_EmptyString, 0); //Wipes the old string
 				gBattleMainFunc = (void*) (0x8013860 | 1);
 				ResetSentPokesToOpponentValue();
+				ClearCopyStats();
 				for (i = 0; i < 8; i++)
 					gBattleCommunication[i] = 0;
 
@@ -815,6 +832,13 @@ static void TryPrepareTotemBoostInBattleSands(void)
 
 void CleanUpExtraTurnValues(void)
 {
+	s32 i;
+
+    for (i = 0; i < gBattlersCount; i++)
+	{
+		if (!(gStatuses3[i] & STATUS3_COMMANDER))
+			gNewBS->commandingDondozo &= ~gBitTable[i];
+	}
 	gNewBS->NoMoreMovingThisTurn = 0;
 	gNewBS->OriginalAttackerTargetCount = 0;
 	gNewBS->ParentalBondOn = FALSE;
@@ -943,8 +967,8 @@ enum MegaStates
 	Mega_Check,
 	Mega_CalcTurnOrder,
 	Mega_SwitchInAbilities,
-	Mega_SwitchInAbilities2,
-	Mega_SwitchInAbilities3,
+	Mega_Opportunist,
+	Mega_MirrorHerb,
 	Mega_Intimidate,
 	Mega_End
 };
@@ -1016,6 +1040,7 @@ void RunTurnActionsFunctions(void)
 				u8 bank = gActiveBattler = gBanksByTurnOrder[i];
 				if (gNewBS->megaData.chosen[bank]
 				&& !gNewBS->megaData.done[bank]
+				&& !(gNewBS->commandingDondozo & gBitTable[bank])
 				&& !DoesZMoveUsageStopMegaEvolution(bank)
 				&& (gCurrentActionFuncId == ACTION_USE_MOVE
 				 || (gCurrentActionFuncId == ACTION_SWITCH && gChosenMovesByBanks[bank] == MOVE_PURSUIT)))
@@ -1078,6 +1103,7 @@ void RunTurnActionsFunctions(void)
 				}
 				else if (gNewBS->terastalData.chosen[bank]
 				&& !gNewBS->terastalData.done[bank]
+				&& !(gNewBS->commandingDondozo & gBitTable[bank])
 				&& !DoesZMoveUsageStopMegaEvolution(bank)
 				&& (gCurrentActionFuncId == ACTION_USE_MOVE
 				 || (gCurrentActionFuncId == ACTION_SWITCH && gChosenMovesByBanks[bank] == MOVE_PURSUIT)))
@@ -1150,30 +1176,29 @@ void RunTurnActionsFunctions(void)
 
 		case Mega_SwitchInAbilities:
 			while (*megaBank < gBattlersCount) {
-				if (BATTLER_ALIVE(gBanksByTurnOrder[*megaBank]))
+				if (BATTLER_ALIVE(gBanksByTurnOrder[*megaBank])
+				&& AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*megaBank], 0, 0, 0))
 				{
-					if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*megaBank], 0, 0, 0))
-					{
-						++*megaBank;
-						return;
-					}
-
-					if (ABILITY(gBanksByTurnOrder[*megaBank]) == ABILITY_TERAFORMZERO)
-					{
-						if ((gBattleWeather & WEATHER_ANY
-						&& !(gBattleWeather & (WEATHER_PRIMAL_ANY | WEATHER_PERMANENT_ANY | WEATHER_CIRCUS)))
-						|| gTerrainType != 0)
-						{
-							gBattleScripting.bank = gBanksByTurnOrder[*megaBank];
-							BattleScriptPushCursorAndCallback(BattleScript_ActivateTeraformZero);
-							++*megaBank;
-							return;
-						}
-					}
+					++*megaBank;
+					return;
 				}
 				++*megaBank;
 			}
 			*megaBank = 0;
+			++gNewBS->megaData.state;
+			return;
+
+		case Mega_Opportunist:
+			if (AbilityBattleEffects(ABILITYEFFECT_OPPORTUNIST, 0, 0, 0, 0))
+				return;
+
+			++gNewBS->megaData.state;
+			return;
+
+		case Mega_MirrorHerb:
+			if (ItemBattleEffects(ItemEffects_MirrorHerb, 0, FALSE, FALSE))
+				return;
+
 			++gNewBS->megaData.state;
 			return;
 
@@ -1182,6 +1207,7 @@ void RunTurnActionsFunctions(void)
 			gNewBS->megaData.state = Mega_End;
 			gNewBS->megaData.activeBank = 0;
 			gNewBS->megaData.megaEvoInProgress = FALSE;
+			ClearCopyStats();
 			//Fallthrough
 		case Mega_End:
 			if (gCurrentActionFuncId != ACTION_USE_MOVE && gCurrentActionFuncId != ACTION_RUN_BATTLESCRIPT) //Necessary because of Mega Evolving before Pursuit
@@ -1199,6 +1225,7 @@ void RunTurnActionsFunctions(void)
 
 			if (gNewBS->dynamaxData.toBeUsed[bank]
 			&& !gNewBS->dynamaxData.used[bank]
+			&& !(gNewBS->commandingDondozo & gBitTable[bank])
 			&& !DoesZMoveUsageStopMegaEvolution(bank)) //Same for Dynamax
 			{
 				const u8* script = GetDynamaxScript(bank);
@@ -1324,7 +1351,8 @@ void HandleAction_UseMove(void)
 
 	gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber];
 
-	if (gBattleStruct->field_91 & gBitTable[gBankAttacker])
+	if (gBattleStruct->field_91 & gBitTable[gBankAttacker]
+	|| gNewBS->commandingDondozo & gBitTable[gBankAttacker])
 	{
 		gCurrentActionFuncId = ACTION_FINISHED;
 		return;

@@ -5391,9 +5391,26 @@ BS_213_StatSwapSplitters:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_214_Blank
-BS_214_Blank:
-	goto BS_STANDARD_HIT
+.global BS_214_FickleBeam
+BS_214_FickleBeam:
+	attackcanceler
+	accuracycheck BS_MOVE_MISSED 0x0
+	attackstring
+	ppreduce
+	callasm FickleBeamFunc
+	call STANDARD_DAMAGE + 2
+	seteffectwithchancetarget
+	goto BS_MOVE_FAINT
+
+.global BattleScript_FickleBeamDoubled
+BattleScript_FickleBeamDoubled:
+	pause DELAY_HALFSECOND
+	setword BATTLE_STRING_LOADER gText_FickleBeamDoubled
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call STANDARD_DAMAGE + 2
+	seteffectwithchancetarget
+	goto BS_MOVE_FAINT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -6184,8 +6201,9 @@ RevivalBlessingSendOut:
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_250_Blank
-BS_250_Blank:
+.global BS_250_OrderUp
+BS_250_OrderUp:
+	callasm OrderUpFunc
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

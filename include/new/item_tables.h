@@ -1342,6 +1342,26 @@ extern const u8 gBagItem_Hearthflame_MaskTiles[];
 extern const u8 gBagItem_Hearthflame_MaskPal[];
 extern const u8 gBagItem_Cornerstone_MaskTiles[];
 extern const u8 gBagItem_Cornerstone_MaskPal[];
+extern const u8 gBagItem_Masterpiece_TeacupTiles[];
+extern const u8 gBagItem_Masterpiece_TeacupPal[];
+extern const u8 gBagItem_Unremarkable_TeacupTiles[];
+extern const u8 gBagItem_Unremarkable_TeacupPal[];
+extern const u8 gBagItem_Tera_OrbTiles[];
+extern const u8 gBagItem_Tera_OrbPal[];
+extern const u8 gBagItem_Mirror_HerbTiles[];
+extern const u8 gBagItem_Mirror_HerbPal[];
+extern const u8 gBagItem_Red_MintTiles[];
+extern const u8 gBagItem_Red_MintPal[];
+extern const u8 gBagItem_Purple_MintTiles[];
+extern const u8 gBagItem_Purple_MintPal[];
+extern const u8 gBagItem_Blue_MintTiles[];
+extern const u8 gBagItem_Blue_MintPal[];
+extern const u8 gBagItem_Pink_MintTiles[];
+extern const u8 gBagItem_Pink_MintPal[];
+extern const u8 gBagItem_Green_MintTiles[];
+extern const u8 gBagItem_Green_MintPal[];
+extern const u8 gBagItem_Yellow_MintTiles[];
+extern const u8 gBagItem_Yellow_MintPal[];
 
 //Funcs
 #define gFieldFunc_Item_None ((void*)0x080A34F9)
@@ -2116,4 +2136,9 @@ extern const u8 DESC_BOOSTER_ENERGY[];
 extern const u8 DESC_WELLSPRING_MASK[];
 extern const u8 DESC_HEARTHFLAME_MASK[];
 extern const u8 DESC_CORNERSTONE_MASK[];
+extern const u8 DESC_TEAL_MASK[];
+extern const u8 DESC_MASTERPIECE_TEACUP[];
+extern const u8 DESC_UNREMARKABLE_TEACUP[];
+extern const u8 DESC_TERA_ORB[];
+extern const u8 DESC_MIRROR_HERB[];
 #endif

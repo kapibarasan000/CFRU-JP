@@ -91,6 +91,7 @@ BattleScript_Terastal:
 	setword BATTLE_STRING_LOADER gText_MonTerastal
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	callasm TryTerastalAbility
 	end3
 
 BattleScript_ActivateTeraformZero:
@@ -99,7 +100,7 @@ BattleScript_ActivateTeraformZero:
 	call BattleScript_AbilityPopUpRevert
 	call BS_WEATHER_FORM_CHANGES
 	callasm TryActivateMimicry
-	end3
+	return
 
 BattleScript_TerastalBoost:
 	playanimation BANK_ATTACKER ANIM_TOTEM_BOOST 0x0

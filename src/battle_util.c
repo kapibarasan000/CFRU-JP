@@ -280,6 +280,9 @@ u8 GetBankFromPartyData(struct Pokemon* mon)
 
 bool8 CanHitSemiInvulnerableTarget(u8 bankAtk, u8 bankDef, u16 move)
 {
+	if (gStatuses3[bankDef] & STATUS3_COMMANDER)
+		return FALSE;
+
 	if (ABILITY(bankAtk) == ABILITY_NOGUARD || ABILITY(bankDef) == ABILITY_NOGUARD)
 		return TRUE;
 
@@ -718,7 +721,7 @@ void CancelMultiTurnMoves(u8 battler)
     gBattleMons[battler].status2 &= ~(STATUS2_UPROAR);
     gBattleMons[battler].status2 &= ~(STATUS2_BIDE);
 
-    gStatuses3[battler] &= (~(STATUS3_SEMI_INVULNERABLE) | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET); //Sky Drop is removed seperately
+    gStatuses3[battler] &= (~(STATUS3_SEMI_INVULNERABLE_NO_COMMANDER) | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET); //Sky Drop is removed seperately
 
     gDisableStructs[battler].rolloutTimer = 0;
     gDisableStructs[battler].furyCutterCounter = 0;
@@ -1082,6 +1085,11 @@ u8 GetIllusionPartyNumber(u8 bank)
 			|| monId >= lastMonId)
 				continue;
 
+			if (IsTerastalFormSpecies(party[monId].species)
+			|| (IsTerastal(bank)
+			&& (IsBannedTerastalSpecies(party[monId].species) || GetTerastalFormSpecies(party[monId].species) != SPECIES_NONE)))
+				return gBattlerPartyIndexes[bank];
+
 			gNewBS->disguisedAs[bank] = monId + 1; //Use original mon id
 			return monId;
 		}
@@ -1270,6 +1278,32 @@ bool8 CanTransferItem(u16 species, u16 item)
 					break; //Break now to save time
 				else if ((evolutions[i].method == MEGA_EVOLUTION && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item) //Can Primal Evolve
 				||  (evolutions[i].method == MEGA_EVOLUTION && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == 0)) //Is Primal
+					return FALSE;
+			}
+			break;
+
+		case ITEM_EFFECT_BOOSTER_ENERGY:
+			switch (species) {
+				case SPECIES_GREAT_TUSK:
+				case SPECIES_SCREAM_TAIL:
+				case SPECIES_BRUTE_BONNET:
+				case SPECIES_FLUTTER_MANE:
+				case SPECIES_SLITHER_WING:
+				case SPECIES_SANDY_SHOCKS:
+				case SPECIES_IRON_TREADS:
+				case SPECIES_IRON_BUNDLE:
+				case SPECIES_IRON_HANDS:
+				case SPECIES_IRON_JUGULIS:
+				case SPECIES_IRON_MOTH:
+				case SPECIES_IRON_THORNS:
+				case SPECIES_ROARING_MOON:
+				case SPECIES_IRON_VALIANT:
+				case SPECIES_WALKING_WAKE:
+				case SPECIES_IRON_LEAVES:
+				case SPECIES_GOUGING_FIRE:
+				case SPECIES_RAGING_BOLT:
+				case SPECIES_IRON_BOULDER:
+				case SPECIES_IRON_CROWN:
 					return FALSE;
 			}
 			break;
@@ -1463,7 +1497,8 @@ bool8 IsMoveAffectedByParentalBond(u16 move, u8 bankAtk)
 
 u8 CalcMoveSplit(u8 bankAtk, u16 move, u8 bankDef)
 {
-	if ((CheckTableForMove(move, gMovesThatChangePhysicality) || (move == MOVE_TERABLAST && TeraTypeActive(bankAtk)))
+	if ((CheckTableForMove(move, gMovesThatChangePhysicality)
+	|| ((move == MOVE_TERABLAST || move == MOVE_TERASTARSTORM) && TeraTypeActive(bankAtk)))
 	&&  SPLIT(move) != SPLIT_STATUS)
 	{
 		u32 attack = gBattleMons[bankAtk].attack;
@@ -1830,10 +1865,13 @@ bool8 ImposterWorks(u8 bankAtk, bool8 checkingMonAtk) //bankAtk here is mainly u
 
 	return BATTLER_ALIVE(targetBank)
 		&& !(gBattleMons[targetBank].status2 & (STATUS2_TRANSFORMED | STATUS2_SUBSTITUTE))
-		&& !(gStatuses3[targetBank] & (STATUS3_SEMI_INVULNERABLE | STATUS3_ILLUSION))
+		&& !(gStatuses3[targetBank] & (STATUS3_SEMI_INVULNERABLE_NO_COMMANDER | STATUS3_ILLUSION))
 		&& (checkingMonAtk || !IS_TRANSFORMED(bankAtk)) //Obviously a party mon can't be transformed
 		&& !HasRaidShields(targetBank)
-		&& !ABILITY_ON_FIELD(ABILITY_NEUTRALIZINGGAS);
+		&& !ABILITY_ON_FIELD(ABILITY_NEUTRALIZINGGAS)
+		&& !IsTerastalFormSpecies(SPECIES(targetBank))
+		&& !(IsTerastal(bankAtk)
+		&& (IsBannedTerastalSpecies(SPECIES(targetBank)) || GetTerastalFormSpecies(SPECIES(targetBank)) != SPECIES_NONE));
 }
 
 void ClearBankStatus(u8 bank)
@@ -2353,13 +2391,12 @@ bool8 IsAbilitySuppressed(u8 bank)
 		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_ABILITY_SUPPRESSION);
 }
 
-bool8 CantScoreACrit(u8 bank, struct Pokemon* mon)
+bool8 CantScoreACrit(struct Pokemon* mon)
 {
 	if (mon != NULL)
 		return FALSE;
 
-	return (gStatuses3[bank] & STATUS3_CANT_SCORE_A_CRIT) != 0
-		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_NO_CRITS);
+	return (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_NO_CRITS);
 }
 
 void ClearTemporarySpeciesSpriteData(u8 bank, bool8 dontClearSubstitute)
@@ -2384,16 +2421,13 @@ u16 TryFixDynamaxTransformSpecies(u8 bank, u16 species)
 
 u8 GetCriticalRank(u8 bankAtk, u32 atkStatus2)
 {
-	u8 rank = 0;
-	if (atkStatus2 & STATUS2_FOCUS_ENERGY)
-	{
-		if (gNewBS->DragonCheerRanks[bankAtk] == 1)
-			rank = 1;
-		else
-			rank = 2;
-	}
+	if (gNewBS->DragonCheerRanks[bankAtk])
+		return gNewBS->DragonCheerRanks[bankAtk];
 
-	return rank;
+	if (atkStatus2 & STATUS2_FOCUS_ENERGY)
+		return 2;
+
+	return 0;
 }
 
 u8 GetBankFaintCounter(u8 bank)
@@ -2422,4 +2456,39 @@ u8 GetHighestStatId(u8 bank)
 			highestId = i;
 	}	
 	return highestId;
+}
+
+void SetOpportunistStats(u8 bank, s8 statValue, u8 statId)
+{
+	for (u32 i = 0; i < gBattlersCount; i++)
+	{
+		if (SIDE(i) == SIDE(bank))
+			continue;
+
+		if (gNewBS->opportunistState[i] == 0
+		&& ABILITY(i) == ABILITY_OPPORTUNIST)
+			gNewBS->opportunistState[i] = 1;
+
+		if (gNewBS->opportunistState[i] == 1 || ITEM_EFFECT(i) == ITEM_EFFECT_MIRROR_HERB)
+		{
+			if ((gBattleMons[bank].statStages[statId - 1] + statValue) > STAT_STAGE_MAX)
+				gNewBS->opportunistBoostStats[i][statId - 1] += (STAT_STAGE_MAX - gBattleMons[bank].statStages[statId - 1]);
+			else
+				gNewBS->opportunistBoostStats[i][statId - 1] += statValue;
+		}
+	}
+}
+
+void ClearCopyStats(void)
+{
+	for (u32 i = 0; i < gBattlersCount; i++)
+	{
+		for (u32 j = 0; j < BATTLE_STATS_NO; j++)
+			gNewBS->opportunistBoostStats[i][j] = 0;
+	}
+}
+
+bool8 CheckCommandingDondozo(u8 bank)
+{
+	return gNewBS->commandingDondozo & gBitTable[bank];
 }

@@ -28,6 +28,7 @@ ability_battle_scripts.s
 .global BattleScript_NeutralizingGas
 .global BattleScript_SwitchInAbilityMsg
 .global BattleScript_End3
+.global BattleScript_ActivateAsOne
 .global BattleScript_AbilityCuredStatus
 .global BattleScript_AbilityCuredStatusEnd3
 .global BattleScript_StartedSchoolingEnd3
@@ -39,10 +40,12 @@ ability_battle_scripts.s
 .global BattleScript_TransformedEnd2
 .global BattleScript_TransformedEnd3
 .global BattleScript_HospitalityActivates
+.global BattleScript_CommanderActivates
 .global BattleScript_ParadoxAbilityActivates
 .global BattleScript_ParadoxAbilityActivatesRet
 .global BattleScript_ParadoxAbilityEnd
 .global BattleScript_ParadoxAbilityEndRet
+.global BattleScript_TeraShiftActivates
 
 .global BattleScript_RainDishActivates
 .global BattleScript_DrySkinDamage
@@ -83,6 +86,9 @@ ability_battle_scripts.s
 .global BattleScript_ElectromorphosisActivates
 .global BattleScript_ToxicDebrisActivates
 .global BattleScript_GuardDogActivates
+.global BattleScript_OpportunistCopyStatChange
+.global BattleScript_OpportunistCopyDragonCheer
+.global BattleScript_OpportunistEnd
 
 .global BattleScript_AbilityChangedType
 .global BattleScript_AbilityChangedTypeContact
@@ -355,6 +361,7 @@ BattleScript_AttackerAbilityStatRaiseEnd3:
 	end3	
 	
 BattleScript_AttackerAbilityStatRaise:
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR BattleScript_End3
 	call BattleScript_AbilityPopUp
 	setgraphicalstatchangevalues
 	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
@@ -366,6 +373,7 @@ BattleScript_AttackerAbilityStatRaise:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_EmbodyAspect:
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR BattleScript_End3
 	call BattleScript_AbilityPopUp
 	setgraphicalstatchangevalues
 	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
@@ -393,7 +401,23 @@ BattleScript_SwitchInAbilityMsg:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 BattleScript_End3:
-	end3	
+	end3
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_ActivateAsOne:
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_ActivateAsOne
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	callasm SetAbilityPopUpUnnerve
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_UnnerveActivate
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1066,6 +1090,56 @@ BattleScript_HospitalityActivates:
 	call BattleScript_AbilityPopUpRevert
 	end3
 
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_CommanderActivates:
+	call BattleScript_AbilityPopUp
+	callasm MakeScriptingBankInvisible
+	setword BATTLE_STRING_LOADER gText_CommanderActivate
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+
+BattleScript_CommanderAtk:
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_DEF | STAT_ANIM_SPD | STAT_ANIM_SPATK | STAT_ANIM_SPDEF, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES | STAT_ANIM_BY_TWO
+	setstatchanger STAT_ATK | INCREASE_2
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BattleScript_CommanderSpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_CommanderSpAtk
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_CommanderSpAtk:
+	setstatchanger STAT_SPATK | INCREASE_2
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BattleScript_CommanderSpd
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_CommanderSpd
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_CommanderSpd:
+	setstatchanger STAT_SPD | INCREASE_2
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BattleScript_CommanderDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_CommanderDef
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_CommanderDef:
+	setstatchanger STAT_DEF | INCREASE_2
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BattleScript_CommanderSpDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_CommanderSpDef
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_CommanderSpDef:
+	setstatchanger STAT_SPDEF | INCREASE_2
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BattleScript_CommanderEnd
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_CommanderEnd
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_CommanderEnd:
+	call BattleScript_AbilityPopUpRevert
+	end3
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_AbilityChangedType: @;For Protean
@@ -1570,6 +1644,46 @@ BattleScript_ParadoxAbilityEndRet:
 	waitmessage DELAY_1SECOND
 	callasm TryActivateBoosterEnergy
 	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_TeraShiftActivates:
+	call BattleScript_AbilityPopUp
+	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
+	reloadhealthbar BANK_SCRIPTING
+	setword BATTLE_STRING_LOADER TransformedString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	end3
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_OpportunistCopyStatChange:
+	call BattleScript_AbilityPopUp
+	copyhword BACKUP_HWORD USER_BANK
+	setbyte SEED_HELPER 1
+
+BattleScript_OpportunistCopyStatChangeLoop:
+	callasm SetCopyStatChange
+	setgraphicalstatchangevalues
+	playanimation BANK_SCRIPTING ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	addbyte SEED_HELPER 1
+	jumpifbyte LESSTHAN SEED_HELPER 8 BattleScript_OpportunistCopyStatChangeLoop
+
+BattleScript_OpportunistCopyDragonCheer:
+	callasm SetCopyDragonCheer
+	setword BATTLE_STRING_LOADER gText_DragonCheerString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+
+BattleScript_OpportunistEnd:
+	setbyte SEED_HELPER 0
+	copyhword USER_BANK BACKUP_HWORD
+	call BattleScript_AbilityPopUpRevert
+	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

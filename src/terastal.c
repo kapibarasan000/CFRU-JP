@@ -281,6 +281,11 @@ void SetStellarBoostFlag(u8 bank, u8 type)
 
 bool8 CanStellarBoost(u8 bank, u8 type)
 {
+	#ifdef SPECIES_TERAPAGOS_STELLAR
+	if (SPECIES(bank) == SPECIES_TERAPAGOS_STELLAR)
+		return TRUE;
+	#endif
+
     if (type < NUMBER_OF_MON_TYPES)
 		return !(gNewBS->terastalData.stellarBoosted[bank] & gBitTable[type]);
     else
@@ -348,7 +353,7 @@ void TerastalFormRevert(struct Pokemon* party)
 		TryRevertTerastalForm(&party[i]);
 }
 
-void TryRevertTerastalForm(struct Pokemon* mon)
+bool8 TryRevertTerastalForm(struct Pokemon* mon)
 {
 	u16 baseSpecies = GetTerastalBaseForm(mon->species);
 
@@ -359,7 +364,10 @@ void TryRevertTerastalForm(struct Pokemon* mon)
 		CalculateMonStats(mon);
 		if (baseSpecies == SPECIES_TERAPAGOS)
 			mon->hp = MathMin(mon->maxHP, oldHP);
+		return TRUE;
 	}
+
+	return FALSE;
 }
 
 u16 GetTerastalBaseForm(u16 species)
@@ -390,4 +398,35 @@ bool8 IsTerastalFormSpecies(u16 species)
 	}
 
 	return FALSE;
+}
+
+u8 GetSpeciesTeraType(u16 species)
+{
+	switch (species) {
+		case SPECIES_OGERPON:
+		case SPECIES_OGERPON_TERASTAL:
+			return TYPE_GRASS;
+
+		case SPECIES_OGERPON_WELLSPRING_MASK:
+		case SPECIES_OGERPON_WELLSPRING_TERASTAL:
+			return TYPE_WATER;
+
+		case SPECIES_OGERPON_HEARTHFLAME_MASK:
+		case SPECIES_OGERPON_HEARTHFLAME_TERASTAL:
+			return TYPE_FIRE;
+
+		case SPECIES_OGERPON_CORNERSTONE_MASK:
+		case SPECIES_OGERPON_CORNERSTONE_TERASTAL:
+			return TYPE_ROCK;
+
+		case SPECIES_TERAPAGOS:
+		case SPECIES_TERAPAGOS_TERASTAL:
+		case SPECIES_TERAPAGOS_STELLAR:
+			return TYPE_STELLAR;
+	}
+
+	if (Random() & 1)
+		return gBaseStats[species].type2;
+	else
+		return gBaseStats[species].type1;
 }

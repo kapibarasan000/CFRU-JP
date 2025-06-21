@@ -21,6 +21,7 @@ const u8* DoTerastal(u8 bank);
 u16 GetTerastalSpecies(u8 bank);
 u16 GetTerastalFormSpecies(u16 species);
 void TerastalFormRevert(struct Pokemon* party);
-void TryRevertTerastalForm(struct Pokemon* mon);
+bool8 TryRevertTerastalForm(struct Pokemon* mon);
 u16 GetTerastalBaseForm(u16 species);
 bool8 IsTerastalFormSpecies(u16 species);
+u8 GetSpeciesTeraType(u16 species);

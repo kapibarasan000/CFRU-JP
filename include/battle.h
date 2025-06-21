@@ -777,6 +777,9 @@ struct NewBattleStruct
 	u16 cudChewBerries[MAX_BATTLERS_COUNT];
 	u8 cudChewTimers[MAX_BATTLERS_COUNT];
 	u8 paradoxBoostStats[MAX_BATTLERS_COUNT];
+	u8 opportunistBoostStats[MAX_BATTLERS_COUNT][BATTLE_STATS_NO];
+	u8 opportunistState[MAX_BATTLERS_COUNT];
+	u16 commanderActive[MAX_BATTLERS_COUNT];
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -804,6 +807,7 @@ struct NewBattleStruct
 	u8 hiddenAnimBattlerSprites;
 	u8 enduredDamage;
 	u8 SaltcureBits;
+	u8 commandingDondozo;
 
 	//Bit Fields for Party
 	u8 canBelch[NUM_BATTLE_SIDES];
@@ -907,6 +911,8 @@ struct NewBattleStruct
 	bool8 terastalBoost : 1;
 	bool8 terastalBoostAnimationPlayed : 1;
 	bool8 poisonPuppeteerConfusion : 1;
+	bool8 mirrorHerbActive : 1;
+	bool8 fickleBeamBoosted : 1;
 
 	//Other
 	u16 LastUsedMove;

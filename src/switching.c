@@ -60,6 +60,8 @@ enum SwitchInStates
 	SwitchIn_Abilities3,
 	SwitchIn_BoosterEnergy,
 	SwitchIn_TotemPokemon,
+	SwitchIn_Opportunist,
+	SwitchIn_MirrorHerb,
 	SwitchIn_LastPokemonMusic,
 	SwitchIn_TrainerMessage,
 	SwitchIn_PreEnd,
@@ -449,7 +451,12 @@ void atk4F_jumpifcantswitch(void)
 {
 	gActiveBattler = GetBankForBattleScript(T2_READ_8(gBattlescriptCurrInstr + 1) & ~(ATK4F_DONT_CHECK_STATUSES));
 
-	if (!(T2_READ_8(gBattlescriptCurrInstr + 1) & ATK4F_DONT_CHECK_STATUSES)
+	if (gNewBS->commanderActive[gActiveBattler] != SPECIES_NONE
+	|| gStatuses3[gActiveBattler] & STATUS3_COMMANDER)
+	{
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	}
+	else if (!(T2_READ_8(gBattlescriptCurrInstr + 1) & ATK4F_DONT_CHECK_STATUSES)
 	&& CanBeTrapped(gActiveBattler)
 	&& ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)) || (gStatuses3[gActiveBattler] & STATUS3_ROOTED) || IsFairyLockActive()))
 	{
@@ -833,18 +840,15 @@ void atk52_switchineffects(void)
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_Abilities:
+			if (SWITCH_IN_ABILITY1(ability) && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
+				return;
+
 			for (i = 0; i < gBattlersCount; ++i)
 			{
 				if (i != gActiveBattler
 				&& ABILITY(i) == ABILITY_TRACE
 				&& AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, i, 0, 0, 0))
 					return;
-			}
-
-			if (SWITCH_IN_ABILITY1(ability) && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
-			{
-				++gNewBS->switchInEffectsState;
-				return;
 			}
 
 			++gNewBS->switchInEffectsState;
@@ -903,9 +907,14 @@ void atk52_switchineffects(void)
 
 		case SwitchIn_Abilities3:
 			if (SWITCH_IN_ABILITY3(ability) && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
-			{
-				++gNewBS->switchInEffectsState;
 				return;
+
+			for (i = 0; i < gBattlersCount; ++i)
+			{
+				if (i != gActiveBattler
+				&& ABILITY(i) == ABILITY_COMMANDER
+				&& AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, i, 0, 0, 0))
+					return;
 			}
 
 			++gNewBS->switchInEffectsState;
@@ -956,6 +965,20 @@ void atk52_switchineffects(void)
 			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
+		case SwitchIn_Opportunist:
+			if (AbilityBattleEffects(ABILITYEFFECT_OPPORTUNIST, 0, 0, 0, 0))
+				return;
+
+			++gNewBS->switchInEffectsState;
+		__attribute__ ((fallthrough));
+
+		case SwitchIn_MirrorHerb:
+			if (ItemBattleEffects(ItemEffects_MirrorHerb, 0, TRUE, FALSE))
+				return;
+
+			++gNewBS->switchInEffectsState;
+		__attribute__ ((fallthrough));
+
 		case SwitchIn_LastPokemonMusic:
 			++gNewBS->switchInEffectsState;
 			#ifdef BGM_BATTLE_GYM_LEADER_LAST_POKEMON
@@ -983,6 +1006,7 @@ void atk52_switchineffects(void)
 		case SwitchIn_PreEnd:
 		SWITCH_IN_END:
 			gSideStatuses[SIDE(gActiveBattler)] &= ~(SIDE_STATUS_SPIKES_DAMAGED);
+			ClearCopyStats();
 
 			for (i = 0; i < gBattlersCount; ++i)
 			{
@@ -1146,7 +1170,9 @@ static bool8 TryDoForceSwitchOut(void)
 	u8 bankDef = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 bankAtk = GetBankForBattleScript(gBattlescriptCurrInstr[2]);
 
-	if (IsDynamaxed(bankDef) || ABILITY(bankDef) == ABILITY_GUARDDOG) //Can't force out a Dynamaxed mon
+	if (IsDynamaxed(bankDef) //Can't force out a Dynamaxed mon
+	|| ABILITY(bankDef) == ABILITY_GUARDDOG
+	|| gNewBS->commanderActive[bankDef] != SPECIES_NONE)
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 		return FALSE;
@@ -1317,7 +1343,8 @@ void PartyMenuSwitchingUpdate(void)
 
 	gBattleStruct->switchoutPartyIndex[gActiveBattler] = gBattlerPartyIndexes[gActiveBattler];
 
-	if (gStatuses3[gActiveBattler] & STATUS3_SKY_DROP_TARGET) //Being Ghost doesn't get you out of this
+	if (gStatuses3[gActiveBattler] & STATUS3_SKY_DROP_TARGET
+	|| gNewBS->commanderActive[gActiveBattler] != SPECIES_NONE) //Being Ghost doesn't get you out of this
 		goto TRAPPED;
 	else if (!CanBeTrapped(gActiveBattler))
 		goto SKIP_SWITCH_BLOCKING_CHECK;

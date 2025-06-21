@@ -18,6 +18,7 @@ LoadProperAbilityBattleDataHook 801298C 0
 BattleBeginFirstTurn 801307C 0
 TrainerSlidingEndTurnHook 08013534 1
 IsRunningFromBattleImpossible 08013574 0
+HandleTurnActionSelectionStateCommanderHook 08013934 0
 DoubleWildUseItemRunFixHook 8013AF8 0
 PartyMenuSwitchingHook 8013C70 0
 ForfeitBattleTowerHook 8013ECC 0

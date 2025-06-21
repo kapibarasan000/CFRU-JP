@@ -1099,6 +1099,9 @@ bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)
 		u16 defAbility = ABILITY(bankDef);
 	#endif
 
+	if (gStatuses3[bankDef] & STATUS3_COMMANDER)
+		return FALSE;
+
 	if (ABILITY(bankAtk) == ABILITY_NOGUARD
 	||  defAbility == ABILITY_NOGUARD
 	||  (gStatuses3[bankDef] & STATUS3_ALWAYS_HITS && gDisableStructs[bankDef].bankWithSureHit == bankAtk))
@@ -1392,6 +1395,9 @@ u16 GetAIChosenMove(u8 bankAtk, u8 bankDef)
 
 bool8 IsTrapped(u8 bank, bool8 switching)
 {
+	if (gNewBS->commanderActive[bank] != SPECIES_NONE)
+		return TRUE;
+
 	if (IsOfType(bank, TYPE_GHOST)
 	|| (switching && ITEM_EFFECT(bank) == ITEM_EFFECT_SHED_SHELL)
 	|| (!switching && ABILITY(bank) == ABILITY_RUNAWAY)
@@ -3595,13 +3601,13 @@ void CalcAITerastalMon(u8 bank)
 			else if (SpecialMoveInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP)) //Only set if mon has Special move
 				bestMonStat = spAttack;
 
-			if (MonKnowsMove(mon, MOVE_TERABLAST))
+			if (MonKnowsMove(mon, MOVE_TERABLAST) || MonKnowsMove(mon, MOVE_TERASTARSTORM))
 				updateScore = 4;
-			else if (type1 != teraType && type2 != teraType)
+			else if (MonKnowsMove(mon, MOVE_IVYCUDGEL))
 				updateScore = 3;
-			else if (DamagingMoveTypeInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP, teraType) && (type1 == teraType || type2 == teraType))
+			else if (type1 != teraType && type2 != teraType)
 				updateScore = 2;
-			else if (DamagingMoveTypeInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP, teraType))
+			else if (DamagingMoveTypeInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP, teraType) && (type1 == teraType || type2 == teraType))
 				updateScore = 1;
 
 			if (updateScore >= bestMonScore)

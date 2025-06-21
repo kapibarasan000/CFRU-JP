@@ -765,7 +765,8 @@ static void MoveSelectionDisplayMoveType(void)
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
 	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
-	if (moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] == MOVE_TERABLAST && gNewBS->terastalData.chosen[gActiveBattler])
+	if ((moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] == MOVE_TERABLAST || moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] == MOVE_TERASTARSTORM)
+	&& gNewBS->terastalData.chosen[gActiveBattler])
 	{
 		moveType = moveInfo->monTeraType;
 		split = CalcMoveSplit(gActiveBattler, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]], gActiveBattler);
@@ -803,7 +804,8 @@ void MoveSelectionDisplayMoveEffectiveness(void)
 	u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
 
 	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
-	if (move == MOVE_TERABLAST && gNewBS->terastalData.chosen[gActiveBattler])
+	if ((move == MOVE_TERABLAST || move == MOVE_TERASTARSTORM)
+	&& gNewBS->terastalData.chosen[gActiveBattler])
 		moveType = moveInfo->monTeraType;
 	else
 		moveType = moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]];
@@ -2075,6 +2077,7 @@ void PlayerHandleChooseAction(void)
 	else if ((IS_DOUBLE_BATTLE)
 	&& GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
 	&& !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
+	&& !(gNewBS->commandingDondozo & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
 	&& !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
 	&& gBattleBufferA[gActiveBattler][1] != ACTION_USE_ITEM) //Mon 1 didn't use item
 	{
@@ -2165,6 +2168,7 @@ void HandleInputChooseAction(void)
 					if ((IS_DOUBLE_BATTLE)
 					&& GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
 					&& !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
+					&& !(gNewBS->commandingDondozo & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
 					&& !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
 					&& gBattleBufferA[gActiveBattler][1] != ACTION_USE_ITEM) //Mon 1 didn't use item
 						goto CANCEL_PARTNER;

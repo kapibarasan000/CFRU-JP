@@ -1056,6 +1056,59 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					break;
 			}
 		break;
+	case ItemEffects_MirrorHerb:
+		for (i = 0; i < gBattlersCount; i++)
+		{
+			bank = gBanksByTurnOrder[i];
+				
+			switch (ITEM_EFFECT(bank))
+			{
+			case ITEM_EFFECT_MIRROR_HERB:
+				if (BATTLER_ALIVE(bank))
+				{
+					for (u8 statId = 0; statId < BATTLE_STATS_NO - 1; statId++)
+					{
+						if (gNewBS->opportunistBoostStats[bank][statId] != 0)
+						{
+							if (ABILITY(bank) == ABILITY_CONTRARY
+							&& gBattleMons[bank].statStages[statId] > STAT_STAGE_MIN)
+							{
+								effect = ITEM_STATS_CHANGE;
+								break;
+							}
+							else if (gBattleMons[bank].statStages[statId] < STAT_STAGE_MAX)
+							{
+								effect = ITEM_STATS_CHANGE;
+								break;
+							}
+						}
+					}
+
+					if (gNewBS->opportunistBoostStats[bank][BATTLE_STATS_NO - 1] != 0
+					&& gNewBS->DragonCheerRanks[bank] < 3)
+						effect = ITEM_STATS_CHANGE;
+				}
+
+				if (effect)
+				{
+					gBattleScripting.bank = bank;
+					gLastUsedItem = ITEM(bank);
+					gNewBS->mirrorHerbActive = TRUE;
+
+					if (moveTurn)
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_MirrorHerbCopyStatChangeRet;
+					}
+					else
+						BattleScriptExecute(BattleScript_MirrorHerbCopyStatChangeEnd2);
+					
+					return effect;
+				}
+				break;
+			}
+		}
+		break;
 	}
 
 	return effect;

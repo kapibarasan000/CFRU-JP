@@ -198,6 +198,9 @@
 #org @gText_RevivalBlessing
 [BUFFER][00]は ふっかつして\nたたかえるように なった！
 
+#org @gText_FickleBeamDoubled
+[ATTACKER]は\nほんきを だした！
+
 //Status Strings
 
 #org @gText_TargetStaysAwake
@@ -450,3 +453,6 @@ The sleep clause prevents more\nPokemon from being put to sleep！
 
 #org @gText_MonTerastal
 [SCRIPTING_BANK]は\nテラスタルした！
+
+#org @gText_MirrorHerbActivate
+[SCRIPTING_BANK]は\n[LAST_ITEM]を つかって\lあいての のうりょくへんかを まねした！

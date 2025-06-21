@@ -35,6 +35,7 @@
 #include "../include/new/move_tables.h"
 #include "../include/new/multi.h"
 #include "../include/new/pokemon_storage_system.h"
+#include "../include/new/terastal.h"
 #include "../include/new/util.h"
 
 #include "Tables/battle_tower_spreads.h"
@@ -4015,10 +4016,7 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	SetBoxMonData(boxMon, MON_DATA_POKEBALL, &value);
 	SetBoxMonData(boxMon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
 
-	if (Random() & 1)
-		boxMon->teratype = gBaseStats[species].type2;
-	else
-		boxMon->teratype = gBaseStats[species].type1;
+	boxMon->teratype = GetSpeciesTeraType(species);
 
 	if (IsGigantamaxSpecies(species))
 		boxMon->substruct3.gigantamax = TRUE;

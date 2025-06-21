@@ -99,6 +99,8 @@ enum EndTurnEffects
 	ET_Block_B,
 	ET_Form_Change,
 	ET_Reactivate_Overworld_Weather,
+	ET_Opportunist,
+	ET_MirrorHerb,
 	ET_End
 };
 
@@ -1665,6 +1667,26 @@ u8 TurnBasedEffects(void)
 				}
 				break;
 
+			case ET_Opportunist:
+				if (AbilityBattleEffects(ABILITYEFFECT_OPPORTUNIST, 0, 0, 0, 0))
+				{
+					++effect;
+					return effect;
+				}
+
+				++gBattleStruct->turnEffectsTracker;
+				break;
+
+			case ET_MirrorHerb:
+				if (ItemBattleEffects(ItemEffects_MirrorHerb, 0, FALSE, FALSE))
+				{
+					++effect;
+					return effect;
+				}
+
+				++gBattleStruct->turnEffectsTracker;
+				break;
+
 			case ET_End:
 			END_TURN_SKIP:
 				gBattleStruct->turnEffectsBank = gBattlersCount;
@@ -1677,6 +1699,7 @@ u8 TurnBasedEffects(void)
 				gNewBS->dynamaxData.attackAgain = FALSE;
 				gNewBS->dynamaxData.repeatedAttacks = 0;
 				gNewBS->ai.sideSwitchedThisRound = 0;
+				ClearCopyStats();
 
 				if (gNewBS->IonDelugeTimer) //Cleared down here b/c necessary for future attacks
 					--gNewBS->IonDelugeTimer;

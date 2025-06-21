@@ -15354,7 +15354,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_ORDERUP] =
 	{
-		.effect = EFFECT_ATTACK_UP_HIT,
+		.effect = EFFECT_ORDER_UP,
 		.power = 80,
 		.type = TYPE_DRAGON,
 		.accuracy = 100,
@@ -15802,7 +15802,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_FICKLEBEAM] =
 	{
-		.effect = EFFECT_HIT,
+		.effect = EFFECT_FICKLE_BEAM,
 		.power = 80,
 		.type = TYPE_DRAGON,
 		.accuracy = 100,

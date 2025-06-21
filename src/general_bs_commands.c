@@ -363,8 +363,12 @@ static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags)
 
 static bool8 TryActivateTeraShell(u8 bankDef)
 {
-	if (gSpecialStatuses[bankDef].distortedTypeMatchups && !gSpecialStatuses[bankDef].teraShellDone)
+	if (ABILITY(bankDef) == ABILITY_TERASHELL
+	&& BATTLER_MAX_HP(bankDef)
+	&& SPLIT(gCurrentMove) != SPLIT_STATUS
+	&& !gSpecialStatuses[bankDef].teraShellDone)
 	{
+		gSpecialStatuses[bankDef].distortedTypeMatchups = TRUE;
 		gSpecialStatuses[bankDef].teraShellDone = TRUE;
 		gBattleScripting.bank = bankDef;
 		BattleScriptPushCursor();
@@ -1493,6 +1497,18 @@ void atk1B_cleareffectsonfaint(void) {
 					TryReactivateCentifernoSandblast(backupStatus2);
 				}
 
+				if (gNewBS->commanderActive[gActiveBattler] != SPECIES_NONE)
+				{
+					if (BATTLER_ALIVE(partner))
+					{
+						u8 backupActiveBattler = gActiveBattler;
+						gActiveBattler = partner;
+						EmitSpriteInvisibility(0, FALSE);
+						MarkBufferBankForExecution(partner);
+						gActiveBattler = backupActiveBattler;
+					}
+				}
+
 				ClearSwitchBytes(gActiveBattler);
 				ClearSwitchBits(gActiveBattler);
 
@@ -1514,6 +1530,7 @@ void atk1B_cleareffectsonfaint(void) {
 						++gBattleMons[bank].statStages[STAT_SPATK - 1];
 						gBattleScripting.bank = gEffectBank = bank;
 
+						SetOpportunistStats(bank, 1, STAT_SPATK);
 						PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPATK);
 						PREPARE_STAT_ROSE(gBattleTextBuff2);
 						gBattleScripting.animArg1 = 0xE + STAT_STAGE_SPATK;
@@ -1727,7 +1744,7 @@ void atk1B_cleareffectsonfaint(void) {
 				if ((!IsRaidBattle() || gActiveBattler != BANK_RAID_BOSS) //Raid Boss doesn't revert until later
 				&& !CheckTableForSpecies(mon->species, sBannedFaintFormsRevertSpecies))
 				{
-					if (TryFormRevert(mon))
+					if (TryFormRevert(mon) || TryRevertTerastalForm(mon))
 					{
 						EmitSetMonData(0, REQUEST_SPECIES_BATTLE, 0, 2, &mon->species);
 						MarkBufferBankForExecution(gActiveBattler);
@@ -3443,6 +3460,7 @@ void atk99_setmist(void)
 
 void atk9B_transformdataexecution(void)
 {
+	u16 species = SPECIES(gBankTarget);
 	gChosenMove = 0xFFFF;
 	gBattlescriptCurrInstr++;
 	if (ProtectedByMaxGuard(gBankTarget, gCurrentMove))
@@ -3452,10 +3470,13 @@ void atk9B_transformdataexecution(void)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed;
 	}
 	else if (gBattleMons[gBankTarget].status2 & STATUS2_TRANSFORMED
-	|| gStatuses3[gBankTarget] & (STATUS3_SEMI_INVULNERABLE | STATUS3_ILLUSION)
+	|| gStatuses3[gBankTarget] & (STATUS3_SEMI_INVULNERABLE_NO_COMMANDER | STATUS3_ILLUSION)
 	|| gSideStatuses[SIDE(gBankTarget)] & SIDE_STATUS_CRAFTY_SHIELD
-	|| (IsDynamaxed(gBankAttacker) && IsBannedDynamaxSpecies(SPECIES(gBankTarget)))
-	|| HasRaidShields(gBankTarget))
+	|| (IsDynamaxed(gBankAttacker) && IsBannedDynamaxSpecies(species))
+	|| HasRaidShields(gBankTarget)
+	|| IsTerastalFormSpecies(species)
+	|| (IsTerastal(gBankAttacker)
+	&& (IsBannedTerastalSpecies(species) || GetTerastalFormSpecies(species) != SPECIES_NONE)))
 	{
 		gMoveResultFlags |= MOVE_RESULT_FAILED;
 		gBattleCommunication[MULTISTRING_CHOOSER] = 1;
@@ -4296,6 +4317,7 @@ void atkB2_trysetperishsong(void)
 	for (i = 0; i < gBattlersCount; ++i)
 	{
 		if (gStatuses3[i] & STATUS3_PERISH_SONG
+		|| gStatuses3[i] & STATUS3_COMMANDER
 		|| ABILITY(i) == ABILITY_SOUNDPROOF
 		|| ABILITY(i) == ABILITY_GOODASGOLD
 		|| (priority > 0 && i != gBankAttacker && ((gTerrainType == PSYCHIC_TERRAIN && CheckGrounding(i)) || defAbilityBlocksPriority)) //Not affected by priority moves
@@ -4593,6 +4615,7 @@ void atkBC_maxattackhalvehp(void)
 	else if (STAT_STAGE(gBankAttacker, STAT_STAGE_ATK) < STAT_STAGE_MAX
 	&& gBattleMons[gBankAttacker].hp > halfHp)
 	{
+		SetOpportunistStats(gBankAttacker, STAT_STAGE_MAX - gBattleMons[gBankAttacker].statStages[STAT_STAGE_ATK - 1], STAT_STAGE_ATK);
 		gBattleMons[gBankAttacker].statStages[STAT_STAGE_ATK - 1] = STAT_STAGE_MAX;
 		gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 2);
 		gBattlescriptCurrInstr += 5;

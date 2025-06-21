@@ -20,4 +20,4 @@ gBallOpenMonFadePal 080F21E4
 gItemData 0809A2E4
 gItemEffectTable2 081259B0
 
-gExpanedBaseStats 080001BC
+#gExpanedBaseStats 080001BC

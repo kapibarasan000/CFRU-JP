@@ -20,7 +20,7 @@
 #define ABILITYEFFECT_ATK_SYNCHRONIZE           0x8
 #define ABILITYEFFECT_INTIMIDATE1               0x9
 #define ABILITYEFFECT_INTIMIDATE2               0xA
-#define ABILITYEFFECT_TRACE                     0xB
+#define ABILITYEFFECT_OPPORTUNIST               0xB
 #define ABILITYEFFECT_CHECK_OTHER_SIDE          0xC
 #define ABILITYEFFECT_CHECK_BANK_SIDE           0xD
 #define ABILITYEFFECT_FIELD_SPORT               0xE

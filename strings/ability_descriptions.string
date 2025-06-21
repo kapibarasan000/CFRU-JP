@@ -190,10 +190,10 @@ HPまんたんで うける ダメージが へる
 あいての のうりょくへんかを むしする
 
 #org @DESC_DEFIANT
-のうりょくが さがると こうげきがあがる
+のうりょくが さがると こうげきが あがる
 
 #org @DESC_COMPETITIVE
-のうりょくが さがると とくこうがあがる
+のうりょくが さがると とくこうが あがる
 
 #org @DESC_DEFEATIST
 HPが へると のうりょくが さがる
@@ -309,13 +309,13 @@ HPが はんぶんで すがたが へんかする
 サイコフィールドを はりめぐらせる
 
 #org @DESC_SURGESURFER
-エレキフィールドのとき すばやさがあがる
+エレキフィールドのとき すばやさが あがる
 
 #org @DESC_GRASSPELT
-グラスフィールドのとき ぼうぎょがあがる
+グラスフィールドのとき ぼうぎょが あがる
 
 #org @DESC_ANGERPOINT
-きゅうしょに うけると こうげきがあがる
+きゅうしょに うけると こうげきが あがる
 
 #org @DESC_ANTICIPATION
 きけんな わざを さっちする
@@ -333,7 +333,7 @@ HPが はんぶんで すがたが へんかする
 あいてが きのみを たべられなくする
 
 #org @DESC_WEAKARMOR
-ぶつりで ぼうぎょがさがり すばやくなる
+ぶつりで ぼうぎょが さがり すばやくなる
 
 #org @DESC_HEAVYMETAL
 じぶんの おもさが 2ばいに なる
@@ -351,7 +351,7 @@ HPが はんぶんで すがたが へんかする
 あくを うけると こうげきが あがる
 
 #org @DESC_RATTLED
-あく ゴースト むしで すばやさがあがる
+あく ゴースト むしで すばやさが あがる
 
 #org @DESC_MERCILESS
 あいてが どくだと きゅうしょに あたる
@@ -377,11 +377,8 @@ HPが はんぶんで すがたが へんかする
 #org @DESC_PICKPOCKET
 さわられた あいてから どうぐを ぬすむ
 
-#org @DESC_PORTALPOWER
-ー
-
 #org @DESC_POISONTOUCH
-あいてに さわると どくにすることがある
+あいてに さわると どくに することがある
 
 #org @DESC_MAGICIAN
 わざをあてた あいてのどうぐを うばう
@@ -415,6 +412,7 @@ HPが はんぶんで とくこうが あがる
 たおされたとき ダメージを あたえる
 
 #org @DESC_DAZZLING
+#org @DESC_ARMORTAIL
 あいてが せんせいわざを だせなくなる
 
 #org @DESC_GLUTTONY
@@ -442,7 +440,7 @@ HPが はんぶんで とくこうが あがる
 みかたに どうぐを わたせるように なる
 
 #org @DESC_STAKEOUT
-こうたいした あいてに ダメージがあがる
+でてきた あいてへの ダメージが あがる
 
 #org @DESC_COMATOSE
 つねに ねむりで ぜったいに めざめない
@@ -468,9 +466,11 @@ HPが はんぶんで とくこうが あがる
 //Sword and Shield Abilities.
 
 #org @DESC_INTREPIDSWORD
+#org @DESC_EMBODYASPECT_HEARTHFLAMEMASK
 せんとうに でたとき こうげきが あがる
 
 #org @DESC_DAUNTLESSSHIELD
+#org @DESC_EMBODYASPECT_CORNERSTONEMASK
 せんとうに でたとき ぼうぎょが あがる
 
 #org @DESC_BALLFETCH
@@ -483,11 +483,11 @@ HPが はんぶんで とくこうが あがる
 のうりょくダウンの こうかを はねかえす
 
 #org @DESC_GULPMISSILE
-くわえたえものを はきだしてはんげきする
+くわえた えものを はきだして はんげきする
 
 #org @DESC_STALWART
 #org @DESC_PROPELLERTAIL
-わざをひきうける こうかを むしできる
+わざを ひきうける こうかを むしできる
 
 #org @DESC_STEAMENGINE
 みずや ほのお わざで すばやさがあがる
@@ -496,7 +496,7 @@ HPが はんぶんで とくこうが あがる
 おとわざの いりょくが あがる
 
 #org @DESC_SANDSPIT
-こうげきを うけると すなあらしをおこす
+こうげきを うけると すなあらしを おこす
 
 #org @DESC_ICESCALES
 とくしゅの ダメージを はんげんする
@@ -511,22 +511,22 @@ HPが はんぶんで とくこうが あがる
 みかたの わざの いりょくが あがる
 
 #org @DESC_MIMICRY
-フィールドによって タイプが かわる
+フィールドに よって タイプが かわる
 
 #org @DESC_SCREENCLEANER
 せんとうに でたとき バリアを けす
 
 #org @DESC_STEELYSPIRIT
-みかたの はがねわざの いりょくがあがる
+みかたの はがねわざの いりょくが あがる
 
 #org @DESC_PERISHBODY
-ふれたあいてと じぶんに ほろびをかける
+ふれた あいてと じぶんに ほろびを かける
 
 #org @DESC_WANDERINGSPIRIT
-ふれたあいてと とくせいを いれかえる
+ふれた あいてと とくせいを いれかえる
 
 #org @DESC_GORILLATACTICS
-こうげきがあがり おなじわざしかだせない
+こうげきが あがり おなじわざしか だせない
 
 #org @DESC_NEUTRALISINGGAS
 ぜんいんの とくせいを むこうにする
@@ -559,46 +559,121 @@ HPが はんぶんで とくこうが あがる
 あいてを たおすと とくこうが あがる
 
 #org @DESC_LINGERINGAROMA
+ふれた あいてに とれないにおいを うつす
+
 #org @DESC_SEEDSOWER
+こうげき されると グラスフィールドを はる
+
 #org @DESC_THERMALEXCHANGE
+ほのおわざを うけると こうげきが あがる
+
 #org @DESC_ANGERSHELL
+HPはんぶんで こうげきてきに なる
+
 #org @DESC_PURIFYINGSALT
+いじょうに ならず ゴーストわざを はんげん
+
 #org @DESC_WELLBAKEDBODY
+ほのおわざで ぼうぎょが ぐーんと あがる
+
 #org @DESC_WINDRIDER
+かぜを うけると こうげきが あがる
+
 #org @DESC_GUARDDOG
+いかくで こうげきが あがり ふきとばない
+
 #org @DESC_ROCKYPAYLOAD
+いわタイプの わざの いりょくが あがる
+
 #org @DESC_WINDPOWER
+かぜを うけると じゅうでんする
+
 #org @DESC_ZEROTOHERO
+てもちに もどると へんしんする
+
 #org @DESC_COMMANDER
+ヘイラッシャの くちの なかで しれいをだす
+
 #org @DESC_ELECTROMORPHOSIS
+こうげきを うけると じゅうでんする
+
 #org @DESC_PROTOSYNTHESIS
+にほんばれのとき のうりょくが あがる
+
 #org @DESC_QUARKDRIVE
+エレキフィールドのとき のうりょくが あがる
+
 #org @DESC_GOODASGOLD
+へんかわざを うけない
+
 #org @DESC_VESSELOFRUIN
+まわりの とくこうを よわめる
+
 #org @DESC_SWORDOFRUIN
+まわりの ぼうぎょを よわめる
+
 #org @DESC_TABLETSOFRUIN
+まわりの こうげきを よわめる
+
 #org @DESC_BEADSOFRUIN
+まわりの とくぼうを よわめる
+
 #org @DESC_ORICHALCUMPULSE
+てんきを にほんばれにし こうげきが あがる
+
 #org @DESC_HADRONENGINE
+エレキフィールドをはり とくこうが あがる
+
 #org @DESC_OPPORTUNIST
+あいての のうりょくアップを まねする 
+
 #org @DESC_CUDCHEW
+たべた きのみを あとで もういちど たべる
+
 #org @DESC_SHARPNESS
+きる わざの いりょくが あがる
+
 #org @DESC_SUPREMEOVERLORD
+たおれた みかたが おおいほど つよくなる
+
 #org @DESC_COSTAR
+みかたの のうりょくへんかを コピーする
+
 #org @DESC_TOXICDEBRIS
-#org @DESC_ARMORTAIL
+ぶつりわざを うけると どくびしが ちらばる
+
 #org @DESC_EARTHEATER
+じめんわざを うけると かいふくする
+
 #org @DESC_MYCELIUMMIGHT
-#org @DESC_HOSPITALITY 
+へんかわざが おそいが とくせいを むしする
+
+#org @DESC_HOSPITALITY
+せんとうに でたとき みかたを かいふくする
+
 #org @DESC_MINDSEYE
+ゴーストタイプに わざが あたる
+
 #org @DESC_EMBODYASPECT_TEALMASK
-#org @DESC_EMBODYASPECT_HEARTHFLAMEMASK
+せんとうに でたとき すばやさが あがる
+
 #org @DESC_EMBODYASPECT_WELLSPRINGMASK
-#org @DESC_EMBODYASPECT_CORNERSTONEMASK
+せんとうに でたとき とくぼうが あがる
+
 #org @DESC_TOXICCHAIN
+こうげきで あいてを たまに もうどくにする
+
 #org @DESC_SUPERSWEETSYRUP
+いちどだけ あいての かいひりつを さげる
+
 #org @DESC_TERASHIFT
+せんとうに でたとき フォルムチェンジする
+
 #org @DESC_TERASHELL
+まんたんだと うけるわざを いまひとつにする
+
 #org @DESC_TERAFORMZERO
+テラスタルで てんきや フィールドを なくす
+
 #org @DESC_POISONPUPPETEER
-ー
+あいてを どくに すると こんらん させる

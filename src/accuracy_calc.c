@@ -348,7 +348,8 @@ bool8 MissesDueToSemiInvulnerability(u8 bankAtk, u8 bankDef, u16 move)
 		if (((gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && !CheckTableForMove(move, gIgnoreInAirMoves))
 		||  ((gStatuses3[bankDef] & STATUS3_UNDERGROUND) && !CheckTableForMove(move, gIgnoreUndergoundMoves))
 		||  ((gStatuses3[bankDef] & STATUS3_UNDERWATER) && !CheckTableForMove(move, gIgnoreUnderwaterMoves))
-		||   (gStatuses3[bankDef] & STATUS3_DISAPPEARED))
+		||   (gStatuses3[bankDef] & STATUS3_DISAPPEARED)
+		||   (gStatuses3[bankDef] & STATUS3_COMMANDER))
 		{
 			return TRUE;
 		}
