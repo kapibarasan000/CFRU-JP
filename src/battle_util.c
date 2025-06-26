@@ -2488,7 +2488,7 @@ void ClearCopyStats(void)
 	}
 }
 
-bool8 CheckCommandingDondozo(u8 bank)
+bool8 CheckCommandingDondozo(void)
 {
-	return gNewBS->commandingDondozo & gBitTable[bank];
+	return gNewBS->commandingDondozo & gBitTable[gActiveBattler];
 }

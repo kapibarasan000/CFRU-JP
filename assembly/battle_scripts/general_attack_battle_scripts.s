@@ -3623,10 +3623,12 @@ BS_168_Memento:
 	jumpifmove MOVE_LUNARDANCE HealingWishBS
 	
 MementoBS:
-	jumpifbyte EQUALS, BATTLE_COMMUNICATION + 6, 0x1, 0x81BBFE2
+	jumpifbyte EQUALS, BATTLE_COMMUNICATION + 6, 0x1, FAILED_PRE
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	attackstring
 	ppreduce
+	accuracycheck BS_MOVE_MISSED 0x0
+	setuserhptozero
 	attackanimation
 	waitanimation
 	setbyte STAT_ANIM_PLAYED 0x0
@@ -3652,7 +3654,6 @@ MementoPrintSpAtkMsg:
 	waitmessage DELAY_1SECOND
 	
 MementoFaintUser:
-	setuserhptozero
 	graphicalhpupdate BANK_ATTACKER
 	datahpupdate BANK_ATTACKER
 	faintpokemon BANK_ATTACKER 0x0 0x0

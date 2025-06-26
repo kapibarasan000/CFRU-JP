@@ -16721,8 +16721,7 @@ ANIM_DRUM_BEATING:
 @Credits to -
 .global ANIM_SNAP_TRAP
 ANIM_SNAP_TRAP:
-	goto 0x81B225A @ANIM_POUND
-	endanimation
+	goto 0x81B225A @Original Clamp animation that uses teeth
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

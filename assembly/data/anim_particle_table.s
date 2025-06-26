@@ -159,7 +159,7 @@ animparticle 0x8c1aea4,	0x1c0,	ANIM_TAG_ICE_CRYSTALS
 animparticle 0x8c1afcc,	0x100,	ANIM_TAG_ICE_SPIKES
 animparticle HANDS_AND_FEET_IMG,	0x800,	ANIM_TAG_HANDS_AND_FEET
 animparticle 0x8c1bddc,	0x200,	ANIM_TAG_MIST_CLOUD
-animparticle 0x8c0ab34,	0x800,	ANIM_TAG_CLAMP
+animparticle 0x8c1ab18,	0x800,	ANIM_TAG_CLAMP
 animparticle 0x8c02460,	0x180,	ANIM_TAG_BUBBLE
 animparticle 0x8c1b0e4,	0x180,	ANIM_TAG_ORBS
 animparticle 0x8c1b2f0,	0x200,	ANIM_TAG_WATER_IMPACT
@@ -533,7 +533,7 @@ animparticlepal 0x8c1afac,	ANIM_TAG_ICE_CRYSTALS
 animparticlepal 0x8c1afac,	ANIM_TAG_ICE_SPIKES
 animparticlepal HANDS_AND_FEET_PAL,	ANIM_TAG_HANDS_AND_FEET
 animparticlepal 0x8c1be54,	ANIM_TAG_MIST_CLOUD
-animparticlepal 0x8c1ac98,	ANIM_TAG_CLAMP
+animparticlepal 0x8c1aaf8,	ANIM_TAG_CLAMP
 animparticlepal 0x8c02894,	ANIM_TAG_BUBBLE
 animparticlepal 0x8c1b1f8,	ANIM_TAG_ORBS
 animparticlepal 0x8c1b3d4,	ANIM_TAG_WATER_IMPACT

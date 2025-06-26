@@ -741,6 +741,7 @@ void atk06_typecalc(void)
 			u8 defEffect = ITEM_EFFECT(bankDef);
 			gBattleMoveDamage = gNewBS->DamageTaken[bankDef];
 			gNewBS->ResultFlags[bankDef] &= ~(MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE | MOVE_RESULT_DOESNT_AFFECT_FOE); //Reset for now so damage can be modulated properly
+			gSpecialStatuses[bankDef].teraShellDone = FALSE;
 
 			//Check Stab
 			if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
@@ -866,6 +867,13 @@ void atk06_typecalc(void)
 
 			if (gNewBS->ResultFlags[bankDef] & MOVE_RESULT_DOESNT_AFFECT_FOE)
 				gProtectStructs[gBankAttacker].targetNotAffected = 1;
+
+			if (!gSpecialStatuses[bankDef].distortedTypeMatchups
+			&& gSpecialStatuses[bankDef].teraShellDone)
+			{
+				gSpecialStatuses[bankDef].distortedTypeMatchups = TRUE;
+				gSpecialStatuses[bankDef].teraShellDone = FALSE;
+			}
 			
 			gNewBS->DamageTaken[bankDef] = gBattleMoveDamage;
 
@@ -887,6 +895,8 @@ void atk4A_typecalc2(void)
 	u16 atkAbility = ABILITY(gBankAttacker);
 	u16 defAbility = ABILITY(gBankTarget);
 	u8 defEffect = ITEM_EFFECT(gBankTarget);
+
+	gSpecialStatuses[gBankTarget].teraShellDone = FALSE;
 
 	//Check Special Ground Immunities
 	if (moveType == TYPE_GROUND && !CheckGrounding(gBankTarget) && gCurrentMove != MOVE_THOUSANDARROWS)
@@ -967,6 +977,13 @@ void atk4A_typecalc2(void)
 
 	if (gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE)
 		gProtectStructs[gBankAttacker].targetNotAffected = 1;
+
+	if (!gSpecialStatuses[gBankTarget].distortedTypeMatchups
+	&& gSpecialStatuses[gBankTarget].teraShellDone)
+	{
+		gSpecialStatuses[gBankTarget].distortedTypeMatchups = TRUE;
+		gSpecialStatuses[gBankTarget].teraShellDone = FALSE;
+	}
 
 	++gBattlescriptCurrInstr;
 }
@@ -1505,7 +1522,11 @@ TYPE_LOOP:
 	|| (ABILITY(bankDef) == ABILITY_TERASHELL && BATTLER_MAX_HP(bankDef) && SPLIT(move) != SPLIT_STATUS))
 	{
 		if (multiplier >= TYPE_MUL_NORMAL)
+		{
 			multiplier = TYPE_MUL_NOT_EFFECTIVE;
+			gSpecialStatuses[bankDef].teraShellDone = TRUE;
+		}
+			
 	}
 		
 	UpdateMoveResultFlags(multiplier, flags);

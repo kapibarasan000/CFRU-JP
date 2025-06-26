@@ -1673,8 +1673,6 @@ u8 TurnBasedEffects(void)
 					++effect;
 					return effect;
 				}
-
-				++gBattleStruct->turnEffectsTracker;
 				break;
 
 			case ET_MirrorHerb:
@@ -1683,8 +1681,6 @@ u8 TurnBasedEffects(void)
 					++effect;
 					return effect;
 				}
-
-				++gBattleStruct->turnEffectsTracker;
 				break;
 
 			case ET_End:

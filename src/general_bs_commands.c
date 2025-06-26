@@ -363,12 +363,9 @@ static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags)
 
 static bool8 TryActivateTeraShell(u8 bankDef)
 {
-	if (ABILITY(bankDef) == ABILITY_TERASHELL
-	&& BATTLER_MAX_HP(bankDef)
-	&& SPLIT(gCurrentMove) != SPLIT_STATUS
+	if (gSpecialStatuses[bankDef].distortedTypeMatchups
 	&& !gSpecialStatuses[bankDef].teraShellDone)
 	{
-		gSpecialStatuses[bankDef].distortedTypeMatchups = TRUE;
 		gSpecialStatuses[bankDef].teraShellDone = TRUE;
 		gBattleScripting.bank = bankDef;
 		BattleScriptPushCursor();
@@ -478,6 +475,9 @@ void atk09_attackanimation(void)
 	|| ProcessPreAttackAnimationFuncs())
 		return;
 
+	if (TryTeastalBoostAnimation(gMoveResultFlags))
+		return;
+
 #if (defined SPECIES_CRAMORANT && defined SPECIES_CRAMORANT_GORGING && defined SPECIES_CRAMORANT_GULPING)
 	if ((move == MOVE_SURF || move == MOVE_DIVE)
 	&& ABILITY(gBankAttacker) == ABILITY_GULPMISSILE
@@ -506,9 +506,6 @@ void atk09_attackanimation(void)
 	u8 resultFlags = gMoveResultFlags;
 	if (IsDoubleSpreadMove())
 		resultFlags = UpdateEffectivenessResultFlagsForDoubleSpreadMoves(resultFlags);
-
-	if (TryTeastalBoostAnimation(resultFlags))
-		return;
 
 	if (((gHitMarker & HITMARKER_NO_ANIMATIONS)
 	 && (move != MOVE_TRANSFORM && move != MOVE_SUBSTITUTE

@@ -1409,7 +1409,6 @@ HandleTurnActionSelectionStateCommanderHook:
 	and r3, r0
 	cmp r3, #0x0
 	bne ActionConfirmed
-	mov r0, r2
 	bl CheckCommandingDondozo
 	cmp r0, #0x0
 	bne ActionConfirmed
