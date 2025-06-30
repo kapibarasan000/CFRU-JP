@@ -30,6 +30,7 @@ extern const u8 Dynamax_Trigger_WorkingTiles[]; //This is used as the image unti
 extern const u16 Dynamax_TriggerPal[];
 extern const u8 Raid_ShieldTiles[];
 extern const u8 Terastal_TriggerTiles[];
+extern const u8 Terastal_Trigger_StellarTiles[];
 extern const u16 Terastal_TriggerPal[];
 extern const u16 Terastal_Trigger_FightingPal[];
 extern const u16 Terastal_Trigger_FlyingPal[];
@@ -48,6 +49,7 @@ extern const u16 Terastal_Trigger_IcePal[];
 extern const u16 Terastal_Trigger_DragonPal[];
 extern const u16 Terastal_Trigger_DarkPal[];
 extern const u16 Terastal_Trigger_FairyPal[];
+extern const u16 Terastal_Trigger_StellarPal[];
 extern const u8 Terastal_Indicator_NormalTiles[];
 extern const u8 Terastal_Indicator_FightingTiles[];
 extern const u8 Terastal_Indicator_FlyingTiles[];
@@ -66,6 +68,7 @@ extern const u8 Terastal_Indicator_IceTiles[];
 extern const u8 Terastal_Indicator_DragonTiles[];
 extern const u8 Terastal_Indicator_DarkTiles[];
 extern const u8 Terastal_Indicator_FairyTiles[];
+extern const u8 Terastal_Indicator_StellarTiles[];
 extern const u16 Terastal_Indicator_NormalPal[];
 extern const u16 Terastal_Indicator_FightingPal[];
 extern const u16 Terastal_Indicator_FlyingPal[];
@@ -84,6 +87,7 @@ extern const u16 Terastal_Indicator_IcePal[];
 extern const u16 Terastal_Indicator_DragonPal[];
 extern const u16 Terastal_Indicator_DarkPal[];
 extern const u16 Terastal_Indicator_FairyPal[];
+extern const u16 Terastal_Indicator_StellarPal[];
 extern const u8 Last_Ball_TriggerTiles[];
 extern const u16 Last_Ball_TriggerPal[];
 
@@ -113,7 +117,7 @@ const u16* const Terastal_TriggerPals[] =
 	Terastal_TriggerPal,
 	Terastal_TriggerPal,
 	Terastal_Trigger_FairyPal,
-	Terastal_TriggerPal,
+	Terastal_Trigger_StellarPal,
 };
 
 static bool8 IsIgnoredTriggerColour(u16 colour);
@@ -184,6 +188,7 @@ static const struct CompressedSpriteSheet sRaidShieldSpriteSheet = {Raid_ShieldT
 static const struct CompressedSpriteSheet sLastBallTriggerSpriteSheet = {Last_Ball_TriggerTiles, (32 * 32) / 2, GFX_TAG_LAST_BALL_TRIGGER};
 
 static const struct CompressedSpriteSheet sTerastalTriggerSpriteSheet = {Terastal_TriggerTiles, (32 * 32) / 2, GFX_TAG_TERASTAL_TRIGGER};
+static const struct CompressedSpriteSheet sTerastalTriggerStellarSpriteSheet = {Terastal_Trigger_StellarTiles, (32 * 32) / 2, GFX_TAG_TERASTAL_TRIGGER};
 
 static const struct SpritePalette sTerastalTriggerPalette[NUMBER_OF_MON_TYPES] = 
 {
@@ -211,7 +216,7 @@ static const struct SpritePalette sTerastalTriggerPalette[NUMBER_OF_MON_TYPES] =
 	{Terastal_TriggerPal, GFX_TAG_TERASTAL_TRIGGER},
 	{Terastal_TriggerPal, GFX_TAG_TERASTAL_TRIGGER},
 	{Terastal_Trigger_FairyPal, GFX_TAG_TERASTAL_TRIGGER},
-	{Terastal_TriggerPal, GFX_TAG_TERASTAL_TRIGGER},
+	{Terastal_Trigger_StellarPal, GFX_TAG_TERASTAL_TRIGGER},
 };
 
 static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet0[NUMBER_OF_MON_TYPES] = 
@@ -240,7 +245,7 @@ static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet0[NUMBER_
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR},
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR},
 	{Terastal_Indicator_FairyTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR},
-	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR},
+	{Terastal_Indicator_StellarTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR},
 };
 
 static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet1[NUMBER_OF_MON_TYPES] = 
@@ -269,7 +274,7 @@ static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet1[NUMBER_
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
 	{Terastal_Indicator_FairyTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
-	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_StellarTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
 };
 
 static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet2[NUMBER_OF_MON_TYPES] = 
@@ -298,7 +303,7 @@ static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet2[NUMBER_
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
 	{Terastal_Indicator_FairyTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
-	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_StellarTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
 };
 
 static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet3[NUMBER_OF_MON_TYPES] = 
@@ -327,7 +332,7 @@ static const struct CompressedSpriteSheet sTerastalIndicatorSpriteSheet3[NUMBER_
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
 	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
 	{Terastal_Indicator_FairyTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
-	{Terastal_Indicator_NormalTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_StellarTiles, (8 * 8) / 2, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
 };
 
 static const struct CompressedSpriteSheet* sTerastalIndicatorSpriteSheet[] = 
@@ -364,7 +369,7 @@ static const struct SpritePalette sTerastalIndicatorPalette0[NUMBER_OF_MON_TYPES
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR},
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR},
 	{Terastal_Indicator_FairyPal, GFX_TAG_TERASTAL_INDICATOR},
-	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR},
+	{Terastal_Indicator_StellarPal, GFX_TAG_TERASTAL_INDICATOR},
 };
 
 static const struct SpritePalette sTerastalIndicatorPalette1[NUMBER_OF_MON_TYPES] = 
@@ -393,7 +398,7 @@ static const struct SpritePalette sTerastalIndicatorPalette1[NUMBER_OF_MON_TYPES
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
 	{Terastal_Indicator_FairyPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
-	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
+	{Terastal_Indicator_StellarPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT},
 };
 
 static const struct SpritePalette sTerastalIndicatorPalette2[NUMBER_OF_MON_TYPES] = 
@@ -422,7 +427,7 @@ static const struct SpritePalette sTerastalIndicatorPalette2[NUMBER_OF_MON_TYPES
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
 	{Terastal_Indicator_FairyPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
-	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
+	{Terastal_Indicator_StellarPal, GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT},
 };
 
 static const struct SpritePalette sTerastalIndicatorPalette3[NUMBER_OF_MON_TYPES] = 
@@ -451,7 +456,7 @@ static const struct SpritePalette sTerastalIndicatorPalette3[NUMBER_OF_MON_TYPES
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
 	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
 	{Terastal_Indicator_FairyPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
-	{Terastal_Indicator_NormalPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
+	{Terastal_Indicator_StellarPal, GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT},
 };
 
 static const struct SpritePalette* sTerastalIndicatorPalette[] = 
@@ -1594,8 +1599,12 @@ void TryLoadTerastalTrigger(void)
 	if (gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN))
 		return;
 
-	LoadSpritePalette(&sTerastalTriggerPalette[GetTeraType(gActiveBattler)]);
-	LoadCompressedSpriteSheetUsingHeap(&sTerastalTriggerSpriteSheet);
+	u8 teraType = GetTeraType(gActiveBattler);
+	LoadSpritePalette(&sTerastalTriggerPalette[teraType]);
+	if (teraType == TYPE_STELLAR)
+		LoadCompressedSpriteSheetUsingHeap(&sTerastalTriggerStellarSpriteSheet);
+	else
+		LoadCompressedSpriteSheetUsingHeap(&sTerastalTriggerSpriteSheet);
 
 	spriteId = CreateSprite(&sTerastalTriggerSpriteTemplate, 130, 90, 1);
 	gSprites[spriteId].data[3] = 32;
