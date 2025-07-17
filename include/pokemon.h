@@ -523,7 +523,7 @@ struct BaseStats
  /* 0x06 */ u8 type1;
  /* 0x07 */ u8 type2;
  /* 0x08 */ u8 catchRate;
- /* 0x09 */ u8 expYield;
+ /* 0x09 */ u8 padding; //was expYield
  /* 0x0A */ u16 evYield_HP:2;
  /* 0x0A */ u16 evYield_Attack:2;
  /* 0x0A */ u16 evYield_Defense:2;
@@ -544,7 +544,7 @@ struct BaseStats
             u8 noFlip : 1;
  /* 0x1A */ u16 ability2;
  /* 0x1C */	u16 hiddenAbility;
- /* 0x1E */	u16 unused;
+ /* 0x1E */	u16 expYield;
 };
 
 struct SpindaSpot
