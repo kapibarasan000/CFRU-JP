@@ -1425,9 +1425,13 @@ map \map
 .byte \speed
 .endm
 
-.macro setflashradius word:req
+.macro setflashlevel word:req
 .byte 0x99
 .2byte \word
+.endm
+
+.macro setflashradius word:req
+	setflashlevel \word
 .endm
 
 .macro animateflash byte:req

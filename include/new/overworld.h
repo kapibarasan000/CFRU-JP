@@ -37,8 +37,6 @@ const u8* LoadProperWhiteoutString(const u8* string);
 bool8 IsPlayerSurfingNorthOrSouth(void);
 bool8 IsPlayerFacingRockClimbableWall(void);
 bool8 MetatileBehavior_IsRockClimbableWall(u8 behaviour);
-void ShouldRockClimbContinue(void);
-void ShouldRockClimbContinueDiagonally(void);
 u8 PartyHasMonWithFieldMovePotential(u16 move, u16 item, u8 surfingType);
 void UseRegisteredItem(u16 registeredItem);
 void TryLoadMiningSpots(void);
@@ -46,6 +44,9 @@ void ChooseMiningSpotToShow(void);
 void IsBestMiningSpotOutOfView(void);
 void ResetMiningSpots(void);
 bool8 IsValidMiningSpot(s16 x, s16 y);
+bool8 MetatileBehavior_IsStairs(u8 behaviour);
+bool8 CanUseEscapeRopeOnCurrMap(void);
+void FieldCB_RushInjuredPokemonToCenter(void);
 
 //Functions Hooked In
 u8 CheckForTrainersWantingBattle(void);

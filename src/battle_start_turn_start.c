@@ -3,8 +3,11 @@
 #include "../include/battle_transition.h"
 #include "../include/battle_setup.h"
 #include "../include/event_data.h"
+#include "../include/gpu_regs.h"
 #include "../include/party_menu.h"
 #include "../include/random.h"
+#include "../include/scanline_effect.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
 #include "../include/constants/trainer_classes.h"
@@ -19,6 +22,7 @@
 #include "../include/new/cmd49.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dexnav.h"
+#include "../include/new/dns.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
@@ -127,6 +131,30 @@ void HandleNewBattleRamClearBeforeBattle(void)
 
 	gNewBS->isTrainerBattle = (gBattleTypeFlags & BATTLE_TYPE_TRAINER) != 0; //Used as part of the anti-catch-Trainer-Pokemon cheat
 	FormsRevert(gPlayerParty); //Try to reset all forms before battle
+}
+
+void VBlankCB_Battle(void)
+{
+	#ifndef DEBUG_AI_CHOICES
+	if (!(gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)) //Prevent RNG exploit in Battle Sands
+		AIRandom(); //Change only AI thinking seed every frame
+	#endif
+	SetGpuReg(REG_OFFSET_BG0HOFS, gBattle_BG0_X);
+	SetGpuReg(REG_OFFSET_BG0VOFS, gBattle_BG0_Y);
+	SetGpuReg(REG_OFFSET_BG1HOFS, gBattle_BG1_X);
+	SetGpuReg(REG_OFFSET_BG1VOFS, gBattle_BG1_Y);
+	SetGpuReg(REG_OFFSET_BG2HOFS, gBattle_BG2_X);
+	SetGpuReg(REG_OFFSET_BG2VOFS, gBattle_BG2_Y);
+	SetGpuReg(REG_OFFSET_BG3HOFS, gBattle_BG3_X);
+	SetGpuReg(REG_OFFSET_BG3VOFS, gBattle_BG3_Y);
+	SetGpuReg(REG_OFFSET_WIN0H, gBattle_WIN0H);
+	SetGpuReg(REG_OFFSET_WIN0V, gBattle_WIN0V);
+	SetGpuReg(REG_OFFSET_WIN1H, gBattle_WIN1H);
+	SetGpuReg(REG_OFFSET_WIN1V, gBattle_WIN1V);
+	LoadOam();
+	ProcessSpriteCopyRequests();
+	TransferPlttBuffer();
+	ScanlineEffect_InitHBlankDmaTransfer();
 }
 
 static void SavePartyItems(void)
@@ -653,6 +681,9 @@ void BattleBeginFirstTurn(void)
 				gBattleStruct->turncountersTracker = 0;
 				gMoveResultFlags = 0;
 				gRandomTurnNumber = Random();
+				#ifdef DEBUG_AI_CHOICES
+				gNewBS->ai.randSeed = Random32(); //So the seed doesn't start at 0
+				#endif
 				gSelectedMonPartyId = PARTY_SIZE; // Revival Blessing
 				CalculateShellSideArmSplits(); //Only done at the beginning of each turn
 				*state = 0;
@@ -1121,14 +1152,16 @@ void RunTurnActionsFunctions(void)
 						{
 							if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 							{
-								if (GetBattlerPosition(bank) == B_POSITION_PLAYER_LEFT)
+								if (GetBattlerPosition(bank) == B_POSITION_PLAYER_LEFT
+								&& FlagGet(FLAG_TERASTAL_CHARGE))
 									FlagClear(FLAG_TERASTAL_CHARGE);
 							}
 							else
 							{
 								gNewBS->terastalData.chosen[PARTNER(bank)] = FALSE;
 								gNewBS->terastalData.done[PARTNER(bank)] = TRUE;
-								FlagClear(FLAG_TERASTAL_CHARGE);
+								if (FlagGet(FLAG_TERASTAL_CHARGE))
+									FlagClear(FLAG_TERASTAL_CHARGE);
 							}
 						}
 						else if (!(gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))

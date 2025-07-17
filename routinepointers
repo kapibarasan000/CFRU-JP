@@ -7,6 +7,7 @@ TagTeamExecutionCompleteHook 802DB60
 ScrCmd_message 8162E60
 ScrCmd_hidemappopup 8162F88
 CreateSpriteLoadTable 08162F6C
+WaitForAorBPress 806B33C
 
 ##Specials
 
@@ -151,6 +152,8 @@ sp0E2_IsDexNavCompleteHere 81633F0
 sp0E4_ShowItemSpriteOnFindObtain 81633F8
 sp0E5_ClearItemSpriteAfterFindObtain 81633FC
 
+sp0E7_CreateFrontierOpponentTeamBeforeBattle 08163404
+
 sp100_CanPlayerUseFlashInCurrentLocation 08163468
 sp101_CanPlayerFlyInCurrentLocation 0816346C
 sp102_IsPlayerFacingSurfableWater 08163470
@@ -161,6 +164,8 @@ sp109_IsPlayerFacingNPCWithOverworldPic 816348C
 sp10A_CanUseCutOnTree 8163490
 sp10B_CanUseRockSmashOnRock 8163494
 sp10C_CanUseStrengthOnBoulder 8163498
+
+sp112_BufferNaturalGiftPowerAndType 81634B0
 
 sp115_RaidBattleAvailable 081634BC
 sp116_StartRaidBattleIntro 081634C0
@@ -179,7 +184,7 @@ sp196_TryCopyTMNameToBuffer1 081636C0
 sp1AE_IsUntradableMonInParty 08163720
 
 ##Field Effects
-FldEff_BikeTireTracks 081BD895
+#FldEff_BikeTireTracks 081BD895
 
 ## Expanded Text Buffers
 LoadTextBuffer07 081F1380
@@ -203,7 +208,6 @@ LinkNpcFix 0805E8A4
 #CB2_InitQuestMenu 0806F534
 
 ##Item Functions
-Task_ReturnToItemListAfterItemPurchase 0809B954
 ItemUseCB_EvolutionStone 080A2A3C
 
 ##Nicknaming
@@ -227,6 +231,12 @@ PlayerAvatarTransition_HandleUnderwater 843FB24
 ##Muddy Slope Forced Movement
 MetatileBehavior_IsMuddySlope 831F884
 ForcedMovement_MuddySlope 831F888
+
+##Battle VBlank
+VBlankCB_Battle 800F928
+VBlankCB_Battle 8011428
+VBlankCB_Battle 802D2D4
+VBlankCB_Battle 8077234
 
 #ifdef UNBOUND
 FieldUseFunc_MaxPowder 8876C40

@@ -5,12 +5,16 @@
 #include "../include/random.h"
 #include "../include/script.h"
 #include "../include/string_util.h"
+#include "../include/constants/items.h"
 
+#include "../include/new/battle_start_turn_start.h"
 #include "../include/new/build_pokemon.h"
-#include "../include/new/util.h"
+#include "../include/new/damage_calc.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"
+#include "../include/new/util.h"
+
 /*
 frontier.c
 	all supporting and master functions for developing a battle frontier
@@ -116,7 +120,7 @@ const u8 gBattleTowerTiers[] =
 	BATTLE_FACILITY_DYNAMAX_STANDARD,
 };
 
-const u8 gNumBattleTowerTiers = ARRAY_COUNT(gBattleTowerTiers);
+const u8 gNumBattleTowerTiers = NELEMS(gBattleTowerTiers);
 
 const u8 gBattleMineFormat1Tiers[] =
 {
@@ -145,7 +149,7 @@ const u8 gBattleMineTiers[] =
 	BATTLE_MINE_FORMAT_3,
 };
 
-const u8 gNumBattleMineTiers = ARRAY_COUNT(gBattleMineTiers);
+const u8 gNumBattleMineTiers = NELEMS(gBattleMineTiers);
 
 const u8 gBattleCircusTiers[] =
 {
@@ -164,7 +168,7 @@ const u8 gBattleCircusTiers[] =
 	BATTLE_FACILITY_NATIONAL_DEX_OU,
 };
 
-const u8 gNumBattleCircusTiers = ARRAY_COUNT(gBattleCircusTiers);
+const u8 gNumBattleCircusTiers = NELEMS(gBattleCircusTiers);
 
 const u8* const gBattleFrontierTierNames[NUM_TIERS] =
 {
@@ -629,6 +633,12 @@ bool8 IsAIControlledBattle(void)
 	return InBattleSands() || (gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE) != 0;
 }
 
+bool8 IsStandardTier(u8 tier)
+{
+	return tier == BATTLE_FACILITY_STANDARD
+		|| tier == BATTLE_FACILITY_DYNAMAX_STANDARD;
+}
+
 bool8 IsCamomonsTier(u8 tier)
 {
 	return tier == BATTLE_FACILITY_CAMOMONS
@@ -712,8 +722,12 @@ bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTower
 	u16 ability;
 	const u16* moveLoc;
 
-	if (species == SPECIES_EGG)
-		return 1;
+	if (species == SPECIES_EGG
+	#ifdef SPECIES_ETERNATUS_ETERNAMAX
+	|| species == SPECIES_ETERNATUS_ETERNAMAX
+	#endif
+	) //Hackmon
+		return TRUE;
 
 	u16 battleFormat = VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE);
 
@@ -856,7 +870,8 @@ bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTower
 				return 1;
 
 			//Check Banned Moves
-			for (i = 0; i < MAX_MON_MOVES; ++i) {
+			for (i = 0; i < MAX_MON_MOVES; ++i)
+			{
 				if (CheckTableForMove(moveLoc[i], gSmogon_MoveBanList))
 					return TRUE;
 			}
@@ -873,7 +888,8 @@ bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTower
 			else
 				moveLoc = mon->moves;
 
-			for (i = 0; i < MAX_MON_MOVES; ++i) {
+			for (i = 0; i < MAX_MON_MOVES; ++i)
+			{
 				if (CheckTableForMove(moveLoc[i], gSmogonLittleCup_MoveBanList))
 					return TRUE;
 			}
@@ -1320,9 +1336,15 @@ u16 sp056_DetermineBattlePointsToGive(void)
 {
 	u16 toGive;
 	u16 streakLength = GetCurrentBattleTowerStreak();
+	u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
 
 	if (streakLength <= 10)
-		toGive = 2;
+	{
+		if (tier == BATTLE_FACILITY_STANDARD || tier == BATTLE_FACILITY_DYNAMAX_STANDARD)
+			toGive = 2;
+		else
+			toGive = 3;
+	}
 	else if (streakLength <= 19)
 		toGive = 3;
 	else if (streakLength == 20)
@@ -1396,6 +1418,14 @@ u16 sp056_DetermineBattlePointsToGive(void)
 		toGive = 10000;
 	else if ((streakLength % 1000) == 0 && streakLength != 0) //Every 1000 wins give 1000
 		toGive = 1000;
+	else if (streakLength > 10000)
+		toGive = 50;
+	else if (streakLength > 5000)
+		toGive = 30;
+	else if (streakLength > 1000)
+		toGive = 20;
+	else if (streakLength > 500)
+		toGive = 15;
 	else
 		toGive = 10;
 
@@ -1750,7 +1780,7 @@ void sp071_LoadBattleMineRecordTier(void)
 	if (currTier == BATTLE_MINE_FORMAT_1 || currTier == BATTLE_MINE_FORMAT_2 || currTier == BATTLE_MINE_FORMAT_3)
 		return;
 
-	for (i = 0; i < ARRAY_COUNT(gBattleMineFormat1Tiers); ++i)
+	for (i = 0; i < NELEMS(gBattleMineFormat1Tiers); ++i)
 	{
 		tier = gBattleMineFormat1Tiers[i];
 		if (currTier == tier)
@@ -1760,7 +1790,7 @@ void sp071_LoadBattleMineRecordTier(void)
 		}
 	}
 
-	for (i = 0; i < ARRAY_COUNT(gBattleMineFormat2Tiers); ++i)
+	for (i = 0; i < NELEMS(gBattleMineFormat2Tiers); ++i)
 	{
 		tier = gBattleMineFormat2Tiers[i];
 		if (currTier == tier)
@@ -1770,7 +1800,7 @@ void sp071_LoadBattleMineRecordTier(void)
 		}
 	}
 
-	for (i = 0; i < ARRAY_COUNT(gBattleMineFormat3Tiers); ++i)
+	for (i = 0; i < NELEMS(gBattleMineFormat3Tiers); ++i)
 	{
 		tier = gBattleMineFormat3Tiers[i];
 		if (currTier == tier)

@@ -2,6 +2,7 @@
 #include "../include/event_object_movement.h"
 #include "../include/field_door.h"
 #include "../include/field_effect.h"
+#include "../include/field_fadetransition.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_screen_effect.h"
 #include "../include/field_weather.h"
@@ -87,8 +88,8 @@ static const struct FollowerSprites gFollowerAlternateSprites[] =
 	{0, 1, 2, 2},
 
 	#ifdef UNBOUND
+	{EVENT_OBJ_GFX_RIVAL, EVENT_OBJ_GFX_RIVAL, EVENT_OBJ_GFX_RIVAL_SURF, EVENT_OBJ_GFX_RED_UNDERWATER},
 	{EVENT_OBJ_GFX_JOGGER, EVENT_OBJ_GFX_CYCLIST_M, EVENT_OBJ_GFX_SWIMMER_M, EVENT_OBJ_GFX_SWIMMER_F}, //For debugging
-	{EVENT_OBJ_GFX_COLLECTOR, EVENT_OBJ_GFX_CYCLIST_M, EVENT_OBJ_GFX_SWIMMER_M, EVENT_OBJ_GFX_SWIMMER_F}, //For debugging
 	#endif
 };
 
@@ -124,7 +125,7 @@ void HideFollower(void)
 
 	if (gFollowerState.createSurfBlob == SURF_BLOB_STATE_ON || gFollowerState.createSurfBlob == SURF_BLOB_STATE_GET_OFF)
 	{
-		BindFieldEffectToSprite(gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId, 2);
+		SetSurfBobState(gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId, 2);
 		DestroySprite(&gSprites[gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId]);
 		gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId = 0; //Unbind
 		gFollowerState.createSurfBlob = SURF_BLOB_STATE_HIDDEN_ON;
@@ -160,6 +161,11 @@ void FollowMe_TryRemoveFollowerOnWhiteOut(void)
 	{
 		if (gFollowerState.flags & FOLLOWER_FLAG_CLEAR_ON_WHITE_OUT)
 			gFollowerState.inProgress = FALSE;
+		else
+		{
+			FollowMe_WarpSetEnd();
+			gFollowerState.createSurfBlob = SURF_BLOB_STATE_NONE; //Assume respawn point isn't on water
+		}
 	}
 }
 
@@ -251,7 +257,7 @@ void FollowMe(struct EventObject* npc, u8 state, bool8 ignoreScriptActive)
 			gFollowerState.createSurfBlob = SURF_BLOB_STATE_ON; //Get rid of hidden
 			SetUpSurfBlobFieldEffect(follower);
 			follower->fieldEffectSpriteId = FieldEffectStart(FLDEFF_SURF_BLOB);
-			BindFieldEffectToSprite(follower->fieldEffectSpriteId, 1);
+			SetSurfBobState(follower->fieldEffectSpriteId, 1);
 		}
 		else
 			TryUpdateFollowerSpriteUnderwater();
@@ -772,7 +778,7 @@ void FollowMe_BindToSurbBlobOnReloadScreen(void)
 	//Spawn surfhead under follower
 	SetUpSurfBlobFieldEffect(follower);
 	follower->fieldEffectSpriteId = FieldEffectStart(FLDEFF_SURF_BLOB);
-	BindFieldEffectToSprite(follower->fieldEffectSpriteId, 1);
+	SetSurfBobState(follower->fieldEffectSpriteId, 1);
 }
 
 static void SetSurfJump(void)
@@ -811,6 +817,7 @@ static void SetSurfJump(void)
 	SetFollowerSprite(FOLLOWER_SPRITE_INDEX_SURF);
 
 	follower = &gEventObjects[GetFollowerMapObjId()];
+	follower->disableJumpLandingGroundEffect = TRUE;
 	EventObjectSetHeldMovement(follower, jumpState);
 }
 
@@ -824,7 +831,7 @@ static void Task_BindSurfBlobToFollower(u8 taskId)
 		return;
 
 	//Bind objs
-	BindFieldEffectToSprite(npc->fieldEffectSpriteId, 0x1);
+	SetSurfBobState(npc->fieldEffectSpriteId, 0x1);
 	UnfreezeEventObjects();
 	DestroyTask(taskId);
 	gPlayerAvatar->preventStep = FALSE; //Player can move again
@@ -860,11 +867,12 @@ static void SetSurfDismount(void)
 	//Unbind and destroy Surf Blob
 	u8 task = CreateTask(Task_FinishSurfDismount, 1);
 	gTasks[task].data[0] = follower->fieldEffectSpriteId;
-	BindFieldEffectToSprite(follower->fieldEffectSpriteId, 2);
+	SetSurfBobState(follower->fieldEffectSpriteId, 2);
 	follower->fieldEffectSpriteId = 0; //Unbind
 	FollowMe_HandleSprite();
 
 	follower = &gEventObjects[GetFollowerMapObjId()]; //Can change after sprite reload
+	follower->disableJumpLandingGroundEffect = FALSE;
 	EventObjectSetHeldMovement(follower, jumpState);
 }
 
@@ -887,6 +895,45 @@ static void Task_FinishSurfDismount(u8 taskId)
 	DestroyTask(taskId);
 	gPlayerAvatar->preventStep = FALSE;
 }
+
+#ifdef SHRINK_PLAYER_THROUGH_DOOR
+static const union AffineAnimCmd sSpriteAffineAnim_ShrinkPlayerAtDoor[] =
+{
+	AFFINEANIMCMD_FRAME(-4, -4, 0, 60), //Shrink sprite
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_GrowPlayerFromDoor[] =
+{
+	AFFINEANIMCMD_FRAME(196, 196, 0, 0),
+	AFFINEANIMCMD_FRAME(4, 4, 0, 15), //Grow sprite
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd* const sSpriteAffineAnimTable_ShrinkPlayerAtDoor[] =
+{
+	sSpriteAffineAnim_ShrinkPlayerAtDoor,
+};
+
+static const union AffineAnimCmd* const sSpriteAffineAnimTable_GrowPlayerFromDoor[] =
+{
+	sSpriteAffineAnim_GrowPlayerFromDoor,
+};
+
+static void Task_DestroyEventObjSpriteMatrixOnAffineAnimCompletion(u8 taskId)
+{
+	struct Sprite* sprite = &gSprites[gEventObjects[gTasks[taskId].data[0]].spriteId];
+
+	if (sprite->affineAnimEnded)
+	{
+		FreeSpriteOamMatrix(sprite);
+		sprite->affineAnims = gDummySpriteAffineAnimTable;
+		sprite->oam.affineMode = ST_OAM_AFFINE_OFF;
+		CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+		DestroyTask(taskId);
+	}
+}
+#endif
 
 void PlayerGoThroughDoor(u8 taskId)
 {
@@ -923,6 +970,14 @@ void PlayerGoThroughDoor(u8 taskId)
 				EventObjectSetHeldMovement(&gEventObjects[followerObjId], newState);
 			}
 
+			#ifdef SHRINK_PLAYER_THROUGH_DOOR
+			struct Sprite* sprite = &gSprites[gEventObjects[playerObjId].spriteId];
+			sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+			sprite->affineAnims = sSpriteAffineAnimTable_ShrinkPlayerAtDoor;
+			CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+			InitSpriteAffineAnim(sprite);
+			#endif
+
             task->data[0] = 2;
         }
         break;
@@ -932,7 +987,7 @@ void PlayerGoThroughDoor(u8 taskId)
 			if (!gFollowerState.inProgress || gEventObjects[followerObjId].invisible) //Don't close door on follower
 				task->data[1] = FieldAnimateDoorClose(*x, *y - 1);
             EventObjectClearHeldMovementIfFinished(&gEventObjects[playerObjId]);
-            sub_807D410(0); //sub_80AF0F4
+            SetPlayerVisibility(0);
             task->data[0] = 3;
         }
         break;
@@ -947,6 +1002,14 @@ void PlayerGoThroughDoor(u8 taskId)
 		{
 			EventObjectClearHeldMovementIfActive(&gEventObjects[followerObjId]);
 			EventObjectSetHeldMovement(&gEventObjects[followerObjId], MOVEMENT_ACTION_WALK_NORMAL_UP);
+
+			#ifdef SHRINK_PLAYER_THROUGH_DOOR
+			struct Sprite* sprite = &gSprites[gEventObjects[followerObjId].spriteId];
+			sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+			sprite->affineAnims = sSpriteAffineAnimTable_ShrinkPlayerAtDoor;
+			CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+			InitSpriteAffineAnim(sprite);
+			#endif
 		}
 
         TryFadeOutOldMapMusic();
@@ -960,7 +1023,79 @@ void PlayerGoThroughDoor(u8 taskId)
         PlayRainStoppingSoundEffect();
         task->data[0] = 0;
         task->func = (void*) 0x807DE49;
+		break;
+	}
+}
+
+void Task_PlayerExitDoor(u8 taskId)
+{
+	struct Task * task = &gTasks[taskId];
+	s16 *x = &task->data[2];
+	s16 *y = &task->data[3];
+
+	switch (task->data[0])
+	{
+		case 0:
+			SetPlayerVisibility(FALSE);
+			FreezeEventObjects();
+			DoOutwardBarnDoorWipe();
+			FadeInFromWhite();
+			++task->data[0];
         break;
+		case 1:
+			task->data[15]++;
+			if (task->data[15] == 25)
+			{
+				PlayerGetDestCoords(x, y);
+				PlaySE(GetDoorSoundEffect(*x, *y));
+				FieldAnimateDoorOpen(*x, *y);
+				++task->data[0];
+			}
+			break;
+		case 2:
+			if (!FieldIsDoorAnimationRunning())
+			{
+				PlayerGetDestCoords(&task->data[12], &task->data[13]);
+				SetPlayerVisibility(TRUE);
+				EventObjectSetHeldMovement(&gEventObjects[GetEventObjectIdByLocalIdAndMap(EVENT_OBJ_ID_PLAYER, 0, 0)], MOVEMENT_ACTION_WALK_NORMAL_DOWN);
+				++task->data[0];
+
+				#ifdef SHRINK_PLAYER_THROUGH_DOOR
+				u8 playerObjId = gPlayerAvatar->eventObjectId;
+				struct Sprite* sprite = &gSprites[gEventObjects[playerObjId].spriteId];
+				sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+				sprite->affineAnims = sSpriteAffineAnimTable_GrowPlayerFromDoor;
+				CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+				InitSpriteAffineAnim(sprite);
+				u8 newTaskId = CreateTask(Task_DestroyEventObjSpriteMatrixOnAffineAnimCompletion, 0xFF);
+				if (newTaskId != 0xFF)
+					gTasks[newTaskId].data[0] = playerObjId;
+				#endif
+			}
+			break;
+		case 3:
+			task->data[14]++;
+			if (task->data[14] == 14)
+			{
+				FieldAnimateDoorClose(task->data[12], task->data[13]);
+				++task->data[0];
+			}
+			break;
+		case 4:
+			if (FieldFadeTransitionBackgroundEffectIsFinished() && !FieldIsDoorAnimationRunning()
+			&& walkrun_is_standing_still() && !FuncIsActiveTask(Task_BarnDoorWipe))
+			{
+				EventObjectClearHeldMovementIfFinished(&gEventObjects[GetEventObjectIdByLocalIdAndMap(EVENT_OBJ_ID_PLAYER, 0, 0)]);
+				++task->data[0];
+			}
+			break;
+		case 5:
+			FollowMe_SetIndicatorToComeOutDoor();
+			FollowMe_WarpSetEnd();
+			UnfreezeEventObjects();
+			ScriptContext2_Disable();
+			DestroyTask(taskId);
+			break;
     }
 }
 
@@ -1005,6 +1140,17 @@ static void Task_FollowerOutOfDoor(u8 taskId)
 				EventObjectTurn(follower, DIR_SOUTH); //The follower should be facing down when it comes out the door
 				EventObjectSetHeldMovement(follower, MOVEMENT_ACTION_WALK_NORMAL_DOWN);
 				task->data[0] = 2;
+
+				#ifdef SHRINK_PLAYER_THROUGH_DOOR
+				struct Sprite* sprite = &gSprites[follower->spriteId];
+				sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+				sprite->affineAnims = sSpriteAffineAnimTable_GrowPlayerFromDoor;
+				CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+				InitSpriteAffineAnim(sprite);
+				u8 newTaskId = CreateTask(Task_DestroyEventObjSpriteMatrixOnAffineAnimCompletion, 0xFF);
+				if (newTaskId != 0xFF)
+					gTasks[newTaskId].data[0] = GetFollowerMapObjId();
+				#endif
 			}
 			break;
 		case 2:
@@ -1257,6 +1403,19 @@ void FollowMe_WarpSetEnd(void)
 
 	follower->facingDirection = player->facingDirection;
 	follower->movementDirection = player->movementDirection;
+}
+
+bool8 IsFollowerAtCoords(s16 x, s16 y)
+{
+	if (gFollowerState.inProgress)
+	{
+		struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
+
+		return follower->currentCoords.x == x
+			&& follower->currentCoords.y == y;
+	}
+
+	return FALSE;
 }
 
 void CreateFollowerAvatar(void)

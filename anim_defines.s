@@ -451,7 +451,6 @@
 .equ AnimTask_RotateMonToSideAndRestore, 0x8099481
 .equ AnimTask_SetAnimAttackerAndTargetForEffectAtk, 0x80BD3BD
 .equ AnimTask_TargetToEffectBattler, 0x80F2661
-.equ AnimTask_SlideOffScreen, 0x8099005
 .equ AnimTask_Rollout, 0x80B5E91
 .equ AnimTask_ShakeTargetBasedOnMovePowerOrDmg, 0x80995DD
 .equ AnimTask_TranslateMonElliptical, 0x809898D
@@ -469,7 +468,6 @@
 .equ AnimTask_TraceMonBlended, 0x80BBE59
 .equ AnimTask_SmokescreenImpact, 0x80DF335
 .equ AnimTask_AttackerPunchWithTrace, 0x80767C9
-.equ AnimTask_ShakeAndSinkMon, 0x8098899
 .equ AnimTask_WindUpLunge, 0x8098EA5
 .equ AnimTask_RotateMonSpriteToSide, 0x8099389
 .equ AnimTask_RockMonBackAndForth, 0x80E1541

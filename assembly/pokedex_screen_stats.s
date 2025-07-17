@@ -152,8 +152,7 @@ print_stat:
 	ldr r3, [r3]
 	add r3, #0x5A
 	ldrh r3, [r3]
-	mov r1, #0x1C
-	mul r3, r1
+	lsl r3, r3, #0x5
 	ldr r2, base_stats
 	ldr r2, [r2]
 	add r2, r3

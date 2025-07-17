@@ -25,6 +25,12 @@ A second item in the Cube can be\nregistered to [L_BUTTON] for easy use。
 #org @gText_BikeTurboBoostDisable
 ターボブースト [GREEN]むこう[BLACK]
 
+#org @gText_SurfTurboBoostEnable
+ターボブースト [GREEN]ゆうこう[BLACK]
+
+#org @gText_SurfTurboBoostDisable
+ターボブースト [GREEN]むこう[BLACK]
+
 #org @gText_PoisonSurvial
 [BUFFER][02]は なんとか どくにたえた\nどくが きえさった！
 
@@ -38,19 +44,37 @@ A second item in the Cube can be\nregistered to [L_BUTTON] for easy use。
 スプレーの こうかが きれた！\nつづけて つかいますか？
 
 #org @gText_UsedAnotherRepel
-[BUFFER][01]は [BUFFER][04]を つかった！
+[BUFFER][01]は [BUFFER][04]を\nつかった！
 
 #org @gText_RepelWoreOff
 スプレーの こうかが きれた！
 
 #org @gText_FoundMultipleItems
-[PLAYER]は\n[BUFFER2]を  [BUFFER1]コ みつけた！
+[PLAYER]は [BUFFER2]を\n[BUFFER1]コ みつけた！
 
 #org @gText_ObtainedMultipleItems
-[PLAYER]は\n[BUFFER2]を [BUFFER1]コ てにいれた！
+[PLAYER]は [BUFFER2]を\n[BUFFER1]コ てにいれた！
 
 #org @gText_ObtainedTMHM
 [PLAYER]は[BUFFER][03]\n‘[BUFFER][02]’を みつけた！
+
+#org @gText_RegisteredItemSelectButton
+[SELECT_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemLButton
+[L_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemRButton
+[R_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemStartButton
+[START_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemLeftButton
+[DPAD_LEFT] [ALIGN][1E]
+
+#org @gText_RegisteredItemRightButton
+[DPAD_RIGHT] [ALIGN][1E]
 
 #org @gText_UseWhichRegisteredItem
 どれを つかう？
@@ -96,6 +120,9 @@ A second item in the Cube can be\nregistered to [L_BUTTON] for easy use。
 
 #org @gText_CantSurface
 うえから ひかりが さしこんでいる！\nポケモンの わざで あがれるかも？
+
+#org @gText_TVSwarm
+こんにちは\n『ポケモン ニュース』の じかんです\pたいへん めずらしい ニュースが\nはいって きました\p[GREEN][BUFFER1][BLACK]で\n[GREEN][BUFFER2][BLACK]が たいりょうはっせい した\lという ほうこくが ありました！\p[GREEN][BUFFER2][BLACK]と いえば\nなかなか みつけることが むずかしい\lポケモンとしても ゆうめい ですね\pあなたも このしんぴてきな\n[GREEN][BUFFER2][BLACK]の たいりょうはっせいを\lみにいっては いかが でしょうか？\pいじょう\n『ポケモン ニュース』でした
 
 #org @gText_DoorIsLocked
 カギが かかっている
@@ -213,6 +240,9 @@ You can't reach the ladder from\nhere！
 
 #org @gText_EnterPassword
 パスワードを にゅうりょく してください
+
+#org @gText_EnterSpeciesName
+ポケモンの なまえを にゅうりょく してください
 
 #org @gText_Purchased
 ーーーー\$

@@ -383,3 +383,5 @@ PP
 #org @sText_PlayerForfeitedMatch
 [PLAYER_NAME]は こうさんした！
 
+#org @gText_UnknownLocation
+なぞのばしょ

@@ -104,4 +104,3 @@ TagTeamPartnerSendoutPokemonHook:
 	bl IsMultiBattle
 	ldr r1, =0x8012F80 | 1
 	bx r1
-

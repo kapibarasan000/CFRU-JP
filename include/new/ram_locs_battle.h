@@ -180,7 +180,6 @@
 #define gBackupHWord (*((u16*) 0x203DFA9))
 #define gDontRemoveTransformSpecies (*((bool8*) 0x203DFAB))
 #define gBankSwitching (*((u8*) 0x203DFAC))
-#define gAbilitiesPerBank ((u16*) 0x203DFE0)
 
 //#define gInShop (*((bool8*) 0x203E043))
 //#define gBattleCircusFlags (*((u32*) 0x203E044))

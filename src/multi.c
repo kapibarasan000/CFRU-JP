@@ -484,9 +484,8 @@ u32 MultiMoneyCalc(void)
 {
 	u32 money = CalcMultiMoneyForTrainer(gTrainerBattleOpponent_A);
 
-	if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS)) {
+	if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS))
 		money += CalcMultiMoneyForTrainer(VarGet(VAR_SECOND_OPPONENT));
-	}
 
 	return money;
 }
@@ -688,13 +687,13 @@ static void PlayerPartnerBufferRunCommand(void)
 
 static void PlayerPartnerHandleChooseMove(void)
 {
-	u8 chosenMoveId, moveTarget;
+	u8 chosenMovePos, moveTarget;
 	u16 chosenMove;
 	struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
 	BattleAI_SetupAIData(0xF);
-	chosenMoveId = BattleAI_ChooseMoveOrAction();
-	chosenMove = moveInfo->moves[chosenMoveId];
+	chosenMovePos = BattleAI_ChooseMoveOrAction();
+	chosenMove = moveInfo->moves[chosenMovePos];
 	moveTarget = GetBaseMoveTarget(chosenMove, gActiveBattler);
 
 	if (moveTarget & MOVE_TARGET_USER)
@@ -714,9 +713,9 @@ static void PlayerPartnerHandleChooseMove(void)
 	}
 
 	//You get 1 of 3 of the following gimmicks per Pokemon
-	if (moveInfo->possibleZMoves[chosenMoveId]) //Checked first b/c Rayquaza can do all 3
+	if (moveInfo->possibleZMoves[chosenMovePos]) //Checked first b/c Rayquaza can do all 3
 	{
-		if (ShouldAIUseZMove(gActiveBattler, gBankTarget, moveInfo->moves[chosenMoveId]))
+		if (ShouldAIUseZMove(gActiveBattler, gBankTarget, moveInfo->moves[chosenMovePos]))
 			gNewBS->zMoveData.toBeUsed[gActiveBattler] = TRUE;
 	}
 	else if (moveInfo->canMegaEvolve)
@@ -729,7 +728,7 @@ static void PlayerPartnerHandleChooseMove(void)
 				gNewBS->ultraData.chosen[gActiveBattler] = TRUE;
 		}
 	}
-	else if (moveInfo->possibleMaxMoves[chosenMoveId] && moveInfo->canterastal)
+	else if (moveInfo->possibleMaxMoves[chosenMovePos] && moveInfo->canterastal)
 	{
 		if (ShouldAIDynamax(gActiveBattler, gBankTarget))
 		{
@@ -743,7 +742,7 @@ static void PlayerPartnerHandleChooseMove(void)
 			gNewBS->terastalData.chosen[gActiveBattler] = TRUE;
 		}
 	}
-	else if (moveInfo->possibleMaxMoves[chosenMoveId])
+	else if (moveInfo->possibleMaxMoves[chosenMovePos])
 	{
 		if (ShouldAIDynamax(gActiveBattler, gBankTarget))
 		{
@@ -757,14 +756,14 @@ static void PlayerPartnerHandleChooseMove(void)
 	}
 
 	//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.
-	gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMoveId;
+	gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMovePos;
 	gBattleStruct->moveTarget[gActiveBattler] = gBankTarget;
 	gChosenMovesByBanks[gActiveBattler] = chosenMove;
 
 	if (IsMockBattle())
 		TryRemovePartnerDoublesKillingScoreComplete(gActiveBattler, gBankTarget, chosenMove, moveTarget, FALSE); //Moves are chosen in order of bank
 
-	EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], FALSE, gNewBS->terastalData.chosen[gActiveBattler]);
+	EmitMoveChosen(1, chosenMovePos, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], FALSE, gNewBS->terastalData.chosen[gActiveBattler]);
 	PlayerPartnerBufferExecComplete();
 }
 

@@ -104,6 +104,20 @@ ScrollingMultiSizeHook:
 	ldr r2, =(0x080CCA98 +1)
 	bx r2
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
+@@@@@ 080CCC44 via r1
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+ScrollingMultiLeftRightHook:
+	and r0, r3
+	strb r0, [r2, #0x17]
+	ldrb r0, [r2, #0x16]
+	mov r1, #0x1 @LIST_MULTIPLE_SCROLL_DPAD
+	lsl r1, #0x6
+	orr r0, r1
+	strb r0, [r2, #0x16]
+	bx lr
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Safari Zone Steps/Ball Count

@@ -61,7 +61,6 @@ move_tables.s
 .global gSpecialWholeFieldMoves
 .global gAromaVeilProtectedMoves
 .global gMovesThatLiftProtectTable
-.global gMovesWithQuietBGM
 .global gTerastalPowerBoostBannedMoves
 .global gSlicingMoves
 .global gWindMoves
@@ -1250,17 +1249,6 @@ gMovesThatLiftProtectTable:
 .hword MOVE_PHANTOMFORCE
 .hword MOVE_SHADOWFORCE
 .hword MOVE_TABLES_TERMIN
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-gMovesWithQuietBGM:
-.hword MOVE_SING
-@.hword MOVE_PERISHSONG
-.hword MOVE_GRASSWHISTLE
-.hword MOVE_RELICSONG
-.hword MOVE_ROUND
-@.hword MOVE_DARKPULSE
-.hword 0xFFFF
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

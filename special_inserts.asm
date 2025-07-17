@@ -9,7 +9,6 @@
 @ Game Speed Up
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-/*
 .org 0x890, 0xFF
 main:
 	ldr r2, .SuperBits
@@ -26,7 +25,6 @@ loop_label:
 
 .align 2
 .SuperBits: .word 0x0300314C
-*/
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palette - part of hook at 0x779c
@@ -66,11 +64,16 @@ loop_label:
 @ Pokedex Flags Banned Battle Types
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.equ BANNED_POKEDEX_FLAGS_BATTLE_TYPES, BATTLE_WIRELESS | BATTLE_OLD_MAN | BATTLE_E_READER | BATTLE_POKE_DUDE | BATTLE_GHOST | BATTLE_TRAINER_TOWER @;Allowed in Frontier
+
 .org 0x12A88, 0xFF
-.word BATTLE_WIRELESS | BATTLE_OLD_MAN | BATTLE_E_READER | BATTLE_GHOST | BATTLE_TRAINER_TOWER | BATTLE_FRONTIER
+.word BANNED_POKEDEX_FLAGS_BATTLE_TYPES
 
 .org 0x12B50, 0xFF
-.word BATTLE_WIRELESS | BATTLE_OLD_MAN | BATTLE_E_READER | BATTLE_GHOST | BATTLE_TRAINER_TOWER | BATTLE_FRONTIER
+.word BANNED_POKEDEX_FLAGS_BATTLE_TYPES
+
+.org 0x12ED8, 0xFF
+.word BANNED_POKEDEX_FLAGS_BATTLE_TYPES
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Ability Expansion gBattleMons Fix
@@ -530,6 +533,18 @@ MaxLevelChange1:
 	.byte MAX_LEVEL	
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Remove Deoxys & Mew Trade Restrictions
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x4F2B0, 0xFF
+RemoveDeoxysMewTradeRestrictions_1:
+	mov r8, r8
+
+.org 0x4F398, 0xFF
+RemoveDeoxysMewTradeRestrictions_2:
+	mov r0, #0x0 @Not restricted
+	bx lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Ability Expansion Base Stats
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x4F440, 0xFF
@@ -700,6 +715,7 @@ VeryTallGrassFix:
 .org 0x6619A, 0xFF @MovementAction_RestoreAnimation_Step0
 	mov r0, r4
 	bl GetEventObjectGraphicsInfoByEventObj
+	ldrb r1, [r0, #0xC] @;Necessary for no compile error - The FF won't get copied otherwise
 
 .org 0x672D2, 0xFF @npc_offscreen_culling
 	mov r5, r0
@@ -731,6 +747,30 @@ VeryTallGrassFix:
 .org 0x68BD0, 0xFF @DoRippleFieldEffect
 	mov r0, r0
 	bl GetEventObjectGraphicsInfoByEventObj
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Remove Add/Delete Item Limiter
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.org 0x69EF8, 0xFF
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x69F44, 0xFF
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x69F88, 0xFF
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x69FCC, 0xFF
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Dynamic Overworld Palettes & More OW Sprites
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .org 0x79378, 0xff	@don't load rain palette on entering map
 	.byte 0x0, 0x25, 0xe, 0xe0
@@ -777,6 +817,9 @@ VeryTallGrassFix:
 .org 0x997A8, 0xFF
 	ldrh r0, [r0]
 	bx lr
+
+.org 0x9A21E, 0xFF
+	ldrh r0, [r3, #0x4]
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Triple Layer Blocks
@@ -969,6 +1012,12 @@ RemoveCaughtMonPokedex151Limiter:
 	b RemoveCaughtMonPokedex151Limiter + 0x24 @0x106BA4
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Remove LR Change Bag Pockets
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x109C7A, 0xFF
+	mov r0, #0x0
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Ability Expansion Base Stats
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x11B674, 0xFF
@@ -1011,22 +1060,18 @@ PPUpPostUseFix:
 	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Remove TM Animation
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x12650E, 0xFF
+RemoveTMAnimationLessThan4Moves:
+	bl RemoveTMAnimationLessThan4Moves + 0x86 @0x8126594 Task_LearnedMove
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Hack - Rare Candies
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x126C16, 0xFF
 MaxLevelRareCandies:
 	.byte MAX_LEVEL
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Stay On Item Screen - Rare Candies
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-.org 0x126C76, 0xFF
-RareCandiesPostUseFix:
-	mov r1, r8
-	bl RareCandiesPostUseFix + 0x1E @ItemUseCB_RareCandyStep
-	mov r8, r8
-	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Ability Expansion Base Stats
@@ -1161,6 +1206,7 @@ SummaryScreenExpDisplay2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Multichoice Pointers
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+/* Handled in bytereplacement
 .org 0x3A567C, 0xFF
 .word MULTICHOICE_STRING_LOADER
 .word 0x2
@@ -1174,7 +1220,7 @@ SummaryScreenExpDisplay2:
 .word 0x6
 .word MULTICHOICE_STRING_LOADER
 .word 0x7
-
+*/
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Multichoice Width
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

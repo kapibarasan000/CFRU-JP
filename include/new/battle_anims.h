@@ -68,6 +68,8 @@ void UpdatedAnimStealItemFinalCallback(struct Sprite* sprite);
 void UpdateOamPriorityInAllHealthboxes(u8 priority);
 bool8 TryHandleLaunchBattleTableAnimation(u8 activeBattler, u8 bankAtk, u8 bankDef, u8 tableId, u16 argument);
 void TryStartShinyAnimation(u8 battler, unusedArg struct Pokemon* mon);
+void HandleSpeciesGfxDataChange(u8 bankAtk, u8 bankDef, u8 transformType);
+void DoMoveAnim(u16 move);
 void SpriteCB_CriticalCaptureThrownBallMovement(struct Sprite* sprite);
 void SpriteCB_InitThrownBallBouncing(struct Sprite *sprite);
 void SpriteCB_EnemyShadow(struct Sprite *shadowSprite);

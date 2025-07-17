@@ -146,16 +146,26 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 		switch (spriteId) {
 			case EVENT_OBJ_GFX_RED_BIKE_VS_SEEKER:
 			case EVENT_OBJ_GFX_LEAF_BIKE_VS_SEEKER:
-				newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
+				if (tableId == 0) //Actually the Vs. Seeker sprites
+				{
+					newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
+					if (newId != 0) //Actually set to something different
+					{
+						tableId = (newId >> 8) & 0xFF;	// upper byte
+						spriteId = (newId & 0xFF);		// lower byte
+					}
+				}
 				break;
 		}
 
+		#ifndef UNBOUND
 		if (spriteId > 239 && tableId == 0)
 		{
 			newId = VarGetEventObjectGraphicsId(spriteId + 16);
 			tableId = (newId >> 8) & 0xFF;	// upper byte
 			spriteId = (newId & 0xFF);		// lower byte
 		}
+		#endif
 	}
 
 	NPCPtr spriteAddr;
@@ -180,33 +190,33 @@ NPCPtr GetEventObjectGraphicsInfoByEventObj(struct EventObject* eventObj)
 
 static u16 GetCustomGraphicsIdByState(u8 state)
 {
-	u16 spriteId = 0;
+	u16 gfxId = 0;
 
 	switch (state) {
 		case PLAYER_AVATAR_STATE_NORMAL:
-			spriteId = VarGet(VAR_PLAYER_WALKRUN);
+			gfxId = VarGet(VAR_PLAYER_WALKRUN);
 			break;
 		case PLAYER_AVATAR_STATE_BIKE:
-			spriteId = VarGet(VAR_PLAYER_BIKING);
+			gfxId = VarGet(VAR_PLAYER_BIKING);
 			break;
 		case PLAYER_AVATAR_STATE_SURFING:
-			spriteId = VarGet(VAR_PLAYER_SURFING);
+			gfxId = VarGet(VAR_PLAYER_SURFING);
 			break;
 		case PLAYER_AVATAR_STATE_FIELD_MOVE: //HM Use
-			spriteId = VarGet(VAR_PLAYER_HM_USE);
+			gfxId = VarGet(VAR_PLAYER_HM_USE);
 			break;
 		case PLAYER_AVATAR_STATE_VS_SEEKER:
-			spriteId = VarGet(VAR_PLAYER_VS_SEEKER);
+			gfxId = VarGet(VAR_PLAYER_VS_SEEKER);
 			break;
 		case PLAYER_AVATAR_STATE_FISHING:
-			spriteId = VarGet(VAR_PLAYER_FISHING);
+			gfxId = VarGet(VAR_PLAYER_FISHING);
 			break;
 		case PLAYER_AVATAR_STATE_UNDERWATER:
-			spriteId = VarGet(VAR_PLAYER_UNDERWATER);
+			gfxId = VarGet(VAR_PLAYER_UNDERWATER);
 			break;
 	}
 
-	return spriteId;
+	return gfxId;
 }
 
 u16 GetPlayerAvatarGraphicsIdByStateIdAndGender(u8 state, u8 gender)
@@ -295,6 +305,9 @@ u16 GetEventObjectGraphicsId(struct EventObject* eventObj)
 		return lowerByte;
 	#endif
 
+	if (upperByte == 0xFF && lowerByte <= 0xF)
+		return VarGet(VAR_RUNTIME_CHANGEABLE + lowerByte); //Runtime changeable
+
 	return lowerByte | (upperByte << 8);
 }
 
@@ -315,7 +328,7 @@ u8 PlayerGenderToFrontTrainerPicId(u8 gender, bool8 modify)
 
 	u16 trainerId = VarGet(VAR_TRAINERCARD_MALE + gender);
 	if (trainerId == 0)
-		trainerId = 0x87 + gender;
+		trainerId = TRAINER_PIC_PLAYER_M + gender;
 
 	return trainerId;
 };
@@ -375,12 +388,15 @@ void PlayerHandleDrawTrainerPic(void)
 	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
 	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], xPos, yPos, GetBattlerSpriteSubpriority(gActiveBattler));
 
+	if (IS_DOUBLE_BATTLE)
+		gSprites[gBattlerSpriteIds[gActiveBattler]].oam.priority = 0; //So it appears above enemy healthbars
+	
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = 240;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = -3; //-2; //Speed scrolling in
 	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn; //sub_805D7AC in Emerald
 
-	gBattlerControllerFuncs[gActiveBattler] = sub_802EEB0;
+	gBattlerControllerFuncs[gActiveBattler] = Player_CompleteOnBattlerSpriteCallbackDummy;
 }
 
 void PlayerHandleTrainerSlide(void)
@@ -391,12 +407,15 @@ void PlayerHandleTrainerSlide(void)
 	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
 	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], 80, (8 - gTrainerBackPicCoords[trainerPicId].coords) * 4 + 80, 30);
 
+	if (IS_DOUBLE_BATTLE)
+		gSprites[gBattlerSpriteIds[gActiveBattler]].oam.priority = 0;
+
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = -96;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 2;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn;
 
-	gBattlerControllerFuncs[gActiveBattler] = sub_802EEE8;
+	gBattlerControllerFuncs[gActiveBattler] = Player_CompleteOnBattlerSpriteCallbackDummy2;
 }
 
 u16 GetBackspriteId(void)

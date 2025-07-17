@@ -122,7 +122,7 @@ static bool8 BT_Phase2CustomLogo_CircleEffect(struct Task *task);
 
 //For pre-battle mugshots
 ///////////////////////////////////////////////////////////////////////////////////
-static u8 CreateMugshotTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpriority, u8* buffer, bool8 loadingPlayer)
+static u8 CreateMugshotTrainerSprite(u8 trainerPicId, s16 x, s16 y, u8 subpriority, u8* buffer, bool8 loadingPlayer)
 {
 	struct SpriteTemplate spriteTemplate;
 
@@ -133,8 +133,8 @@ static u8 CreateMugshotTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpri
 		case MUGSHOT_VS_SYMBOL:
 			if (loadingPlayer)
 			{
-				struct CompressedSpritePalette pal = {VS_SpritePal, gTrainerFrontPicPaletteTable[trainerSpriteID].tag};
-				struct CompressedSpriteSheet sprite = {VS_SpriteTiles, 64 * 64 / 2, gTrainerFrontPicTable[trainerSpriteID].tag};
+				struct CompressedSpritePalette pal = {VS_SpritePal, gTrainerFrontPicPaletteTable[trainerPicId].tag};
+				struct CompressedSpriteSheet sprite = {VS_SpriteTiles, 64 * 64 / 2, gTrainerFrontPicTable[trainerPicId].tag};
 				LoadCompressedSpritePaletteOverrideBuffer(&pal, buffer);
 				LoadCompressedSpriteSheetOverrideBuffer(&sprite, buffer);
 			}
@@ -143,26 +143,26 @@ static u8 CreateMugshotTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpri
 				#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 				if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 				{
-					if (IS_VALID_TABLE_SPRITE(trainerSpriteID)) //Complete data for image
+					if (IS_VALID_TABLE_SPRITE(trainerPicId)) //Complete data for image
 					{
-						struct CompressedSpritePalette pal = {sPreBattleMugshotSprites[trainerSpriteID].pal, gTrainerFrontPicPaletteTable[trainerSpriteID].tag};
-						struct CompressedSpriteSheet sprite = {sPreBattleMugshotSprites[trainerSpriteID].sprite, sPreBattleMugshotSprites[trainerSpriteID].size, gTrainerFrontPicTable[trainerSpriteID].tag};
+						struct CompressedSpritePalette pal = {sPreBattleMugshotSprites[trainerPicId].pal, gTrainerFrontPicPaletteTable[trainerPicId].tag};
+						struct CompressedSpriteSheet sprite = {sPreBattleMugshotSprites[trainerPicId].sprite, sPreBattleMugshotSprites[trainerPicId].size, gTrainerFrontPicTable[trainerPicId].tag};
 						LoadCompressedSpritePaletteOverrideBuffer(&pal, buffer);
 						LoadCompressedSpriteSheetOverrideBuffer(&sprite, buffer);
-						x += sPreBattleMugshotSprites[trainerSpriteID].x;
-						y += sPreBattleMugshotSprites[trainerSpriteID].y;
+						x += sPreBattleMugshotSprites[trainerPicId].x;
+						y += sPreBattleMugshotSprites[trainerPicId].y;
 					}
 					else
 					{
-						LoadCompressedSpritePaletteOverrideBuffer(&gTrainerFrontPicPaletteTable[trainerSpriteID], buffer);
-						LoadCompressedSpriteSheetOverrideBuffer(&gTrainerFrontPicTable[trainerSpriteID], buffer);
+						LoadCompressedSpritePaletteOverrideBuffer(&gTrainerFrontPicPaletteTable[trainerPicId], buffer);
+						LoadCompressedSpriteSheetOverrideBuffer(&gTrainerFrontPicTable[trainerPicId], buffer);
 					}
 				}
 				else
 				#endif
 				{
-					LoadCompressedSpritePaletteOverrideBuffer(&gTrainerFrontPicPaletteTable[trainerSpriteID], buffer);
-					LoadCompressedSpriteSheetOverrideBuffer(&gTrainerFrontPicTable[trainerSpriteID], buffer);
+					LoadCompressedSpritePaletteOverrideBuffer(&gTrainerFrontPicPaletteTable[trainerPicId], buffer);
+					LoadCompressedSpriteSheetOverrideBuffer(&gTrainerFrontPicTable[trainerPicId], buffer);
 				}
 			}
 			break;
@@ -172,33 +172,39 @@ static u8 CreateMugshotTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpri
 			#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 			if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 			{
-				if (IS_VALID_TABLE_SPRITE(trainerSpriteID)) //Complete data for image
+				if (IS_VALID_TABLE_SPRITE(trainerPicId)) //Complete data for image
 				{
-					struct CompressedSpritePalette pal = {sPreBattleMugshotSprites[trainerSpriteID].pal, gTrainerFrontPicPaletteTable[trainerSpriteID].tag};
-					struct CompressedSpriteSheet sprite = {sPreBattleMugshotSprites[trainerSpriteID].sprite, sPreBattleMugshotSprites[trainerSpriteID].size, gTrainerFrontPicTable[trainerSpriteID].tag};
+					struct CompressedSpritePalette pal = {sPreBattleMugshotSprites[trainerPicId].pal, gTrainerFrontPicPaletteTable[trainerPicId].tag};
+					struct CompressedSpriteSheet sprite = {sPreBattleMugshotSprites[trainerPicId].sprite, sPreBattleMugshotSprites[trainerPicId].size, gTrainerFrontPicTable[trainerPicId].tag};
 					LoadCompressedSpritePaletteOverrideBuffer(&pal, buffer);
 					LoadCompressedSpriteSheetOverrideBuffer(&sprite, buffer);
-					x += sPreBattleMugshotSprites[trainerSpriteID].x;
-					y += sPreBattleMugshotSprites[trainerSpriteID].y;
+					x += sPreBattleMugshotSprites[trainerPicId].x;
+					y += sPreBattleMugshotSprites[trainerPicId].y;
 				}
 				else
-				{
-					struct CompressedSpritePalette palStruct = {GetTrainerSpritePal(trainerSpriteID), gTrainerFrontPicPaletteTable[trainerSpriteID].tag};
-					LoadCompressedSpritePaletteOverrideBuffer(&palStruct, buffer);
-					LoadCompressedSpriteSheetOverrideBuffer(&gTrainerFrontPicTable[trainerSpriteID], buffer);
-				}
+					goto REGULAR_PLAYER_SPRITE;
 			}
 			else
 			#endif
 			{
-				struct CompressedSpritePalette palStruct = {GetTrainerSpritePal(trainerSpriteID), gTrainerFrontPicPaletteTable[trainerSpriteID].tag};
-				LoadCompressedSpritePaletteOverrideBuffer(&palStruct, buffer);
-				LoadCompressedSpriteSheetOverrideBuffer(&gTrainerFrontPicTable[trainerSpriteID], buffer);
+				#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
+				REGULAR_PLAYER_SPRITE: ;
+				#endif
+				struct SpritePalette dest;
+				LoadCompressedSpriteSheetOverrideBuffer(&gTrainerFrontPicTable[trainerPicId], buffer);
+				LZ77UnCompWram(GetTrainerSpritePal(trainerPicId), buffer);
+				dest.data = (void*) buffer;
+				dest.tag = gTrainerFrontPicPaletteTable[trainerPicId].tag;
+				unusedArg u8 index = LoadSpritePalette(&dest);
+
+				#ifdef UNBOUND
+				TryModifyMugshotTrainerPicPal(trainerPicId, index);
+				#endif
 			}
 			break;
 	}
 
-	UpdateMugshotSpriteTemplate(&spriteTemplate, gTrainerFrontPicTable[trainerSpriteID].tag);
+	UpdateMugshotSpriteTemplate(&spriteTemplate, gTrainerFrontPicTable[trainerPicId].tag);
 	return CreateSprite(&spriteTemplate, x, y, subpriority);
 }
 
@@ -276,7 +282,7 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 {
 	struct Sprite *opponentSprite, *playerSprite;
 	s16 mugshotId = task->tMugshotId;
-	u8 trainerSpriteID, trainerSpriteID2, trainerSpriteIDPartner;
+	u8 trainerPicId, trainerPicId2, trainerPicIdPartner;
 	s16 x1, x2, y1, y2;
 
 	u16 mugshotType = VarGet(VAR_PRE_BATTLE_MUGSHOT_STYLE);
@@ -341,11 +347,11 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 	|| gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_ELITE_FOUR
 	#endif
 	)
-		trainerSpriteID = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_A, 0);
+		trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_A, 0);
 	else
-		trainerSpriteID = sMugshotsTrainerPicIDsTable[mugshotId];
+		trainerPicId = sMugshotsTrainerPicIDsTable[mugshotId];
 
-	task->tOpponentSpriteId = CreateMugshotTrainerSprite(trainerSpriteID,
+	task->tOpponentSpriteId = CreateMugshotTrainerSprite(trainerPicId,
 														sMugshotsOpponentCoords[mugshotId][0] - x1,
 														sMugshotsOpponentCoords[mugshotId][1] + y1,
 														0, gDecompressionBuffer, FALSE);
@@ -353,8 +359,8 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 	//Load Opponent B
 	if (IsTrainerBattleModeAgainstTwoOpponents())
 	{
-		trainerSpriteID2 = GetFrontierTrainerFrontSpriteId(VarGet(VAR_SECOND_OPPONENT), 1);
-		task->tOpponentSpriteId2 = CreateMugshotTrainerSprite(trainerSpriteID2,
+		trainerPicId2 = GetFrontierTrainerFrontSpriteId(VarGet(VAR_SECOND_OPPONENT), 1);
+		task->tOpponentSpriteId2 = CreateMugshotTrainerSprite(trainerPicId2,
 															sMugshotsOpponentCoords[mugshotId][0] - x1 - 50,
 															sMugshotsOpponentCoords[mugshotId][1] + y1,
 															0, gDecompressionBuffer, FALSE);
@@ -364,7 +370,7 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 		#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 		else if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 		{
-			if (!IS_VALID_TABLE_SPRITE(trainerSpriteID2))
+			if (!IS_VALID_TABLE_SPRITE(trainerPicId2))
 				UpdateMugshotSpriteData(task->tOpponentSpriteId2, SPRITE_SHAPE(64x32), sMugshotsOpponentRotationScales[mugshotId][0], sMugshotsOpponentRotationScales[mugshotId][1], 0, TRUE);
 			else
 				UpdateMugshotSpriteData(task->tOpponentSpriteId2, SPRITE_SHAPE(64x64), 0, 0, 0, FALSE);
@@ -384,15 +390,15 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 	{
 		if (IsTrainerBattleModeWithPartner())
 		{
-			trainerSpriteIDPartner = (GetFrontierTrainerFrontSpriteId(gTrainerBattlePartner, 2));
-			task->tPartnerSpriteId = CreateMugshotTrainerSprite(trainerSpriteIDPartner, x2 + 50, y2, 0, gDecompressionBuffer, FALSE);
+			trainerPicIdPartner = (GetFrontierTrainerFrontSpriteId(gTrainerBattlePartner, 2));
+			task->tPartnerSpriteId = CreateMugshotTrainerSprite(trainerPicIdPartner, x2 + 50, y2, 0, gDecompressionBuffer, FALSE);
 
 			if (mugshotType == MUGSHOT_BIG)
 				UpdateMugshotSpriteData(task->tPartnerSpriteId, SPRITE_SHAPE(64x64), -512, 512, 0, TRUE);
 			#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 			else if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 			{
-				if (!IS_VALID_TABLE_SPRITE(trainerSpriteIDPartner))
+				if (!IS_VALID_TABLE_SPRITE(trainerPicIdPartner))
 					UpdateMugshotSpriteData(task->tPartnerSpriteId, SPRITE_SHAPE(64x32), -512, 512, 0, TRUE);
 				else
 					UpdateMugshotSpriteData(task->tPartnerSpriteId, SPRITE_SHAPE(64x64), 0, 0, 0, FALSE);
@@ -406,8 +412,8 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 	}
 	else
 	{
-		trainerSpriteIDPartner = 0; //So the compiler doesn't complain
-		++trainerSpriteIDPartner;
+		trainerPicIdPartner = 0; //So the compiler doesn't complain
+		++trainerPicIdPartner;
 	}
 
 	opponentSprite = &gSprites[task->tOpponentSpriteId];
@@ -441,7 +447,7 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 		#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 		else if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 		{
-			if (IS_VALID_TABLE_SPRITE(trainerSpriteID))
+			if (IS_VALID_TABLE_SPRITE(trainerPicId))
 				opponentSprite->oam.shape = SPRITE_SHAPE(64x64);
 			else
 			{
@@ -459,7 +465,7 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 		else
 			playerSprite->oam.shape = SPRITE_SHAPE(64x32);
 
-		if (IS_VALID_TABLE_SPRITE(trainerSpriteID))
+		if (IS_VALID_TABLE_SPRITE(trainerPicId))
 			opponentSprite->oam.shape = SPRITE_SHAPE(64x64);
 		else
 			opponentSprite->oam.shape = SPRITE_SHAPE(64x32);
@@ -480,7 +486,7 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 	#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 	if ((FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE)))
 	{
-		if (!IS_VALID_TABLE_SPRITE(trainerSpriteID))
+		if (!IS_VALID_TABLE_SPRITE(trainerPicId))
 			SetOamMatrixRotationScaling(opponentSprite->oam.matrixNum, sMugshotsOpponentRotationScales[mugshotId][0], sMugshotsOpponentRotationScales[mugshotId][1], 0);
 	}
 	else

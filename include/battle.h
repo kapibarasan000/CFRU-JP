@@ -1012,6 +1012,7 @@ struct NewBattleStruct
 	struct 
 	{
 		u16 zMoveHelper;
+		u32 randSeed; //Seeded every frame regardless of whether or not the Random seed is normally
 		bool8 sideSwitchedThisRound;
 		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //~0x2017B5B
 		u8 typeAbsorbSwitchingCooldown[MAX_BATTLERS_COUNT]; //Prevent a type absorb switching loop

@@ -41,7 +41,7 @@ u16 RandRange(u16 min, u16 max)
 	return (Random() % (max - min)) + min;
 }
 
-bool8 CheckTableForMove(move_t move, const u16 table[])
+bool8 CheckTableForMove(u16 move, const u16 table[])
 {
 	for (u32 i = 0; table[i] != MOVE_TABLES_TERMIN; ++i)
 	{
@@ -52,7 +52,7 @@ bool8 CheckTableForMove(move_t move, const u16 table[])
 	return FALSE;
 }
 
-bool8 CheckTableForMoveEffect(move_t move, const u8 table[])
+bool8 CheckTableForMoveEffect(u16 move, const u8 table[])
 {
 	for (u32 i = 0; table[i] != MOVE_EFFECT_TABLES_TERMIN; ++i)
 	{
@@ -113,9 +113,10 @@ u8 ViableMonCount(struct Pokemon* party)
 
 	for (u32 i = 0; i < PARTY_SIZE; ++i)
 	{
-		if (GetMonData(&party[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
-		&& !GetMonData(&party[i], MON_DATA_IS_EGG, NULL)
-		&&  GetMonData(&party[i], MON_DATA_HP, NULL) > 0)
+		//Don't use GetMonData because time saving is important
+		if (party[i].species != SPECIES_NONE
+		&&  party[i].hp > 0
+		&& !party[i].isEgg)
 			++count;
 	}
 
@@ -194,6 +195,23 @@ u16 GetNationalPokedexCount(u8 caseID)
 	return count;
 }
 
+bool8 SpeciesWithDexNumOnTeam(u16 dexNum)
+{
+	u32 i;
+
+	for (i = 0; i < PARTY_SIZE; ++i)
+	{
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+
+		if (species != SPECIES_NONE
+		&& species != SPECIES_EGG
+		&& SpeciesToNationalPokedexNum(species) == dexNum)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 bool8 CanSpeciesEvolve(u16 species)
 {
 	const struct Evolution* evolutions = gEvolutionTable[species];
@@ -221,31 +239,39 @@ bool8 CouldHaveEvolvedViaLevelUp(struct Pokemon* mon)
 
 	for (u32 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (IsLevelUpEvolutionMethod(evolutions[i].method) && mon->level >= evolutions[i].param)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (IsLevelUpEvolutionMethod(evolutions[i].method) && mon->level >= evolutions[i].param)
 			return TRUE;
 	}
 
 	return FALSE;
 }
 
-void EvolveSpeciesByLevel(u16* species, u8 level)
+bool8 EvolveSpeciesByLevel(u16* species, u8 level)
 {
 	const struct Evolution* evolutions;
+	bool8 evolved = FALSE;
 
 	START:
 	evolutions = gEvolutionTable[*species];
 
 	for (u32 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if ((IsLevelUpEvolutionMethod(evolutions[i].method) && level >= evolutions[i].param)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if ((IsLevelUpEvolutionMethod(evolutions[i].method) && level >= evolutions[i].param)
 		||  (IsOtherEvolutionMethod(evolutions[i].method) && level >= 40)
-		||  (IsItemEvolutionMethod(evolutions[i].method) && level >= 50)
-		||  (IsFriendshipEvolutionMethod(evolutions[i].method) && level >= 60))
+		||  (IsItemEvolutionMethod(evolutions[i].method) && level >= 45)
+		||  (IsFriendshipEvolutionMethod(evolutions[i].method) && level >= 55))
 		{
 			*species = evolutions[i].targetSpecies;
+			evolved = TRUE;
 			goto START; //Evolve until it can't evolve any more
 		}
 	}
+
+	return evolved;
 }
 
 u32 GetBaseStatsTotal(const u16 species)
@@ -364,6 +390,11 @@ bool8 IsMonOfType(struct Pokemon* mon, u8 type)
 		return type1 == type || type2 == type;
 }
 
+bool8 IsSpeciesOfType(u16 species, u8 type)
+{
+	return gBaseStats[species].type1 == type || gBaseStats[species].type2 == type;
+}
+
 bool8 IsSpeciesAffectedByScalemons(u16 species)
 {
 	if (species == SPECIES_SHEDINJA) //Shedinja would get OP stats because of its low HP and BST
@@ -388,7 +419,7 @@ u8 GetVisualBaseStat(u8 statId, u16 species) //For the Pokedex screen
 	return base;
 }
 
-#define TILE_SIZE 32
+/*#define TILE_SIZE 32
 #define SPRITE_RAM 0x6010000
 #define sSpriteTileAllocBitmap ((u8*) 0x2021AC4)
 #define FREE_SPRITE_TILE(n) (sSpriteTileAllocBitmap[(n) / 8] &= ~(1 << ((n) % 8)))
@@ -403,7 +434,7 @@ void DestroyMonIconSprite(struct Sprite* sprite)
 		FREE_SPRITE_TILE(i);
 
 	ResetSprite(sprite);
-}
+}*/
 
 bool8 CanPartyMonBeGeneralStatused(struct Pokemon* mon)
 {

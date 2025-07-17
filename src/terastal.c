@@ -150,7 +150,7 @@ static item_t FindPlayerTeraOrb(void)
 	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
 		return ITEM_TERA_ORB;
 
-	if (FlagGet(FLAG_TERASTAL_CHARGE))
+	if (FlagGet(FLAG_TERASTAL_CHARGE) || FlagGet(FLAG_TERA_ORB_NO_COST))
 	{
 		for (u8 i = 0; i < ARRAY_COUNT(sTeraOrbTable); ++i)
 		{

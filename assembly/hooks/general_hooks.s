@@ -29,6 +29,20 @@ EmitChooseMoveHook:
 	pop {r4-r6,pc}
 
 .pool
+@0x80140C8 with r0
+AIEmitChooseActionHook:
+	mov r0, r5
+	bl ShouldAIChooseAction
+	cmp r0, #0x0
+	beq SkipChooseAction
+	ldr r0, =0x8013934 | 1
+	bx r0
+
+SkipChooseAction:
+	ldr r0, =0x801446E | 1
+	bx r0
+
+.pool
 @0x802EF90 with r0
 SwitchMoveDataHook:
 	bl HandleMoveSwitchingUpdate
@@ -40,24 +54,6 @@ SwitchMoveDataHook:
 TurnValuesCleanUpAdditionHook:
 	bl CleanUpExtraTurnValues
 	pop {r4-r7, pc}
-
-.pool
-@0x80992E4 with r0
-SlideMonToOffsetHook:
-	mov r0, #0x0
-	bl LoadBattleAnimTarget
-	mov r2, r0
-	ldr r0, =0x8098D08 | 1
-	bx r0
-
-.pool
-@0x80991BA with r0
-SlideMonToOriginalPosHook:
-	mov r0, #0x0
-	bl LoadBattleAnimTarget
-	ldr r1, =0x2023CA4 @BattlerSpriteIds
-	ldr r2, =0x8098BE6 | 1
-	bx r2
 
 .pool
 @0x0804AA1E with r1
@@ -158,6 +154,47 @@ NormalBallThrowReturn:
 	ldrb r0, [r0, #0x8]
 	ldr r2, =0x80F0E4C | 1
 	bx r2
+
+.pool
+@0x804A1E4 with r0
+PokeBallThrowSoundHook:
+	mov r0, #0x36 @Throw Poke Ball
+	ldr r1, =PlaySE
+	bl bxr1
+	ldr r0, =0x804A220 | 1
+	bx r0
+
+.pool
+@0x804A2BC with r1
+TrainersThrowPokeBallsHook1:
+	add r0, #24 @X-Offset to the right thrown from
+	strh r0, [r4, #0x20]
+	mov r0, r6
+	mov r1, #1
+	ldr r2, =GetBattlerSpriteCoord
+	bl bxr2
+	lsl r0, #0x18
+	lsr r0, #0x18
+	sub r0, #12 @Y-Offset upwards thrown from
+	ldr r1, =0x0804A2CC | 1
+	bx r1
+
+.pool
+@0x804AFC6 with r1
+TrainersThrowPokeBallsHook2:
+	mov r0, r4
+	ldr r1, =GetBattlerPosition
+	bl bxr1
+	mov r1, #2 @BIT_FLANK
+	and r0, r1
+	cmp r0, #0
+	beq ReleaseMon1FromBall @Left mon
+	ldr r0, =0x0804AFD4 | 1 @Release mon 2
+	bx r0
+
+ReleaseMon1FromBall:
+	ldr r0, =0x0804AFE0 | 1
+	bx r0
 
 .pool
 @0x80A1E2C with r0
@@ -332,20 +369,23 @@ EvolutionMovesHook:
 	bx r1
 
 .pool
-@0x81058DC with r0
-PokedexLoadAlternateHeightHook:
-	lsr r7, r2, #0x18
-	lsl r3, r3, #0x18
-	lsr r3, r3, #0x18
-	mov r8, r3
-	mov r5, r1 @Save species
-	mov r0, r1
+@0x81066EE with r0
+PokedexLoadAlternateHeightAndWeightHook:
+	lsr r7, r3, #0x18
+	lsl r4, r4, #0x18
+	lsr r4, r4, #0x18
+	cmp r4, #0x1
+	beq PokedexLoadAlternateWeight
+	add r0, r5, #0x0
 	mov r1, #0x0 @PKDX_GET_HEIGHT
 	bl TryGetAlternateSpeciesSize
 	cmp r0, #0x0
 	bne ReturnPokedexHeight
 	mov r0, r5
-	ldr r1, =0x81058E6 | 1
+	ldr r1, =SpeciesToNationalPokedexNum
+	bl bxr1
+	mov r5, r0
+	ldr r1, =0x8106704 | 1
 	bx r1
 
 ReturnPokedexHeight:
@@ -353,23 +393,21 @@ ReturnPokedexHeight:
 	mov r0, r5 @Store species in r0
 	ldr r1, =SpeciesToNationalPokedexNum
 	bl bxr1
-	ldr r1, =0x81058F6 | 1
+	mov r5, r0
+	ldr r1, =0x8106710 | 1
 	bx r1
 
-.pool
-@@0x8105A58 with r0
-PokedexLoadAlternateWeightHook:
-	lsl r3, r3, #0x18
-	lsr r3, r3, #0x18
-	mov r9, r3
-	mov r5, r1 @Save species
-	mov r0, r1
+PokedexLoadAlternateWeight:
+	add r0, r5, #0x0
 	mov r1, #0x1 @PKDX_GET_WEIGHT
 	bl TryGetAlternateSpeciesSize
 	cmp r0, #0x0
 	bne ReturnPokedexWeight
 	mov r0, r5
-	ldr r1, =0x8105A60 | 1
+	ldr r1, =SpeciesToNationalPokedexNum
+	bl bxr1
+	mov r5, r0
+	ldr r1, =0x8106724 | 1
 	bx r1
 
 ReturnPokedexWeight:
@@ -377,10 +415,29 @@ ReturnPokedexWeight:
 	mov r0, r5 @Store species in r0
 	ldr r1, =SpeciesToNationalPokedexNum
 	bl bxr1
-	ldr r1, =0x8105A70 | 1
+	mov r5, r0
+	ldr r1, =0x8106730 | 1
 bxr1:
 	bx r1
 
+.pool
+@0x8105886 with r0
+FixPokedexCheckNullSpeciesHook:
+	cmp r3, #0x0 @Null species
+	beq FixPokedexCheckNullSpeciesHook_ReturnNotSeenCaught
+	sub r0, r3, #0x1
+	lsl r0, r0, #0x10
+	lsr r3, r0, #0x10
+	lsr r0, r0, #0x13
+	lsl r0, r0, #0x18
+	lsr r4, r0, #0x18
+	ldr r0, =0x8105892 | 1
+	bx r0
+
+FixPokedexCheckNullSpeciesHook_ReturnNotSeenCaught:
+	mov r0, #0x0
+	ldr r1, =0x810596E | 1
+	bx r1
 
 .pool
 @0x80A0774 with r2
@@ -450,25 +507,10 @@ LoadMaxNumPokemonChooseBattleTowerStringHook:
 .pool
 @0x805B2EC with r0
 AutoRunHook:
-	mov r0, #0x2 @B-Button
-	and r5, r0
-	cmp r5, #0x0
-	bne CheckIfRunningAllowed
-	bl IsAutoRunEnabled
+	mov r0, r5
+	bl ShouldPlayerRun
 	cmp r0, #0x0
 	beq NoRunning
-
-CheckIfRunningAllowed:
-	ldr r2, =gEventObjects
-	ldrb r1, [r6, #0x5] @NPC Id
-	lsl r0, r1, #0x3
-	add r0, r1
-	lsl r0, #0x2
-	add r0, r2
-	ldrb r0, [r0, #0x1E]
-	bl IsRunningDisallowed
-	cmp r0, #0x0
-	bne NoRunning
 	ldr r0, =0x805B316 | 1
 	bx r0
 
@@ -499,6 +541,23 @@ TimeToHatchEgg:
 	mov r1, r5
 	bl TryDecrementingDaycareStepCounterIfMoreEggsToHatch
 	ldr r0, =0x8045914 | 1
+	bx r0
+
+.pool
+@0x8046A7E with r0
+SkipEggHatchNicknameHook:
+	bl ShouldSkipOfferEggHatchNickname
+	cmp r0, #0x0
+	beq SkipEggHatchNicknameReturn
+	ldr r0, =sEggHatchData
+	ldr r0, [r0]
+	mov r1, #11 @;Fade out
+	strb r1, [r0, #0x2]
+	ldr r0, =0x8046C0C | 1
+	bx r0
+
+SkipEggHatchNicknameReturn:
+	ldr r0, =0x8046A70 | 1
 	bx r0
 
 .pool
@@ -718,52 +777,6 @@ bxr2:
 
 SelectItemFromTMCaseReturn:
 	ldr r0, =0x8132B64 | 1
-	bx r0
-
-/*
-.pool
-@0x80DB3C8 with r1
-GrassFootstepNoiseHook:
-	cmp r0, #0x0
-	beq DoGrassFootstepNoise
-	mov r0, r3
-	mov r1, #0x4
-*/
-DoSeekSpriteAnim:
-	ldr r2, =SeekSpriteAnim
-	bl bxr2
-	b EndGrassFootstepNoiseCheck
-
-DoGrassFootstepNoise:
-	bl PlayGrassFootstepNoise
-EndGrassFootstepNoiseCheck:
-	mov r0, #0x0
-	add sp, sp, #0x4
-	pop {r4-r5, pc}
-
-.pool
-@0x80DB678 with r1
-VeryTallGrassFootstepNoiseHook:
-	cmp r0, #0x0
-	beq DoGrassFootstepNoise
-	mov r0, r3
-	mov r1, #0x6
-	b DoSeekSpriteAnim
-
-.pool
-@0x80DB9C4 with r1
-SandFootstepNoiseHook:
-	lsr r5, r0, #0x18
-	bl PlaySandFootstepNoise
-	mov r1, r5
-	cmp r1, #0x40
-	beq EndSandFootstepFieldEffect
-	lsl r0, r1, #0x4
-	ldr r3, =0x080DC9B4 | 1
-	bx r3
-
-EndSandFootstepFieldEffect:
-	ldr r0, =0x080DC9E6 | 1
 	bx r0
 
 .pool
@@ -1018,6 +1031,9 @@ CheckPlayerPressedStartButton:
 	and r0, r1
 	cmp r0, #0
 	beq CheckSelectButtonReturn
+	bl IsDexNavHudActive
+	cmp r0, #0x0
+	bne CheckSelectButtonReturn @No opening Start Menu while HUD is active
 	ldr r2, =0x0806C4CA | 1
 	bx r2
 
@@ -1039,6 +1055,8 @@ DiveSpeedHook:
 	bx r0
 
 MoveFasterOnWater:
+	mov r0, r4
+	bl MovePlayerWhileSurfing
 	ldr r0, =0x805B2E0 | 1
 	bx r0
 
@@ -1088,6 +1106,27 @@ HealthBarChangeAmountHook:
 	str r4, [sp, #0x4]
 	ldr r4, =0x80498F0 | 1
 	bx r4
+
+.pool
+@0x8049942 with r1
+ExpBarChangeAmountHook:
+	lsl r0, r0, #0x10
+	lsr r5, r0, #0x10
+	mov r0, r8 @Bank
+	bl ShouldFillExpBarToMax
+	cmp r0, #0x0
+	beq ExpBarNormalChangeAmount
+	mov r0, #0x1
+	neg r4, r0
+	ldr r0, =0x804995C | 1
+	bx r0
+
+ExpBarNormalChangeAmount:
+	ldr r0, [r4, #0x4]
+	ldr r1, [r4, #0x8]
+	mov r3, r4
+	ldr r2, =0x804994C | 1
+	bx r2
 
 .pool
 @0x81E381C with r0
@@ -1173,7 +1212,17 @@ OpenPartyScreenBatonPassExplosionFix:
 	strb r3, [r4]
 
 OpenPartyScreenBatonPassExplosionFixReturn:
+	ldr r0, =gActiveBattler
+	ldrb r0, [r0]
+	ldr r1, =gBattlersCount
+	ldrb r1, [r1]
+	cmp r0, r1
+	bge OpenPartyScreenBatonPassExplosionFixNoStandbyMsg @Likely in Raid battles
 	ldr r0, =0x8024414 | 1
+	bx r0
+
+OpenPartyScreenBatonPassExplosionFixNoStandbyMsg:
+	ldr r0, =0x8024422 | 1
 	bx r0
 
 .pool
@@ -1287,6 +1336,52 @@ AIXItemStringHook:
 	bx r0
 
 .pool
+@0x8136A8E with 3
+SummaryScreenOTGenderColour:
+	add r2, #0x3
+	ldr r3, =GetMonData
+	bl bxr3
+	ldr r0, [r6]
+	add r0, r5
+	mov r1, #0x31 @OT Gender
+	ldr r3, =GetMonData
+	bl bxr3
+	mov r1, #0xFC
+	mov r2, sp
+	strb r1, [r2]
+	mov r1, #0x1
+	strb r1, [r2, #0x1]
+	mov r1, #0x7
+	cmp r0, #0x0
+	beq GetOtGender_Cont
+	mov r1, #0x1
+GetOtGender_Cont:
+	strb r1, [r2, #0x2]
+	ldr r0, [r6]
+	mov r2, #0xC1
+	lsl r2, #0x6 @0x3040
+	add r0, r2
+	mov r1, sp
+	mov r2, #8
+	ldr r3, =0x8136A9E | 1
+	bx r3
+
+.pool
+@0x8137F32 with r2
+SummaryScreen_TradeMonMetLocationHook:
+	ldr r2, =GetMonData
+	bl bxr2
+	lsl r0, r0, #0x18
+	lsr r5, r0, #0x18
+	ldr r0, [r7]
+	add r0, r4 @Mon
+	mov r1, r5 @Met Location
+	bl TryReplaceSummaryScreenLocationWithFarAwayLocation
+	mov r5, r0
+	ldr r1, =0x8137F3C | 1
+	bx r1
+
+.pool
 @0x8032CEC with r0
 LastUsedBallOverrideHook:
 	push {r4-r5, lr}
@@ -1301,6 +1396,97 @@ LastUsedBallOverrideHook:
 
 LastUsedBallOverrideHook_SkipBag: @Skips the palette fade to bag
 	ldr r0, =0x80324A4 | 1
+	bx r0
+
+.pool
+@0x8041384 with r1
+SitrusBerryOverworldEffectUpdate:
+	ldr r1, [sp, #0x8] @Item Index
+	cmp r1, #0x8E @Sitrus Berry
+	bne NotSitrusBerry
+	lsr r0, #0x1 @Reduce to 1/4
+
+NotSitrusBerry:  
+	cmp r0, #0x0
+	bne SitrusBerryOverworldReturn
+	mov r0, #0x1 @Restore at least 1 HP
+
+SitrusBerryOverworldReturn:
+	str r0, [sp] @HP to recover
+	ldr r1, =0x8041396 | 1
+	bx r1
+
+.pool
+@0x8141668 with r1
+SlotMachineExpandedCoinsDisplayFix:
+	lsl r0, #0x10
+	lsr r0, #0x10
+	mov r8, r0
+
+	mov r0, r9 @Coins
+	ldr r1, .OldMaxCoins
+	cmp r0, r1
+	blt SkipCoinsDisplayFix
+	mov r0, #0x0
+	mov r9, r1 @Coins
+	mov r8, r0 @0 Payout
+
+SkipCoinsDisplayFix:
+	mov r6, #0xFA
+	lsl r6, #0x2
+	ldr r0, =0x8141672 | 1
+	bx r0
+
+.align 2
+.OldMaxCoins: .word 9999
+
+.pool
+@0x80586E4 with r0
+RemoveWalkThroughWallCheat:
+	ldr r0, .3FF
+	cmp r1, r0
+	beq NotPassable
+	mov r0, #0xC0
+	lsl r0, #0x4
+	ldr r2, =0x080586EE | 1
+	bx r2
+
+NotPassable:
+	mov r0, #0x1
+	pop {r4-r7, pc}
+
+.align 2
+.3FF: .word 0x3FF
+
+.pool
+@0x809ABAA with r0
+@Swap order of mallocs so memory is moved around
+RemoveShopModifierCheats:
+	ldr r6, =sShopMenuItemStrings
+	ldrh r1, [r4, #0x10]
+	add r1, #0x1
+	lsl r0, r1, #0x3
+	add r0, r0, r1
+	ldr r1, =malloc
+	bl bxr1
+	str r0, [r6] @sShopMenuItemStrings
+	cmp r0, #0x0
+	beq FreeShopMemoryReturn
+
+	ldrh r0, [r4, #0x10]
+	add r0, #0x1
+	lsl r0, #0x3
+	ldr r1, =malloc
+	bl bxr1
+	str r0, [r7] @sShopMenuListMenu
+	cmp r0, #0x0
+	beq FreeShopMemoryReturn
+	ldr r0, =0x809ABE8 | 1
+	bx r0
+
+FreeShopMemoryReturn:
+	ldr r0, =0x809ABCE | 1
+bxr0:
 	bx r0
 
 .pool
@@ -1340,15 +1526,32 @@ LoadMapFromCameraTransition_DNSFixHook1:
 	ldr r0, =0x8055148 | 1
 	bx r0
 
-bxr0:
-	bx r0
-
 .pool
 @0x8055184 with r0
 LoadMapFromCameraTransition_DNSFixHook2:
 	ldr r0, [sp] @Old map header - saved above in Hook1
 	bl TryLoadTileset2OnCameraTransition
 	ldr r0, =0x80551A2 | 1
+	bx r0
+
+@0x8025B18 with r0
+AutoScrollBattleLevelUpBoxHook1:
+	bl ShouldCloseBattleLevelUpBox
+	cmp r0, #0x0
+	beq AutoScrollBattleLevelUpBoxHook_ReturnNo
+	ldr r0, =0x8025B20 | 1
+	bx r0
+
+AutoScrollBattleLevelUpBoxHook_ReturnNo:
+	ldr r0, =0x8025BDE | 1
+	bx r0
+
+@0x8025B38 with r0
+AutoScrollBattleLevelUpBoxHook2:
+	bl ShouldCloseBattleLevelUpBox
+	cmp r0, #0x0
+	beq AutoScrollBattleLevelUpBoxHook_ReturnNo
+	ldr r0, =0x8025B40 | 1
 	bx r0
 
 .pool

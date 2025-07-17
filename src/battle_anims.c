@@ -1080,6 +1080,30 @@ void AnimTask_GetTrappedMoveAnimId(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
+//Whirlwind
+
+//To move a mon off-screen when pushed out by Roar/Whirlwind
+void AnimTask_SlideOffScreen(u8 taskId)
+{
+	u8 bank, spriteId;
+
+	bank = LoadBattleAnimTarget(0);
+	spriteId = GetAnimBattlerSpriteId(gBattleAnimArgs[0]);
+
+	if (spriteId < MAX_SPRITES)
+	{
+		gTasks[taskId].data[0] = spriteId;
+		if (SIDE(bank) != B_SIDE_PLAYER)
+			gTasks[taskId].data[1] = gBattleAnimArgs[1];
+		else
+			gTasks[taskId].data[1] = -gBattleAnimArgs[1];
+
+		gTasks[taskId].func = (void*) (0x80990C0 | 1); //AnimTask_SlideOffScreen_Step
+	}
+	else
+		DestroyAnimVisualTask(taskId);
+}
+
 void AnimTask_GetRaidBattleStormLevel(u8 taskId)
 {
 	gBattleAnimArgs[0] = gNewBS->dynamaxData.stormLevel;
@@ -1449,6 +1473,85 @@ void SpriteCB_TranslateAnimSpriteToTargetMonLocationDestroyMatrix(struct Sprite 
 	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, coordType) + gBattleAnimArgs[3];
 	sprite->callback = StartAnimLinearTranslation;
 	StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
+}
+
+//Linearly translates a mon to a target offset. The horizontal offset
+//is mirrored for the opponent's pokemon, and the vertical offset
+//is only mirrored if arg 3 is set to 1.
+//arg 0: 0 = attacker, 1 = target
+//arg 1: target x pixel offset
+//arg 2: target y pixel offset
+//arg 3: mirror vertical translation for opposite battle side
+//arg 4: duration
+void SlideMonToOffset(struct Sprite *sprite)
+{
+	u8 battler;
+	u8 monSpriteId;
+	battler = LoadBattleAnimTarget(0);
+	if (!IsBattlerSpriteVisible(battler))
+		DestroyAnimSprite(sprite);
+	else
+	{
+		monSpriteId = gBattlerSpriteIds[battler];
+		if (SIDE(battler) != B_SIDE_PLAYER)
+		{
+			gBattleAnimArgs[1] = -gBattleAnimArgs[1];
+			if (gBattleAnimArgs[3] == 1)
+				gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+		}
+
+		sprite->data[0] = gBattleAnimArgs[4];
+		sprite->data[1] = gSprites[monSpriteId].pos1.x;
+		sprite->data[2] = gSprites[monSpriteId].pos1.x + gBattleAnimArgs[1];
+		sprite->data[3] = gSprites[monSpriteId].pos1.y;
+		sprite->data[4] = gSprites[monSpriteId].pos1.y + gBattleAnimArgs[2];
+		InitSpriteDataForLinearTranslation(sprite);
+		sprite->data[3] = 0;
+		sprite->data[4] = 0;
+		sprite->data[5] = monSpriteId;
+		sprite->invisible = TRUE;
+		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+		sprite->callback = TranslateMonSpriteLinearFixedPoint;
+	}
+}
+
+//Linearly slides a mon's bg picture back to its original sprite position.
+//The sprite parameter is a dummy sprite used for facilitating the movement with its callback.
+//arg 0: 1 = target or 0 = attacker
+//arg 1: direction (0 = horizontal and vertical, 1 = horizontal only, 2 = vertical only)
+//arg 2: duration
+void SlideMonToOriginalPos(struct Sprite *sprite)
+{
+	u8 battler,  monSpriteId;
+	battler = LoadBattleAnimTarget(0);
+
+	if (!IsBattlerSpriteVisible(battler))
+		DestroyAnimSprite(sprite);
+	else
+	{
+		monSpriteId = gBattlerSpriteIds[battler];
+
+		sprite->data[0] = gBattleAnimArgs[2];
+		sprite->data[1] = gSprites[monSpriteId].pos1.x + gSprites[monSpriteId].pos2.x;
+		sprite->data[2] = gSprites[monSpriteId].pos1.x;
+		sprite->data[3] = gSprites[monSpriteId].pos1.y + gSprites[monSpriteId].pos2.y;
+		sprite->data[4] = gSprites[monSpriteId].pos1.y;
+		InitSpriteDataForLinearTranslation(sprite);
+		sprite->data[3] = 0;
+		sprite->data[4] = 0;
+		sprite->data[5] = gSprites[monSpriteId].pos2.x;
+		sprite->data[6] = gSprites[monSpriteId].pos2.y;
+		sprite->invisible = TRUE;
+
+		if (gBattleAnimArgs[1] == 1)
+			sprite->data[2] = 0;
+		else if (gBattleAnimArgs[1] == 2)
+			sprite->data[1] = 0;
+
+		sprite->data[7] = gBattleAnimArgs[1];
+		sprite->data[7] |= monSpriteId << 8;
+		sprite->callback = (void*) (0x8098C78 | 1); //SlideMonToOriginalPos_Step
+	}
 }
 
 void SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles(struct Sprite* sprite)
@@ -3433,6 +3536,32 @@ void SpriteCB_ForcePalm(struct Sprite* sprite)
 	sprite->data[5] = gBattleAnimArgs[5]; //Pause before motion
 	sprite->data[6] = 0;
 	sprite->callback = SpriteCB_ForcePalmStep1;
+}
+
+//Gravity//
+
+//Shakes a mon bg horizontally and moves it downward linearly.
+//arg 0: battler
+//arg 1: x offset
+//arg 2: frame delay between each movement
+//arg 3: downward speed (subpixel)
+//arg 4: duration
+void AnimTask_ShakeAndSinkMon(u8 taskId)
+{
+	u8 spriteId = GetAnimBattlerSpriteId(gBattleAnimArgs[0]);
+	if (spriteId < MAX_SPRITES)
+	{	
+		gSprites[spriteId].pos2.x = gBattleAnimArgs[1];
+		gTasks[taskId].data[0] = spriteId;
+		gTasks[taskId].data[1] = gBattleAnimArgs[1];
+		gTasks[taskId].data[2] = gBattleAnimArgs[2];
+		gTasks[taskId].data[3] = gBattleAnimArgs[3];
+		gTasks[taskId].data[4] = gBattleAnimArgs[4];
+		gTasks[taskId].func = (void*) (0x80988F8 | 1); //AnimTask_ShakeAndSinkMon_Step
+		gTasks[taskId].func(taskId);
+	}
+	else
+		DestroyAnimVisualTask(taskId);
 }
 
 //Creates a sprite that moves right then then along the target.
@@ -5611,6 +5740,23 @@ u8 CalcHealthBarPixelChange(unusedArg u8 bank)
 	#endif
 }
 
+//Faster EXP Bar Change//
+
+bool8 ShouldFillExpBarToMax(unusedArg u8 bank)
+{
+	#ifdef FASTER_EXP_BAR_CHANGE
+	struct BattleBarInfo* expBar = &gBattleSpritesDataPtr->battleBars[bank];
+
+	if (expBar->oldValue == 0 && abs(expBar->receivedValue) >= expBar->maxValue)
+	{
+		expBar->currValue = expBar->maxValue;
+		return TRUE;
+	}
+	#endif
+
+	return FALSE;
+}
+
 //The original function would run through gBattlerSpriteIds until it found a spriteId
 //that matched. This would cause issues if there was a Pokemon missing from the field who
 //used to have the same spriteId as the current sprite in the animation.
@@ -5748,6 +5894,28 @@ void HandleSpeciesGfxDataChange(u8 bankAtk, u8 bankDef, u8 transformType)
 		gSprites[gBattlerSpriteIds[bankAtk]].pos1.y = GetBattlerSpriteDefault_Y(bankAtk);
 		StartSpriteAnim(&gSprites[gBattlerSpriteIds[bankAtk]], gBattleMonForms[bankAtk]);
 	}
+}
+
+//Move Animations & Special Animations//
+void DoMoveAnim(u16 move)
+{
+	gBattleAnimAttacker = gBankAttacker;
+	gBattleAnimTarget = gBankTarget;
+
+	if (IS_DOUBLE_BATTLE
+	&& gBattleMoves[move].target & MOVE_TARGET_ALL
+	&& SIDE(gBattleAnimAttacker) == SIDE(gBattleAnimTarget)) //Targeting same side
+	{
+		//Double spread move that is targeted at the partner
+		//Try setting anim target to other side of field so the anim looks normal
+		u8 foe = FOE(gBankAttacker);
+		if (!(gAbsentBattlerFlags & gBitTable[foe]))
+			gBattleAnimTarget = foe;
+		else if (!(gAbsentBattlerFlags & gBitTable[PARTNER(foe)]))
+			gBattleAnimTarget = PARTNER(foe);
+	}
+
+	LaunchBattleAnimation(gMoveAnimations, move, TRUE);
 }
 
 #define tBattlerId 	data[0]

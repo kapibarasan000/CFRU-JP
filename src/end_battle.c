@@ -4,8 +4,10 @@
 #include "../include/field_weather.h"
 #include "../include/item_menu.h"
 #include "../include/item_use.h"
+#include "../include/load_save.h"
 #include "../include/malloc.h"
 #include "../include/random.h"
+#include "../include/constants/maps.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainer_classes.h"
 
@@ -49,6 +51,9 @@ const u16 gEndBattleFlagClearTable[] =
 #endif
 #ifdef FLAG_NO_CATCHING_AND_RUNNING
 	FLAG_NO_CATCHING_AND_RUNNING,
+#endif
+#ifdef FLAG_ALWAYS_CATCHABLE
+	FLAG_ALWAYS_CATCHABLE,
 #endif
 #ifdef FLAG_WILD_CUSTOM_MOVES
 	FLAG_WILD_CUSTOM_MOVES,
@@ -402,6 +407,8 @@ u8 IsRunningFromBattleImpossible(void)
 	gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER))
+		return FALSE;
+	else if (RAID_BATTLE_END)
 		return FALSE;
 	else if (AreAllKindsOfRunningPrevented())
 		return TRUE;

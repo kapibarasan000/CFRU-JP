@@ -1,7 +1,9 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/string_util.h"
 
 #include "../include/new/battle_util.h"
+#include "../include/new/mega.h"
 #include "../include/new/multi.h"
 #include "../include/new/trainer_sliding.h"
 #include "../include/new/trainer_sliding_data.h"
@@ -126,14 +128,7 @@ void HandleIntroSlide(u8 terrain)
 	{
 		taskId = CreateTask(BattleIntroSlide3, 0);
 	}
-	/*
-	else if ((gBattleTypeFlags & BATTLE_TYPE_KYOGRE_GROUDON) && gGameVersion != VERSION_RUBY) //Why?
-	{
-		terrain = BATTLE_TERRAIN_UNDERWATER;
-		taskId = CreateTask(BattleIntroSlide2, 0);
-	}
-	*/
-	else if (terrain > BATTLE_TERRAIN_CHAMPION) //Terrain Champion
+	else if (terrain > BATTLE_TERRAIN_CHAMPION)
 	{
 		taskId = CreateTask(BattleIntroSlide3, 0);
 	}

@@ -88,6 +88,3 @@ PartnerSetupHook:
         bl ChooseProperPartnerController
         ldr r0, =0x800CE9C | 1
         bx r0
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-

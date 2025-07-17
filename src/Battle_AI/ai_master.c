@@ -326,7 +326,7 @@ u32 GetAIFlags(void)
 		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE; //Make partner smart
 	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_2) //No idea how these two work
 		flags = AI_SCRIPT_CHECK_BAD_MOVE;
-	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_3)
+	else if (gBattleTypeFlags & BATTLE_TYPE_LEGENDARY_FRLG)
 		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
 	else
 	{
