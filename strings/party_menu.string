@@ -60,3 +60,9 @@
 
 #org @gText_MaxPowderRemovesGigantamax
 [BUFFER1]は キョダイマックス\nできなくなった[PAUSE_UNTIL_PRESS]
+
+#org @gText_MintOfferGive
+[BUFFER1]の のうりょくを\nへんか させますか？
+
+#org @gText_MintUsed
+[BUFFER1]の のうりょくに\nへんかが おきたようだ！[PAUSE_UNTIL_PRESS]

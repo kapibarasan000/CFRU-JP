@@ -283,7 +283,9 @@ struct BoxPokemon
 {
     u32 personality;
     u32 otId;
-    u8 nickname[POKEMON_NAME_LENGTH - 1];
+    u8 nickname[POKEMON_NAME_LENGTH - 3];
+    u8 natureMint;
+    u8 hyperTraining;
     u8 teratype;
     u8 language;
     u8 isBadEgg:1;
@@ -305,8 +307,10 @@ typedef struct Pokemon
 {
 	u32 personality;	//0x0
 	u32 otid;			//0x4
-	u8 nickname[9];	//0x8
-    u8 teratype;
+	u8 nickname[7];	//0x8
+    u8 natureMint; //0xF
+    u8 hyperTraining; //0x10
+    u8 teratype; //0x11
 	u8 language;		//0x12
 	u8 sanity;			//0x13
 	u8 otname[7];

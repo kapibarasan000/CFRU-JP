@@ -1546,6 +1546,10 @@ static void ItemUseCB_MaxPowder(u8 taskId, TaskFunc func);
 static void Task_OfferGigantamaxChange(u8 taskId);
 static void Task_HandleGigantamaxChangeYesNoInput(u8 taskId);
 static void Task_ChangeGigantamax(u8 taskId);
+static void ItemUseCB_NatureMint(u8 taskId, TaskFunc func);
+static void Task_OfferNatureChange(u8 taskId);
+static void Task_HandleNatureChangeYesNoInput(u8 taskId);
+static void Task_ChangeNature(u8 taskId);
 
 void Task_ClosePartyMenuAfterText(u8 taskId)
 {
@@ -2797,6 +2801,90 @@ void FieldUseFunc_ExpShare(u8 taskId)
 {
     sItemUseOnFieldCB = Task_ExpShareField;
     SetUpItemUseOnFieldCallback(taskId);
+}
+
+void FieldUseFunc_NatureMint(u8 taskId)
+{
+	gItemUseCB = ItemUseCB_NatureMint;
+	SetUpItemUseCallback(taskId);
+}
+
+extern const u8 gText_MintOfferGive[];
+extern const u8 gText_MintUsed[];
+static void ItemUseCB_NatureMint(u8 taskId, TaskFunc func)
+{
+	u16 item = Var800E;
+	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+	u8 oldNature = mon->natureMint != 0 ? mon->natureMint - 1 : GetNature(mon);
+	u8 newNature = ItemId_GetMystery2(item);
+
+	PlaySE(SE_SELECT);
+
+	switch (oldNature)
+	{
+		case NATURE_HARDY:
+		case NATURE_DOCILE:
+		case NATURE_BASHFUL:
+		case NATURE_QUIRKY:
+			oldNature = NATURE_SERIOUS;
+	}
+
+	if (newNature != oldNature)
+	{
+		GetMonNickname(mon, gStringVar1);
+		StringExpandPlaceholders(gStringVar4, gText_MintOfferGive);
+		DisplayPartyMenuMessage(gStringVar4, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = Task_OfferNatureChange;
+	}
+	else //No Effect
+	{
+		gPartyMenuUseExitCallback = FALSE;
+		DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = func;
+	}
+}
+
+static void Task_OfferNatureChange(u8 taskId)
+{
+	if (IsPartyMenuTextPrinterActive() != TRUE)
+	{
+		PartyMenuDisplayYesNoMenu();
+		gTasks[taskId].func = Task_HandleNatureChangeYesNoInput;
+	}
+}
+
+static void Task_HandleNatureChangeYesNoInput(u8 taskId)
+{
+	switch (Menu_ProcessInputNoWrapClearOnChoose())
+	{
+		case 0:
+			gTasks[taskId].func = Task_ChangeNature;
+			break;
+		case MENU_B_PRESSED:
+			PlaySE(SE_SELECT);
+			// Fallthrough
+		case 1:
+			gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+			break;
+	}
+}
+
+static void Task_ChangeNature(u8 taskId)
+{
+    u16 item = Var800E;
+    struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+    
+    PlaySE(SE_USE_ITEM);
+    GetMonNickname(mon, gStringVar1);
+    mon->natureMint = ItemId_GetMystery2(item) + 1;
+    CalculateMonStats(mon);
+    StringExpandPlaceholders(gStringVar4, gText_MintUsed);
+    DisplayPartyMenuMessage(gStringVar4, TRUE);
+    ScheduleBgCopyTilemapToVram(2);
+    gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+    RemoveBagItem(Var800E, 1);
 }
 
 void ChooseFaintedMon(u8 taskId, s8 *slotPtr)
