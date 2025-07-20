@@ -66,7 +66,7 @@ IMAGES = './Images'
 ASFLAGS = ['-mthumb', '-I', ASSEMBLY]
 LDFLAGS = ['BPRJ.ld', '-T', 'linker.ld']
 CFLAGS = ['-mthumb', '-mno-thumb-interwork', '-mcpu=arm7tdmi', '-mtune=arm7tdmi',
-          '-mno-long-calls', '-march=armv4t', '-Wall', '-Wextra', '-Os', '-fira-loop-pressure', '-fipa-pta']
+          '-mno-long-calls', '-march=armv4t', '-Wall', '-Wextra', '-O2', '-fira-loop-pressure', '-fipa-pta']
 
 
 class Master:

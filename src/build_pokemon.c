@@ -4270,7 +4270,7 @@ void CalculateMonStatsNew(struct Pokemon *mon)
 
 	for (i = STAT_HP; i < NUM_STATS; ++i)
 	{
-		ivs[i] = GetMonData(mon, MON_DATA_HP_IV + i, NULL);
+		ivs[i] = mon->hyperTraining & gBitTable[i] ? 31 : GetMonData(mon, MON_DATA_HP_IV + i, NULL);
 		evs[i] = GetMonData(mon, MON_DATA_HP_EV + i, NULL);
 	}
 

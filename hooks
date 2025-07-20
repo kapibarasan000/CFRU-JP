@@ -696,6 +696,10 @@ AddFontHook 0809F456 2
 DakutenCheck 0809F3BE 1
 DakutenHealthBar 08048E36 0
 
+#ifdef CUSTOM_MULTICHOICE
+LoadCustomMultiChoiceWidthHook 0809C526 0
+#endif
+
 #ifdef SCROLLING_MULTICHOICE
 
 ##Scrolling Multichoice

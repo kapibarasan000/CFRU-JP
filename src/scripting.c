@@ -540,6 +540,52 @@ u8 sp019_CheckAttackPP(void)
 	return GetMonDataFromVar8003(MON_DATA_PP1 + slot);
 }
 
+bool8 CanHyperTraining(u16 partyId, u16 stat)
+{
+	return GetMonData(&gPlayerParty[partyId], MON_DATA_HP_IV + stat, NULL) != 31
+		&& !(gPlayerParty[partyId].hyperTraining & gBitTable[stat]);
+}
+
+bool8 sp12F_SetHyperTraining(void)
+{
+	u16 partyId = Var8004;
+	u16 stat = Var8005;
+	
+	if (partyId >= PARTY_SIZE)
+		return FALSE;
+
+	if (stat == SetAllIVs)
+	{
+		u8 count = 0;
+
+		for (u16 i = 0; i <= CheckIVs_SpDef; ++i)
+		{
+			if (CanHyperTraining(partyId, i))
+			{
+				gPlayerParty[partyId].hyperTraining |= gBitTable[i];
+				count++;
+			}
+		}
+
+		if (count)
+		{
+			CalculateMonStats(&gPlayerParty[partyId]);
+			return TRUE;
+		}
+	}
+	else
+	{
+		if (CanHyperTraining(partyId, stat))
+		{
+			gPlayerParty[partyId].hyperTraining |= gBitTable[stat];
+			CalculateMonStats(&gPlayerParty[partyId]);
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 
 // Trading Specials //
 ////////////////////////////////////////////////////////////////

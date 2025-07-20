@@ -179,6 +179,8 @@ sp11C_GiveRaidBattleRewards 081634D8
 sp12C_DoEnterPhraseScreen 08163518
 sp12D_CompareEnteredPhrase 0816351C
 
+sp12F_SetHyperTraining 08163524
+
 sp196_TryCopyTMNameToBuffer1 081636C0
 
 sp1AE_IsUntradableMonInParty 08163720

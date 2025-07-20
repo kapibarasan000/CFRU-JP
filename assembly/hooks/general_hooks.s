@@ -1625,3 +1625,21 @@ ActionConfirmed:
 	ldrb r2, [r4]
 	ldr r0, =0x801394E | 1
 	bx r0
+
+.pool
+@0x809C526 with r0
+LoadCustomMultiChoiceWidthHook:
+	cmp r5, #0x20
+	blt LoadNomalWidth
+	cmp r5, #0x25
+	bgt LoadNomalWidth
+	ldr r0, =0x2036FF8 @var8006
+	ldrb r4, [r0]
+	cmp r4, #0
+	beq LoadNomalWidth
+	ldr r0, =0x809C53E | 1
+	bx r0
+
+LoadNomalWidth:
+	ldr r0, =0x809C538 | 1
+	bx r0

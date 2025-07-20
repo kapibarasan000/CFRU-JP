@@ -261,3 +261,45 @@ Stop zooming！
 
 #org @gText_Exp_Share_Off
 がくしゅうそうちが オフになった
+
+#org @gText_HyperTrainingMonChoice
+すごいとっくんを する\nポケモンを えらんで ください
+
+#org @gText_GoldBottleCap
+きんのおうかん
+
+#org @gText_BottleCap
+ぎんのおうかん
+
+#org @gText_BottleCapChoice
+きんのおうかんと ぎんのおうかん\nどちらを つかいますか？
+
+#org @gText_HyperTrainingEnd
+[BUFFER1]は すごいとっくんで\nつよくなった！[PAUSE_UNTIL_PRESS]
+
+#org @gText_HyperTrainingHP
+ H P
+
+#org @gText_HyperTrainingATK
+こうげき
+
+#org @gText_HyperTrainingDEF
+ぼうぎょ
+
+#org @gText_HyperTrainingSPD
+すばやさ
+
+#org @gText_HyperTrainingSPATK
+とくこう
+
+#org @gText_HyperTrainingSPDEF
+とくぼう
+
+#org @gText_HyperTrainingStatChoice
+きたえる のうりょくを\nえらんで ください
+
+#org @gText_HyperTrainingCant
+これいじょう きたえる ことは\nできない ようだ[PAUSE_UNTIL_PRESS]
+
+#org @gText_HyperTrainingNoItem
+おうかんを もっていません[PAUSE_UNTIL_PRESS]

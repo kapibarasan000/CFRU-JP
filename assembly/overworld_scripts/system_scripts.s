@@ -385,6 +385,7 @@ EventScript_ShowSelectItems:
 	preparemsg gText_UseWhichRegisteredItem
 	waitmsg
 	callasm UseChosenRegisteredItem @;Fires when script ends
+	setvar 0x8006 0x13
 	switch 0x8004
 	case 2, EventScript_ShowSelectItems2
 	case 3, EventScript_ShowSelectItems3
@@ -961,6 +962,7 @@ SystemScript_DebugMenu:
 	multichoiceoption gText_DebugMenu_Level100Team 2
 	multichoiceoption gText_DebugMenu_MaxCoinage 3
 	multichoiceoption gText_DebugMenu_ShinyTeam 4
+	setvar 0x8006 0x13
 	multichoice 0x0 0x0 FIVE_MULTICHOICE_OPTIONS 0x0
 	switch LASTRESULT
 	case 0, SystemScript_DebugMenu_SetFlag
@@ -978,6 +980,7 @@ SystemScript_DebugMenu_SetFlag:
 	multichoiceoption gText_DebugMenu_Pokedexes 2
 	multichoiceoption gText_DebugMenu_FlySpots 3
 	multichoiceoption gText_DebugMenu_CustomFlag 4
+	setvar 0x8006 0x13
 	multichoice 0x0 0x0 FIVE_MULTICHOICE_OPTIONS 0x0
 	compare LASTRESULT 0x5
 	if greaterorequal _goto SystemScript_DebugMenu_End
@@ -991,6 +994,7 @@ SystemScript_DebugMenu_GiveItem:
 	multichoiceoption gText_DebugMenu_Berries 3
 	multichoiceoption gText_DebugMenu_TMs 4
 	multichoiceoption gText_DebugMenu_AllItems 5
+	setvar 0x8006 0x13
 	multichoice 0x0 0x0 SIX_MULTICHOICE_OPTIONS 0x0
 	compare LASTRESULT 0x6
 	if greaterorequal _goto SystemScript_DebugMenu_End
@@ -1063,3 +1067,79 @@ SystemScript_Exp_Share_Off:
 	msgboxsign
 	msgbox gText_Exp_Share_Off MSG_SIGN
 	goto EndScript
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+TestScript_HyperTraining:
+	lock
+	preparemsg gText_HyperTrainingMonChoice
+	waitmsg
+	Special 0x9F
+	waitstate
+	compare 0x8004 0x7
+	if equal _goto TestScript_HyperTrainingEnd
+	bufferpartypokemon 0x0 0x8004
+	multichoiceoption gText_GoldBottleCap 0
+	multichoiceoption gText_BottleCap 1
+	preparemsg gText_BottleCapChoice
+	waitmsg
+	setvar 0x8006 0xB
+	multichoice 0x11 0x8 TWO_MULTICHOICE_OPTIONS 0x0
+	compare LASTRESULT 0x0
+	if equal _goto TestScript_HyperTrainingGoldBottleCap
+	compare LASTRESULT 0x1
+	if equal _goto TestScript_HyperTrainingBottleCap
+
+TestScript_HyperTrainingEnd:
+	releaseall
+	end
+
+TestScript_HyperTrainingGoldBottleCap:
+	checkitem ITEM_GOLD_BOTTLE_CAP 1
+	compare LASTRESULT 0x0
+	if equal _goto TestScript_HyperTrainingNoItem
+	setvar 0x8005 0x6
+	special2 LASTRESULT 0x12F
+	compare LASTRESULT 0x0
+	if equal _goto TestScript_HyperTrainingCantMsg
+	sound 0x1
+	preparemsg gText_HyperTrainingEnd
+	waitmsg
+	removeitem ITEM_GOLD_BOTTLE_CAP 1
+	goto TestScript_HyperTrainingEnd
+
+TestScript_HyperTrainingBottleCap:
+	checkitem ITEM_BOTTLE_CAP 1
+	compare LASTRESULT 0x0
+	if equal _goto TestScript_HyperTrainingNoItem
+	multichoiceoption gText_HyperTrainingHP 0
+	multichoiceoption gText_HyperTrainingATK 1
+	multichoiceoption gText_HyperTrainingDEF 2
+	multichoiceoption gText_HyperTrainingSPD 3
+	multichoiceoption gText_HyperTrainingSPATK 4
+	multichoiceoption gText_HyperTrainingSPDEF 5
+	preparemsg gText_HyperTrainingStatChoice
+	waitmsg
+	setvar 0x8006 0x8
+	multichoice 0x14 0x1 SIX_MULTICHOICE_OPTIONS 0x0
+	compare LASTRESULT 0x7F
+	if equal _goto TestScript_HyperTrainingEnd
+	copyvar 0x8005 LASTRESULT
+	special2 LASTRESULT 0x12F
+	compare LASTRESULT 0x0
+	if equal _goto TestScript_HyperTrainingCantMsg
+	sound 0x1
+	preparemsg gText_HyperTrainingEnd
+	waitmsg
+	removeitem ITEM_BOTTLE_CAP 1
+	goto TestScript_HyperTrainingEnd
+
+TestScript_HyperTrainingCantMsg:
+	preparemsg gText_HyperTrainingCant
+	waitmsg
+	goto TestScript_HyperTrainingEnd
+
+TestScript_HyperTrainingNoItem:
+	preparemsg gText_HyperTrainingNoItem
+	waitmsg
+	goto TestScript_HyperTrainingEnd

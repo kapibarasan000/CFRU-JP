@@ -1215,7 +1215,7 @@ void SetMemoryForBagStorage(void)
 
 extern void* sBagBgTilemapBuffer;
 extern struct ListMenuItem* sBagListMenuItems;
-extern u8 (*sBagListMenuItemStrings)[20];
+extern u8 (*sBagListMenuItemStrings)[15];
 
 bool8 AllocateBagItemListBuffers(void)
 {
