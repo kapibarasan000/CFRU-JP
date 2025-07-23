@@ -220,14 +220,13 @@ bxr3:
 	bx r3
 
 .pool
-@0x802D9D8 with r0
+@0x802D1E8 with r0
 DoubleWildDexHook1:
 	push {r4-r5,lr}
 	sub sp, #0x14
 	bl LoadTargetPokedexSpecies
-	mov r1, #0xB
-	ldr r2, =0x802D1F0 | 1
-	bx r2
+	ldr r1, =0x802D1F6 | 1
+	bx r1
 
 .pool
 @0x802DAEC with r0
