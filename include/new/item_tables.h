@@ -4,1344 +4,1300 @@
 
 #ifdef EXPANDED_NEW_ITEMS
 
-#define gBag_InterrogationTiles ((void*)0x08E87028 - 0xFFFD8)
-#define gBag_InterrogationPal ((void*)0x08E870A0 - 0xFFFD8)
-#define gBag_ReturnTiles ((void*)0x08D870DC)
-#define gBag_ReturnPal ((void*)0x08D87164)
-#define gBag_MasterBallTiles ((void*)0x08E87154 - 0xFFFD8)
-#define gBag_MasterBallPal ((void*)0x08E87224 - 0xFFFD8)
-#define gBag_UltraBallTiles ((void*)0x08E8724C - 0xFFFD8)
-#define gBag_UltraBallPal ((void*)0x08E8730C - 0xFFFD8)
-#define gBag_GreatBallTiles ((void*)0x08E87334 - 0xFFFD8)
-#define gBag_GreatBallPal ((void*)0x08E87404 - 0xFFFD8)
-#define gBag_PokeBallTiles ((void*)0x08E8742C - 0xFFFD8)
-#define gBag_PokeBallPal ((void*)0x08E874DC - 0xFFFD8)
-#define gBag_SafariBallTiles ((void*)0x08E87500 - 0xFFFD8)
-#define gBag_SafariBallPal ((void*)0x08E875D0 - 0xFFFD8)
-#define gBag_NetBallTiles ((void*)0x08E875F8 - 0xFFFD8)
-#define gBag_NetBallPal ((void*)0x08E876CC - 0xFFFD8)
-#define gBag_DiveBallTiles ((void*)0x08E876F0 - 0xFFFD8)
-#define gBag_DiveBallPal ((void*)0x08E877B8 - 0xFFFD8)
-#define gBag_NestBallTiles ((void*)0x08E877DC - 0xFFFD8)
-#define gBag_NestBallPal ((void*)0x08E878A0 - 0xFFFD8)
-#define gBag_RepeatBallTiles ((void*)0x08E878C8 - 0xFFFD8)
-#define gBag_RepeatBallPal ((void*)0x08E8798C - 0xFFFD8)
-#define gBag_TimerBallTiles ((void*)0x08E879B4 - 0xFFFD8)
-#define gBag_TimerBallTPal ((void*)0x08E8798C - 0xFFFD8)
-#define gBag_LuxuryBallTiles ((void*)0x08E87A7C - 0xFFFD8)
-#define gBag_LuxuryBallPal ((void*)0x08E87B38 - 0xFFFD8)
-#define gBag_PremierBallTiles ((void*)0x08E87B60 - 0xFFFD8)
-#define gBag_PremierBallPal ((void*)0x08E87B38 - 0xFFFD8)
-#define gBag_PotionTiles ((void*)0x08E87C04 - 0xFFFD8)
-#define gBag_PotionPal ((void*)0x08E87CCC - 0xFFFD8)
-#define gBag_AntidoteTiles ((void*)0x08E87CF0 - 0xFFFD8)
-#define gBag_AntidotePal ((void*)0x08E87DA0 - 0xFFFD8)
-#define gBag_BurnHealTiles ((void*)0x08E87E0C - 0xFFFD8)
-#define gBag_BurnHealTPal ((void*)0x08E87DC4 - 0xFFFD8)
-#define gBag_IceHealTiles ((void*)0x08E87E0C - 0xFFFD8)
-#define gBag_IceHealPal ((void*)0x08E87DE8 - 0xFFFD8)
-#define gBag_AwakeningTiles ((void*)0x08E87E0C - 0xFFFD8)
-#define gBag_AwakeningPal ((void*)0x08E87EBC - 0xFFFD8)
-#define gBag_ParalyzHealTiles ((void*)0x08E87E0C - 0xFFFD8)
-#define gBag_ParalyzHealPal ((void*)0x08E87EE0 - 0xFFFD8)
-#define gBag_FullRestoreTiles ((void*)0x08E87F04 - 0xFFFD8)
-#define gBag_FullRestorePal ((void*)0x08E87FE8 - 0xFFFD8)
-#define gBag_MaxPotionTiles ((void*)0x08E87F04 - 0xFFFD8)
-#define gBag_MaxPotionPal ((void*)0x08E8800C - 0xFFFD8)
-#define gBag_HyperPotionTiles ((void*)0x08E87C04 - 0xFFFD8)
-#define gBag_HyperPotionPal ((void*)0x08E88030 - 0xFFFD8)
-#define gBag_SuperPotionTiles ((void*)0x08E87C04 - 0xFFFD8)
-#define gBag_SuperPotionPal ((void*)0x08E88054 - 0xFFFD8)
-#define gBag_FullHealTiles ((void*)0x08E88078 - 0xFFFD8)
-#define gBag_FullHealPal ((void*)0x08E88120 - 0xFFFD8)
-#define gBag_ReviveTiles ((void*)0x08E88148 - 0xFFFD8)
-#define gBag_RevivePal ((void*)0x08E88270 - 0xFFFD8)
-#define gBag_MaxReviveTiles ((void*)0x08E881A4 - 0xFFFD8)
-#define gBag_MaxRevivePal ((void*)0x08E88270 - 0xFFFD8)
-#define gBag_FreshWaterTiles ((void*)0x08E8828C - 0xFFFD8)
-#define gBag_FreshWaterPal ((void*)0x08E8833C - 0xFFFD8)
-#define gBag_SodaPopTiles ((void*)0x08E88360 - 0xFFFD8)
-#define gBag_SodaPopPal ((void*)0x08E883F4 - 0xFFFD8)
-#define gBag_LemonadeTiles ((void*)0x08E8841C - 0xFFFD8)
-#define gBag_LemonadePal ((void*)0x08E884DC - 0xFFFD8)
-#define gBag_MoomooMilkTiles ((void*)0x08E88504 - 0xFFFD8)
-#define gBag_MoomooMilkPal ((void*)0x08E885B4 - 0xFFFD8)
-#define gBag_EnergyPowderTiles ((void*)0x08E885DC - 0xFFFD8)
-#define gBag_EnergyPowderPal ((void*)0x08E88668 - 0xFFFD8)
-#define gBag_EnergyRootTiles ((void*)0x08E88688 - 0xFFFD8)
-#define gBag_EnergyRootPal ((void*)0x08E88754 - 0xFFFD8)
-#define gBag_HealPowderTiles ((void*)0x08E885DC - 0xFFFD8)
-#define gBag_HealPowderPal ((void*)0x08E88770 - 0xFFFD8)
-#define gBag_RevivalHerbTiles ((void*)0x08E88790 - 0xFFFD8)
-#define gBag_RevivalHerbPal ((void*)0x08E88860 - 0xFFFD8)
-#define gBag_EtherTiles ((void*)0x08E88880 - 0xFFFD8)
-#define gBag_EtherPal ((void*)0x08E88940 - 0xFFFD8)
-#define gBag_MaxEtherTiles ((void*)0x08E88880 - 0xFFFD8)
-#define gBag_MaxEtherPal ((void*)0x08E88964 - 0xFFFD8)
-#define gBag_ElixirTiles ((void*)0x08E88880 - 0xFFFD8)
-#define gBag_ElixirPal ((void*)0x08E88988 - 0xFFFD8)
-#define gBag_MaxElixirTiles ((void*)0x08E88880 - 0xFFFD8)
-#define gBag_MaxElixirPal ((void*)0x08E889AC - 0xFFFD8)
-#define gBag_LavaCookieTiles ((void*)0x08E889D0 - 0xFFFD8)
-#define gBag_LavaCookiePal ((void*)0x08E88A9C - 0xFFFD8)
-#define gBag_BlueFluteTiles ((void*)0x08E88AC0 - 0xFFFD8)
-#define gBag_BlueFlutePal ((void*)0x08E88B74 - 0xFFFD8)
-#define gBag_YellowFluteTiles ((void*)0x08E88AC0 - 0xFFFD8)
-#define gBag_YellowFlutePal ((void*)0x08E88B98 - 0xFFFD8)
-#define gBag_RedFluteTiles ((void*)0x08E88AC0 - 0xFFFD8)
-#define gBag_RedFlutePal ((void*)0x08E88BBC - 0xFFFD8)
-#define gBag_BlackFluteTiles ((void*)0x08E88AC0 - 0xFFFD8)
-#define gBag_BlackFlutePal ((void*)0x08E88BE0 - 0xFFFD8)
-#define gBag_WhiteFluteTiles ((void*)0x08E88AC0 - 0xFFFD8)
-#define gBag_WhiteFlutePal ((void*)0x08E88C04 - 0xFFFD8)
-#define gBag_BerryJuiceTiles ((void*)0x08E88C28 - 0xFFFD8)
-#define gBag_BerryJuicePal ((void*)0x08E88D08 - 0xFFFD8)
-#define gBag_SacredAshTiles ((void*)0x08E88D30 - 0xFFFD8)
-#define gBag_SacredAshPal ((void*)0x08E88DF0 - 0xFFFD8)
-#define gBag_ShoalSaltTiles ((void*)0x08E885DC - 0xFFFD8)
-#define gBag_ShoalSaltPal ((void*)0x08E88E14 - 0xFFFD8)
-#define gBag_ShoalShellTiles ((void*)0x08E88E34 - 0xFFFD8)
-#define gBag_ShoalShellPal ((void*)0x08E88F28 - 0xFFFD8)
-#define gBag_RedShardTiles ((void*)0x08E88F50 - 0xFFFD8)
-#define gBag_RedShardPal ((void*)0x08E88FAC - 0xFFFD8)
-#define gBag_BlueShardTiles ((void*)0x08E88F50 - 0xFFFD8)
-#define gBag_BlueShardPal ((void*)0x08E88FC4 - 0xFFFD8)
-#define gBag_YellowShardTiles ((void*)0x08E88F50 - 0xFFFD8)
-#define gBag_YellowShardPal ((void*)0x08E88FDC - 0xFFFD8)
-#define gBag_GreenShardTiles ((void*)0x08E88F50 - 0xFFFD8)
-#define gBag_GreenShardPal ((void*)0x08E88FF4 - 0xFFFD8)
+#define gItemIcon_InterrogationTiles ((void*)0x08E87028 - 0xFFFD8)
+#define gItemIcon_InterrogationPal ((void*)0x08E870A0 - 0xFFFD8)
+#define gItemIcon_ReturnTiles ((void*)0x08D870DC)
+#define gItemIcon_ReturnPal ((void*)0x08D87164)
+#define gItemIcon_MasterBallTiles ((void*)0x08E87154 - 0xFFFD8)
+#define gItemIcon_MasterBallPal ((void*)0x08E87224 - 0xFFFD8)
+#define gItemIcon_UltraBallTiles ((void*)0x08E8724C - 0xFFFD8)
+#define gItemIcon_UltraBallPal ((void*)0x08E8730C - 0xFFFD8)
+#define gItemIcon_GreatBallTiles ((void*)0x08E87334 - 0xFFFD8)
+#define gItemIcon_GreatBallPal ((void*)0x08E87404 - 0xFFFD8)
+#define gItemIcon_PokeBallTiles ((void*)0x08E8742C - 0xFFFD8)
+#define gItemIcon_PokeBallPal ((void*)0x08E874DC - 0xFFFD8)
+#define gItemIcon_SafariBallTiles ((void*)0x08E87500 - 0xFFFD8)
+#define gItemIcon_SafariBallPal ((void*)0x08E875D0 - 0xFFFD8)
+#define gItemIcon_NetBallTiles ((void*)0x08E875F8 - 0xFFFD8)
+#define gItemIcon_NetBallPal ((void*)0x08E876CC - 0xFFFD8)
+#define gItemIcon_DiveBallTiles ((void*)0x08E876F0 - 0xFFFD8)
+#define gItemIcon_DiveBallPal ((void*)0x08E877B8 - 0xFFFD8)
+#define gItemIcon_NestBallTiles ((void*)0x08E877DC - 0xFFFD8)
+#define gItemIcon_NestBallPal ((void*)0x08E878A0 - 0xFFFD8)
+#define gItemIcon_RepeatBallTiles ((void*)0x08E878C8 - 0xFFFD8)
+#define gItemIcon_RepeatBallPal ((void*)0x08E8798C - 0xFFFD8)
+#define gItemIcon_TimerBallTiles ((void*)0x08E879B4 - 0xFFFD8)
+#define gItemIcon_TimerBallTPal ((void*)0x08E8798C - 0xFFFD8)
+#define gItemIcon_LuxuryBallTiles ((void*)0x08E87A7C - 0xFFFD8)
+#define gItemIcon_LuxuryBallPal ((void*)0x08E87B38 - 0xFFFD8)
+#define gItemIcon_PremierBallTiles ((void*)0x08E87B60 - 0xFFFD8)
+#define gItemIcon_PremierBallPal ((void*)0x08E87B38 - 0xFFFD8)
+#define gItemIcon_PotionTiles ((void*)0x08E87C04 - 0xFFFD8)
+#define gItemIcon_PotionPal ((void*)0x08E87CCC - 0xFFFD8)
+#define gItemIcon_AntidoteTiles ((void*)0x08E87CF0 - 0xFFFD8)
+#define gItemIcon_AntidotePal ((void*)0x08E87DA0 - 0xFFFD8)
+#define gItemIcon_BurnHealTiles ((void*)0x08E87E0C - 0xFFFD8)
+#define gItemIcon_BurnHealTPal ((void*)0x08E87DC4 - 0xFFFD8)
+#define gItemIcon_IceHealTiles ((void*)0x08E87E0C - 0xFFFD8)
+#define gItemIcon_IceHealPal ((void*)0x08E87DE8 - 0xFFFD8)
+#define gItemIcon_AwakeningTiles ((void*)0x08E87E0C - 0xFFFD8)
+#define gItemIcon_AwakeningPal ((void*)0x08E87EBC - 0xFFFD8)
+#define gItemIcon_ParalyzHealTiles ((void*)0x08E87E0C - 0xFFFD8)
+#define gItemIcon_ParalyzHealPal ((void*)0x08E87EE0 - 0xFFFD8)
+#define gItemIcon_FullRestoreTiles ((void*)0x08E87F04 - 0xFFFD8)
+#define gItemIcon_FullRestorePal ((void*)0x08E87FE8 - 0xFFFD8)
+#define gItemIcon_MaxPotionTiles ((void*)0x08E87F04 - 0xFFFD8)
+#define gItemIcon_MaxPotionPal ((void*)0x08E8800C - 0xFFFD8)
+#define gItemIcon_HyperPotionTiles ((void*)0x08E87C04 - 0xFFFD8)
+#define gItemIcon_HyperPotionPal ((void*)0x08E88030 - 0xFFFD8)
+#define gItemIcon_SuperPotionTiles ((void*)0x08E87C04 - 0xFFFD8)
+#define gItemIcon_SuperPotionPal ((void*)0x08E88054 - 0xFFFD8)
+#define gItemIcon_FullHealTiles ((void*)0x08E88078 - 0xFFFD8)
+#define gItemIcon_FullHealPal ((void*)0x08E88120 - 0xFFFD8)
+#define gItemIcon_ReviveTiles ((void*)0x08E88148 - 0xFFFD8)
+#define gItemIcon_RevivePal ((void*)0x08E88270 - 0xFFFD8)
+#define gItemIcon_MaxReviveTiles ((void*)0x08E881A4 - 0xFFFD8)
+#define gItemIcon_MaxRevivePal ((void*)0x08E88270 - 0xFFFD8)
+#define gItemIcon_FreshWaterTiles ((void*)0x08E8828C - 0xFFFD8)
+#define gItemIcon_FreshWaterPal ((void*)0x08E8833C - 0xFFFD8)
+#define gItemIcon_SodaPopTiles ((void*)0x08E88360 - 0xFFFD8)
+#define gItemIcon_SodaPopPal ((void*)0x08E883F4 - 0xFFFD8)
+#define gItemIcon_LemonadeTiles ((void*)0x08E8841C - 0xFFFD8)
+#define gItemIcon_LemonadePal ((void*)0x08E884DC - 0xFFFD8)
+#define gItemIcon_MoomooMilkTiles ((void*)0x08E88504 - 0xFFFD8)
+#define gItemIcon_MoomooMilkPal ((void*)0x08E885B4 - 0xFFFD8)
+#define gItemIcon_EnergyPowderTiles ((void*)0x08E885DC - 0xFFFD8)
+#define gItemIcon_EnergyPowderPal ((void*)0x08E88668 - 0xFFFD8)
+#define gItemIcon_EnergyRootTiles ((void*)0x08E88688 - 0xFFFD8)
+#define gItemIcon_EnergyRootPal ((void*)0x08E88754 - 0xFFFD8)
+#define gItemIcon_HealPowderTiles ((void*)0x08E885DC - 0xFFFD8)
+#define gItemIcon_HealPowderPal ((void*)0x08E88770 - 0xFFFD8)
+#define gItemIcon_RevivalHerbTiles ((void*)0x08E88790 - 0xFFFD8)
+#define gItemIcon_RevivalHerbPal ((void*)0x08E88860 - 0xFFFD8)
+#define gItemIcon_EtherTiles ((void*)0x08E88880 - 0xFFFD8)
+#define gItemIcon_EtherPal ((void*)0x08E88940 - 0xFFFD8)
+#define gItemIcon_MaxEtherTiles ((void*)0x08E88880 - 0xFFFD8)
+#define gItemIcon_MaxEtherPal ((void*)0x08E88964 - 0xFFFD8)
+#define gItemIcon_ElixirTiles ((void*)0x08E88880 - 0xFFFD8)
+#define gItemIcon_ElixirPal ((void*)0x08E88988 - 0xFFFD8)
+#define gItemIcon_MaxElixirTiles ((void*)0x08E88880 - 0xFFFD8)
+#define gItemIcon_MaxElixirPal ((void*)0x08E889AC - 0xFFFD8)
+#define gItemIcon_LavaCookieTiles ((void*)0x08E889D0 - 0xFFFD8)
+#define gItemIcon_LavaCookiePal ((void*)0x08E88A9C - 0xFFFD8)
+#define gItemIcon_BlueFluteTiles ((void*)0x08E88AC0 - 0xFFFD8)
+#define gItemIcon_BlueFlutePal ((void*)0x08E88B74 - 0xFFFD8)
+#define gItemIcon_YellowFluteTiles ((void*)0x08E88AC0 - 0xFFFD8)
+#define gItemIcon_YellowFlutePal ((void*)0x08E88B98 - 0xFFFD8)
+#define gItemIcon_RedFluteTiles ((void*)0x08E88AC0 - 0xFFFD8)
+#define gItemIcon_RedFlutePal ((void*)0x08E88BBC - 0xFFFD8)
+#define gItemIcon_BlackFluteTiles ((void*)0x08E88AC0 - 0xFFFD8)
+#define gItemIcon_BlackFlutePal ((void*)0x08E88BE0 - 0xFFFD8)
+#define gItemIcon_WhiteFluteTiles ((void*)0x08E88AC0 - 0xFFFD8)
+#define gItemIcon_WhiteFlutePal ((void*)0x08E88C04 - 0xFFFD8)
+#define gItemIcon_BerryJuiceTiles ((void*)0x08E88C28 - 0xFFFD8)
+#define gItemIcon_BerryJuicePal ((void*)0x08E88D08 - 0xFFFD8)
+#define gItemIcon_SacredAshTiles ((void*)0x08E88D30 - 0xFFFD8)
+#define gItemIcon_SacredAshPal ((void*)0x08E88DF0 - 0xFFFD8)
+#define gItemIcon_ShoalSaltTiles ((void*)0x08E885DC - 0xFFFD8)
+#define gItemIcon_ShoalSaltPal ((void*)0x08E88E14 - 0xFFFD8)
+#define gItemIcon_ShoalShellTiles ((void*)0x08E88E34 - 0xFFFD8)
+#define gItemIcon_ShoalShellPal ((void*)0x08E88F28 - 0xFFFD8)
+#define gItemIcon_RedShardTiles ((void*)0x08E88F50 - 0xFFFD8)
+#define gItemIcon_RedShardPal ((void*)0x08E88FAC - 0xFFFD8)
+#define gItemIcon_BlueShardTiles ((void*)0x08E88F50 - 0xFFFD8)
+#define gItemIcon_BlueShardPal ((void*)0x08E88FC4 - 0xFFFD8)
+#define gItemIcon_YellowShardTiles ((void*)0x08E88F50 - 0xFFFD8)
+#define gItemIcon_YellowShardPal ((void*)0x08E88FDC - 0xFFFD8)
+#define gItemIcon_GreenShardTiles ((void*)0x08E88F50 - 0xFFFD8)
+#define gItemIcon_GreenShardPal ((void*)0x08E88FF4 - 0xFFFD8)
 
-extern const u8 gItemSprite_Rage_Candy_BarTiles[];
-extern const u8 gItemSprite_Rage_Candy_BarPal[];
-extern const u8 gItemSprite_Old_GateauTiles[];
-extern const u8 gItemSprite_Old_GateauPal[];
-extern const u8 gItemSprite_CasteliaconeTiles[];
-extern const u8 gItemSprite_CasteliaconePal[];
-extern const u8 gBag_LumioseGaletteTiles[];
-extern const u8 gBag_LumioseGalettePal[];
-extern const u8 gBag_ShalourSableTiles[];
-extern const u8 gBag_ShalourSablePal[];
-extern const u8 gBag_HealthWingTiles[];
-extern const u8 gBag_HealthWingPal[];
-extern const u8 gBag_MuscleWingTiles[];
-extern const u8 gBag_MuscleWingPal[];
-extern const u8 gBag_ResistWingTiles[];
-extern const u8 gBag_ResistWingPal[];
-extern const u8 gBag_GeniusWingTiles[];
-extern const u8 gBag_GeniusWingPal[];
-extern const u8 gBag_CleverWingTiles[];
-extern const u8 gBag_CleverWingPal[];
-extern const u8 gBag_SwiftWingTiles[];
-extern const u8 gBag_SwiftWingPal[];
+extern const u8 gItemIcon_Rage_Candy_BarTiles[];
+extern const u8 gItemIcon_Rage_Candy_BarPal[];
+extern const u8 gItemIcon_Old_GateauTiles[];
+extern const u8 gItemIcon_Old_GateauPal[];
+extern const u8 gItemIcon_CasteliaconeTiles[];
+extern const u8 gItemIcon_CasteliaconePal[];
+extern const u8 gItemIcon_Lumiose_GaletteTiles[];
+extern const u8 gItemIcon_Lumiose_GalettePal[];
+extern const u8 gItemIcon_Shalour_SableTiles[];
+extern const u8 gItemIcon_Shalour_SablePal[];
+extern const u8 gItemIcon_Health_WingTiles[];
+extern const u8 gItemIcon_Health_WingPal[];
+extern const u8 gItemIcon_Muscle_WingTiles[];
+extern const u8 gItemIcon_Muscle_WingPal[];
+extern const u8 gItemIcon_Resist_WingTiles[];
+extern const u8 gItemIcon_Resist_WingPal[];
+extern const u8 gItemIcon_Genius_WingTiles[];
+extern const u8 gItemIcon_Genius_WingPal[];
+extern const u8 gItemIcon_Clever_WingTiles[];
+extern const u8 gItemIcon_Clever_WingPal[];
+extern const u8 gItemIcon_Swift_WingTiles[];
+extern const u8 gItemIcon_Swift_WingPal[];
 
-#define gBag_HPUpTiles ((void*)0x08E8900C - 0xFFFD8)
-#define gBag_HPUpPal ((void*)0x08E890C4 - 0xFFFD8)
-#define gBag_ProteinTiles ((void*)0x08E890EC - 0xFFFD8)
-#define gBag_ProteinPal ((void*)0x08E8919C - 0xFFFD8)
-#define gBag_IronTiles ((void*)0x08E890EC - 0xFFFD8)
-#define gBag_IronPal ((void*)0x08E891C4 - 0xFFFD8)
-#define gBag_CarbosTiles ((void*)0x08E890EC - 0xFFFD8)
-#define gBag_CarbosPal ((void*)0x08E891EC - 0xFFFD8)
-#define gBag_CalciumTiles ((void*)0x08E890EC - 0xFFFD8)
-#define gBag_CalciumPal ((void*)0x08E89214 - 0xFFFD8)
-#define gBag_RareCandyTiles ((void*)0x08E8923C - 0xFFFD8)
-#define gBag_RareCandyPal ((void*)0x08E89300 - 0xFFFD8)
-#define gBag_PPUpTiles ((void*)0x08E8931C - 0xFFFD8)
-#define gBag_PPUpPal ((void*)0x08E893CC - 0xFFFD8)
-#define gBag_ZincTiles ((void*)0x08E890EC - 0xFFFD8)
-#define gBag_ZincPal ((void*)0x08E893F4 - 0xFFFD8)
-#define gBag_PPMaxTiles ((void*)0x08E8941C - 0xFFFD8)
-#define gBag_PPMaxPal ((void*)0x08E894C4 - 0xFFFD8)
+#define gItemIcon_HPUpTiles ((void*)0x08E8900C - 0xFFFD8)
+#define gItemIcon_HPUpPal ((void*)0x08E890C4 - 0xFFFD8)
+#define gItemIcon_ProteinTiles ((void*)0x08E890EC - 0xFFFD8)
+#define gItemIcon_ProteinPal ((void*)0x08E8919C - 0xFFFD8)
+#define gItemIcon_IronTiles ((void*)0x08E890EC - 0xFFFD8)
+#define gItemIcon_IronPal ((void*)0x08E891C4 - 0xFFFD8)
+#define gItemIcon_CarbosTiles ((void*)0x08E890EC - 0xFFFD8)
+#define gItemIcon_CarbosPal ((void*)0x08E891EC - 0xFFFD8)
+#define gItemIcon_CalciumTiles ((void*)0x08E890EC - 0xFFFD8)
+#define gItemIcon_CalciumPal ((void*)0x08E89214 - 0xFFFD8)
+#define gItemIcon_RareCandyTiles ((void*)0x08E8923C - 0xFFFD8)
+#define gItemIcon_RareCandyPal ((void*)0x08E89300 - 0xFFFD8)
+#define gItemIcon_PPUpTiles ((void*)0x08E8931C - 0xFFFD8)
+#define gItemIcon_PPUpPal ((void*)0x08E893CC - 0xFFFD8)
+#define gItemIcon_ZincTiles ((void*)0x08E890EC - 0xFFFD8)
+#define gItemIcon_ZincPal ((void*)0x08E893F4 - 0xFFFD8)
+#define gItemIcon_PPMaxTiles ((void*)0x08E8941C - 0xFFFD8)
+#define gItemIcon_PPMaxPal ((void*)0x08E894C4 - 0xFFFD8)
 
-extern const u8 gBag_MaxCandyTiles[];
-extern const u8 gBag_MaxCandyPal[];
+extern const u8 gItemIcon_Max_CandyTiles[];
+extern const u8 gItemIcon_Max_CandyPal[];
 
-#define gBag_GuardSpecTiles ((void*)0x08E89558 - 0xFFFD8)
-#define gBag_GuardSpecPal ((void*)0x08E894EC - 0xFFFD8)
-#define gBag_DireHitTiles ((void*)0x08E89558 - 0xFFFD8)
-#define gBag_DireHitPal ((void*)0x08E89510 - 0xFFFD8)
-#define gBag_XAttackTiles ((void*)0x08E89558 - 0xFFFD8)
-#define gBag_XAttackPal ((void*)0x08E89534 - 0xFFFD8)
-#define gBag_XDefendTiles ((void*)0x08E89558 - 0xFFFD8)
-#define gBag_XDefendPal ((void*)0x08E8963C - 0xFFFD8)
-#define gBag_XSpeedTiles ((void*)0x08E89558 - 0xFFFD8)
-#define gBag_XSpeedPal ((void*)0x08E89660 - 0xFFFD8)
-#define gBag_XAccuracyTiles ((void*)0x08E89558 - 0xFFFD8)
-#define gBag_XAccuracyPal ((void*)0x08E89684 - 0xFFFD8)
-#define gBag_XSpAtkTiles ((void*)0x08E89558 - 0xFFFD8)
-#define gBag_XSpAtkPal ((void*)0x08E896A8 - 0xFFFD8)
-#define gBag_PokeDollTiles ((void*)0x08E896CC - 0xFFFD8)
-#define gBag_PokeDollPal ((void*)0x08E897BC - 0xFFFD8)
-#define gBag_FluffyTailTiles ((void*)0x08E897D8 - 0xFFFD8)
-#define gBag_FluffyTailPal ((void*)0x08E898C8 - 0xFFFD8)
+#define gItemIcon_GuardSpecTiles ((void*)0x08E89558 - 0xFFFD8)
+#define gItemIcon_GuardSpecPal ((void*)0x08E894EC - 0xFFFD8)
+#define gItemIcon_DireHitTiles ((void*)0x08E89558 - 0xFFFD8)
+#define gItemIcon_DireHitPal ((void*)0x08E89510 - 0xFFFD8)
+#define gItemIcon_XAttackTiles ((void*)0x08E89558 - 0xFFFD8)
+#define gItemIcon_XAttackPal ((void*)0x08E89534 - 0xFFFD8)
+#define gItemIcon_XDefendTiles ((void*)0x08E89558 - 0xFFFD8)
+#define gItemIcon_XDefendPal ((void*)0x08E8963C - 0xFFFD8)
+#define gItemIcon_XSpeedTiles ((void*)0x08E89558 - 0xFFFD8)
+#define gItemIcon_XSpeedPal ((void*)0x08E89660 - 0xFFFD8)
+#define gItemIcon_XAccuracyTiles ((void*)0x08E89558 - 0xFFFD8)
+#define gItemIcon_XAccuracyPal ((void*)0x08E89684 - 0xFFFD8)
+#define gItemIcon_XSpAtkTiles ((void*)0x08E89558 - 0xFFFD8)
+#define gItemIcon_XSpAtkPal ((void*)0x08E896A8 - 0xFFFD8)
+#define gItemIcon_PokeDollTiles ((void*)0x08E896CC - 0xFFFD8)
+#define gItemIcon_PokeDollPal ((void*)0x08E897BC - 0xFFFD8)
+#define gItemIcon_FluffyTailTiles ((void*)0x08E897D8 - 0xFFFD8)
+#define gItemIcon_FluffyTailPal ((void*)0x08E898C8 - 0xFFFD8)
 
-extern const u8 gBag_BigMalasadaTiles[];
-extern const u8 gBag_BigMalasadaPal[];
+extern const u8 gItemIcon_Big_MalasadaTiles[];
+extern const u8 gItemIcon_Big_MalasadaPal[];
 
-#define gBag_SuperRepelTiles ((void*)0x08E898EC - 0xFFFD8)
-#define gBag_SuperRepelPal ((void*)0x08E8998C - 0xFFFD8)
-#define gBag_MaxRepelTiles ((void*)0x08E898EC - 0xFFFD8)
-#define gBag_MaxRepelPal ((void*)0x08E899B4 - 0xFFFD8)
-#define gBag_EscapeRopeTiles ((void*)0x08E899DC - 0xFFFD8)
-#define gBag_EscapeRopePal ((void*)0x08E89A90 - 0xFFFD8)
-#define gBag_RepelTiles ((void*)0x08E898EC - 0xFFFD8)
-#define gBag_RepelPal ((void*)0x08E89AB4 - 0xFFFD8)
+#define gItemIcon_SuperRepelTiles ((void*)0x08E898EC - 0xFFFD8)
+#define gItemIcon_SuperRepelPal ((void*)0x08E8998C - 0xFFFD8)
+#define gItemIcon_MaxRepelTiles ((void*)0x08E898EC - 0xFFFD8)
+#define gItemIcon_MaxRepelPal ((void*)0x08E899B4 - 0xFFFD8)
+#define gItemIcon_EscapeRopeTiles ((void*)0x08E899DC - 0xFFFD8)
+#define gItemIcon_EscapeRopePal ((void*)0x08E89A90 - 0xFFFD8)
+#define gItemIcon_RepelTiles ((void*)0x08E898EC - 0xFFFD8)
+#define gItemIcon_RepelPal ((void*)0x08E89AB4 - 0xFFFD8)
 
-extern const u8 gBag_LinkCableTiles[];
-extern const u8 gBag_LinkCablePal[];
-extern const u8 gBag_ProtectorTiles[];
-extern const u8 gBag_ProtectorPal[];
-extern const u8 gBag_ElectirizerTiles[];
-extern const u8 gBag_ElectirizerPal[];
-extern const u8 gBag_MagmarizerTiles[];
-extern const u8 gBag_MagmarizerPal[];
-extern const u8 gBag_DubiousDiskTiles[];
-extern const u8 gBag_DubiousDiskPal[];
-extern const u8 gBag_ReaperClothTiles[];
-extern const u8 gBag_ReaperClothPal[];
+extern const u8 gItemIcon_Linking_CordTiles[];
+extern const u8 gItemIcon_Linking_CordPal[];
+extern const u8 gItemIcon_ProtectorTiles[];
+extern const u8 gItemIcon_ProtectorPal[];
+extern const u8 gItemIcon_ElectirizerTiles[];
+extern const u8 gItemIcon_ElectirizerPal[];
+extern const u8 gItemIcon_MagmarizerTiles[];
+extern const u8 gItemIcon_MagmarizerPal[];
+extern const u8 gItemIcon_Dubious_DiskTiles[];
+extern const u8 gItemIcon_Dubious_DiskPal[];
+extern const u8 gItemIcon_Reaper_ClothTiles[];
+extern const u8 gItemIcon_Reaper_ClothPal[];
 
-#define gBag_SunStoneTiles ((void*)0x08E89ADC - 0xFFFD8)
-#define gBag_SunStonePal ((void*)0x08E89BD4 - 0xFFFD8)
-#define gBag_MoonStoneTiles ((void*)0x08E89BF0 - 0xFFFD8)
-#define gBag_MoonStonePal ((void*)0x08E89CC4 - 0xFFFD8)
-#define gBag_FireStoneTiles ((void*)0x08E89CE4 - 0xFFFD8)
-#define gBag_FireStonePal ((void*)0x08E89DD8 - 0xFFFD8)
-#define gBag_ThunderStoneTiles ((void*)0x08E89E00 - 0xFFFD8)
-#define gBag_ThunderStonePal ((void*)0x08E89EE8 - 0xFFFD8)
-#define gBag_WaterStoneTiles ((void*)0x08E89F08 - 0xFFFD8)
-#define gBag_WaterStonePal ((void*)0x08E89FE8 - 0xFFFD8)
-#define gBag_LeafStoneTiles ((void*)0x08E8A00C - 0xFFFD8)
-#define gBag_LeafStonePal ((void*)0x08E8A100 - 0xFFFD8)
+#define gItemIcon_SunStoneTiles ((void*)0x08E89ADC - 0xFFFD8)
+#define gItemIcon_SunStonePal ((void*)0x08E89BD4 - 0xFFFD8)
+#define gItemIcon_MoonStoneTiles ((void*)0x08E89BF0 - 0xFFFD8)
+#define gItemIcon_MoonStonePal ((void*)0x08E89CC4 - 0xFFFD8)
+#define gItemIcon_FireStoneTiles ((void*)0x08E89CE4 - 0xFFFD8)
+#define gItemIcon_FireStonePal ((void*)0x08E89DD8 - 0xFFFD8)
+#define gItemIcon_ThunderStoneTiles ((void*)0x08E89E00 - 0xFFFD8)
+#define gItemIcon_ThunderStonePal ((void*)0x08E89EE8 - 0xFFFD8)
+#define gItemIcon_WaterStoneTiles ((void*)0x08E89F08 - 0xFFFD8)
+#define gItemIcon_WaterStonePal ((void*)0x08E89FE8 - 0xFFFD8)
+#define gItemIcon_LeafStoneTiles ((void*)0x08E8A00C - 0xFFFD8)
+#define gItemIcon_LeafStonePal ((void*)0x08E8A100 - 0xFFFD8)
 
-extern const u8 gBag_ShinyStoneTiles[];
-extern const u8 gBag_ShinyStonePal[];
-extern const u8 gBag_DuskStoneTiles[];
-extern const u8 gBag_DuskStonePal[];
-extern const u8 gBag_DawnStoneTiles[];
-extern const u8 gBag_DawnStonePal[];
-extern const u8 gBag_IceStoneTiles[];
-extern const u8 gBag_IceStonePal[];
+extern const u8 gItemIcon_Shiny_StoneTiles[];
+extern const u8 gItemIcon_Shiny_StonePal[];
+extern const u8 gItemIcon_Dusk_StoneTiles[];
+extern const u8 gItemIcon_Dusk_StonePal[];
+extern const u8 gItemIcon_Dawn_StoneTiles[];
+extern const u8 gItemIcon_Dawn_StonePal[];
+extern const u8 gItemIcon_Ice_StoneTiles[];
+extern const u8 gItemIcon_Ice_StonePal[];
 
-#define gBag_TinyMushroomTiles ((void*)0x08E8A128 - 0xFFFD8)
-#define gBag_TinyMushroomPal ((void*)0x08E8A260 - 0xFFFD8)
-#define gBag_BigMushroomTiles ((void*)0x08E8A1A8 - 0xFFFD8)
-#define gBag_BigMushroomPal ((void*)0x08E8A260 - 0xFFFD8)
+#define gItemIcon_TinyMushroomTiles ((void*)0x08E8A128 - 0xFFFD8)
+#define gItemIcon_TinyMushroomPal ((void*)0x08E8A260 - 0xFFFD8)
+#define gItemIcon_BigMushroomTiles ((void*)0x08E8A1A8 - 0xFFFD8)
+#define gItemIcon_BigMushroomPal ((void*)0x08E8A260 - 0xFFFD8)
 
-extern const u8 gBag_BalmMushroomTiles[];
-extern const u8 gBag_BalmMushroomPal[];
+extern const u8 gItemIcon_Balm_MushroomTiles[];
+extern const u8 gItemIcon_Balm_MushroomPal[];
 
-#define gBag_PearlTiles ((void*)0x08E8A284 - 0xFFFD8)
-#define gBag_PearlPal ((void*)0x08E8A300 - 0xFFFD8)
-#define gBag_BigPearlTiles ((void*)0x08E8A328 - 0xFFFD8)
-#define gBag_BigPearlPal ((void*)0x08E8A300 - 0xFFFD8)
-#define gBag_StardustTiles ((void*)0x08E8A3E0 - 0xFFFD8)
-#define gBag_StardustPal ((void*)0x08E8A4A0 - 0xFFFD8)
-#define gBag_StarPieceTiles ((void*)0x08E8A4C4 - 0xFFFD8)
-#define gBag_StarPiecePal ((void*)0x08E8A4A0 - 0xFFFD8)
-#define gBag_NuggetTiles ((void*)0x08E8A548 - 0xFFFD8)
-#define gBag_NuggetPal ((void*)0x08E8A5D4 - 0xFFFD8)
-#define gBag_HeartScaleTiles ((void*)0x08E8A5F4 - 0xFFFD8)
-#define gBag_HeartScalePal ((void*)0x08E8A694 - 0xFFFD8)
+#define gItemIcon_PearlTiles ((void*)0x08E8A284 - 0xFFFD8)
+#define gItemIcon_PearlPal ((void*)0x08E8A300 - 0xFFFD8)
+#define gItemIcon_BigPearlTiles ((void*)0x08E8A328 - 0xFFFD8)
+#define gItemIcon_BigPearlPal ((void*)0x08E8A300 - 0xFFFD8)
+#define gItemIcon_StardustTiles ((void*)0x08E8A3E0 - 0xFFFD8)
+#define gItemIcon_StardustPal ((void*)0x08E8A4A0 - 0xFFFD8)
+#define gItemIcon_StarPieceTiles ((void*)0x08E8A4C4 - 0xFFFD8)
+#define gItemIcon_StarPiecePal ((void*)0x08E8A4A0 - 0xFFFD8)
+#define gItemIcon_NuggetTiles ((void*)0x08E8A548 - 0xFFFD8)
+#define gItemIcon_NuggetPal ((void*)0x08E8A5D4 - 0xFFFD8)
+#define gItemIcon_HeartScaleTiles ((void*)0x08E8A5F4 - 0xFFFD8)
+#define gItemIcon_HeartScalePal ((void*)0x08E8A694 - 0xFFFD8)
 
-extern const u8 gBag_RareBoneTiles[];
-extern const u8 gBag_RareBonePal[];
-extern const u8 gBag_PearlStringTiles[];
-extern const u8 gBag_PearlStringPal[];
-extern const u8 gBag_CometShardTiles[];
-extern const u8 gBag_CometShardPal[];
-extern const u8 gBag_BigNuggetTiles[];
-extern const u8 gBag_BigNuggetPal[];
-extern const u8 gBag_HoneyTiles[];
-extern const u8 gBag_HoneyPal[];
-extern const u8 gBag_PrettyWingTiles[];
-extern const u8 gBag_PrettyWingPal[];
-extern const u8 gBag_OvalStoneTiles[];
-extern const u8 gBag_OvalStonePal[];
-extern const u8 gBag_RazorClawTiles[];
-extern const u8 gBag_RazorClawPal[];
-extern const u8 gBag_RazorFangTiles[];
-extern const u8 gBag_RazorFangPal[];
+extern const u8 gItemIcon_Rare_BoneTiles[];
+extern const u8 gItemIcon_Rare_BonePal[];
+extern const u8 gItemIcon_Pearl_StringTiles[];
+extern const u8 gItemIcon_Pearl_StringPal[];
+extern const u8 gItemIcon_Comet_ShardTiles[];
+extern const u8 gItemIcon_Comet_ShardPal[];
+extern const u8 gItemIcon_Big_NuggetTiles[];
+extern const u8 gItemIcon_Big_NuggetPal[];
+extern const u8 gItemIcon_HoneyTiles[];
+extern const u8 gItemIcon_HoneyPal[];
+extern const u8 gItemIcon_Pretty_WingTiles[];
+extern const u8 gItemIcon_Pretty_WingPal[];
+extern const u8 gItemIcon_Oval_StoneTiles[];
+extern const u8 gItemIcon_Oval_StonePal[];
+extern const u8 gItemIcon_Razor_ClawTiles[];
+extern const u8 gItemIcon_Razor_ClawPal[];
+extern const u8 gItemIcon_Razor_FangTiles[];
+extern const u8 gItemIcon_Razor_FangPal[];
 
-#define gBag_OrangeMailTiles ((void*)0x08E8A6B0 - 0xFFFD8)
-#define gBag_OrangeMailPal ((void*)0x08E8A784 - 0xFFFD8)
-#define gBag_HarborMailTiles ((void*)0x08E8A7A4 - 0xFFFD8)
-#define gBag_HarborMailPal ((void*)0x08E8A86C - 0xFFFD8)
-#define gBag_GlitterMailTiles ((void*)0x08E8A88C - 0xFFFD8)
-#define gBag_GlitterMailPal ((void*)0x08E8A968 - 0xFFFD8)
-#define gBag_MechMailTiles ((void*)0x08E8A990 - 0xFFFD8)
-#define gBag_MechMailPal ((void*)0x08E8AA6C - 0xFFFD8)
-#define gBag_WoodMailTiles ((void*)0x08E8AA8C - 0xFFFD8)
-#define gBag_WoodMailPal ((void*)0x08E8AB6C - 0xFFFD8)
-#define gBag_WaveMailTiles ((void*)0x08E8AB8C - 0xFFFD8)
-#define gBag_WaveMailPal ((void*)0x08E8AC64 - 0xFFFD8)
-#define gBag_BeadMailTiles ((void*)0x08E8AC84 - 0xFFFD8)
-#define gBag_BeadMailPal ((void*)0x08E8AD44 - 0xFFFD8)
-#define gBag_ShadowMailTiles ((void*)0x08E8AD64 - 0xFFFD8)
-#define gBag_ShadowMailPal ((void*)0x08E8AE38 - 0xFFFD8)
-#define gBag_TropicMailTiles ((void*)0x08E8AE5C - 0xFFFD8)
-#define gBag_TropicMailPal ((void*)0x08E8AF40 - 0xFFFD8)
-#define gBag_DreamMailTiles ((void*)0x08E8AF64 - 0xFFFD8)
-#define gBag_DreamMailPal ((void*)0x08E8B044 - 0xFFFD8)
-#define gBag_FabMailTiles ((void*)0x08E8B064 - 0xFFFD8)
-#define gBag_FabMailPal ((void*)0x08E8B12C - 0xFFFD8)
-#define gBag_RetroMailTiles ((void*)0x08E8B148 - 0xFFFD8)
-#define gBag_RetroMailPal ((void*)0x08E8B1E0 - 0xFFFD8)
-#define gBag_CheriBerryTiles ((void*)0x08E8B200 - 0xFFFD8)
-#define gBag_CheriBerryPal ((void*)0x08E8B2E8 - 0xFFFD8)
-#define gBag_ChestoBerryTiles ((void*)0x08E8B310 - 0xFFFD8)
-#define gBag_ChestoBerryPal ((void*)0x08E8B3D0 - 0xFFFD8)
-#define gBag_PechaBerryTiles ((void*)0x08E8B3F4 - 0xFFFD8)
-#define gBag_PechaBerryPal ((void*)0x08E8B4B4 - 0xFFFD8)
-#define gBag_RawstBerryTiles ((void*)0x08E8B4D8 - 0xFFFD8)
-#define gBag_RawstBerryPal ((void*)0x08E8B5BC - 0xFFFD8)
-#define gBag_AspearBerryTiles ((void*)0x08E8B5E0 - 0xFFFD8)
-#define gBag_AspearBerryPal ((void*)0x08E8B6C8 - 0xFFFD8)
-#define gBag_LeppaBerryTiles ((void*)0x08E8B6EC - 0xFFFD8)
-#define gBag_LeppaBerryPal ((void*)0x08E8B7A4 - 0xFFFD8)
-#define gBag_OranBerryTiles ((void*)0x08E8B7C8 - 0xFFFD8)
-#define gBag_OranBerryPal ((void*)0x08E8B88C - 0xFFFD8)
-#define gBag_PersimBerryTiles ((void*)0x08E8B8B0 - 0xFFFD8)
-#define gBag_PersimBerryPal ((void*)0x08E8B984 - 0xFFFD8)
-#define gBag_LumBerryTiles ((void*)0x08E8B9A8 - 0xFFFD8)
-#define gBag_LumBerryPal ((void*)0x08E8BA60 - 0xFFFD8)
-#define gBag_SitrusBerryTiles ((void*)0x08E8BA7C - 0xFFFD8)
-#define gBag_SitrusBerryPal ((void*)0x08E8BB48 - 0xFFFD8)
-#define gBag_FigyBerryTiles ((void*)0x08E8BB6C - 0xFFFD8)
-#define gBag_FigyBerryPal ((void*)0x08E8BC34 - 0xFFFD8)
-#define gBag_WikiBerryTiles ((void*)0x08E8BC58 - 0xFFFD8)
-#define gBag_WikiBerryPal ((void*)0x08E8BD3C - 0xFFFD8)
-#define gBag_MagoBerryTiles ((void*)0x08E8BD60 - 0xFFFD8)
-#define gBag_MagoBerryPal ((void*)0x08E8BE1C - 0xFFFD8)
-#define gBag_AguavBerryTiles ((void*)0x08E8BE40 - 0xFFFD8)
-#define gBag_AguavBerryPal ((void*)0x08E8BF2C - 0xFFFD8)
-#define gBag_IapapaBerryTiles ((void*)0x08E8BF4C - 0xFFFD8)
-#define gBag_IapapaBerryPal ((void*)0x08E8C034 - 0xFFFD8)
-#define gBag_RazzBerryTiles ((void*)0x08E8C058 - 0xFFFD8)
-#define gBag_RazzBerryPal ((void*)0x08E8C138 - 0xFFFD8)
-#define gBag_BlukBerryTiles ((void*)0x08E8C15C - 0xFFFD8)
-#define gBag_BlukBerryPal ((void*)0x08E8C24C - 0xFFFD8)
-#define gBag_NanabBerryTiles ((void*)0x08E8C270 - 0xFFFD8)
-#define gBag_NanabBerryPal ((void*)0x08E8C354 - 0xFFFD8)
-#define gBag_WepearBerryTiles ((void*)0x08E8C378 - 0xFFFD8)
-#define gBag_WepearBerryPal ((void*)0x08E8C440 - 0xFFFD8)
-#define gBag_PinapBerryTiles ((void*)0x08E8C45C - 0xFFFD8)
-#define gBag_PinapBerryPal ((void*)0x08E8C550 - 0xFFFD8)
-#define gBag_PomegBerryTiles ((void*)0x08E8C574 - 0xFFFD8)
-#define gBag_PomegBerryPal ((void*)0x08E8C628 - 0xFFFD8)
-#define gBag_KelpsyBerryTiles ((void*)0x08E8C64C - 0xFFFD8)
-#define gBag_KelpsyBerryPal ((void*)0x08E8C71C - 0xFFFD8)
-#define gBag_QualotBerryTiles ((void*)0x08E8C73C - 0xFFFD8)
-#define gBag_QualotBerryPal ((void*)0x08E8C808 - 0xFFFD8)
-#define gBag_HondewBerryTiles ((void*)0x08E8C82C - 0xFFFD8)
-#define gBag_HondewBerryPal ((void*)0x08E8C90C - 0xFFFD8)
-#define gBag_GrepaBerryTiles ((void*)0x08E8C930 - 0xFFFD8)
-#define gBag_GrepaBerryPal ((void*)0x08E8C9E4 - 0xFFFD8)
-#define gBag_TamatoBerryTiles ((void*)0x08E8CA08 - 0xFFFD8)
-#define gBag_TamatoBerryPal ((void*)0x08E8CAE4 - 0xFFFD8)
-#define gBag_CornnBerryTiles ((void*)0x08E8CB08 - 0xFFFD8)
-#define gBag_CornnBerryPal ((void*)0x08E8CBF4 - 0xFFFD8)
-#define gBag_MagostBerryTiles ((void*)0x08E8CC1C - 0xFFFD8)
-#define gBag_MagostBerryPal ((void*)0x08E8CCC4 - 0xFFFD8)
-#define gBag_RabutaBerryTiles ((void*)0x08E8CCE8 - 0xFFFD8)
-#define gBag_RabutaBerryPal ((void*)0x08E8CDE4 - 0xFFFD8)
-#define gBag_NomelBerryTiles ((void*)0x08E8CE08 - 0xFFFD8)
-#define gBag_NomelBerryPal ((void*)0x08E8CEAC - 0xFFFD8)
-#define gBag_SpelonBerryTiles ((void*)0x08E8CEC8 - 0xFFFD8)
-#define gBag_SpelonBerryPal ((void*)0x08E8CF8C - 0xFFFD8)
-#define gBag_PamtreBerryTiles ((void*)0x08E8CFAC - 0xFFFD8)
-#define gBag_PamtreBerryPal ((void*)0x08E8D08C - 0xFFFD8)
-#define gBag_WatmelBerryTiles ((void*)0x08E8D0B4 - 0xFFFD8)
-#define gBag_WatmelBerryPal ((void*)0x08E8D1C4 - 0xFFFD8)
-#define gBag_DurinBerryTiles ((void*)0x08E8D1E8 - 0xFFFD8)
-#define gBag_DurinBerryPal ((void*)0x08E8D2EC - 0xFFFD8)
-#define gBag_BelueBerryTiles ((void*)0x08E8D310 - 0xFFFD8)
-#define gBag_BelueBerryPal ((void*)0x08E8D3F4 - 0xFFFD8)
-#define gBag_LiechiBerryTiles ((void*)0x08E8D418 - 0xFFFD8)
-#define gBag_LiechiBerryPal ((void*)0x08E8D4F8 - 0xFFFD8)
-#define gBag_GanlonBerryTiles ((void*)0x08E8D518 - 0xFFFD8)
-#define gBag_GanlonBerryPal ((void*)0x08E8D5F8 - 0xFFFD8)
-#define gBag_SalacBerryTiles ((void*)0x08E8D618 - 0xFFFD8)
-#define gBag_SalacBerryPal ((void*)0x08E8D700 - 0xFFFD8)
-#define gBag_PetayaBerryTiles ((void*)0x08E8D720 - 0xFFFD8)
-#define gBag_PetayaBerrypal ((void*)0x08E8D818 - 0xFFFD8)
-#define gBag_ApicotBerryTiles ((void*)0x08E8D83C - 0xFFFD8)
-#define gBag_ApicotBerryPal ((void*)0x08E8D8F4 - 0xFFFD8)
-#define gBag_LansatBerryTiles ((void*)0x08E8D91C - 0xFFFD8)
-#define gBag_LansatBerryPal ((void*)0x08E8D9FC - 0xFFFD8)
-#define gBag_StarfBerryTiles ((void*)0x08E8DA20 - 0xFFFD8)
-#define gBag_StarfBerryPal ((void*)0x08E8DAF0 - 0xFFFD8)
-#define gBag_EnigmaBerryTiles ((void*)0x08E8DB14 - 0xFFFD8)
-#define gBag_EnigmaBerryPal ((void*)0x08E8DBE0 - 0xFFFD8)
+#define gItemIcon_OrangeMailTiles ((void*)0x08E8A6B0 - 0xFFFD8)
+#define gItemIcon_OrangeMailPal ((void*)0x08E8A784 - 0xFFFD8)
+#define gItemIcon_HarborMailTiles ((void*)0x08E8A7A4 - 0xFFFD8)
+#define gItemIcon_HarborMailPal ((void*)0x08E8A86C - 0xFFFD8)
+#define gItemIcon_GlitterMailTiles ((void*)0x08E8A88C - 0xFFFD8)
+#define gItemIcon_GlitterMailPal ((void*)0x08E8A968 - 0xFFFD8)
+#define gItemIcon_MechMailTiles ((void*)0x08E8A990 - 0xFFFD8)
+#define gItemIcon_MechMailPal ((void*)0x08E8AA6C - 0xFFFD8)
+#define gItemIcon_WoodMailTiles ((void*)0x08E8AA8C - 0xFFFD8)
+#define gItemIcon_WoodMailPal ((void*)0x08E8AB6C - 0xFFFD8)
+#define gItemIcon_WaveMailTiles ((void*)0x08E8AB8C - 0xFFFD8)
+#define gItemIcon_WaveMailPal ((void*)0x08E8AC64 - 0xFFFD8)
+#define gItemIcon_BeadMailTiles ((void*)0x08E8AC84 - 0xFFFD8)
+#define gItemIcon_BeadMailPal ((void*)0x08E8AD44 - 0xFFFD8)
+#define gItemIcon_ShadowMailTiles ((void*)0x08E8AD64 - 0xFFFD8)
+#define gItemIcon_ShadowMailPal ((void*)0x08E8AE38 - 0xFFFD8)
+#define gItemIcon_TropicMailTiles ((void*)0x08E8AE5C - 0xFFFD8)
+#define gItemIcon_TropicMailPal ((void*)0x08E8AF40 - 0xFFFD8)
+#define gItemIcon_DreamMailTiles ((void*)0x08E8AF64 - 0xFFFD8)
+#define gItemIcon_DreamMailPal ((void*)0x08E8B044 - 0xFFFD8)
+#define gItemIcon_FabMailTiles ((void*)0x08E8B064 - 0xFFFD8)
+#define gItemIcon_FabMailPal ((void*)0x08E8B12C - 0xFFFD8)
+#define gItemIcon_RetroMailTiles ((void*)0x08E8B148 - 0xFFFD8)
+#define gItemIcon_RetroMailPal ((void*)0x08E8B1E0 - 0xFFFD8)
+#define gItemIcon_CheriBerryTiles ((void*)0x08E8B200 - 0xFFFD8)
+#define gItemIcon_CheriBerryPal ((void*)0x08E8B2E8 - 0xFFFD8)
+#define gItemIcon_ChestoBerryTiles ((void*)0x08E8B310 - 0xFFFD8)
+#define gItemIcon_ChestoBerryPal ((void*)0x08E8B3D0 - 0xFFFD8)
+#define gItemIcon_PechaBerryTiles ((void*)0x08E8B3F4 - 0xFFFD8)
+#define gItemIcon_PechaBerryPal ((void*)0x08E8B4B4 - 0xFFFD8)
+#define gItemIcon_RawstBerryTiles ((void*)0x08E8B4D8 - 0xFFFD8)
+#define gItemIcon_RawstBerryPal ((void*)0x08E8B5BC - 0xFFFD8)
+#define gItemIcon_AspearBerryTiles ((void*)0x08E8B5E0 - 0xFFFD8)
+#define gItemIcon_AspearBerryPal ((void*)0x08E8B6C8 - 0xFFFD8)
+#define gItemIcon_LeppaBerryTiles ((void*)0x08E8B6EC - 0xFFFD8)
+#define gItemIcon_LeppaBerryPal ((void*)0x08E8B7A4 - 0xFFFD8)
+#define gItemIcon_OranBerryTiles ((void*)0x08E8B7C8 - 0xFFFD8)
+#define gItemIcon_OranBerryPal ((void*)0x08E8B88C - 0xFFFD8)
+#define gItemIcon_PersimBerryTiles ((void*)0x08E8B8B0 - 0xFFFD8)
+#define gItemIcon_PersimBerryPal ((void*)0x08E8B984 - 0xFFFD8)
+#define gItemIcon_LumBerryTiles ((void*)0x08E8B9A8 - 0xFFFD8)
+#define gItemIcon_LumBerryPal ((void*)0x08E8BA60 - 0xFFFD8)
+#define gItemIcon_SitrusBerryTiles ((void*)0x08E8BA7C - 0xFFFD8)
+#define gItemIcon_SitrusBerryPal ((void*)0x08E8BB48 - 0xFFFD8)
+#define gItemIcon_FigyBerryTiles ((void*)0x08E8BB6C - 0xFFFD8)
+#define gItemIcon_FigyBerryPal ((void*)0x08E8BC34 - 0xFFFD8)
+#define gItemIcon_WikiBerryTiles ((void*)0x08E8BC58 - 0xFFFD8)
+#define gItemIcon_WikiBerryPal ((void*)0x08E8BD3C - 0xFFFD8)
+#define gItemIcon_MagoBerryTiles ((void*)0x08E8BD60 - 0xFFFD8)
+#define gItemIcon_MagoBerryPal ((void*)0x08E8BE1C - 0xFFFD8)
+#define gItemIcon_AguavBerryTiles ((void*)0x08E8BE40 - 0xFFFD8)
+#define gItemIcon_AguavBerryPal ((void*)0x08E8BF2C - 0xFFFD8)
+#define gItemIcon_IapapaBerryTiles ((void*)0x08E8BF4C - 0xFFFD8)
+#define gItemIcon_IapapaBerryPal ((void*)0x08E8C034 - 0xFFFD8)
+#define gItemIcon_RazzBerryTiles ((void*)0x08E8C058 - 0xFFFD8)
+#define gItemIcon_RazzBerryPal ((void*)0x08E8C138 - 0xFFFD8)
+#define gItemIcon_BlukBerryTiles ((void*)0x08E8C15C - 0xFFFD8)
+#define gItemIcon_BlukBerryPal ((void*)0x08E8C24C - 0xFFFD8)
+#define gItemIcon_NanabBerryTiles ((void*)0x08E8C270 - 0xFFFD8)
+#define gItemIcon_NanabBerryPal ((void*)0x08E8C354 - 0xFFFD8)
+#define gItemIcon_WepearBerryTiles ((void*)0x08E8C378 - 0xFFFD8)
+#define gItemIcon_WepearBerryPal ((void*)0x08E8C440 - 0xFFFD8)
+#define gItemIcon_PinapBerryTiles ((void*)0x08E8C45C - 0xFFFD8)
+#define gItemIcon_PinapBerryPal ((void*)0x08E8C550 - 0xFFFD8)
+#define gItemIcon_PomegBerryTiles ((void*)0x08E8C574 - 0xFFFD8)
+#define gItemIcon_PomegBerryPal ((void*)0x08E8C628 - 0xFFFD8)
+#define gItemIcon_KelpsyBerryTiles ((void*)0x08E8C64C - 0xFFFD8)
+#define gItemIcon_KelpsyBerryPal ((void*)0x08E8C71C - 0xFFFD8)
+#define gItemIcon_QualotBerryTiles ((void*)0x08E8C73C - 0xFFFD8)
+#define gItemIcon_QualotBerryPal ((void*)0x08E8C808 - 0xFFFD8)
+#define gItemIcon_HondewBerryTiles ((void*)0x08E8C82C - 0xFFFD8)
+#define gItemIcon_HondewBerryPal ((void*)0x08E8C90C - 0xFFFD8)
+#define gItemIcon_GrepaBerryTiles ((void*)0x08E8C930 - 0xFFFD8)
+#define gItemIcon_GrepaBerryPal ((void*)0x08E8C9E4 - 0xFFFD8)
+#define gItemIcon_TamatoBerryTiles ((void*)0x08E8CA08 - 0xFFFD8)
+#define gItemIcon_TamatoBerryPal ((void*)0x08E8CAE4 - 0xFFFD8)
+#define gItemIcon_CornnBerryTiles ((void*)0x08E8CB08 - 0xFFFD8)
+#define gItemIcon_CornnBerryPal ((void*)0x08E8CBF4 - 0xFFFD8)
+#define gItemIcon_MagostBerryTiles ((void*)0x08E8CC1C - 0xFFFD8)
+#define gItemIcon_MagostBerryPal ((void*)0x08E8CCC4 - 0xFFFD8)
+#define gItemIcon_RabutaBerryTiles ((void*)0x08E8CCE8 - 0xFFFD8)
+#define gItemIcon_RabutaBerryPal ((void*)0x08E8CDE4 - 0xFFFD8)
+#define gItemIcon_NomelBerryTiles ((void*)0x08E8CE08 - 0xFFFD8)
+#define gItemIcon_NomelBerryPal ((void*)0x08E8CEAC - 0xFFFD8)
+#define gItemIcon_SpelonBerryTiles ((void*)0x08E8CEC8 - 0xFFFD8)
+#define gItemIcon_SpelonBerryPal ((void*)0x08E8CF8C - 0xFFFD8)
+#define gItemIcon_PamtreBerryTiles ((void*)0x08E8CFAC - 0xFFFD8)
+#define gItemIcon_PamtreBerryPal ((void*)0x08E8D08C - 0xFFFD8)
+#define gItemIcon_WatmelBerryTiles ((void*)0x08E8D0B4 - 0xFFFD8)
+#define gItemIcon_WatmelBerryPal ((void*)0x08E8D1C4 - 0xFFFD8)
+#define gItemIcon_DurinBerryTiles ((void*)0x08E8D1E8 - 0xFFFD8)
+#define gItemIcon_DurinBerryPal ((void*)0x08E8D2EC - 0xFFFD8)
+#define gItemIcon_BelueBerryTiles ((void*)0x08E8D310 - 0xFFFD8)
+#define gItemIcon_BelueBerryPal ((void*)0x08E8D3F4 - 0xFFFD8)
+#define gItemIcon_LiechiBerryTiles ((void*)0x08E8D418 - 0xFFFD8)
+#define gItemIcon_LiechiBerryPal ((void*)0x08E8D4F8 - 0xFFFD8)
+#define gItemIcon_GanlonBerryTiles ((void*)0x08E8D518 - 0xFFFD8)
+#define gItemIcon_GanlonBerryPal ((void*)0x08E8D5F8 - 0xFFFD8)
+#define gItemIcon_SalacBerryTiles ((void*)0x08E8D618 - 0xFFFD8)
+#define gItemIcon_SalacBerryPal ((void*)0x08E8D700 - 0xFFFD8)
+#define gItemIcon_PetayaBerryTiles ((void*)0x08E8D720 - 0xFFFD8)
+#define gItemIcon_PetayaBerrypal ((void*)0x08E8D818 - 0xFFFD8)
+#define gItemIcon_ApicotBerryTiles ((void*)0x08E8D83C - 0xFFFD8)
+#define gItemIcon_ApicotBerryPal ((void*)0x08E8D8F4 - 0xFFFD8)
+#define gItemIcon_LansatBerryTiles ((void*)0x08E8D91C - 0xFFFD8)
+#define gItemIcon_LansatBerryPal ((void*)0x08E8D9FC - 0xFFFD8)
+#define gItemIcon_StarfBerryTiles ((void*)0x08E8DA20 - 0xFFFD8)
+#define gItemIcon_StarfBerryPal ((void*)0x08E8DAF0 - 0xFFFD8)
+#define gItemIcon_EnigmaBerryTiles ((void*)0x08E8DB14 - 0xFFFD8)
+#define gItemIcon_EnigmaBerryPal ((void*)0x08E8DBE0 - 0xFFFD8)
 
-extern const u8 gBag_PrismScaleTiles[];
-extern const u8 gBag_PrismScalePal[];
-extern const u8 gBag_SachetTiles[];
-extern const u8 gBag_SachetPal[];
-extern const u8 gBag_WhipDreamTiles[];
-extern const u8 gBag_WhipDreamPal[];
+extern const u8 gItemIcon_Prism_ScaleTiles[];
+extern const u8 gItemIcon_Prism_ScalePal[];
+extern const u8 gItemIcon_SachetTiles[];
+extern const u8 gItemIcon_SachetPal[];
+extern const u8 gItemIcon_Whip_DreamTiles[];
+extern const u8 gItemIcon_Whip_DreamPal[];
 
-#define gBag_BrightPowderTiles ((void*)0x08E8DC00 - 0xFFFD8)
-#define gBag_BrightPowderPal ((void*)0x08E8DCBC - 0xFFFD8)
-#define gBag_WhiteHerbTiles ((void*)0x08E8DCDC - 0xFFFD8)
-#define gBag_WhiteHerbPal ((void*)0x08E8DD88 - 0xFFFD8)
-#define gBag_MachoBraceTiles ((void*)0x08E8DDA8 - 0xFFFD8)
-#define gBag_MachoBracePal ((void*)0x08E8DE94 - 0xFFFD8)
-#define gBag_ExpShareTiles ((void*)0x08E8DEBC - 0xFFFD8)
-#define gBag_ExpSharePal ((void*)0x08E8DFA8 - 0xFFFD8)
-#define gBag_QuickClawTiles ((void*)0x08E8DFD0 - 0xFFFD8)
-#define gBag_QuickClawPal ((void*)0x08E8E068 - 0xFFFD8)
-#define gBag_SootheBellTiles ((void*)0x08E8E088 - 0xFFFD8)
-#define gBag_SootheBellPal ((void*)0x08E8E14C - 0xFFFD8)
-#define gBag_MentalHerbTiles ((void*)0x08E8DCDC - 0xFFFD8)
-#define gBag_MentalHerbPal ((void*)0x08E8E170 - 0xFFFD8)
-#define gBag_ChoiceBandTiles ((void*)0x08E8E190 - 0xFFFD8)
-#define gBag_ChoiceBandPal ((void*)0x08E8E27C - 0xFFFD8)
-#define gBag_KingsRockTiles ((void*)0x08E8E2A4 - 0xFFFD8)
-#define gBag_KingsRockPal ((void*)0x08E8E394 - 0xFFFD8)
-#define gBag_SilverPowderTiles ((void*)0x08E8E3B0 - 0xFFFD8)
-#define gBag_SilverPowderPal ((void*)0x08E8E43C - 0xFFFD8)
-#define gBag_AmuletCoinTiles ((void*)0x08E8E460 - 0xFFFD8)
-#define gBag_AmuletCoinPal ((void*)0x08E8E4F8 - 0xFFFD8)
-#define gBag_CleanseTagTiles ((void*)0x08E8E51C - 0xFFFD8)
-#define gBag_CleanseTagPal ((void*)0x08E8E5C0 - 0xFFFD8)
-#define gBag_SoulDewTiles ((void*)0x08E8E5E0 - 0xFFFD8)
-#define gBag_SoulDewPal ((void*)0x08E8E674 - 0xFFFD8)
-#define gBag_DeepSeaToothTiles ((void*)0x08E8E694 - 0xFFFD8)
-#define gBag_DeepSeaToothPal ((void*)0x08E8E748 - 0xFFFD8)
-#define gBag_DeepSeaScaleTiles ((void*)0x08E8E76C - 0xFFFD8)
-#define gBag_DeepSeaScalePal ((void*)0x08E8E814 - 0xFFFD8)
-#define gBag_SmokeBallTiles ((void*)0x08E8E834 - 0xFFFD8)
-#define gBag_SmokeBallPal ((void*)0x08E8E8EC - 0xFFFD8)
-#define gBag_EverstoneTiles ((void*)0x08E8E910 - 0xFFFD8)
-#define gBag_EverstonePal ((void*)0x08E8E9C4 - 0xFFFD8)
-#define gBag_FocusBandTiles ((void*)0x08E8E9E0 - 0xFFFD8)
-#define gBag_FocusBandPal ((void*)0x08E8EAD0 - 0xFFFD8)
-#define gBag_LuckyEggTiles ((void*)0x08E8EAF8 - 0xFFFD8)
-#define gBag_LuckyEggPal ((void*)0x08E8EB80 - 0xFFFD8)
-#define gBag_ScopeLensTiles ((void*)0x08E8EB98 - 0xFFFD8)
-#define gBag_ScopeLensPal ((void*)0x08E8EC98 - 0xFFFD8)
-#define gBag_MetalCoatTiles ((void*)0x08E8ECC0 - 0xFFFD8)
-#define gBag_MetalCoatPal ((void*)0x08E8ED7C - 0xFFFD8)
-#define gBag_LeftoversTiles ((void*)0x08E8ED9C - 0xFFFD8)
-#define gBag_LeftoversPal ((void*)0x08E8EE40 - 0xFFFD8)
-#define gBag_DragonScaleTiles ((void*)0x08E8EE64 - 0xFFFD8)
-#define gBag_DragonScalePal ((void*)0x08E8EF18 - 0xFFFD8)
-#define gBag_LightBallTiles ((void*)0x08E8EF38 - 0xFFFD8)
-#define gBag_LightBallPal ((void*)0x08E8EFCC - 0xFFFD8)
-#define gBag_SoftSandTiles ((void*)0x08E8EFF0 - 0xFFFD8)
-#define gBag_SoftSandPal ((void*)0x08E8F0AC - 0xFFFD8)
-#define gBag_HardStoneTiles ((void*)0x08E8F0CC - 0xFFFD8)
-#define gBag_HardStonePal ((void*)0x08E8F180 - 0xFFFD8)
-#define gBag_MiracleSeedTiles ((void*)0x08E8F1A4 - 0xFFFD8)
-#define gBag_MiracleSeedPal ((void*)0x08E8F254 - 0xFFFD8)
-#define gBag_BlackGlassesTiles ((void*)0x08E8F270 - 0xFFFD8)
-#define gBag_BlackGlassesPal ((void*)0x08E8F2F8 - 0xFFFD8)
-#define gBag_BlackBeltTiles ((void*)0x08E8F310 - 0xFFFD8)
-#define gBag_BlackBeltPal ((void*)0x08E8F2F8 - 0xFFFD8)
-#define gBag_MagnetTiles ((void*)0x08E8F3D8 - 0xFFFD8)
-#define gBag_MagnetPal ((void*)0x08E8F488 - 0xFFFD8)
-#define gBag_MysticWaterTiles ((void*)0x08E8F4B0 - 0xFFFD8)
-#define gBag_MysticWaterPal ((void*)0x08E8F548 - 0xFFFD8)
-#define gBag_SharpBeakTiles ((void*)0x08E8F568 - 0xFFFD8)
-#define gBag_SharpBeakPal ((void*)0x08E8F624 - 0xFFFD8)
-#define gBag_PoisonBarbTiles ((void*)0x08E8F644 - 0xFFFD8)
-#define gBag_PoisonBarbPal ((void*)0x08E8F6CC - 0xFFFD8)
-#define gBag_NevermelticeTiles ((void*)0x08E8F6EC - 0xFFFD8)
-#define gBag_NevermelticePal ((void*)0x08E8F7B8 - 0xFFFD8)
-#define gBag_SpellTagTiles ((void*)0x08E8F7D4 - 0xFFFD8)
-#define gBag_SpellTagPal ((void*)0x08E8F874 - 0xFFFD8)
-#define gBag_TwistedSpoonTiles ((void*)0x08E8F894 - 0xFFFD8)
-#define gBag_TwistedSpoonPal ((void*)0x08E8F934 - 0xFFFD8)
-#define gBag_CharcoalTiles ((void*)0x08E8F94C - 0xFFFD8)
-#define gBag_CharcoalPal ((void*)0x08E8FA1C - 0xFFFD8)
-#define gBag_DragonFangTiles ((void*)0x08E8FA38 - 0xFFFD8)
-#define gBag_DragonFangPal ((void*)0x08E8FAEC - 0xFFFD8)
-#define gBag_SilkScarfTiles ((void*)0x08E8FB0C - 0xFFFD8)
-#define gBag_SilkScarfPal ((void*)0x08E8FC14 - 0xFFFD8)
-#define gBag_UpgradeTiles ((void*)0x08E8FC34 - 0xFFFD8)
-#define gBag_UpgradePal ((void*)0x08E8FCF0 - 0xFFFD8)
-#define gBag_ShellBellTiles ((void*)0x08E8FD18 - 0xFFFD8)
-#define gBag_ShellBellPal ((void*)0x08E88F28 - 0xFFFD8)
-#define gBag_SeaIncenseTiles ((void*)0x08E8FDF8 - 0xFFFD8)
-#define gBag_SeaIncensePal ((void*)0x08E8FEE0 - 0xFFFD8)
-#define gBag_LaxIncenseTiles ((void*)0x08E8FF08 - 0xFFFD8)
-#define gBag_LaxIncensePal ((void*)0x08E8FFF0 - 0xFFFD8)
-#define gBag_LuckyPunchTiles ((void*)0x08E90018 - 0xFFFD8)
-#define gBag_LuckyPunchPal ((void*)0x08E900DC - 0xFFFD8)
-#define gBag_MetalPowderTiles ((void*)0x08E900FC - 0xFFFD8)
-#define gBag_MetalPowderPal ((void*)0x08E901BC - 0xFFFD8)
-#define gBag_ThickClubTiles ((void*)0x08E901E0 - 0xFFFD8)
-#define gBag_ThickClubPal ((void*)0x08E90274 - 0xFFFD8)
-#define gBag_LeekTiles ((void*)0x08E90290 - 0xFFFD8)
-#define gBag_LeekPal ((void*)0x08E90330 - 0xFFFD8)
+#define gItemIcon_BrightPowderTiles ((void*)0x08E8DC00 - 0xFFFD8)
+#define gItemIcon_BrightPowderPal ((void*)0x08E8DCBC - 0xFFFD8)
+#define gItemIcon_WhiteHerbTiles ((void*)0x08E8DCDC - 0xFFFD8)
+#define gItemIcon_WhiteHerbPal ((void*)0x08E8DD88 - 0xFFFD8)
+#define gItemIcon_MachoBraceTiles ((void*)0x08E8DDA8 - 0xFFFD8)
+#define gItemIcon_MachoBracePal ((void*)0x08E8DE94 - 0xFFFD8)
+#define gItemIcon_ExpShareTiles ((void*)0x08E8DEBC - 0xFFFD8)
+#define gItemIcon_ExpSharePal ((void*)0x08E8DFA8 - 0xFFFD8)
+#define gItemIcon_QuickClawTiles ((void*)0x08E8DFD0 - 0xFFFD8)
+#define gItemIcon_QuickClawPal ((void*)0x08E8E068 - 0xFFFD8)
+#define gItemIcon_SootheBellTiles ((void*)0x08E8E088 - 0xFFFD8)
+#define gItemIcon_SootheBellPal ((void*)0x08E8E14C - 0xFFFD8)
+#define gItemIcon_MentalHerbTiles ((void*)0x08E8DCDC - 0xFFFD8)
+#define gItemIcon_MentalHerbPal ((void*)0x08E8E170 - 0xFFFD8)
+#define gItemIcon_ChoiceBandTiles ((void*)0x08E8E190 - 0xFFFD8)
+#define gItemIcon_ChoiceBandPal ((void*)0x08E8E27C - 0xFFFD8)
+#define gItemIcon_KingsRockTiles ((void*)0x08E8E2A4 - 0xFFFD8)
+#define gItemIcon_KingsRockPal ((void*)0x08E8E394 - 0xFFFD8)
+#define gItemIcon_SilverPowderTiles ((void*)0x08E8E3B0 - 0xFFFD8)
+#define gItemIcon_SilverPowderPal ((void*)0x08E8E43C - 0xFFFD8)
+#define gItemIcon_AmuletCoinTiles ((void*)0x08E8E460 - 0xFFFD8)
+#define gItemIcon_AmuletCoinPal ((void*)0x08E8E4F8 - 0xFFFD8)
+#define gItemIcon_CleanseTagTiles ((void*)0x08E8E51C - 0xFFFD8)
+#define gItemIcon_CleanseTagPal ((void*)0x08E8E5C0 - 0xFFFD8)
+#define gItemIcon_SoulDewTiles ((void*)0x08E8E5E0 - 0xFFFD8)
+#define gItemIcon_SoulDewPal ((void*)0x08E8E674 - 0xFFFD8)
+#define gItemIcon_DeepSeaToothTiles ((void*)0x08E8E694 - 0xFFFD8)
+#define gItemIcon_DeepSeaToothPal ((void*)0x08E8E748 - 0xFFFD8)
+#define gItemIcon_DeepSeaScaleTiles ((void*)0x08E8E76C - 0xFFFD8)
+#define gItemIcon_DeepSeaScalePal ((void*)0x08E8E814 - 0xFFFD8)
+#define gItemIcon_SmokeBallTiles ((void*)0x08E8E834 - 0xFFFD8)
+#define gItemIcon_SmokeBallPal ((void*)0x08E8E8EC - 0xFFFD8)
+#define gItemIcon_EverstoneTiles ((void*)0x08E8E910 - 0xFFFD8)
+#define gItemIcon_EverstonePal ((void*)0x08E8E9C4 - 0xFFFD8)
+#define gItemIcon_FocusBandTiles ((void*)0x08E8E9E0 - 0xFFFD8)
+#define gItemIcon_FocusBandPal ((void*)0x08E8EAD0 - 0xFFFD8)
+#define gItemIcon_LuckyEggTiles ((void*)0x08E8EAF8 - 0xFFFD8)
+#define gItemIcon_LuckyEggPal ((void*)0x08E8EB80 - 0xFFFD8)
+#define gItemIcon_ScopeLensTiles ((void*)0x08E8EB98 - 0xFFFD8)
+#define gItemIcon_ScopeLensPal ((void*)0x08E8EC98 - 0xFFFD8)
+#define gItemIcon_MetalCoatTiles ((void*)0x08E8ECC0 - 0xFFFD8)
+#define gItemIcon_MetalCoatPal ((void*)0x08E8ED7C - 0xFFFD8)
+#define gItemIcon_LeftoversTiles ((void*)0x08E8ED9C - 0xFFFD8)
+#define gItemIcon_LeftoversPal ((void*)0x08E8EE40 - 0xFFFD8)
+#define gItemIcon_DragonScaleTiles ((void*)0x08E8EE64 - 0xFFFD8)
+#define gItemIcon_DragonScalePal ((void*)0x08E8EF18 - 0xFFFD8)
+#define gItemIcon_LightBallTiles ((void*)0x08E8EF38 - 0xFFFD8)
+#define gItemIcon_LightBallPal ((void*)0x08E8EFCC - 0xFFFD8)
+#define gItemIcon_SoftSandTiles ((void*)0x08E8EFF0 - 0xFFFD8)
+#define gItemIcon_SoftSandPal ((void*)0x08E8F0AC - 0xFFFD8)
+#define gItemIcon_HardStoneTiles ((void*)0x08E8F0CC - 0xFFFD8)
+#define gItemIcon_HardStonePal ((void*)0x08E8F180 - 0xFFFD8)
+#define gItemIcon_MiracleSeedTiles ((void*)0x08E8F1A4 - 0xFFFD8)
+#define gItemIcon_MiracleSeedPal ((void*)0x08E8F254 - 0xFFFD8)
+#define gItemIcon_BlackGlassesTiles ((void*)0x08E8F270 - 0xFFFD8)
+#define gItemIcon_BlackGlassesPal ((void*)0x08E8F2F8 - 0xFFFD8)
+#define gItemIcon_BlackBeltTiles ((void*)0x08E8F310 - 0xFFFD8)
+#define gItemIcon_BlackBeltPal ((void*)0x08E8F2F8 - 0xFFFD8)
+#define gItemIcon_MagnetTiles ((void*)0x08E8F3D8 - 0xFFFD8)
+#define gItemIcon_MagnetPal ((void*)0x08E8F488 - 0xFFFD8)
+#define gItemIcon_MysticWaterTiles ((void*)0x08E8F4B0 - 0xFFFD8)
+#define gItemIcon_MysticWaterPal ((void*)0x08E8F548 - 0xFFFD8)
+#define gItemIcon_SharpBeakTiles ((void*)0x08E8F568 - 0xFFFD8)
+#define gItemIcon_SharpBeakPal ((void*)0x08E8F624 - 0xFFFD8)
+#define gItemIcon_PoisonBarbTiles ((void*)0x08E8F644 - 0xFFFD8)
+#define gItemIcon_PoisonBarbPal ((void*)0x08E8F6CC - 0xFFFD8)
+#define gItemIcon_NevermelticeTiles ((void*)0x08E8F6EC - 0xFFFD8)
+#define gItemIcon_NevermelticePal ((void*)0x08E8F7B8 - 0xFFFD8)
+#define gItemIcon_SpellTagTiles ((void*)0x08E8F7D4 - 0xFFFD8)
+#define gItemIcon_SpellTagPal ((void*)0x08E8F874 - 0xFFFD8)
+#define gItemIcon_TwistedSpoonTiles ((void*)0x08E8F894 - 0xFFFD8)
+#define gItemIcon_TwistedSpoonPal ((void*)0x08E8F934 - 0xFFFD8)
+#define gItemIcon_CharcoalTiles ((void*)0x08E8F94C - 0xFFFD8)
+#define gItemIcon_CharcoalPal ((void*)0x08E8FA1C - 0xFFFD8)
+#define gItemIcon_DragonFangTiles ((void*)0x08E8FA38 - 0xFFFD8)
+#define gItemIcon_DragonFangPal ((void*)0x08E8FAEC - 0xFFFD8)
+#define gItemIcon_SilkScarfTiles ((void*)0x08E8FB0C - 0xFFFD8)
+#define gItemIcon_SilkScarfPal ((void*)0x08E8FC14 - 0xFFFD8)
+#define gItemIcon_UpgradeTiles ((void*)0x08E8FC34 - 0xFFFD8)
+#define gItemIcon_UpgradePal ((void*)0x08E8FCF0 - 0xFFFD8)
+#define gItemIcon_ShellBellTiles ((void*)0x08E8FD18 - 0xFFFD8)
+#define gItemIcon_ShellBellPal ((void*)0x08E88F28 - 0xFFFD8)
+#define gItemIcon_SeaIncenseTiles ((void*)0x08E8FDF8 - 0xFFFD8)
+#define gItemIcon_SeaIncensePal ((void*)0x08E8FEE0 - 0xFFFD8)
+#define gItemIcon_LaxIncenseTiles ((void*)0x08E8FF08 - 0xFFFD8)
+#define gItemIcon_LaxIncensePal ((void*)0x08E8FFF0 - 0xFFFD8)
+#define gItemIcon_LuckyPunchTiles ((void*)0x08E90018 - 0xFFFD8)
+#define gItemIcon_LuckyPunchPal ((void*)0x08E900DC - 0xFFFD8)
+#define gItemIcon_MetalPowderTiles ((void*)0x08E900FC - 0xFFFD8)
+#define gItemIcon_MetalPowderPal ((void*)0x08E901BC - 0xFFFD8)
+#define gItemIcon_ThickClubTiles ((void*)0x08E901E0 - 0xFFFD8)
+#define gItemIcon_ThickClubPal ((void*)0x08E90274 - 0xFFFD8)
+#define gItemIcon_LeekTiles ((void*)0x08E90290 - 0xFFFD8)
+#define gItemIcon_LeekPal ((void*)0x08E90330 - 0xFFFD8)
 
-extern const u8 gBag_StrawberrySweetTiles[];
-extern const u8 gBag_StrawberrySweetPal[];
-extern const u8 gBag_BlueBerrySweetTiles[];
-extern const u8 gBag_BlueBerrySweetPal[];
-extern const u8 gBag_LoveSweetTiles[];
-extern const u8 gBag_LoveSweetPal[];
-extern const u8 gBag_CloverSweetTiles[];
-extern const u8 gBag_CloverSweetPal[];
-extern const u8 gBag_FlowerSweetTiles[];
-extern const u8 gBag_FlowerSweetPal[];
-extern const u8 gBag_RibbonSweetTiles[];
-extern const u8 gBag_RibbonSweetPal[];
-extern const u8 gBag_StarSweetTiles[];
-extern const u8 gBag_StarSweetPal[];
-extern const u8 gBag_SweetAppleTiles[];
-extern const u8 gBag_SweetApplePal[];
-extern const u8 gBag_TartAppleTiles[];
-extern const u8 gBag_TartApplePal[];
-extern const u8 gBagCrackedPotTiles[];
-extern const u8 gBagCrackedPotPal[];
-extern const u8 gBag_ChippedPotTiles[];
-extern const u8 gBag_ChippedPotPal[];
-extern const u8 gBag_GalarianCuffTiles[];
-extern const u8 gBag_GalarianCuffPal[];
-extern const u8 gBag_GalarianCrownTiles[];
-extern const u8 gBag_GalarianCrownPal[];
-extern const u8 gBag_CherishBallTiles[];
-extern const u8 gBag_CherishBallPal[];
-extern const u8 gBag_DuskBallTiles[];
-extern const u8 gBag_DuskBallPal[];
-extern const u8 gBag_HealBallTiles[];
-extern const u8 gBag_HealBallPal[];
-extern const u8 gBag_QuickBallTiles[];
-extern const u8 gBag_QuickBallPal[];
-extern const u8 gBag_FastBallTiles[];
-extern const u8 gBag_FastBallPal[];
-extern const u8 gBag_LevelBallTiles[];
-extern const u8 gBag_LevelBallPal[];
-extern const u8 gBag_LureBallTiles[];
-extern const u8 gBag_LureBallPal[];
-extern const u8 gBag_HeavyBallTiles[];
-extern const u8 gBag_HeavyBallPal[];
-extern const u8 gBag_LoveBallTiles[];
-extern const u8 gBag_LoveBallPal[];
-extern const u8 gBag_FriendBallTiles[];
-extern const u8 gBag_FriendBallPal[];
-extern const u8 gBag_MoonBallTiles[];
-extern const u8 gBag_MoonBallPal[];
-extern const u8 gBag_SportBallTiles[];
-extern const u8 gBag_SportBallPal[];
-extern const u8 gBag_BeastBallTiles[];
-extern const u8 gBag_BeastBallPal[];
-extern const u8 gBag_DreamBallTiles[];
-extern const u8 gBag_DreamBallPal[];
-extern const u8 gBag_ParkBallTiles[];
-extern const u8 gBag_ParkBallPal[];
+extern const u8 gItemIcon_Strawberry_SweetTiles[];
+extern const u8 gItemIcon_Strawberry_SweetPal[];
+extern const u8 gItemIcon_Berry_SweetTiles[];
+extern const u8 gItemIcon_Berry_SweetPal[];
+extern const u8 gItemIcon_Love_SweetTiles[];
+extern const u8 gItemIcon_Love_SweetPal[];
+extern const u8 gItemIcon_Clover_SweetTiles[];
+extern const u8 gItemIcon_Clover_SweetPal[];
+extern const u8 gItemIcon_Flower_SweetTiles[];
+extern const u8 gItemIcon_Flower_SweetPal[];
+extern const u8 gItemIcon_Ribbon_SweetTiles[];
+extern const u8 gItemIcon_Ribbon_SweetPal[];
+extern const u8 gItemIcon_Star_SweetTiles[];
+extern const u8 gItemIcon_Star_SweetPal[];
+extern const u8 gItemIcon_Sweet_AppleTiles[];
+extern const u8 gItemIcon_Sweet_ApplePal[];
+extern const u8 gItemIcon_Tart_AppleTiles[];
+extern const u8 gItemIcon_Tart_ApplePal[];
+extern const u8 gItemIcon_Cracked_PotTiles[];
+extern const u8 gItemIcon_Cracked_PotPal[];
+extern const u8 gItemIcon_Chipped_PotTiles[];
+extern const u8 gItemIcon_Chipped_PotPal[];
+extern const u8 gItemIcon_Galarica_CuffTiles[];
+extern const u8 gItemIcon_Galarica_CuffPal[];
+extern const u8 gItemIcon_Galarica_WreathTiles[];
+extern const u8 gItemIcon_Galarica_WreathPal[];
+extern const u8 gItemIcon_Cherish_BallTiles[];
+extern const u8 gItemIcon_Cherish_BallPal[];
+extern const u8 gItemIcon_Dusk_BallTiles[];
+extern const u8 gItemIcon_Dusk_BallPal[];
+extern const u8 gItemIcon_Heal_BallTiles[];
+extern const u8 gItemIcon_Heal_BallPal[];
+extern const u8 gItemIcon_Quick_BallTiles[];
+extern const u8 gItemIcon_Quick_BallPal[];
+extern const u8 gItemIcon_Fast_BallTiles[];
+extern const u8 gItemIcon_Fast_BallPal[];
+extern const u8 gItemIcon_Level_BallTiles[];
+extern const u8 gItemIcon_Level_BallPal[];
+extern const u8 gItemIcon_Lure_BallTiles[];
+extern const u8 gItemIcon_Lure_BallPal[];
+extern const u8 gItemIcon_Heavy_BallTiles[];
+extern const u8 gItemIcon_Heavy_BallPal[];
+extern const u8 gItemIcon_Love_BallTiles[];
+extern const u8 gItemIcon_Love_BallPal[];
+extern const u8 gItemIcon_Friend_BallTiles[];
+extern const u8 gItemIcon_Friend_BallPal[];
+extern const u8 gItemIcon_Moon_BallTiles[];
+extern const u8 gItemIcon_Moon_BallPal[];
+extern const u8 gItemIcon_Sport_BallTiles[];
+extern const u8 gItemIcon_Sport_BallPal[];
+extern const u8 gItemIcon_Beast_BallTiles[];
+extern const u8 gItemIcon_Beast_BallPal[];
+extern const u8 gItemIcon_Dream_BallTiles[];
+extern const u8 gItemIcon_Dream_BallPal[];
+extern const u8 gItemIcon_Park_BallTiles[];
+extern const u8 gItemIcon_Park_BallPal[];
 
-#define gBag_RedScarfTiles ((void*)0x08E90354 - 0xFFFD8)
-#define gBag_RedScarfPal ((void*)0x08E90420 - 0xFFFD8)
-#define gBag_BlueScarfTiles ((void*)0x08E90354 - 0xFFFD8)
-#define gBag_BlueScarfPal ((void*)0x08E9043C - 0xFFFD8)
-#define gBag_PinkScarfTiles ((void*)0x08E90354 - 0xFFFD8)
-#define gBag_PinkScarfPal ((void*)0x08E90458 - 0xFFFD8)
-#define gBag_GreenScarfTiles ((void*)0x08E90354 - 0xFFFD8)
-#define gBag_GreenScarfPal ((void*)0x08E90474 - 0xFFFD8)
-#define gBag_YellowScarfTiles ((void*)0x08E90354 - 0xFFFD8)
-#define gBag_YellowScarfPal ((void*)0x08E90490 - 0xFFFD8)
-#define gBag_MachBikeTiles ((void*)0x08E904AC - 0xFFFD8)
-#define gBag_MachBikePal ((void*)0x08E905B4 - 0xFFFD8)
-#define gBag_CoinCaseTiles ((void*)0x08E905D8 - 0xFFFD8)
-#define gBag_CoinCasePal ((void*)0x08E90698 - 0xFFFD8)
-#define gBag_ItemfinderTiles ((void*)0x08E906B8 - 0xFFFD8)
-#define gBag_ItemfinderPal ((void*)0x08E90774 - 0xFFFD8)
-#define gBag_OldRodTiles ((void*)0x08E9079C - 0xFFFD8)
-#define gBag_OldRodPal ((void*)0x08E90848 - 0xFFFD8)
-#define gBag_GoodRodTiles ((void*)0x08E9086C - 0xFFFD8)
-#define gBag_GoodRodPal ((void*)0x08E90908 - 0xFFFD8)
-#define gBag_SuperRodTiles ((void*)0x08E90930 - 0xFFFD8)
-#define gBag_SuperRodPal ((void*)0x08E909E0 - 0xFFFD8)
-#define gBag_SSTicketTiles ((void*)0x08E90A08 - 0xFFFD8)
-#define gBag_SSTicketPal ((void*)0x08E90A9C - 0xFFFD8)
-#define gBag_ContestPassTiles ((void*)0x08E90AB4 - 0xFFFD8)
-#define gBag_ContestPassPal ((void*)0x08E90B60 - 0xFFFD8)
+#define gItemIcon_RedScarfTiles ((void*)0x08E90354 - 0xFFFD8)
+#define gItemIcon_RedScarfPal ((void*)0x08E90420 - 0xFFFD8)
+#define gItemIcon_BlueScarfTiles ((void*)0x08E90354 - 0xFFFD8)
+#define gItemIcon_BlueScarfPal ((void*)0x08E9043C - 0xFFFD8)
+#define gItemIcon_PinkScarfTiles ((void*)0x08E90354 - 0xFFFD8)
+#define gItemIcon_PinkScarfPal ((void*)0x08E90458 - 0xFFFD8)
+#define gItemIcon_GreenScarfTiles ((void*)0x08E90354 - 0xFFFD8)
+#define gItemIcon_GreenScarfPal ((void*)0x08E90474 - 0xFFFD8)
+#define gItemIcon_YellowScarfTiles ((void*)0x08E90354 - 0xFFFD8)
+#define gItemIcon_YellowScarfPal ((void*)0x08E90490 - 0xFFFD8)
+#define gItemIcon_MachBikeTiles ((void*)0x08E904AC - 0xFFFD8)
+#define gItemIcon_MachBikePal ((void*)0x08E905B4 - 0xFFFD8)
+#define gItemIcon_CoinCaseTiles ((void*)0x08E905D8 - 0xFFFD8)
+#define gItemIcon_CoinCasePal ((void*)0x08E90698 - 0xFFFD8)
+#define gItemIcon_ItemfinderTiles ((void*)0x08E906B8 - 0xFFFD8)
+#define gItemIcon_ItemfinderPal ((void*)0x08E90774 - 0xFFFD8)
+#define gItemIcon_OldRodTiles ((void*)0x08E9079C - 0xFFFD8)
+#define gItemIcon_OldRodPal ((void*)0x08E90848 - 0xFFFD8)
+#define gItemIcon_GoodRodTiles ((void*)0x08E9086C - 0xFFFD8)
+#define gItemIcon_GoodRodPal ((void*)0x08E90908 - 0xFFFD8)
+#define gItemIcon_SuperRodTiles ((void*)0x08E90930 - 0xFFFD8)
+#define gItemIcon_SuperRodPal ((void*)0x08E909E0 - 0xFFFD8)
+#define gItemIcon_SSTicketTiles ((void*)0x08E90A08 - 0xFFFD8)
+#define gItemIcon_SSTicketPal ((void*)0x08E90A9C - 0xFFFD8)
+#define gItemIcon_ContestPassTiles ((void*)0x08E90AB4 - 0xFFFD8)
+#define gItemIcon_ContestPassPal ((void*)0x08E90B60 - 0xFFFD8)
 
-extern const u8 gBag_ZPowerRingTiles[];
-extern const u8 gBag_ZPowerRingPal[];
+extern const u8 gItemIcon_Z_Power_RingTiles[];
+extern const u8 gItemIcon_Z_Power_RingPal[];
 
-#define gBag_WailmerPailTiles ((void*)0x08E90B88 - 0xFFFD8)
-#define gBag_WailmerPailPal ((void*)0x08E90C54 - 0xFFFD8)
-#define gBag_DevonGoodsTiles ((void*)0x08E90C78 - 0xFFFD8)
-#define gBag_DevonGoodsPal ((void*)0x08E90D20 - 0xFFFD8)
-#define gBag_SootSackTiles ((void*)0x08E90D3C - 0xFFFD8)
-#define gBag_SootSackPal ((void*)0x08E90E14 - 0xFFFD8)
-#define gBag_BasementKeyTiles ((void*)0x08E90E3C - 0xFFFD8)
-#define gBag_BasementKeyPal ((void*)0x08E90EE4 - 0xFFFD8)
-#define gBag_AcroBikeTiles ((void*)0x08E90F0C - 0xFFFD8)
-#define gBag_AcroBikePal ((void*)0x08E91008 - 0xFFFD8)
-#define gBag_PoKeBlLoCkCASETiles ((void*)0x08E91028 - 0xFFFD8)
-#define gBag_PoKeBlLoCkCASEPal ((void*)0x08E91110 - 0xFFFD8)
-#define gBag_LetterTiles ((void*)0x08E91138 - 0xFFFD8)
-#define gBag_LetterPal ((void*)0x08E88A9C - 0xFFFD8)
-#define gBag_EonTicketTiles ((void*)0x08E911B8 - 0xFFFD8)
-#define gBag_EonTicketPal ((void*)0x08E91254 - 0xFFFD8)
+#define gItemIcon_WailmerPailTiles ((void*)0x08E90B88 - 0xFFFD8)
+#define gItemIcon_WailmerPailPal ((void*)0x08E90C54 - 0xFFFD8)
+#define gItemIcon_DevonGoodsTiles ((void*)0x08E90C78 - 0xFFFD8)
+#define gItemIcon_DevonGoodsPal ((void*)0x08E90D20 - 0xFFFD8)
+#define gItemIcon_SootSackTiles ((void*)0x08E90D3C - 0xFFFD8)
+#define gItemIcon_SootSackPal ((void*)0x08E90E14 - 0xFFFD8)
+#define gItemIcon_BasementKeyTiles ((void*)0x08E90E3C - 0xFFFD8)
+#define gItemIcon_BasementKeyPal ((void*)0x08E90EE4 - 0xFFFD8)
+#define gItemIcon_AcroBikeTiles ((void*)0x08E90F0C - 0xFFFD8)
+#define gItemIcon_AcroBikePal ((void*)0x08E91008 - 0xFFFD8)
+#define gItemIcon_PoKeBlLoCkCASETiles ((void*)0x08E91028 - 0xFFFD8)
+#define gItemIcon_PoKeBlLoCkCASEPal ((void*)0x08E91110 - 0xFFFD8)
+#define gItemIcon_LetterTiles ((void*)0x08E91138 - 0xFFFD8)
+#define gItemIcon_LetterPal ((void*)0x08E88A9C - 0xFFFD8)
+#define gItemIcon_EonTicketTiles ((void*)0x08E911B8 - 0xFFFD8)
+#define gItemIcon_EonTicketPal ((void*)0x08E91254 - 0xFFFD8)
 
-extern const u8 gBag_RedOrbTiles[];
-extern const u8 gBag_RedOrbPal[];
-extern const u8 gBag_BlueOrbTiles[];
-extern const u8 gBag_BlueOrbPal[];
+extern const u8 gItemIcon_Red_OrbTiles[];
+extern const u8 gItemIcon_Red_OrbPal[];
+extern const u8 gItemIcon_Blue_OrbTiles[];
+extern const u8 gItemIcon_Blue_OrbPal[];
 
-#define gBag_ScannerTiles ((void*)0x08E91368 - 0xFFFD8)
-#define gBag_ScannerPal ((void*)0x08E91430 - 0xFFFD8)
-#define gBag_GoGogglesTiles ((void*)0x08E91454 - 0xFFFD8)
-#define gBag_GoGogglesPal ((void*)0x08E91508 - 0xFFFD8)
-#define gBag_MeteoriteTiles ((void*)0x08E91528 - 0xFFFD8)
-#define gBag_MeteoritePal ((void*)0x08E91608 - 0xFFFD8)
-#define gBag_RM1KeyTiles ((void*)0x08E91628 - 0xFFFD8)
-#define gBag_RM1KeyPal ((void*)0x08E92754 - 0xFFFD8)
-#define gBag_RM2KeyTiles ((void*)0x08E916E0 - 0xFFFD8)
-#define gBag_RM2KeyPal ((void*)0x08E92754 - 0xFFFD8)
-#define gBag_RM4KeyTiles ((void*)0x08E9179C - 0xFFFD8)
-#define gBag_RM4KeyPal ((void*)0x08E92754 - 0xFFFD8)
-#define gBag_RM6KeyTiles ((void*)0x08E9185C - 0xFFFD8)
-#define gBag_RM6KeyPal ((void*)0x08E92754 - 0xFFFD8)
-#define gBag_StorageKeyTiles ((void*)0x08E91918 - 0xFFFD8)
-#define gBag_StorageKeyPal ((void*)0x08E90EE4 - 0xFFFD8)
-#define gBag_RootFossilTiles ((void*)0x08E919C0 - 0xFFFD8)
-#define gBag_RootFossilPal ((void*)0x08E91ACC - 0xFFFD8)
-#define gBag_ClawFossilTiles ((void*)0x08E91AF4 - 0xFFFD8)
-#define gBag_ClawFossilPal ((void*)0x08E91ACC - 0xFFFD8)
-#define gBag_DevonScopeTiles ((void*)0x08E91BE4 - 0xFFFD8)
-#define gBag_DevonScopePal ((void*)0x08E91CA0 - 0xFFFD8)
-#define gBag_TMTiles ((void*)0x08E91CC8 - 0xFFFD8)
-#define gBag_TMNormalPal ((void*)0x08E91E64 - 0xFFFD8)
-#define gBag_TMFightingPal ((void*)0x08E91DC4 - 0xFFFD8)
-#define gBag_TMFlyingPal ((void*)0x08E9201C - 0xFFFD8)
-#define gBag_TMPoisonPal ((void*)0x08E91E8C - 0xFFFD8)
-#define gBag_TMGroundPal ((void*)0x08E91FA4 - 0xFFFD8)
-#define gBag_TMRockPal ((void*)0x08E91FF4 - 0xFFFD8)
-#define gBag_TMGhostPal ((void*)0x08E91FCC - 0xFFFD8)
-#define gBag_TMSteelPal ((void*)0x08E91F54 - 0xFFFD8)
-#define gBag_TMFirePal ((void*)0x08E91F04 - 0xFFFD8)
-#define gBag_TMWaterPal ((void*)0x08E91E14 - 0xFFFD8)
-#define gBag_TMGrassPal ((void*)0x08E91EDC - 0xFFFD8)
-#define gBag_TMElectricPal ((void*)0x08E91F7C - 0xFFFD8)
-#define gBag_TMPsychicPal ((void*)0x08E91E3C - 0xFFFD8)
-#define gBag_TMIcePal ((void*)0x08E91EB4 - 0xFFFD8)
-#define gBag_TMDragonPal ((void*)0x08E91DEC - 0xFFFD8)
-#define gBag_TMDarkPal ((void*)0x08E91F2C - 0xFFFD8)
+#define gItemIcon_ScannerTiles ((void*)0x08E91368 - 0xFFFD8)
+#define gItemIcon_ScannerPal ((void*)0x08E91430 - 0xFFFD8)
+#define gItemIcon_GoGogglesTiles ((void*)0x08E91454 - 0xFFFD8)
+#define gItemIcon_GoGogglesPal ((void*)0x08E91508 - 0xFFFD8)
+#define gItemIcon_MeteoriteTiles ((void*)0x08E91528 - 0xFFFD8)
+#define gItemIcon_MeteoritePal ((void*)0x08E91608 - 0xFFFD8)
+#define gItemIcon_RM1KeyTiles ((void*)0x08E91628 - 0xFFFD8)
+#define gItemIcon_RM1KeyPal ((void*)0x08E92754 - 0xFFFD8)
+#define gItemIcon_RM2KeyTiles ((void*)0x08E916E0 - 0xFFFD8)
+#define gItemIcon_RM2KeyPal ((void*)0x08E92754 - 0xFFFD8)
+#define gItemIcon_RM4KeyTiles ((void*)0x08E9179C - 0xFFFD8)
+#define gItemIcon_RM4KeyPal ((void*)0x08E92754 - 0xFFFD8)
+#define gItemIcon_RM6KeyTiles ((void*)0x08E9185C - 0xFFFD8)
+#define gItemIcon_RM6KeyPal ((void*)0x08E92754 - 0xFFFD8)
+#define gItemIcon_StorageKeyTiles ((void*)0x08E91918 - 0xFFFD8)
+#define gItemIcon_StorageKeyPal ((void*)0x08E90EE4 - 0xFFFD8)
+#define gItemIcon_RootFossilTiles ((void*)0x08E919C0 - 0xFFFD8)
+#define gItemIcon_RootFossilPal ((void*)0x08E91ACC - 0xFFFD8)
+#define gItemIcon_ClawFossilTiles ((void*)0x08E91AF4 - 0xFFFD8)
+#define gItemIcon_ClawFossilPal ((void*)0x08E91ACC - 0xFFFD8)
+#define gItemIcon_DevonScopeTiles ((void*)0x08E91BE4 - 0xFFFD8)
+#define gItemIcon_DevonScopePal ((void*)0x08E91CA0 - 0xFFFD8)
+#define gItemIcon_TMTiles ((void*)0x08E91CC8 - 0xFFFD8)
+#define gItemIcon_TMNormalPal ((void*)0x08E91E64 - 0xFFFD8)
+#define gItemIcon_TMFightingPal ((void*)0x08E91DC4 - 0xFFFD8)
+#define gItemIcon_TMFlyingPal ((void*)0x08E9201C - 0xFFFD8)
+#define gItemIcon_TMPoisonPal ((void*)0x08E91E8C - 0xFFFD8)
+#define gItemIcon_TMGroundPal ((void*)0x08E91FA4 - 0xFFFD8)
+#define gItemIcon_TMRockPal ((void*)0x08E91FF4 - 0xFFFD8)
+#define gItemIcon_TMGhostPal ((void*)0x08E91FCC - 0xFFFD8)
+#define gItemIcon_TMSteelPal ((void*)0x08E91F54 - 0xFFFD8)
+#define gItemIcon_TMFirePal ((void*)0x08E91F04 - 0xFFFD8)
+#define gItemIcon_TMWaterPal ((void*)0x08E91E14 - 0xFFFD8)
+#define gItemIcon_TMGrassPal ((void*)0x08E91EDC - 0xFFFD8)
+#define gItemIcon_TMElectricPal ((void*)0x08E91F7C - 0xFFFD8)
+#define gItemIcon_TMPsychicPal ((void*)0x08E91E3C - 0xFFFD8)
+#define gItemIcon_TMIcePal ((void*)0x08E91EB4 - 0xFFFD8)
+#define gItemIcon_TMDragonPal ((void*)0x08E91DEC - 0xFFFD8)
+#define gItemIcon_TMDarkPal ((void*)0x08E91F2C - 0xFFFD8)
 
-extern const u8 gBag_TMFairyPal[];
-extern const u8 gBag_TMBugPal[];
-extern const u8 gBag_DynamaxBandTiles[];
-extern const u8 gBag_DynamaxBandPal[];
+extern const u8 gItemIcon_TM_FairyPal[];
+extern const u8 gItemIcon_TM_BugPal[];
+extern const u8 gItemIcon_Dynamax_BandTiles[];
+extern const u8 gItemIcon_Dynamax_BandPal[];
 
-#define gBag_CrazyAxeTiles ((void*)0x089B3818)
-#define gBag_CrazyAxePal ((void*)0x089B00C0)
-#define gBag_CrazyMaceTiles ((void*)0x089DA658)
-#define gBag_CrazyMacePal ((void*)0x089DA730)
-#define gBag_PokeFluteTiles ((void*)0x08E9211C - 0xFFFD8)
-#define gBag_PokeFlutePal ((void*)0x08E921E0 - 0xFFFD8)
-#define gBag_SecretKeyTiles ((void*)0x08E92208 - 0xFFFD8)
-#define gBag_SecretKeyPal ((void*)0x08E922D4 - 0xFFFD8)
-#define gBag_BikeVoucherTiles ((void*)0x08E922FC - 0xFFFD8)
-#define gBag_BikeVoucherPal ((void*)0x08E9239C - 0xFFFD8)
+#define gItemIcon_CrazyAxeTiles ((void*)0x089B3818)
+#define gItemIcon_CrazyAxePal ((void*)0x089B00C0)
+#define gItemIcon_CrazyMaceTiles ((void*)0x089DA658)
+#define gItemIcon_CrazyMacePal ((void*)0x089DA730)
+#define gItemIcon_PokeFluteTiles ((void*)0x08E9211C - 0xFFFD8)
+#define gItemIcon_PokeFlutePal ((void*)0x08E921E0 - 0xFFFD8)
+#define gItemIcon_SecretKeyTiles ((void*)0x08E92208 - 0xFFFD8)
+#define gItemIcon_SecretKeyPal ((void*)0x08E922D4 - 0xFFFD8)
+#define gItemIcon_BikeVoucherTiles ((void*)0x08E922FC - 0xFFFD8)
+#define gItemIcon_BikeVoucherPal ((void*)0x08E9239C - 0xFFFD8)
 
-extern const u8 gBag_MegaRingTiles[];
-extern const u8 gBag_MegaRingPal[];
+extern const u8 gItemIcon_Mega_RingTiles[];
+extern const u8 gItemIcon_Mega_RingPal[];
 
-#define gBag_OldAmberTiles ((void*)0x08E924CC - 0xFFFD8)
-#define gBag_OldAmberPal ((void*)0x08E925AC - 0xFFFD8)
-#define gBag_CardKeyTiles ((void*)0x08E925D0 - 0xFFFD8)
-#define gBag_CardKeyPal ((void*)0x08E92678 - 0xFFFD8)
-#define gBag_LiftKeyTiles ((void*)0x08E92698 - 0xFFFD8)
-#define gBag_LiftKeyPal ((void*)0x08E92754 - 0xFFFD8)
-#define gBag_HelixFossilTiles ((void*)0x08E92774 - 0xFFFD8)
-#define gBag_HelixFossilPal ((void*)0x08E92868 - 0xFFFD8)
-#define gBag_DomeFossilTiles ((void*)0x08E92888 - 0xFFFD8)
-#define gBag_DomeFossilPal ((void*)0x08E92868 - 0xFFFD8)
-#define gBag_SilphScopeTiles ((void*)0x08E92978 - 0xFFFD8)
-#define gBag_SilphScopePal ((void*)0x08E92A4C - 0xFFFD8)
-#define gBag_BicycleTiles ((void*)0x08E92A70 - 0xFFFD8)
-#define gBag_BicyclePal ((void*)0x08E92B74 - 0xFFFD8)
-#define gBag_TownMapTiles ((void*)0x08E92B94 - 0xFFFD8)
-#define gBag_TownMapPal ((void*)0x08E92C50 - 0xFFFD8)
-#define gBag_VSSeekerTiles ((void*)0x08E92C78 - 0xFFFD8)
-#define gBag_VSSeekerPal ((void*)0x08E92D40 - 0xFFFD8)
-#define gBag_FameCheckerTiles ((void*)0x08E92D60 - 0xFFFD8)
-#define gBag_FameCheckerPal ((void*)0x08E92E18 - 0xFFFD8)
-#define gBag_TMCaseTiles ((void*)0x08E92E3C - 0xFFFD8)
-#define gBag_TMCasePal ((void*)0x08E92F00 - 0xFFFD8)
-#define gBag_BerryPouchTiles ((void*)0x08E92F28 - 0xFFFD8)
-#define gBag_BerryPouchPal ((void*)0x08E93028 - 0xFFFD8)
-#define gBag_TeachyTVTiles ((void*)0x08E93050 - 0xFFFD8)
-#define gBag_TeachyTVPal ((void*)0x08E93148 - 0xFFFD8)
-#define gBag_TriPassTiles ((void*)0x08E93170 - 0xFFFD8)
-#define gBag_TriPassPal ((void*)0x08E93214 - 0xFFFD8)
-#define gBag_RainbowPassTiles ((void*)0x08E93234 - 0xFFFD8)
-#define gBag_RainbowPassPal ((void*)0x08E932DC - 0xFFFD8)
-#define gBag_TeaTiles ((void*)0x08E93304 - 0xFFFD8)
-#define gBag_TeaPal ((void*)0x08E933CC - 0xFFFD8)
-#define gBag_MysticTicketTiles ((void*)0x08E933F0 - 0xFFFD8)
-#define gBag_MysticTicketPal ((void*)0x08E93488 - 0xFFFD8)
-#define gBag_AuroraTicketTiles ((void*)0x08E934A8 - 0xFFFD8)
-#define gBag_AuroraTicketPal ((void*)0x08E93544 - 0xFFFD8)
-#define gBag_PowderJarTiles ((void*)0x08E93568 - 0xFFFD8)
-#define gBag_PowderJarPal ((void*)0x08E93608 - 0xFFFD8)
-#define gBag_RubyTiles ((void*)0x08E93658 - 0xFFFD8)
-#define gBag_RubyPal ((void*)0x08E93630 - 0xFFFD8)
-#define gBag_SapphireTiles ((void*)0x08E93658 - 0xFFFD8)
-#define gBag_SapphirePal ((void*)0x08E93720 - 0xFFFD8)
+#define gItemIcon_OldAmberTiles ((void*)0x08E924CC - 0xFFFD8)
+#define gItemIcon_OldAmberPal ((void*)0x08E925AC - 0xFFFD8)
+#define gItemIcon_CardKeyTiles ((void*)0x08E925D0 - 0xFFFD8)
+#define gItemIcon_CardKeyPal ((void*)0x08E92678 - 0xFFFD8)
+#define gItemIcon_LiftKeyTiles ((void*)0x08E92698 - 0xFFFD8)
+#define gItemIcon_LiftKeyPal ((void*)0x08E92754 - 0xFFFD8)
+#define gItemIcon_HelixFossilTiles ((void*)0x08E92774 - 0xFFFD8)
+#define gItemIcon_HelixFossilPal ((void*)0x08E92868 - 0xFFFD8)
+#define gItemIcon_DomeFossilTiles ((void*)0x08E92888 - 0xFFFD8)
+#define gItemIcon_DomeFossilPal ((void*)0x08E92868 - 0xFFFD8)
+#define gItemIcon_SilphScopeTiles ((void*)0x08E92978 - 0xFFFD8)
+#define gItemIcon_SilphScopePal ((void*)0x08E92A4C - 0xFFFD8)
+#define gItemIcon_BicycleTiles ((void*)0x08E92A70 - 0xFFFD8)
+#define gItemIcon_BicyclePal ((void*)0x08E92B74 - 0xFFFD8)
+#define gItemIcon_TownMapTiles ((void*)0x08E92B94 - 0xFFFD8)
+#define gItemIcon_TownMapPal ((void*)0x08E92C50 - 0xFFFD8)
+#define gItemIcon_VSSeekerTiles ((void*)0x08E92C78 - 0xFFFD8)
+#define gItemIcon_VSSeekerPal ((void*)0x08E92D40 - 0xFFFD8)
+#define gItemIcon_FameCheckerTiles ((void*)0x08E92D60 - 0xFFFD8)
+#define gItemIcon_FameCheckerPal ((void*)0x08E92E18 - 0xFFFD8)
+#define gItemIcon_TMCaseTiles ((void*)0x08E92E3C - 0xFFFD8)
+#define gItemIcon_TMCasePal ((void*)0x08E92F00 - 0xFFFD8)
+#define gItemIcon_BerryPouchTiles ((void*)0x08E92F28 - 0xFFFD8)
+#define gItemIcon_BerryPouchPal ((void*)0x08E93028 - 0xFFFD8)
+#define gItemIcon_TeachyTVTiles ((void*)0x08E93050 - 0xFFFD8)
+#define gItemIcon_TeachyTVPal ((void*)0x08E93148 - 0xFFFD8)
+#define gItemIcon_TriPassTiles ((void*)0x08E93170 - 0xFFFD8)
+#define gItemIcon_TriPassPal ((void*)0x08E93214 - 0xFFFD8)
+#define gItemIcon_RainbowPassTiles ((void*)0x08E93234 - 0xFFFD8)
+#define gItemIcon_RainbowPassPal ((void*)0x08E932DC - 0xFFFD8)
+#define gItemIcon_TeaTiles ((void*)0x08E93304 - 0xFFFD8)
+#define gItemIcon_TeaPal ((void*)0x08E933CC - 0xFFFD8)
+#define gItemIcon_MysticTicketTiles ((void*)0x08E933F0 - 0xFFFD8)
+#define gItemIcon_MysticTicketPal ((void*)0x08E93488 - 0xFFFD8)
+#define gItemIcon_AuroraTicketTiles ((void*)0x08E934A8 - 0xFFFD8)
+#define gItemIcon_AuroraTicketPal ((void*)0x08E93544 - 0xFFFD8)
+#define gItemIcon_PowderJarTiles ((void*)0x08E93568 - 0xFFFD8)
+#define gItemIcon_PowderJarPal ((void*)0x08E93608 - 0xFFFD8)
+#define gItemIcon_RubyTiles ((void*)0x08E93658 - 0xFFFD8)
+#define gItemIcon_RubyPal ((void*)0x08E93630 - 0xFFFD8)
+#define gItemIcon_SapphireTiles ((void*)0x08E93658 - 0xFFFD8)
+#define gItemIcon_SapphirePal ((void*)0x08E93720 - 0xFFFD8)
 
-extern const u8 gBag_OccaBerryTiles[];
-extern const u8 gBag_OccaBerryPal[];
-extern const u8 gBag_PasshoBerryTiles[];
-extern const u8 gBag_PasshoBerryPal[];
-extern const u8 gBag_WacanBerryTiles[];
-extern const u8 gBag_WacanBerryPal[];
-extern const u8 gBag_RindoBerryTiles[];
-extern const u8 gBag_RindoBerryPal[];
-extern const u8 gBag_YacheBerryTiles[];
-extern const u8 gBag_YacheBerryPal[];
-extern const u8 gBag_ChopleBerryTiles[];
-extern const u8 gBag_ChopleBerryPal[];
-extern const u8 gBag_KebiaBerryTiles[];
-extern const u8 gBag_KebiaBerryPal[];
-extern const u8 gBag_ShucaBerryTiles[];
-extern const u8 gBag_ShucaBerryPal[];
-extern const u8 gBag_CobaBerryTiles[];
-extern const u8 gBag_CobaBerryPal[];
-extern const u8 gBag_PapayaBerryTiles[];
-extern const u8 gBag_PapayaBerryPal[];
-extern const u8 gBag_TangaBerryTiles[];
-extern const u8 gBag_TangaBerryPal[];
-extern const u8 gBag_ChartiBerryTiles[];
-extern const u8 gBag_ChartiBerryPal[];
-extern const u8 gBag_KasibBerryTiles[];
-extern const u8 gBag_KasibBerryPal[];
-extern const u8 gBag_HabanBerryTiles[];
-extern const u8 gBag_HabanBerryPal[];
-extern const u8 gBag_ColburBerryTiles[];
-extern const u8 gBag_ColburBerryPal[];
-extern const u8 gBag_RabiriBerryTiles[];
-extern const u8 gBag_RabiriBerryPal[];
-extern const u8 gBag_ChilanBerryTiles[];
-extern const u8 gBag_ChilanBerryPal[];
-extern const u8 gBag_MicleBerryTiles[];
-extern const u8 gBag_MicleBerryPal[];
-extern const u8 gBag_CustapBerryTiles[];
-extern const u8 gBag_CustapBerryPal[];
-extern const u8 gBag_JacobaBerryTiles[];
-extern const u8 gBag_JacobaBerryPal[];
-extern const u8 gBag_RowapBerryTiles[];
-extern const u8 gBag_RowapBerryPal[];
-extern const u8 gBag_RoseliBerryTiles[];
-extern const u8 gBag_RoseliBerryPal[];
-extern const u8 gBag_KeeBerryTiles[];
-extern const u8 gBag_KeeBerryPal[];
-extern const u8 gBag_MarangBerryTiles[];
-extern const u8 gBag_MarangBerryPal[];
-extern const u8 gBag_OvalCharmTiles[];
-extern const u8 gBag_OvalCharmPal[];
-extern const u8 gBag_ShinyCharmTiles[];
-extern const u8 gBag_ShinyCharmPal[];
-extern const u8 gBag_RainbowWingTiles[];
-extern const u8 gBag_RainbowWingPal[];
-extern const u8 gBag_SilverWingTiles[];
-extern const u8 gBag_SilverWingPal[];
-extern const u8 gBag_MagmaStoneTiles[];
-extern const u8 gBag_MagmaStonePal[];
-extern const u8 gBag_LightStoneTiles[];
-extern const u8 gBag_LightStonePal[];
-extern const u8 gBag_DarkStoneTiles[];
-extern const u8 gBag_DarkStonePal[];
-extern const u8 gBag_SunFluteTiles[];
-extern const u8 gBag_SunFlutePal[];
-extern const u8 gBag_MoonFluteTiles[];
-extern const u8 gBag_MoonFlutePal[];
-extern const u8 gBag_GracideaTiles[];
-extern const u8 gBag_GracideaPal[];
-extern const u8 gBag_DNASplicesTiles[];
-extern const u8 gBag_DNASplicesPal[];
-extern const u8 gBag_RevealGlassTiles[];
-extern const u8 gBag_RevealGlassPal[];
-extern const u8 gBag_PrisonBottleTiles[];
-extern const u8 gBag_PrisonBottlePal[];
-extern const u8 gBag_NSolarizerTiles[];
-extern const u8 gBag_NSolarizerPal[];
-extern const u8 gBag_NLunarizerTiles[];
-extern const u8 gBag_NLunarizerPal[];
-extern const u8 gBag_RustedSwordTiles[];
-extern const u8 gBag_RustedSwordPal[];
-extern const u8 gBag_RustedShieldTiles[];
-extern const u8 gBag_RustedShieldPal[];
-extern const u8 gBag_AdamantOrbTiles[];
-extern const u8 gBag_AdamantOrbPal[];
-extern const u8 gBag_LustrousOrbTiles[];
-extern const u8 gBag_LustrousOrbPal[];
-extern const u8 gBag_GriseousOrbTiles[];
-extern const u8 gBag_GriseousOrbPal[];
-extern const u8 gBag_FistPlateTiles[];
-extern const u8 gBag_FistPlatePal[];
-extern const u8 gBag_SkyPlateTiles[];
-extern const u8 gBag_SkyPlatePal[];
-extern const u8 gBag_ToxicPlateTiles[];
-extern const u8 gBag_ToxicPlatePal[];
-extern const u8 gBag_EarthPlateTiles[];
-extern const u8 gBag_EarthPlatePal[];
-extern const u8 gBag_StonePlateTiles[];
-extern const u8 gBag_StonePlatePal[];
-extern const u8 gBag_InsectPlateTiles[];
-extern const u8 gBag_InsectPlatePal[];
-extern const u8 gBag_SpookyPlateTiles[];
-extern const u8 gBag_SpookyPlatePal[];
-extern const u8 gBag_IronPlateTiles[];
-extern const u8 gBag_IronPlatePal[];
-extern const u8 gBag_FlamePlateTiles[];
-extern const u8 gBag_FlamePlatePal[];
-extern const u8 gBag_SplashPlateTiles[];
-extern const u8 gBag_SplashPlatePal[];
-extern const u8 gBag_MeadowPlateTiles[];
-extern const u8 gBag_MeadowPlatePal[];
-extern const u8 gBag_ZapPlateTiles[];
-extern const u8 gBag_ZapPlatePal[];
-extern const u8 gBag_MindPlateTiles[];
-extern const u8 gBag_MindPlatePal[];
-extern const u8 gBag_IciclePlateTiles[];
-extern const u8 gBag_IciclePlatePal[];
-extern const u8 gBag_DracoPlateTiles[];
-extern const u8 gBag_DracoPlatePal[];
-extern const u8 gBag_DreadPlateTiles[];
-extern const u8 gBag_DreadPlatePal[];
-extern const u8 gBag_PixiePlateTiles[];
-extern const u8 gBag_PixiePlatePal[];
-extern const u8 gBag_FightingMemoryTiles[];
-extern const u8 gBag_FightingMemoryPal[];
-extern const u8 gBag_FlyingMemoryTiles[];
-extern const u8 gBag_FlyingMemoryPal[];
-extern const u8 gBag_PoisonMemoryTiles[];
-extern const u8 gBag_PoisonMemoryPal[];
-extern const u8 gBag_GroundMemoryTiles[];
-extern const u8 gBag_GroundMemoryPal[];
-extern const u8 gBag_RockMemoryTiles[];
-extern const u8 gBag_RockMemoryPal[];
-extern const u8 gBag_BugMemoryTiles[];
-extern const u8 gBag_BugMemoryPal[];
-extern const u8 gBag_GhostMemoryTiles[];
-extern const u8 gBag_GhostMemoryPal[];
-extern const u8 gBag_SteelMemoryTiles[];
-extern const u8 gBag_SteelMemoryPal[];
-extern const u8 gBag_FireMemoryTiles[];
-extern const u8 gBag_FireMemoryPal[];
-extern const u8 gBag_WaterMemoryTiles[];
-extern const u8 gBag_WaterMemoryPal[];
-extern const u8 gBag_GrassMemoryTiles[];
-extern const u8 gBag_GrassMemoryPal[];
-extern const u8 gBag_ElectricMemoryTiles[];
-extern const u8 gBag_ElectricMemoryPal[];
-extern const u8 gBag_PsychicMemoryTiles[];
-extern const u8 gBag_PsychicMemoryPal[];
-extern const u8 gBag_IceMemoryTiles[];
-extern const u8 gBag_IceMemoryPal[];
-extern const u8 gBag_DragonMemoryTiles[];
-extern const u8 gBag_DragonMemoryPal[];
-extern const u8 gBag_DarkMemoryTiles[];
-extern const u8 gBag_DarkMemoryPal[];
-extern const u8 gBag_FairyMemoryTiles[];
-extern const u8 gBag_FairyMemoryPal[];
-extern const u8 gBag_BurnDriveTiles[];
-extern const u8 gBag_BurnDrivePal[];
-extern const u8 gBag_DouseDriveTiles[];
-extern const u8 gBag_DouseDrivePal[];
-extern const u8 gBag_ShockDriveTiles[];
-extern const u8 gBag_ShockDrivePal[];
-extern const u8 gBag_ChillDriveTiles[];
-extern const u8 gBag_ChillDrivePal[];
-extern const u8 gBag_RedNectarTiles[];
-extern const u8 gBag_RedNectarPal[];
-extern const u8 gBag_YellowNectarTiles[];
-extern const u8 gBag_YellowNectarPal[];
-extern const u8 gBag_PinkNectarTiles[];
-extern const u8 gBag_PinkNectarPal[];
-extern const u8 gBag_PurpleNectarTiles[];
-extern const u8 gBag_PurpleNectarPal[];
-extern const u8 gBag_NecroziumZTiles[];
-extern const u8 gBag_NecroziumZPal[];
-extern const u8 gBag_VenusauriteTiles[];
-extern const u8 gBag_VenusauritePal[];
-extern const u8 gBag_CharizarditeXTiles[];
-extern const u8 gBag_CharizarditeXPal[];
-extern const u8 gBag_CharizarditeYTiles[];
-extern const u8 gBag_CharizarditeYPal[];
-extern const u8 gBag_BlastoiseniteTiles[];
-extern const u8 gBag_BlastoisenitePal[];
-extern const u8 gBag_BeedrilliteTiles[];
-extern const u8 gBag_BeedrillitePal[];
-extern const u8 gBag_PidgeotiteTiles[];
-extern const u8 gBag_PidgeotitePal[];
-extern const u8 gBag_AlakaziteTiles[];
-extern const u8 gBag_AlakazitePal[];
-extern const u8 gBag_SlowbroniteTiles[];
-extern const u8 gBag_SlowbronitePal[];
-extern const u8 gBag_GengariteTiles[];
-extern const u8 gBag_GengaritePal[];
-extern const u8 gBag_KangaskaniteTiles[];
-extern const u8 gBag_KangaskanitePal[];
-extern const u8 gBag_PinsiriteTiles[];
-extern const u8 gBag_PinsiritePal[];
-extern const u8 gBag_GyaradositeTiles[];
-extern const u8 gBag_GyaradositePal[];
-extern const u8 gBag_AerodactliteTiles[];
-extern const u8 gBag_AerodactlitePal[];
-extern const u8 gBag_MewtwoniteXTiles[];
-extern const u8 gBag_MewtwoniteXPal[];
-extern const u8 gBag_MewtwoniteYTiles[];
-extern const u8 gBag_MewtwoniteYPal[];
-extern const u8 gBag_AmpharositeTiles[];
-extern const u8 gBag_AmpharositePal[];
-extern const u8 gBag_SteelixiteTiles[];
-extern const u8 gBag_SteelixitePal[];
-extern const u8 gBag_ScizoriteTiles[];
-extern const u8 gBag_ScizoritePal[];
-extern const u8 gBag_HeracroniteTiles[];
-extern const u8 gBag_HeracronitePal[];
-extern const u8 gBag_HoundoomniteTiles[];
-extern const u8 gBag_HoundoomnitePal[];
-extern const u8 gBag_TyranitariteTiles[];
-extern const u8 gBag_TyranitaritePal[];
-extern const u8 gBag_SceptiliteTiles[];
-extern const u8 gBag_SceptilitePal[];
-extern const u8 gBag_BlazikeniteTiles[];
-extern const u8 gBag_BlazikenitePal[];
-extern const u8 gBag_SwampertiteTiles[];
-extern const u8 gBag_SwampertitePal[];
-extern const u8 gBag_GardevoiriteTiles[];
-extern const u8 gBag_GardevoiritePal[];
-extern const u8 gBag_SableniteTiles[];
-extern const u8 gBag_SablenitePal[];
-extern const u8 gBag_MawiliteTiles[];
-extern const u8 gBag_MawilitePal[];
-extern const u8 gBag_AggroniteTiles[];
-extern const u8 gBag_AggronitePal[];
-extern const u8 gBag_MedichamiteTiles[];
-extern const u8 gBag_MedichamitePal[];
-extern const u8 gBag_ManectiteTiles[];
-extern const u8 gBag_ManectitePal[];
-extern const u8 gBag_SharpedoniteTiles[];
-extern const u8 gBag_SharpedonitePal[];
-extern const u8 gBag_CameruptiteTiles[];
-extern const u8 gBag_CameruptitePal[];
-extern const u8 gBag_AltarianiteTiles[];
-extern const u8 gBag_AltarianitePal[];
-extern const u8 gBag_BanettiteTiles[];
-extern const u8 gBag_BanettitePal[];
-extern const u8 gBag_AbsoliteTiles[];
-extern const u8 gBag_AbsolitePal[];
-extern const u8 gBag_GlalititeTiles[];
-extern const u8 gBag_GlalititePal[];
-extern const u8 gBag_SalamenciteTiles[];
-extern const u8 gBag_SalamencitePal[];
-extern const u8 gBag_MetagrossiteTiles[];
-extern const u8 gBag_MetagrossitePal[];
-extern const u8 gBag_LatiasiteTiles[];
-extern const u8 gBag_LatiasitePal[];
-extern const u8 gBag_LatiositeTiles[];
-extern const u8 gBag_LatiositePal[];
-extern const u8 gBag_LopunniteTiles[];
-extern const u8 gBag_LopunnitePal[];
-extern const u8 gBag_GarchompiteTiles[];
-extern const u8 gBag_GarchompitePal[];
-extern const u8 gBag_LucarioniteTiles[];
-extern const u8 gBag_LucarionitePal[];
-extern const u8 gBag_AbomasiteTiles[];
-extern const u8 gBag_AbomasitePal[];
-extern const u8 gBag_GalladiteTiles[];
-extern const u8 gBag_GalladitePal[];
-extern const u8 gBag_AudiniteTiles[];
-extern const u8 gBag_AudinitePal[];
-extern const u8 gBag_DianciteTiles[];
-extern const u8 gBag_DiancitePal[];
-extern const u8 gBag_NormaliumZTiles[];
-extern const u8 gBag_NormaliumZPal[];
-extern const u8 gBag_FightiumZTiles[];
-extern const u8 gBag_FightiumZPal[];
-extern const u8 gBag_FlyiniumZTiles[];
-extern const u8 gBag_FlyiniumZPal[];
-extern const u8 gBag_PoisoniumZTiles[];
-extern const u8 gBag_PoisoniumZPal[];
-extern const u8 gBag_GroundiumZTiles[];
-extern const u8 gBag_GroundiumZPal[];
-extern const u8 gBag_RockiumZTiles[];
-extern const u8 gBag_RockiumZPal[];
-extern const u8 gBag_BuginiumZTiles[];
-extern const u8 gBag_BuginiumZPal[];
-extern const u8 gBag_GhostiumZTiles[];
-extern const u8 gBag_GhostiumZPal[];
-extern const u8 gBag_SteeliumZTiles[];
-extern const u8 gBag_SteeliumZPal[];
-extern const u8 gBag_FiriumZTiles[];
-extern const u8 gBag_FiriumZPal[];
-extern const u8 gBag_WateriumZTiles[];
-extern const u8 gBag_WateriumZPal[];
-extern const u8 gBag_GrassiumZTiles[];
-extern const u8 gBag_GrassiumZPal[];
-extern const u8 gBag_ElectriumZTiles[];
-extern const u8 gBag_ElectriumZPal[];
-extern const u8 gBag_PsychiumZTiles[];
-extern const u8 gBag_PsychiumZPal[];
-extern const u8 gBag_IciumZTiles[];
-extern const u8 gBag_IciumZPal[];
-extern const u8 gBag_DragoniumZTiles[];
-extern const u8 gBag_DragoniumZPal[];
-extern const u8 gBag_DarkiniumZTiles[];
-extern const u8 gBag_DarkiniumZPal[];
-extern const u8 gBag_FairiumZTiles[];
-extern const u8 gBag_FairiumZPal[];
-extern const u8 gBag_AlorichiumZTiles[];
-extern const u8 gBag_AlorichiumZPal[];
-extern const u8 gBag_DecidiumZTiles[];
-extern const u8 gBag_DecidiumZPal[];
-extern const u8 gBag_EeviumZTiles[];
-extern const u8 gBag_EeviumZPal[];
-extern const u8 gBag_InciniumZTiles[];
-extern const u8 gBag_InciniumZPal[];
-extern const u8 gBag_KommoniumZTiles[];
-extern const u8 gBag_KommoniumZPal[];
-extern const u8 gBag_LunaliumZTiles[];
-extern const u8 gBag_LunaliumZPal[];
-extern const u8 gBag_LycaniumZTiles[];
-extern const u8 gBag_LycaniumZPal[];
-extern const u8 gBag_MarshadiumZTiles[];
-extern const u8 gBag_MarshadiumZPal[];
-extern const u8 gBag_MewniumZTiles[];
-extern const u8 gBag_MewniumZPal[];
-extern const u8 gBag_MimikiumZTiles[];
-extern const u8 gBag_MimikiumZPal[];
-extern const u8 gBag_PikaniumZTiles[];
-extern const u8 gBag_PikaniumZPal[];
-extern const u8 gBag_PikashuniumZTiles[];
-extern const u8 gBag_PikashuniumZPal[];
-extern const u8 gBag_PrimariumZTiles[];
-extern const u8 gBag_PrimariumZPal[];
-extern const u8 gBag_SnorliumZTiles[];
-extern const u8 gBag_SnorliumZPal[];
-extern const u8 gBag_SolganiumZTiles[];
-extern const u8 gBag_SolganiumZPal[];
-extern const u8 gBag_TapuniumZTiles[];
-extern const u8 gBag_TapuniumZPal[];
-extern const u8 Bag_Black_Augurite_SpriteTiles[];
-extern const u8 Bag_Black_Augurite_SpritePal[];
-extern const u8 Bag_Malicious_Armor_SpriteTiles[];
-extern const u8 Bag_Malicious_Armor_SpritePal[];
-extern const u8 Bag_Auspicious_Armor_SpriteTiles[];
-extern const u8 Bag_Auspicious_Armor_SpritePal[];
-extern const u8 Bag_Peat_Block_SpriteTiles[];
-extern const u8 Bag_Peat_Block_SpritePal[];
-extern const u8 gBag_RedApricornTiles[];
-extern const u8 gBag_RedApricornPal[];
-extern const u8 gBag_White_AppricornTiles[];
-extern const u8 gBag_White_AppricornPal[];
-extern const u8 gBag_YellowApricornTiles[];
-extern const u8 gBag_YellowApricornPal[];
-extern const u8 Bag_Gimmi_CoinTiles[];
-extern const u8 Bag_Gimmi_CoinPal[];
-extern const u8 Bag_Syrypy_AppleTiles[];
-extern const u8 Bag_Syrypy_ApplePal[];
-extern const u8 Bag_Metal_AlloyTiles[];
-extern const u8 Bag_Metal_AlloyPal[];
-extern const u8 Bag_Old_Sea_MapTiles[];
-extern const u8 Bag_Old_Sea_MapPal[];
-extern const u8 Bag_Wellspring_MaskTiles[];
-extern const u8 Bag_Wellspring_MaskPal[];
-extern const u8 Bag_HearthFlame_MaskTiles[];
-extern const u8 Bag_HearthFlame_MaskPal[];
-extern const u8 Bag_CornerStone_MaskTiles[];
-extern const u8 Bag_CornerStone_MaskPal[];
-extern const u8 gBag_SkullFossilTiles[];
-extern const u8 gBag_SkullFossilPal[];
-extern const u8 gBag_ArmorFossilTiles[];
-extern const u8 gBag_ArmorFossilPal[];
-extern const u8 gBag_CoverFossilTiles[];
-extern const u8 gBag_CoverFossilPal[];
-extern const u8 gBag_PlumeFossilTiles[];
-extern const u8 gBag_PlumeFossilPal[];
-extern const u8 gBag_JawFossilTiles[];
-extern const u8 gBag_JawFossilPal[];
-extern const u8 gBag_SailFossilTiles[];
-extern const u8 gBag_SailFossilPal[];
-extern const u8 gBag_BirdFossilTiles[];
-extern const u8 gBag_BirdFossilPal[];
-extern const u8 gBag_FishFossilTiles[];
-extern const u8 gBag_FishFossilPal[];
-extern const u8 gBag_DrakeFossilTiles[];
-extern const u8 gBag_DrakeFossilPal[];
-extern const u8 gBag_DinoFossilTiles[];
-extern const u8 gBag_DinoFossilPal[];
-extern const u8 gBag_OddKeystoneTiles[];
-extern const u8 gBag_OddKeystonePal[];
-extern const u8 gBag_BottleCapTiles[];
-extern const u8 gBag_BottleCapPal[];
-extern const u8 gBag_GoldBottleCapTiles[];
-extern const u8 gBag_GoldBottleCapPal[];
-extern const u8 gBag_WishPieceTiles[];
-extern const u8 gBag_WishPiecePal[];
-extern const u8 gBag_PowerBracerTiles[];
-extern const u8 gBag_PowerBracerPal[];
-extern const u8 gBag_PowerBeltTiles[];
-extern const u8 gBag_PowerBeltPal[];
-extern const u8 gBag_PowerLensTiles[];
-extern const u8 gBag_PowerLensPal[];
-extern const u8 gBag_PowerBandTiles[];
-extern const u8 gBag_PowerBandPal[];
-extern const u8 gBag_PowerAnkletTiles[];
-extern const u8 gBag_PowerAnkletPal[];
-extern const u8 gBag_PowerWeighTiles[];
-extern const u8 gBag_PowerWeightPal[];
-extern const u8 gBag_LuckIncenseTiles[];
-extern const u8 gBag_LuckIncensePal[];
-extern const u8 gBag_FullIncenseTiles[];
-extern const u8 gBag_FullIncensePal[];
-extern const u8 gBag_OddIncenseTiles[];
-extern const u8 gBag_OddIncensePal[];
-extern const u8 gBag_PureIncenseTiles[];
-extern const u8 gBag_PureIncensePal[];
-extern const u8 gBag_RockIncenseTiles[];
-extern const u8 gBag_RockIncensePal[];
-extern const u8 gBag_RoseIncenseTiles[];
-extern const u8 gBag_RoseIncensePal[];
-extern const u8 gBag_WaveIncenseTiles[];
-extern const u8 gBag_WaveIncensePal[];
-extern const u8 gBag_NormalGemTiles[];
-extern const u8 gBag_NormalGemPal[];
-extern const u8 gBag_FightingGemTiles[];
-extern const u8 gBag_FightingGemPal[];
-extern const u8 gBag_FlyingGemTiles[];
-extern const u8 gBag_FlyingGemPal[];
-extern const u8 gBag_PoisonGemTiles[];
-extern const u8 gBag_PoisonGemPal[];
-extern const u8 gBag_GroundGemTiles[];
-extern const u8 gBag_GroundGemPal[];
-extern const u8 gBag_RockGemTiles[];
-extern const u8 gBag_RockGemPal[];
-extern const u8 gBag_BugGemTiles[];
-extern const u8 gBag_BugGemPal[];
-extern const u8 gBag_GhostGemTiles[];
-extern const u8 gBag_GhostGemPal[];
-extern const u8 gBag_SteelGemTiles[];
-extern const u8 gBag_SteelGemPal[];
-extern const u8 gBag_FireGemTiles[];
-extern const u8 gBag_FireGemPal[];
-extern const u8 gBag_WaterGemTiles[];
-extern const u8 gBag_WaterGemPal[];
-extern const u8 gBag_GrassGemTiles[];
-extern const u8 gBag_GrassGemPal[];
-extern const u8 gBag_ElectricGemTiles[];
-extern const u8 gBag_ElectricGemPal[];
-extern const u8 gBag_PsychicGemTiles[];
-extern const u8 gBag_PsychicGemPal[];
-extern const u8 gBag_IceGemTiles[];
-extern const u8 gBag_IceGemPal[];
-extern const u8 gBag_DragonGemTiles[];
-extern const u8 gBag_DragonGemPal[];
-extern const u8 gBag_DarkGemTiles[];
-extern const u8 gBag_DarkGemPal[];
-extern const u8 gBag_FairyGemTiles[];
-extern const u8 gBag_FairyGemPal[];
-extern const u8 gBag_WideLensTiles[];
-extern const u8 gBag_WideLensPal[];
-extern const u8 gBag_MuscleBandTiles[];
-extern const u8 gBag_MuscleBandPal[];
-extern const u8 gBag_WiseGlassesTiles[];
-extern const u8 gBag_WiseGlassesPal[];
-extern const u8 gBag_ExpertBeltTiles[];
-extern const u8 gBag_ExpertBeltPal[];
-extern const u8 gBag_LightClayTiles[];
-extern const u8 gBag_LightClayPal[];
-extern const u8 gBag_LifeOrbTiles[];
-extern const u8 gBag_LifeOrbPal[];
-extern const u8 gBag_PowerHerbTiles[];
-extern const u8 gBag_PowerHerbPal[];
-extern const u8 gBag_ToxicOrbTiles[];
-extern const u8 gBag_ToxicOrbPal[];
-extern const u8 gBag_FlameOrbTiles[];
-extern const u8 gBag_FlameOrbPal[];
-extern const u8 gBag_QuickPowderTiles[];
-extern const u8 gBag_QuickPowderPal[];
-extern const u8 gBag_FocusSashTiles[];
-extern const u8 gBag_FocusSashPal[];
-extern const u8 gBag_ZoomLensTiles[];
-extern const u8 gBag_ZoomLensPal[];
-extern const u8 gBag_MetronomeTiles[];
-extern const u8 gBag_MetronomePal[];
-extern const u8 gBag_IronBallTiles[];
-extern const u8 gBag_IronBallPal[];
-extern const u8 gBag_LaggingTailTiles[];
-extern const u8 gBag_LaggingTailPal[];
-extern const u8 gBag_DestinyKnotTiles[];
-extern const u8 gBag_DestinyKnotPal[];
-extern const u8 gBag_BlackSludgeTiles[];
-extern const u8 gBag_BlackSludgePal[];
-extern const u8 gBag_IcyRockTiles[];
-extern const u8 gBag_IcyRockPal[];
-extern const u8 gBag_SmoothRockTiles[];
-extern const u8 gBag_SmoothRockPal[];
-extern const u8 gBag_HeatRockTiles[];
-extern const u8 gBag_HeatRockPal[];
-extern const u8 gBag_DampRockTiles[];
-extern const u8 gBag_DampRockPal[];
-extern const u8 gBag_GripClawTiles[];
-extern const u8 gBag_GripClawPal[];
-extern const u8 gBag_ChoiceScarfTiles[];
-extern const u8 gBag_ChoiceScarfPal[];
-extern const u8 gBag_ChoiceSpecsTiles[];
-extern const u8 gBag_ChoiceSpecsPal[];
-extern const u8 gBag_StickyBarbTiles[];
-extern const u8 gBag_StickyBarbPal[];
-extern const u8 gBag_ShedShellTiles[];
-extern const u8 gBag_ShedShellPal[];
-extern const u8 gBag_BigRootTiles[];
-extern const u8 gBag_BigRootPal[];
-extern const u8 gBag_EvioliteTiles[];
-extern const u8 gBag_EviolitePal[];
-extern const u8 gBag_FloatStoneTiles[];
-extern const u8 gBag_FloatStonePal[];
-extern const u8 gBag_RockyHelmetTiles[];
-extern const u8 gBag_RockyHelmetPal[];
-extern const u8 gBag_AirBalloomTiles[];
-extern const u8 gBag_AirBalloomPal[];
-extern const u8 gBag_RedCardTiles[];
-extern const u8 gBag_RedCardPal[];
-extern const u8 gBag_RingTargetTiles[];
-extern const u8 gBag_RingTargetPal[];
-extern const u8 gBag_BindingBandTiles[];
-extern const u8 gBag_BindingBandPal[];
-extern const u8 gBag_AbsorbBulbTiles[];
-extern const u8 gBag_AbsorbBulbPal[];
-extern const u8 gBag_CellBatteryTiles[];
-extern const u8 gBag_CellBatteryPal[];
-extern const u8 gBag_EjectButtonTiles[];
-extern const u8 gBag_EjectButtonPal[];
-extern const u8 gBag_WeaknessPolicyTiles[];
-extern const u8 gBag_WeaknessPolicyPal[];
-extern const u8 gBag_AssaultVestTiles[];
-extern const u8 gBag_AssaultVestPal[];
-extern const u8 gBag_LuminousMossTiles[];
-extern const u8 gBag_LuminousMossPal[];
-extern const u8 gBag_SnowballTiles[];
-extern const u8 gBag_SnowballPal[];
-extern const u8 gBag_SafeGogglesTiles[];
-extern const u8 gBag_SafeGogglesPal[];
-extern const u8 gBag_AdrenalOrbTiles[];
-extern const u8 gBag_AdrenalOrbPal[];
-extern const u8 gBag_TerrainExtenderTiles[];
-extern const u8 gBag_TerrainExtenderPal[];
-extern const u8 gBag_ProtectivePadsTiles[];
-extern const u8 gBag_ProtectivePadsPal[];
-extern const u8 gBag_ElectricSeedTiles[];
-extern const u8 gBag_ElectricSeedPal[];
-extern const u8 gBag_GrassySeedTiles[];
-extern const u8 gBag_GrassySeedPal[];
-extern const u8 gBag_MistySeedTiles[];
-extern const u8 gBag_MistySeedPal[];
-extern const u8 gBag_PsychicSeedTiles[];
-extern const u8 gBag_PsychicSeedPal[];
-extern const u8 gBag_EjectPackTiles[];
-extern const u8 gBag_EjectPackPal[];
-extern const u8 gBag_RoomServiceTiles[];
-extern const u8 gBag_RoomServicePal[];
-extern const u8 gBag_BlunderPolicyTiles[];
-extern const u8 gBag_BlunderPolicyPal[];
-extern const u8 gBag_HeavyDBootsTiles[];
-extern const u8 gBag_HeavyDBootsPal[];
-extern const u8 gBag_UtUmbrellaTiles[];
-extern const u8 gBag_UtUmbrellaPal[];
-extern const u8 gBag_ThroatSprayTiles[];
-extern const u8 gBag_ThroatSprayPal[];
-extern const u8 gBag_AbilityPotionTiles[];
-extern const u8 gBag_AbilityPotionPal[];
-extern const u8 gBag_SacredWeedTiles[];
-extern const u8 gBag_SacredWeedPal[];
-extern const u8 gBag_DesertFlowerTiles[];
-extern const u8 gBag_DesertFlowerPal[];
-extern const u8 gBag_GelanoTiles[];
-extern const u8 gBag_GelanoPal[];
-extern const u8 gBag_TuftHairTiles[];
-extern const u8 gBag_TuftHairPal[];
-extern const u8 gBag_AbilityPatchTiles[];
-extern const u8 gBag_AbilityPatchPal[];
-extern const u8 gBag_DefrostPotionTiles[];
-extern const u8 gBag_DefrostPotionPal[];
-extern const u8 gBag_SkullRelicTiles[];
-extern const u8 gBag_SkullRelicPal[];
-extern const u8 gBag_PokeScanTiles[];
-extern const u8 gBag_PokeScanPal[];
-extern const u8 gBag_ClimbBootsTiles[];
-extern const u8 gBag_ClimbBootsPal[];
-extern const u8 gBag_OtomaiTicketTiles[];
-extern const u8 gBag_OtomaiTicketPal[];
-extern const u8 gBag_ZCubeTiles[];
-extern const u8 gBag_ZCubePal[];
-extern const u8 gBag_EmptyShellTiles[];
-extern const u8 gBag_EmptyShellPal[];
-extern const u8 gBag_UltraRepelTiles[];
-extern const u8 gBag_UltraRepelPal[];
-extern const u8 gBag_MysticKeyTiles[];
-extern const u8 gBag_MysticKeyPal[];
-extern const u8 gBag_ZygardeCellTiles[];
-extern const u8 gBag_ZygardeCellPal[];
-extern const u8 gBag_RunningShoesTiles[];
-extern const u8 gBag_RunningShoesPal[];
-extern const u8 gBag_SwimSuitFTiles[];
-extern const u8 gBag_SwimSuitFPal[];
-extern const u8 gBag_ReinsOfUnityTiles[];
-extern const u8 gBag_ReinsOfUnityPal[];
-extern const u8 gBag_SwimsuitMTiles[];
-extern const u8 gBag_SwimsuitMPal[];
-extern const u8 Bag_Loaded_Dice_SpriteTiles[];
-extern const u8 Bag_Loaded_Dice_SpritePal[];
-extern const u8 gBag_Black_AppricornTiles[];
-extern const u8 gBag_Black_AppricornPal[];
-extern const u8 gBag_Blue_AppricornTiles[];
-extern const u8 gBag_Blue_AppricornPal[];
-extern const u8 gBag_Green_AppricornTiles[];
-extern const u8 gBag_Green_AppricornPal[];
-extern const u8 gBag_Pink_AppricornTiles[];
-extern const u8 gBag_Pink_AppricornPal[];
-extern const u8 gBag_Red_AppricornTiles[];
-extern const u8 gBag_Red_AppricornPal[];
-#define gBag_OaksParcelTiles ((void*)0x08E92044 - 0xFFFD8)
-#define gBag_OaksParcelPal ((void*)0x08E920FC - 0xFFFD8)
-#define gBag_GoldTeethTiles ((void*)0x08E923BC - 0xFFFD8)
-#define gBag_GoldTeethPal ((void*)0x08E924A8 - 0xFFFD8)
-extern const u8 gBag_RelicCooperTiles[];
-extern const u8 gBag_RelicCooperPal[];
-extern const u8 gBag_RelicSilverTiles[];
-extern const u8 gBag_RelicSilverPal[];
-extern const u8 gBag_RelicGoldTiles[];
-extern const u8 gBag_RelicGoldPal[];
-extern const u8 gBag_RelicVaseTiles[];
-extern const u8 gBag_RelicVasePal[];
-extern const u8 gBag_RelicBandTiles[];
-extern const u8 gBag_RelicBandPal[];
-extern const u8 gBag_RelicStatueTiles[];
-extern const u8 gBag_RelicStatuePal[];
-extern const u8 gBag_RelicCrownTiles[];
-extern const u8 gBag_RelicCrownPal[];
-extern const u8 gBagItem_Leaders_CrestTiles[];
-extern const u8 gBagItem_Leaders_CrestPal[];
-extern const u8 gBagItem_Gimmi_CoinTiles[];
-extern const u8 gBagItem_Gimmi_CoinPal[];
-extern const u8 gBagItem_Clear_AmuletTiles[];
-extern const u8 gBagItem_Clear_AmuletPal[];
-extern const u8 gBagItem_Covert_CloakTiles[];
-extern const u8 gBagItem_Covert_CloakPal[];
-extern const u8 gBagItem_Loaded_DiceTiles[];
-extern const u8 gBagItem_Loaded_DicePal[];
-extern const u8 gBagItem_Puching_GlovesTiles[];
-extern const u8 gBagItem_Puching_GlovesPal[];
-extern const u8 gBagItem_Reins_of_UnityTiles[];
-extern const u8 gBagItem_Reins_of_UnityPal[];
-extern const u8 gBagItem_Booster_EnergyTiles[];
-extern const u8 gBagItem_Booster_EnergyPal[];
-extern const u8 gBagItem_Wellspring_MaskTiles[];
-extern const u8 gBagItem_Wellspring_MaskPal[];
-extern const u8 gBagItem_Hearthflame_MaskTiles[];
-extern const u8 gBagItem_Hearthflame_MaskPal[];
-extern const u8 gBagItem_Cornerstone_MaskTiles[];
-extern const u8 gBagItem_Cornerstone_MaskPal[];
+extern const u8 gItemIcon_Occa_BerryTiles[];
+extern const u8 gItemIcon_Occa_BerryPal[];
+extern const u8 gItemIcon_Passho_BerryTiles[];
+extern const u8 gItemIcon_Passho_BerryPal[];
+extern const u8 gItemIcon_Wacan_BerryTiles[];
+extern const u8 gItemIcon_Wacan_BerryPal[];
+extern const u8 gItemIcon_Rindo_BerryTiles[];
+extern const u8 gItemIcon_Rindo_BerryPal[];
+extern const u8 gItemIcon_Yache_BerryTiles[];
+extern const u8 gItemIcon_Yache_BerryPal[];
+extern const u8 gItemIcon_Chople_BerryTiles[];
+extern const u8 gItemIcon_Chople_BerryPal[];
+extern const u8 gItemIcon_Kebia_BerryTiles[];
+extern const u8 gItemIcon_Kebia_BerryPal[];
+extern const u8 gItemIcon_Shuca_BerryTiles[];
+extern const u8 gItemIcon_Shuca_BerryPal[];
+extern const u8 gItemIcon_Coba_BerryTiles[];
+extern const u8 gItemIcon_Coba_BerryPal[];
+extern const u8 gItemIcon_Papaya_BerryTiles[];
+extern const u8 gItemIcon_Papaya_BerryPal[];
+extern const u8 gItemIcon_Tanga_BerryTiles[];
+extern const u8 gItemIcon_Tanga_BerryPal[];
+extern const u8 gItemIcon_Charti_BerryTiles[];
+extern const u8 gItemIcon_Charti_BerryPal[];
+extern const u8 gItemIcon_Kasib_BerryTiles[];
+extern const u8 gItemIcon_Kasib_BerryPal[];
+extern const u8 gItemIcon_Haban_BerryTiles[];
+extern const u8 gItemIcon_Haban_BerryPal[];
+extern const u8 gItemIcon_Colbur_BerryTiles[];
+extern const u8 gItemIcon_Colbur_BerryPal[];
+extern const u8 gItemIcon_Rabiri_BerryTiles[];
+extern const u8 gItemIcon_Rabiri_BerryPal[];
+extern const u8 gItemIcon_Chilan_BerryTiles[];
+extern const u8 gItemIcon_Chilan_BerryPal[];
+extern const u8 gItemIcon_Micle_BerryTiles[];
+extern const u8 gItemIcon_Micle_BerryPal[];
+extern const u8 gItemIcon_Custap_BerryTiles[];
+extern const u8 gItemIcon_Custap_BerryPal[];
+extern const u8 gItemIcon_Jacoba_BerryTiles[];
+extern const u8 gItemIcon_Jacoba_BerryPal[];
+extern const u8 gItemIcon_Rowap_BerryTiles[];
+extern const u8 gItemIcon_Rowap_BerryPal[];
+extern const u8 gItemIcon_Roseli_BerryTiles[];
+extern const u8 gItemIcon_Roseli_BerryPal[];
+extern const u8 gItemIcon_Kee_BerryTiles[];
+extern const u8 gItemIcon_Kee_BerryPal[];
+extern const u8 gItemIcon_Marang_BerryTiles[];
+extern const u8 gItemIcon_Marang_BerryPal[];
+extern const u8 gItemIcon_Oval_CharmTiles[];
+extern const u8 gItemIcon_Oval_CharmPal[];
+extern const u8 gItemIcon_Shiny_CharmTiles[];
+extern const u8 gItemIcon_Shiny_CharmPal[];
+extern const u8 gItemIcon_Rainbow_WingTiles[];
+extern const u8 gItemIcon_Rainbow_WingPal[];
+extern const u8 gItemIcon_Silver_WingTiles[];
+extern const u8 gItemIcon_Silver_WingPal[];
+extern const u8 gItemIcon_Magma_StoneTiles[];
+extern const u8 gItemIcon_Magma_StonePal[];
+extern const u8 gItemIcon_Light_StoneTiles[];
+extern const u8 gItemIcon_Light_StonePal[];
+extern const u8 gItemIcon_Dark_StoneTiles[];
+extern const u8 gItemIcon_Dark_StonePal[];
+extern const u8 gItemIcon_Sun_FluteTiles[];
+extern const u8 gItemIcon_Sun_FlutePal[];
+extern const u8 gItemIcon_Moon_FluteTiles[];
+extern const u8 gItemIcon_Moon_FlutePal[];
+extern const u8 gItemIcon_GracideaTiles[];
+extern const u8 gItemIcon_GracideaPal[];
+extern const u8 gItemIcon_DNA_SplicesTiles[];
+extern const u8 gItemIcon_DNA_SplicesPal[];
+extern const u8 gItemIcon_Reveal_GlassTiles[];
+extern const u8 gItemIcon_Reveal_GlassPal[];
+extern const u8 gItemIcon_Prison_BottleTiles[];
+extern const u8 gItemIcon_Prison_BottlePal[];
+extern const u8 gItemIcon_N_SolarizerTiles[];
+extern const u8 gItemIcon_N_SolarizerPal[];
+extern const u8 gItemIcon_N_LunarizerTiles[];
+extern const u8 gItemIcon_N_LunarizerPal[];
+extern const u8 gItemIcon_Rusted_SwordTiles[];
+extern const u8 gItemIcon_Rusted_SwordPal[];
+extern const u8 gItemIcon_Rusted_ShieldTiles[];
+extern const u8 gItemIcon_Rusted_ShieldPal[];
+extern const u8 gItemIcon_Adamant_OrbTiles[];
+extern const u8 gItemIcon_Adamant_OrbPal[];
+extern const u8 gItemIcon_Lustrous_OrbTiles[];
+extern const u8 gItemIcon_Lustrous_OrbPal[];
+extern const u8 gItemIcon_Griseous_OrbTiles[];
+extern const u8 gItemIcon_Griseous_OrbPal[];
+extern const u8 gItemIcon_Fist_PlateTiles[];
+extern const u8 gItemIcon_Fist_PlatePal[];
+extern const u8 gItemIcon_Sky_PlateTiles[];
+extern const u8 gItemIcon_Sky_PlatePal[];
+extern const u8 gItemIcon_Toxic_PlateTiles[];
+extern const u8 gItemIcon_Toxic_PlatePal[];
+extern const u8 gItemIcon_Earth_PlateTiles[];
+extern const u8 gItemIcon_Earth_PlatePal[];
+extern const u8 gItemIcon_Stone_PlateTiles[];
+extern const u8 gItemIcon_Stone_PlatePal[];
+extern const u8 gItemIcon_Insect_PlateTiles[];
+extern const u8 gItemIcon_Insect_PlatePal[];
+extern const u8 gItemIcon_Spooky_PlateTiles[];
+extern const u8 gItemIcon_Spooky_PlatePal[];
+extern const u8 gItemIcon_Iron_PlateTiles[];
+extern const u8 gItemIcon_Iron_PlatePal[];
+extern const u8 gItemIcon_Flame_PlateTiles[];
+extern const u8 gItemIcon_Flame_PlatePal[];
+extern const u8 gItemIcon_Splash_PlateTiles[];
+extern const u8 gItemIcon_Splash_PlatePal[];
+extern const u8 gItemIcon_Meadow_PlateTiles[];
+extern const u8 gItemIcon_Meadow_PlatePal[];
+extern const u8 gItemIcon_Zap_PlateTiles[];
+extern const u8 gItemIcon_Zap_PlatePal[];
+extern const u8 gItemIcon_Mind_PlateTiles[];
+extern const u8 gItemIcon_Mind_PlatePal[];
+extern const u8 gItemIcon_Icicle_PlateTiles[];
+extern const u8 gItemIcon_Icicle_PlatePal[];
+extern const u8 gItemIcon_Draco_PlateTiles[];
+extern const u8 gItemIcon_Draco_PlatePal[];
+extern const u8 gItemIcon_Dread_PlateTiles[];
+extern const u8 gItemIcon_Dread_PlatePal[];
+extern const u8 gItemIcon_Pixie_PlateTiles[];
+extern const u8 gItemIcon_Pixie_PlatePal[];
+extern const u8 gItemIcon_Fighting_MemoryTiles[];
+extern const u8 gItemIcon_Fighting_MemoryPal[];
+extern const u8 gItemIcon_Flying_MemoryTiles[];
+extern const u8 gItemIcon_Flying_MemoryPal[];
+extern const u8 gItemIcon_Poison_MemoryTiles[];
+extern const u8 gItemIcon_Poison_MemoryPal[];
+extern const u8 gItemIcon_Ground_MemoryTiles[];
+extern const u8 gItemIcon_Ground_MemoryPal[];
+extern const u8 gItemIcon_Rock_MemoryTiles[];
+extern const u8 gItemIcon_Rock_MemoryPal[];
+extern const u8 gItemIcon_Bug_MemoryTiles[];
+extern const u8 gItemIcon_Bug_MemoryPal[];
+extern const u8 gItemIcon_Ghost_MemoryTiles[];
+extern const u8 gItemIcon_Ghost_MemoryPal[];
+extern const u8 gItemIcon_Steel_MemoryTiles[];
+extern const u8 gItemIcon_Steel_MemoryPal[];
+extern const u8 gItemIcon_Fire_MemoryTiles[];
+extern const u8 gItemIcon_Fire_MemoryPal[];
+extern const u8 gItemIcon_Water_MemoryTiles[];
+extern const u8 gItemIcon_Water_MemoryPal[];
+extern const u8 gItemIcon_Grass_MemoryTiles[];
+extern const u8 gItemIcon_Grass_MemoryPal[];
+extern const u8 gItemIcon_Electric_MemoryTiles[];
+extern const u8 gItemIcon_Electric_MemoryPal[];
+extern const u8 gItemIcon_Psychic_MemoryTiles[];
+extern const u8 gItemIcon_Psychic_MemoryPal[];
+extern const u8 gItemIcon_Ice_MemoryTiles[];
+extern const u8 gItemIcon_Ice_MemoryPal[];
+extern const u8 gItemIcon_Dragon_MemoryTiles[];
+extern const u8 gItemIcon_Dragon_MemoryPal[];
+extern const u8 gItemIcon_Dark_MemoryTiles[];
+extern const u8 gItemIcon_Dark_MemoryPal[];
+extern const u8 gItemIcon_Fairy_MemoryTiles[];
+extern const u8 gItemIcon_Fairy_MemoryPal[];
+extern const u8 gItemIcon_Burn_DriveTiles[];
+extern const u8 gItemIcon_Burn_DrivePal[];
+extern const u8 gItemIcon_Douse_DriveTiles[];
+extern const u8 gItemIcon_Douse_DrivePal[];
+extern const u8 gItemIcon_Shock_DriveTiles[];
+extern const u8 gItemIcon_Shock_DrivePal[];
+extern const u8 gItemIcon_Chill_DriveTiles[];
+extern const u8 gItemIcon_Chill_DrivePal[];
+extern const u8 gItemIcon_Red_NectarTiles[];
+extern const u8 gItemIcon_Red_NectarPal[];
+extern const u8 gItemIcon_Yellow_NectarTiles[];
+extern const u8 gItemIcon_Yellow_NectarPal[];
+extern const u8 gItemIcon_Pink_NectarTiles[];
+extern const u8 gItemIcon_Pink_NectarPal[];
+extern const u8 gItemIcon_Purple_NectarTiles[];
+extern const u8 gItemIcon_Purple_NectarPal[];
+extern const u8 gItemIcon_Necrozium_ZTiles[];
+extern const u8 gItemIcon_Necrozium_ZPal[];
+extern const u8 gItemIcon_VenusauriteTiles[];
+extern const u8 gItemIcon_VenusauritePal[];
+extern const u8 gItemIcon_Charizardite_XTiles[];
+extern const u8 gItemIcon_Charizardite_XPal[];
+extern const u8 gItemIcon_Charizardite_YTiles[];
+extern const u8 gItemIcon_Charizardite_YPal[];
+extern const u8 gItemIcon_BlastoiseniteTiles[];
+extern const u8 gItemIcon_BlastoisenitePal[];
+extern const u8 gItemIcon_BeedrilliteTiles[];
+extern const u8 gItemIcon_BeedrillitePal[];
+extern const u8 gItemIcon_PidgeotiteTiles[];
+extern const u8 gItemIcon_PidgeotitePal[];
+extern const u8 gItemIcon_AlakaziteTiles[];
+extern const u8 gItemIcon_AlakazitePal[];
+extern const u8 gItemIcon_SlowbroniteTiles[];
+extern const u8 gItemIcon_SlowbronitePal[];
+extern const u8 gItemIcon_GengariteTiles[];
+extern const u8 gItemIcon_GengaritePal[];
+extern const u8 gItemIcon_KangaskhaniteTiles[];
+extern const u8 gItemIcon_KangaskhanitePal[];
+extern const u8 gItemIcon_PinsiriteTiles[];
+extern const u8 gItemIcon_PinsiritePal[];
+extern const u8 gItemIcon_GyaradositeTiles[];
+extern const u8 gItemIcon_GyaradositePal[];
+extern const u8 gItemIcon_AerodactliteTiles[];
+extern const u8 gItemIcon_AerodactlitePal[];
+extern const u8 gItemIcon_Mewtwonite_XTiles[];
+extern const u8 gItemIcon_Mewtwonite_XPal[];
+extern const u8 gItemIcon_Mewtwonite_YTiles[];
+extern const u8 gItemIcon_Mewtwonite_YPal[];
+extern const u8 gItemIcon_AmpharositeTiles[];
+extern const u8 gItemIcon_AmpharositePal[];
+extern const u8 gItemIcon_SteelixiteTiles[];
+extern const u8 gItemIcon_SteelixitePal[];
+extern const u8 gItemIcon_ScizoriteTiles[];
+extern const u8 gItemIcon_ScizoritePal[];
+extern const u8 gItemIcon_HeracroniteTiles[];
+extern const u8 gItemIcon_HeracronitePal[];
+extern const u8 gItemIcon_HoundoomniteTiles[];
+extern const u8 gItemIcon_HoundoomnitePal[];
+extern const u8 gItemIcon_TyranitariteTiles[];
+extern const u8 gItemIcon_TyranitaritePal[];
+extern const u8 gItemIcon_SceptiliteTiles[];
+extern const u8 gItemIcon_SceptilitePal[];
+extern const u8 gItemIcon_BlazikeniteTiles[];
+extern const u8 gItemIcon_BlazikenitePal[];
+extern const u8 gItemIcon_SwampertiteTiles[];
+extern const u8 gItemIcon_SwampertitePal[];
+extern const u8 gItemIcon_GardevoiriteTiles[];
+extern const u8 gItemIcon_GardevoiritePal[];
+extern const u8 gItemIcon_SableniteTiles[];
+extern const u8 gItemIcon_SablenitePal[];
+extern const u8 gItemIcon_MawiliteTiles[];
+extern const u8 gItemIcon_MawilitePal[];
+extern const u8 gItemIcon_AggroniteTiles[];
+extern const u8 gItemIcon_AggronitePal[];
+extern const u8 gItemIcon_MedichamiteTiles[];
+extern const u8 gItemIcon_MedichamitePal[];
+extern const u8 gItemIcon_ManectiteTiles[];
+extern const u8 gItemIcon_ManectitePal[];
+extern const u8 gItemIcon_SharpedoniteTiles[];
+extern const u8 gItemIcon_SharpedonitePal[];
+extern const u8 gItemIcon_CameruptiteTiles[];
+extern const u8 gItemIcon_CameruptitePal[];
+extern const u8 gItemIcon_AltarianiteTiles[];
+extern const u8 gItemIcon_AltarianitePal[];
+extern const u8 gItemIcon_BanettiteTiles[];
+extern const u8 gItemIcon_BanettitePal[];
+extern const u8 gItemIcon_AbsoliteTiles[];
+extern const u8 gItemIcon_AbsolitePal[];
+extern const u8 gItemIcon_GlalititeTiles[];
+extern const u8 gItemIcon_GlalititePal[];
+extern const u8 gItemIcon_SalamenciteTiles[];
+extern const u8 gItemIcon_SalamencitePal[];
+extern const u8 gItemIcon_MetagrossiteTiles[];
+extern const u8 gItemIcon_MetagrossitePal[];
+extern const u8 gItemIcon_LatiasiteTiles[];
+extern const u8 gItemIcon_LatiasitePal[];
+extern const u8 gItemIcon_LatiositeTiles[];
+extern const u8 gItemIcon_LatiositePal[];
+extern const u8 gItemIcon_LopunniteTiles[];
+extern const u8 gItemIcon_LopunnitePal[];
+extern const u8 gItemIcon_GarchompiteTiles[];
+extern const u8 gItemIcon_GarchompitePal[];
+extern const u8 gItemIcon_LucarioniteTiles[];
+extern const u8 gItemIcon_LucarionitePal[];
+extern const u8 gItemIcon_AbomasiteTiles[];
+extern const u8 gItemIcon_AbomasitePal[];
+extern const u8 gItemIcon_GalladiteTiles[];
+extern const u8 gItemIcon_GalladitePal[];
+extern const u8 gItemIcon_AudiniteTiles[];
+extern const u8 gItemIcon_AudinitePal[];
+extern const u8 gItemIcon_DianciteTiles[];
+extern const u8 gItemIcon_DiancitePal[];
+extern const u8 gItemIcon_Normalium_ZTiles[];
+extern const u8 gItemIcon_Normalium_ZPal[];
+extern const u8 gItemIcon_Fightium_ZTiles[];
+extern const u8 gItemIcon_Fightium_ZPal[];
+extern const u8 gItemIcon_Flyinium_ZTiles[];
+extern const u8 gItemIcon_Flyinium_ZPal[];
+extern const u8 gItemIcon_Poisonium_ZTiles[];
+extern const u8 gItemIcon_Poisonium_ZPal[];
+extern const u8 gItemIcon_Groundium_ZTiles[];
+extern const u8 gItemIcon_Groundium_ZPal[];
+extern const u8 gItemIcon_Rockium_ZTiles[];
+extern const u8 gItemIcon_Rockium_ZPal[];
+extern const u8 gItemIcon_Buginium_ZTiles[];
+extern const u8 gItemIcon_Buginium_ZPal[];
+extern const u8 gItemIcon_Ghostium_ZTiles[];
+extern const u8 gItemIcon_Ghostium_ZPal[];
+extern const u8 gItemIcon_Steelium_ZTiles[];
+extern const u8 gItemIcon_Steelium_ZPal[];
+extern const u8 gItemIcon_Firium_ZTiles[];
+extern const u8 gItemIcon_Firium_ZPal[];
+extern const u8 gItemIcon_Waterium_ZTiles[];
+extern const u8 gItemIcon_Waterium_ZPal[];
+extern const u8 gItemIcon_Grassium_ZTiles[];
+extern const u8 gItemIcon_Grassium_ZPal[];
+extern const u8 gItemIcon_Electrium_ZTiles[];
+extern const u8 gItemIcon_Electrium_ZPal[];
+extern const u8 gItemIcon_Psychium_ZTiles[];
+extern const u8 gItemIcon_Psychium_ZPal[];
+extern const u8 gItemIcon_Icium_ZTiles[];
+extern const u8 gItemIcon_Icium_ZPal[];
+extern const u8 gItemIcon_Dragonium_ZTiles[];
+extern const u8 gItemIcon_Dragonium_ZPal[];
+extern const u8 gItemIcon_Darkinium_ZTiles[];
+extern const u8 gItemIcon_Darkinium_ZPal[];
+extern const u8 gItemIcon_Fairium_ZTiles[];
+extern const u8 gItemIcon_Fairium_ZPal[];
+extern const u8 gItemIcon_Alorichium_ZTiles[];
+extern const u8 gItemIcon_Alorichium_ZPal[];
+extern const u8 gItemIcon_Decidium_ZTiles[];
+extern const u8 gItemIcon_Decidium_ZPal[];
+extern const u8 gItemIcon_Eevium_ZTiles[];
+extern const u8 gItemIcon_Eevium_ZPal[];
+extern const u8 gItemIcon_Incinium_ZTiles[];
+extern const u8 gItemIcon_Incinium_ZPal[];
+extern const u8 gItemIcon_Kommonium_ZTiles[];
+extern const u8 gItemIcon_Kommonium_ZPal[];
+extern const u8 gItemIcon_Lunalium_ZTiles[];
+extern const u8 gItemIcon_Lunalium_ZPal[];
+extern const u8 gItemIcon_Lycanium_ZTiles[];
+extern const u8 gItemIcon_Lycanium_ZPal[];
+extern const u8 gItemIcon_Marshadium_ZTiles[];
+extern const u8 gItemIcon_Marshadium_ZPal[];
+extern const u8 gItemIcon_Mewnium_ZTiles[];
+extern const u8 gItemIcon_Mewnium_ZPal[];
+extern const u8 gItemIcon_Mimikium_ZTiles[];
+extern const u8 gItemIcon_Mimikium_ZPal[];
+extern const u8 gItemIcon_Pikanium_ZTiles[];
+extern const u8 gItemIcon_Pikanium_ZPal[];
+extern const u8 gItemIcon_Pikashunium_ZTiles[];
+extern const u8 gItemIcon_Pikashunium_ZPal[];
+extern const u8 gItemIcon_Primarium_ZTiles[];
+extern const u8 gItemIcon_Primarium_ZPal[];
+extern const u8 gItemIcon_Snorlium_ZTiles[];
+extern const u8 gItemIcon_Snorlium_ZPal[];
+extern const u8 gItemIcon_Solganium_ZTiles[];
+extern const u8 gItemIcon_Solganium_ZPal[];
+extern const u8 gItemIcon_Tapunium_ZTiles[];
+extern const u8 gItemIcon_Tapunium_ZPal[];
+extern const u8 gItemIcon_Black_AuguriteTiles[];
+extern const u8 gItemIcon_Black_AuguritePal[];
+extern const u8 gItemIcon_Malicious_ArmorTiles[];
+extern const u8 gItemIcon_Malicious_ArmorPal[];
+extern const u8 gItemIcon_Auspicious_ArmorTiles[];
+extern const u8 gItemIcon_Auspicious_ArmorPal[];
+extern const u8 gItemIcon_Peat_BlockTiles[];
+extern const u8 gItemIcon_Peat_BlockPal[];
+extern const u8 gItemIcon_White_AppricornTiles[];
+extern const u8 gItemIcon_White_AppricornPal[];
+extern const u8 gItemIcon_Yellow_ApricornTiles[];
+extern const u8 gItemIcon_Yellow_ApricornPal[];
+extern const u8 gItemIcon_Syrupy_AppleTiles[];
+extern const u8 gItemIcon_Syrupy_ApplePal[];
+extern const u8 gItemIcon_Metal_AlloyTiles[];
+extern const u8 gItemIcon_Metal_AlloyPal[];
+extern const u8 gItemIcon_Wellspring_MaskTiles[];
+extern const u8 gItemIcon_Wellspring_MaskPal[];
+extern const u8 gItemIcon_HearthFlame_MaskTiles[];
+extern const u8 gItemIcon_HearthFlame_MaskPal[];
+extern const u8 gItemIcon_CornerStone_MaskTiles[];
+extern const u8 gItemIcon_CornerStone_MaskPal[];
+extern const u8 gItemIcon_Skull_FossilTiles[];
+extern const u8 gItemIcon_Skull_FossilPal[];
+extern const u8 gItemIcon_Armor_FossilTiles[];
+extern const u8 gItemIcon_Armor_FossilPal[];
+extern const u8 gItemIcon_Cover_FossilTiles[];
+extern const u8 gItemIcon_Cover_FossilPal[];
+extern const u8 gItemIcon_Plume_FossilTiles[];
+extern const u8 gItemIcon_Plume_FossilPal[];
+extern const u8 gItemIcon_Jaw_FossilTiles[];
+extern const u8 gItemIcon_Jaw_FossilPal[];
+extern const u8 gItemIcon_Sail_FossilTiles[];
+extern const u8 gItemIcon_Sail_FossilPal[];
+extern const u8 gItemIcon_Bird_FossilTiles[];
+extern const u8 gItemIcon_Bird_FossilPal[];
+extern const u8 gItemIcon_Fish_FossilTiles[];
+extern const u8 gItemIcon_Fish_FossilPal[];
+extern const u8 gItemIcon_Drake_FossilTiles[];
+extern const u8 gItemIcon_Drake_FossilPal[];
+extern const u8 gItemIcon_Dino_FossilTiles[];
+extern const u8 gItemIcon_Dino_FossilPal[];
+extern const u8 gItemIcon_Odd_KeystoneTiles[];
+extern const u8 gItemIcon_Odd_KeystonePal[];
+extern const u8 gItemIcon_Bottle_CapTiles[];
+extern const u8 gItemIcon_Bottle_CapPal[];
+extern const u8 gItemIcon_Gold_Bottle_CapTiles[];
+extern const u8 gItemIcon_Gold_Bottle_CapPal[];
+extern const u8 gItemIcon_Wishing_PieceTiles[];
+extern const u8 gItemIcon_Wishing_PiecePal[];
+extern const u8 gItemIcon_Power_BracerTiles[];
+extern const u8 gItemIcon_Power_BracerPal[];
+extern const u8 gItemIcon_Power_BeltTiles[];
+extern const u8 gItemIcon_Power_BeltPal[];
+extern const u8 gItemIcon_Power_LensTiles[];
+extern const u8 gItemIcon_Power_LensPal[];
+extern const u8 gItemIcon_Power_BandTiles[];
+extern const u8 gItemIcon_Power_BandPal[];
+extern const u8 gItemIcon_Power_AnkletTiles[];
+extern const u8 gItemIcon_Power_AnkletPal[];
+extern const u8 gItemIcon_Power_WeightTiles[];
+extern const u8 gItemIcon_Power_WeightPal[];
+extern const u8 gItemIcon_Luck_IncenseTiles[];
+extern const u8 gItemIcon_Luck_IncensePal[];
+extern const u8 gItemIcon_Full_IncenseTiles[];
+extern const u8 gItemIcon_Full_IncensePal[];
+extern const u8 gItemIcon_Odd_IncenseTiles[];
+extern const u8 gItemIcon_Odd_IncensePal[];
+extern const u8 gItemIcon_Pure_IncenseTiles[];
+extern const u8 gItemIcon_Pure_IncensePal[];
+extern const u8 gItemIcon_Rock_IncenseTiles[];
+extern const u8 gItemIcon_Rock_IncensePal[];
+extern const u8 gItemIcon_Rose_IncenseTiles[];
+extern const u8 gItemIcon_Rose_IncensePal[];
+extern const u8 gItemIcon_Wave_IncenseTiles[];
+extern const u8 gItemIcon_Wave_IncensePal[];
+extern const u8 gItemIcon_Normal_GemTiles[];
+extern const u8 gItemIcon_Normal_GemPal[];
+extern const u8 gItemIcon_Fighting_GemTiles[];
+extern const u8 gItemIcon_Fighting_GemPal[];
+extern const u8 gItemIcon_Flying_GemTiles[];
+extern const u8 gItemIcon_Flying_GemPal[];
+extern const u8 gItemIcon_Poison_GemTiles[];
+extern const u8 gItemIcon_Poison_GemPal[];
+extern const u8 gItemIcon_Ground_GemTiles[];
+extern const u8 gItemIcon_Ground_GemPal[];
+extern const u8 gItemIcon_Rock_GemTiles[];
+extern const u8 gItemIcon_Rock_GemPal[];
+extern const u8 gItemIcon_Bug_GemTiles[];
+extern const u8 gItemIcon_Bug_GemPal[];
+extern const u8 gItemIcon_Ghost_GemTiles[];
+extern const u8 gItemIcon_Ghost_GemPal[];
+extern const u8 gItemIcon_Steel_GemTiles[];
+extern const u8 gItemIcon_Steel_GemPal[];
+extern const u8 gItemIcon_Fire_GemTiles[];
+extern const u8 gItemIcon_Fire_GemPal[];
+extern const u8 gItemIcon_Water_GemTiles[];
+extern const u8 gItemIcon_Water_GemPal[];
+extern const u8 gItemIcon_Grass_GemTiles[];
+extern const u8 gItemIcon_Grass_GemPal[];
+extern const u8 gItemIcon_Electric_GemTiles[];
+extern const u8 gItemIcon_Electric_GemPal[];
+extern const u8 gItemIcon_Psychic_GemTiles[];
+extern const u8 gItemIcon_Psychic_GemPal[];
+extern const u8 gItemIcon_Ice_GemTiles[];
+extern const u8 gItemIcon_Ice_GemPal[];
+extern const u8 gItemIcon_Dragon_GemTiles[];
+extern const u8 gItemIcon_Dragon_GemPal[];
+extern const u8 gItemIcon_Dark_GemTiles[];
+extern const u8 gItemIcon_Dark_GemPal[];
+extern const u8 gItemIcon_Fairy_GemTiles[];
+extern const u8 gItemIcon_Fairy_GemPal[];
+extern const u8 gItemIcon_Wide_LensTiles[];
+extern const u8 gItemIcon_Wide_LensPal[];
+extern const u8 gItemIcon_Muscle_BandTiles[];
+extern const u8 gItemIcon_Muscle_BandPal[];
+extern const u8 gItemIcon_Wise_GlassesTiles[];
+extern const u8 gItemIcon_Wise_GlassesPal[];
+extern const u8 gItemIcon_Expert_BeltTiles[];
+extern const u8 gItemIcon_Expert_BeltPal[];
+extern const u8 gItemIcon_Light_ClayTiles[];
+extern const u8 gItemIcon_Light_ClayPal[];
+extern const u8 gItemIcon_Life_OrbTiles[];
+extern const u8 gItemIcon_Life_OrbPal[];
+extern const u8 gItemIcon_Power_HerbTiles[];
+extern const u8 gItemIcon_Power_HerbPal[];
+extern const u8 gItemIcon_Toxic_OrbTiles[];
+extern const u8 gItemIcon_Toxic_OrbPal[];
+extern const u8 gItemIcon_Flame_OrbTiles[];
+extern const u8 gItemIcon_Flame_OrbPal[];
+extern const u8 gItemIcon_Quick_PowderTiles[];
+extern const u8 gItemIcon_Quick_PowderPal[];
+extern const u8 gItemIcon_Focus_SashTiles[];
+extern const u8 gItemIcon_Focus_SashPal[];
+extern const u8 gItemIcon_Zoom_LensTiles[];
+extern const u8 gItemIcon_Zoom_LensPal[];
+extern const u8 gItemIcon_MetronomeTiles[];
+extern const u8 gItemIcon_MetronomePal[];
+extern const u8 gItemIcon_Iron_BallTiles[];
+extern const u8 gItemIcon_Iron_BallPal[];
+extern const u8 gItemIcon_Lagging_TailTiles[];
+extern const u8 gItemIcon_Lagging_TailPal[];
+extern const u8 gItemIcon_Destiny_KnotTiles[];
+extern const u8 gItemIcon_Destiny_KnotPal[];
+extern const u8 gItemIcon_Black_SludgeTiles[];
+extern const u8 gItemIcon_Black_SludgePal[];
+extern const u8 gItemIcon_Icy_RockTiles[];
+extern const u8 gItemIcon_Icy_RockPal[];
+extern const u8 gItemIcon_Smooth_RockTiles[];
+extern const u8 gItemIcon_Smooth_RockPal[];
+extern const u8 gItemIcon_Heat_RockTiles[];
+extern const u8 gItemIcon_Heat_RockPal[];
+extern const u8 gItemIcon_Damp_RockTiles[];
+extern const u8 gItemIcon_Damp_RockPal[];
+extern const u8 gItemIcon_Grip_ClawTiles[];
+extern const u8 gItemIcon_Grip_ClawPal[];
+extern const u8 gItemIcon_Choice_ScarfTiles[];
+extern const u8 gItemIcon_Choice_ScarfPal[];
+extern const u8 gItemIcon_Choice_SpecsTiles[];
+extern const u8 gItemIcon_Choice_SpecsPal[];
+extern const u8 gItemIcon_Sticky_BarbTiles[];
+extern const u8 gItemIcon_Sticky_BarbPal[];
+extern const u8 gItemIcon_Shed_ShellTiles[];
+extern const u8 gItemIcon_Shed_ShellPal[];
+extern const u8 gItemIcon_Big_RootTiles[];
+extern const u8 gItemIcon_Big_RootPal[];
+extern const u8 gItemIcon_EvioliteTiles[];
+extern const u8 gItemIcon_EviolitePal[];
+extern const u8 gItemIcon_Float_StoneTiles[];
+extern const u8 gItemIcon_Float_StonePal[];
+extern const u8 gItemIcon_Rocky_HelmetTiles[];
+extern const u8 gItemIcon_Rocky_HelmetPal[];
+extern const u8 gItemIcon_Air_BalloonTiles[];
+extern const u8 gItemIcon_Air_BalloonPal[];
+extern const u8 gItemIcon_Red_CardTiles[];
+extern const u8 gItemIcon_Red_CardPal[];
+extern const u8 gItemIcon_Ring_TargetTiles[];
+extern const u8 gItemIcon_Ring_TargetPal[];
+extern const u8 gItemIcon_Binding_BandTiles[];
+extern const u8 gItemIcon_Binding_BandPal[];
+extern const u8 gItemIcon_Absorb_BulbTiles[];
+extern const u8 gItemIcon_Absorb_BulbPal[];
+extern const u8 gItemIcon_Cell_BatteryTiles[];
+extern const u8 gItemIcon_Cell_BatteryPal[];
+extern const u8 gItemIcon_Eject_ButtonTiles[];
+extern const u8 gItemIcon_Eject_ButtonPal[];
+extern const u8 gItemIcon_Weakness_PolicyTiles[];
+extern const u8 gItemIcon_Weakness_PolicyPal[];
+extern const u8 gItemIcon_Assault_VestTiles[];
+extern const u8 gItemIcon_Assault_VestPal[];
+extern const u8 gItemIcon_Luminous_MossTiles[];
+extern const u8 gItemIcon_Luminous_MossPal[];
+extern const u8 gItemIcon_SnowballTiles[];
+extern const u8 gItemIcon_SnowballPal[];
+extern const u8 gItemIcon_Safety_GogglesTiles[];
+extern const u8 gItemIcon_Safety_GogglesPal[];
+extern const u8 gItemIcon_Adrenaline_OrbTiles[];
+extern const u8 gItemIcon_Adrenaline_OrbPal[];
+extern const u8 gItemIcon_Terrain_ExtenderTiles[];
+extern const u8 gItemIcon_Terrain_ExtenderPal[];
+extern const u8 gItemIcon_Protective_PadsTiles[];
+extern const u8 gItemIcon_Protective_PadsPal[];
+extern const u8 gItemIcon_Electric_SeedTiles[];
+extern const u8 gItemIcon_Electric_SeedPal[];
+extern const u8 gItemIcon_Grassy_SeedTiles[];
+extern const u8 gItemIcon_Grassy_SeedPal[];
+extern const u8 gItemIcon_Misty_SeedTiles[];
+extern const u8 gItemIcon_Misty_SeedPal[];
+extern const u8 gItemIcon_Psychic_SeedTiles[];
+extern const u8 gItemIcon_Psychic_SeedPal[];
+extern const u8 gItemIcon_Eject_PackTiles[];
+extern const u8 gItemIcon_Eject_PackPal[];
+extern const u8 gItemIcon_Room_ServiceTiles[];
+extern const u8 gItemIcon_Room_ServicePal[];
+extern const u8 gItemIcon_Blunder_PolicyTiles[];
+extern const u8 gItemIcon_Blunder_PolicyPal[];
+extern const u8 gItemIcon_Heavy_Duty_BootsTiles[];
+extern const u8 gItemIcon_Heavy_Duty_BootsPal[];
+extern const u8 gItemIcon_Utility_UmbrellaTiles[];
+extern const u8 gItemIcon_Utility_UmbrellaPal[];
+extern const u8 gItemIcon_Throat_SprayTiles[];
+extern const u8 gItemIcon_Throat_SprayPal[];
+extern const u8 gItemIcon_Ability_CapsuleTiles[];
+extern const u8 gItemIcon_Ability_CapsulePal[];
+extern const u8 gItemIcon_Ability_PatchTiles[];
+extern const u8 gItemIcon_Ability_PatchPal[];
+extern const u8 gItemIcon_Black_AppricornTiles[];
+extern const u8 gItemIcon_Black_AppricornPal[];
+extern const u8 gItemIcon_Blue_AppricornTiles[];
+extern const u8 gItemIcon_Blue_AppricornPal[];
+extern const u8 gItemIcon_Green_AppricornTiles[];
+extern const u8 gItemIcon_Green_AppricornPal[];
+extern const u8 gItemIcon_Pink_AppricornTiles[];
+extern const u8 gItemIcon_Pink_AppricornPal[];
+extern const u8 gItemIcon_Red_AppricornTiles[];
+extern const u8 gItemIcon_Red_AppricornPal[];
+#define gItemIcon_OaksParcelTiles ((void*)0x08E92044 - 0xFFFD8)
+#define gItemIcon_OaksParcelPal ((void*)0x08E920FC - 0xFFFD8)
+#define gItemIcon_GoldTeethTiles ((void*)0x08E923BC - 0xFFFD8)
+#define gItemIcon_GoldTeethPal ((void*)0x08E924A8 - 0xFFFD8)
+extern const u8 gItemIcon_Relic_CooperTiles[];
+extern const u8 gItemIcon_Relic_CooperPal[];
+extern const u8 gItemIcon_Relic_SilverTiles[];
+extern const u8 gItemIcon_Relic_SilverPal[];
+extern const u8 gItemIcon_Relic_GoldTiles[];
+extern const u8 gItemIcon_Relic_GoldPal[];
+extern const u8 gItemIcon_Relic_VaseTiles[];
+extern const u8 gItemIcon_Relic_VasePal[];
+extern const u8 gItemIcon_Relic_BandTiles[];
+extern const u8 gItemIcon_Relic_BandPal[];
+extern const u8 gItemIcon_Relic_StatueTiles[];
+extern const u8 gItemIcon_Relic_StatuePal[];
+extern const u8 gItemIcon_Relic_CrownTiles[];
+extern const u8 gItemIcon_Relic_CrownPal[];
+extern const u8 gItemIcon_Leaders_CrestTiles[];
+extern const u8 gItemIcon_Leaders_CrestPal[];
+extern const u8 gItemIcon_Gimmighoul_CoinTiles[];
+extern const u8 gItemIcon_Gimmighoul_CoinPal[];
+extern const u8 gItemIcon_Clear_AmuletTiles[];
+extern const u8 gItemIcon_Clear_AmuletPal[];
+extern const u8 gItemIcon_Covert_CloakTiles[];
+extern const u8 gItemIcon_Covert_CloakPal[];
+extern const u8 gItemIcon_Loaded_DiceTiles[];
+extern const u8 gItemIcon_Loaded_DicePal[];
+extern const u8 gItemIcon_Punching_GloveTiles[];
+extern const u8 gItemIcon_Punching_GlovePal[];
+extern const u8 gItemIcon_Reins_of_UnityTiles[];
+extern const u8 gItemIcon_Reins_of_UnityPal[];
+extern const u8 gItemIcon_Booster_EnergyTiles[];
+extern const u8 gItemIcon_Booster_EnergyPal[];
+extern const u8 gItemIcon_Wellspring_MaskTiles[];
+extern const u8 gItemIcon_Wellspring_MaskPal[];
+extern const u8 gItemIcon_Hearthflame_MaskTiles[];
+extern const u8 gItemIcon_Hearthflame_MaskPal[];
+extern const u8 gItemIcon_Cornerstone_MaskTiles[];
+extern const u8 gItemIcon_Cornerstone_MaskPal[];
 extern const u8 gItemIcon_Masterpiece_TeacupTiles[];
 extern const u8 gItemIcon_Masterpiece_TeacupPal[];
 extern const u8 gItemIcon_Unremarkable_TeacupTiles[];
@@ -1731,7 +1687,7 @@ extern const u8 DESC_Z_POWER_RING[];
 #define DESC_TM46 ((void*)0x083A0007)
 #define DESC_TM47 ((void*)0x083A0034)
 #define DESC_TM48 ((void*)0x083A0062)
-#define DESC_TM49 ((void*)0x083A0090)
+extern const u8 DESC_TM49[]; 
 #define DESC_TM50 ((void*)0x083A00BE)
 extern const u8 DESC_HM01[];
 extern const u8 DESC_HM02[]; 

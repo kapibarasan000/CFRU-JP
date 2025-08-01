@@ -331,7 +331,13 @@ def ProcessMusic(midiFile: str) -> str:
 def LinkObjects(objects: itertools.chain) -> str:
     """Link objects into one binary."""
     linked = 'build/linked.o'
-    cmd = [LD] + LDFLAGS + ['-o', linked] + list(objects)
+
+    obj_list_path = 'object_files.txt'
+    with open(obj_list_path, 'w', encoding='utf-8') as f:
+        for obj in objects:
+            f.write(obj.replace("\\", "/") + '\n')
+
+    cmd = [LD] + LDFLAGS + ['-o', linked, f'@{obj_list_path}']
     RunCommand(cmd)
     return linked
 
