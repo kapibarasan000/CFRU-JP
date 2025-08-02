@@ -180,6 +180,7 @@ sp12C_DoEnterPhraseScreen 08163518
 sp12D_CompareEnteredPhrase 0816351C
 
 sp12F_SetHyperTraining 08163524
+sp131_ChangeTeraType 0816352C
 
 sp196_TryCopyTMNameToBuffer1 081636C0
 

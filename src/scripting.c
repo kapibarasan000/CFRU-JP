@@ -586,6 +586,42 @@ bool8 sp12F_SetHyperTraining(void)
 	return FALSE;
 }
 
+bool8 TeraTypeChangeBanned(u16 species)
+{
+	switch (SpeciesToNationalPokedexNum(species))
+	{
+		case NATIONAL_DEX_SHEDINJA:
+		case NATIONAL_DEX_OGERPON:
+		case NATIONAL_DEX_TERAPAGOS:
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+bool8 sp131_ChangeTeraType(void)
+{
+	u16 partyId = Var8004;
+	u16 teraType = Var8005;
+
+	if (partyId >= PARTY_SIZE)
+		return FALSE;
+
+	if (TeraTypeChangeBanned(gPlayerParty[partyId].species))
+		return FALSE;
+
+	if (teraType >= NUMBER_OF_MON_TYPES)
+		return FALSE;
+
+	if (teraType != gPlayerParty[partyId].teratype)
+	{
+		gPlayerParty[partyId].teratype = teraType;
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 
 // Trading Specials //
 ////////////////////////////////////////////////////////////////
