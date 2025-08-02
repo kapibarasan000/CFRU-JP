@@ -1035,6 +1035,9 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 
 						goto TRAINER_WITH_EV_GIVE_RANDOM_ABILITY;
 				}
+
+				if (spread->teraType != TERA_TYPE_DEFAULT)
+					mon->teratype = spread->teraType - 1;
 			}
 			#endif
 
@@ -2202,6 +2205,9 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 
 	if (spread->gigantamax)
 		mon->gigantamax = TRUE;
+
+	if (spread->teraType != TERA_TYPE_DEFAULT)
+		mon->teratype = spread->teraType - 1;
 
 	TryFormRevert(mon); //To fix Minior forms
 	CalculateMonStatsNew(mon);
@@ -3864,6 +3870,14 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, unusedA
 	{
 		mon.gigantamax = TRUE;
 		FlagClear(FLAG_GIGANTAMAXABLE);
+	}
+	#endif
+
+	#ifdef FLAG_CUSTOM_TERA_TYPE
+	if (FlagGet(FLAG_CUSTOM_TERA_TYPE))
+	{
+		mon.teratype = VarGet(Var8008);
+		FlagClear(FLAG_CUSTOM_TERA_TYPE);
 	}
 	#endif
 

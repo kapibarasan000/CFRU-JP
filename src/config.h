@@ -65,6 +65,7 @@
 #define FLAG_KEEP_CONSUMABLE_ITEMS 0x927 //If set, consumable items are returned after battles
 #define FLAG_TERASTAL_CHARGE 0x92B
 #define FLAG_TERA_ORB_NO_COST 0x92C
+#define FLAG_CUSTOM_TERA_TYPE 0x92D
 #define FLAG_DAILY_EVENTS_START 0xE00 //To flag + 0xFF, resets every new day.
 
 /*===== Start Menu/Poketools Flags =====*/

@@ -338,6 +338,11 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 		gEnemyParty[enemyMonIndex].gigantamax = TRUE;
 	#endif
 
+	#ifdef FLAG_CUSTOM_TERA_TYPE
+	if (FlagGet(FLAG_CUSTOM_TERA_TYPE))
+		gEnemyParty[enemyMonIndex].teratype = VarGet(Var8008);
+	#endif
+
 	#ifdef FLAG_WILD_CUSTOM_MOVES
 	//Custom moves
 	if (FlagGet(FLAG_WILD_CUSTOM_MOVES)
