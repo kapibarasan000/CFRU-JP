@@ -456,3 +456,9 @@ The sleep clause prevents more\nPokemon from being put to sleep！
 
 #org @gText_MirrorHerbActivate
 [SCRIPTING_BANK]は\n[LAST_ITEM]を つかって\lあいての のうりょくへんかを まねした！
+
+#org @gText_AbilityShieldProtected
+[TARGET]は\nとくせいガードの こうかで\lとくせいが まもられている！
+
+#org @gText_AbilityShieldProtectedAttacker
+[ATTACKER]は\nとくせいガードの こうかで\lとくせいが まもられている！

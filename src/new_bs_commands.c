@@ -565,6 +565,8 @@ void atkFF0E_setcounter(void)
 			break;
 		case Counters_Embargo:
 			gNewBS->EmbargoTimers[bank] = amount;
+			if (ItemId_GetHoldEffect(ITEM(bank)) == ITEM_EFFECT_ABILITY_SHIELD)
+				HandleAbilityShieldGetAndLost(bank);
 			break;
 		case Counters_Electrify:
 			gNewBS->ElectrifyTimers[bank] = amount;

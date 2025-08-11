@@ -2914,9 +2914,9 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		case ABILITY_PROTOSYNTHESIS:
 		case ABILITY_QUARKDRIVE:
 		//1.3x Boost
-			if (!useMonDef && gNewBS->paradoxBoostStats[bankAtk] == STAT_DEF)
+			if (!useMonDef && gNewBS->paradoxBoostStats[bankDef] == STAT_DEF)
 				defense = (defense * 13) / 10;
-			else if (!useMonDef && gNewBS->paradoxBoostStats[bankAtk] == STAT_SPDEF)
+			else if (!useMonDef && gNewBS->paradoxBoostStats[bankDef] == STAT_SPDEF)
 				spDefense = (spDefense * 13) / 10;
 			break;
 	}
@@ -3198,10 +3198,6 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	if (data->defStatus3 & STATUS3_GLAIVERUSH)
 		damage *= 2;
 
-	//Punching Glove Boost
-	if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_PUNCHING_GLOVE && CheckTableForMove(move, gPunchingMoves))
-		damage = (damage * 11) / 10;
-
 	//Weather Boost
 	if (WEATHER_HAS_EFFECT && data->defItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
 	{
@@ -3263,6 +3259,12 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		//1.2x Boost
 			if (data->resultFlags & MOVE_RESULT_SUPER_EFFECTIVE)
 				damage = (damage * 12) / 10;
+			break;
+
+		case ITEM_EFFECT_PUNCHING_GLOVE:
+		//1.1x Boost
+			if (CheckTableForMove(move, gPunchingMoves))
+				damage = (damage * 11) / 10;
 			break;
 	}
 

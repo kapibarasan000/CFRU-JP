@@ -828,12 +828,17 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 				if (!CheckTableForAbility(*GetAbilityLocation(target1), gTraceBannedAbilities))
 				{
 					gBankAttacker = bank;
-					*GetAbilityLocation(bank) = *GetAbilityLocation(target1);
-					gLastUsedAbility = *GetAbilityLocation(target1);
-					BattleScriptPushCursorAndCallback(BattleScript_TraceActivates);
+					if (ITEM_EFFECT(bank) == ITEM_EFFECT_ABILITY_SHIELD)
+						BattleScriptPushCursorAndCallback(BattleScript_AttackerAbilityShieldEnd3);
+					else
+					{
+						*GetAbilityLocation(bank) = *GetAbilityLocation(target1);
+						gLastUsedAbility = *GetAbilityLocation(target1);
+						BattleScriptPushCursorAndCallback(BattleScript_TraceActivates);
 
-					PREPARE_MON_NICK_WITH_PREFIX_BUFFER(gBattleTextBuff1, target1, gBattlerPartyIndexes[target1])
-					PREPARE_ABILITY_BUFFER(gBattleTextBuff2, gLastUsedAbility)
+						PREPARE_MON_NICK_WITH_PREFIX_BUFFER(gBattleTextBuff1, target1, gBattlerPartyIndexes[target1])
+						PREPARE_ABILITY_BUFFER(gBattleTextBuff2, gLastUsedAbility)
+					}
 				}
 				else
 				{
@@ -1452,7 +1457,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			{
 				if (!IsAbilitySuppressed(i) //Gastro Acid has higher priority
 				&& ABILITY(i) != ABILITY_NONE
-				&& !CheckTableForAbility(ABILITY(i), gNeutralizingGasBannedAbilities))
+				&& !CheckTableForAbility(ABILITY(i), gNeutralizingGasBannedAbilities)
+				&& ITEM_EFFECT(i) != ITEM_EFFECT_ABILITY_SHIELD)
 				{
 					u16* abilityLoc = GetAbilityLocation(i);
 					gNewBS->neutralizingGasBlockedAbilities[i] = *abilityLoc;

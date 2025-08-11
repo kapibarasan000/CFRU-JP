@@ -332,6 +332,8 @@ BattleScript_ItemSteal:
 	playanimation BANK_TARGET ANIM_STEAL_ITEM 0x0
 	printstring 0x8E
 	waitmessage DELAY_1SECOND
+	callasm TryRemovePrimalWeatherAfterItemChange
+	tryactivateswitchinability BANK_ATTACKER
 	call 0x81BD298 @;BattleScript_WeatherFormChanges - In case of Utility Umbrella
 	return
 

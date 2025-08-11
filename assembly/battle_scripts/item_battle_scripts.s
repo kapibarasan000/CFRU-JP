@@ -70,6 +70,11 @@ item_battle_scripts.s
 .global BattleScript_MirrorHerbCopyStatChangeRet
 .global BattleScript_MirrorHerbCopyDragonCheer
 .global BattleScript_MirrorHerbEnd
+.global BattleScript_AbilityShield
+.global BattleScript_AbilityShieldMoveEnd
+.global BattleScript_AttackerAbilityShieldEnd3
+.global BattleScript_AttackerAbilityShield
+.global BattleScript_AbilityShieldNeutralizingGas
 
 .global BattleScript_CheekPouch
 
@@ -695,6 +700,36 @@ BattleScript_MirrorHerbEnd:
 	waitmessage DELAY_1SECOND
 	removeitem BANK_SCRIPTING
 	callasm ClearMirrorHerbActive
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_AbilityShieldMoveEnd:
+	call BattleScript_AbilityShield
+	goto BS_MOVE_END
+
+BattleScript_AbilityShield:
+	setword BATTLE_STRING_LOADER gText_AbilityShieldProtected
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+BattleScript_AttackerAbilityShieldEnd3:
+	call BattleScript_AttackerAbilityShield
+	end3
+
+BattleScript_AttackerAbilityShield:
+	setword BATTLE_STRING_LOADER gText_AbilityShieldProtectedAttacker
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+BattleScript_AbilityShieldNeutralizingGas:
+	setbyte USER_BANK 0
+BattleScript_AbilityShieldNeutralizingGasLoop:
+	callasm TryAbilityShieldMsg
+	addbyte USER_BANK 1
+	jumpifarraynotequal USER_BANK NUM_POKEMON 0x1 BattleScript_AbilityShieldNeutralizingGasLoop
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

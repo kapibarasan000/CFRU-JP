@@ -607,7 +607,8 @@ void atk52_switchineffects(void)
 			if (!IsAbilitySuppressed(gActiveBattler) //Gastro Acid has higher priority
 			&& ABILITY(gActiveBattler) != ABILITY_NONE
 			&& !CheckTableForAbility(ABILITY(gActiveBattler), gNeutralizingGasBannedAbilities)
-			&& AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BANK, gActiveBattler, ABILITY_NEUTRALIZINGGAS, 0, 0))
+			&& AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BANK, gActiveBattler, ABILITY_NEUTRALIZINGGAS, 0, 0)
+			&& ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_ABILITY_SHIELD)
 			{
 				u16* abilityLoc = GetAbilityLocation(gActiveBattler);
 				gNewBS->neutralizingGasBlockedAbilities[gActiveBattler] = *abilityLoc;

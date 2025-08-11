@@ -1673,7 +1673,7 @@ void HandleInputChooseTarget(void)
 					else if (GetBaseMoveTarget(move, gActiveBattler) & MOVE_TARGET_USER_OR_PARTNER)
 						i++;
 
-					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
+					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing || move == MOVE_DOODLE) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
 						i = FALSE; //Can't use Max Move on partner
 
 					break;
@@ -1742,7 +1742,7 @@ void HandleInputChooseTarget(void)
 					else if (GetBaseMoveTarget(move, gActiveBattler) & MOVE_TARGET_USER_OR_PARTNER)
 						i++;
 
-					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
+					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing || move == MOVE_DOODLE) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
 						i = FALSE; //Can't use Max Move on partner
 					break;
 				case B_POSITION_OPPONENT_LEFT:

@@ -15,6 +15,7 @@ extern const u8 BattleScript_WeatherAbilityBlockedByPrimalWeather[];
 extern const u8 BattleScript_WeatherAbilityBlockedByPrimalWeatherRet[];
 extern const u8 BattleScript_IntimidateActivatesEnd3[];
 extern const u8 BattleScript_TraceActivates[];
+extern const u8 BattleScript_AttackerAbilityShieldEnd3[];
 extern const u8 BattleScript_Frisk[];
 extern const u8 BattleScript_FriskEnd[];
 extern const u8 BattleScript_PastelVeil[];

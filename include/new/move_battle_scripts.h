@@ -104,6 +104,7 @@ extern const u8 BattleScript_MaxMoveAromatherapy[];
 extern const u8 BattleScript_MaxMoveConfuseFoes[];
 extern const u8 BattleScript_MaxMoveTormentFoes[];
 extern const u8 BattleScript_MaxMoveLowerSpeed2Foes[];
+extern const u8 BattleScript_AbilityShield[];
 
 //Strings
 extern const u8 gText_SuperEffectiveTarget[];

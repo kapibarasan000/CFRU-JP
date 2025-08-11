@@ -15066,7 +15066,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_DOODLE] =
 	{
-		.effect = EFFECT_SKILL_SWAP,
+		.effect = EFFECT_ROLE_PLAY,
 		.power = 0,
 		.type = TYPE_NORMAL,
 		.accuracy = 100,

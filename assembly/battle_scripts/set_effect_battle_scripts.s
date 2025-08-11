@@ -105,6 +105,7 @@ BattleScript_KnockedOff:
 	playanimation BANK_TARGET ANIM_KNOCK_OFF_ITEM 0x0
 	printstring 0xB7 @;STRINGID_PKMNKNOCKEDOFF
 	waitmessage DELAY_1SECOND
+	callasm TryRemovePrimalWeatherAfterItemChange
 	call 0x81BD298 @;BattleScript_WeatherFormChanges - In case of Utility Umbrella
 	return
 

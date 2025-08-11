@@ -903,6 +903,8 @@ u8 TurnBasedEffects(void)
 				&& BATTLER_ALIVE(gActiveBattler)
 				&& --gNewBS->EmbargoTimers[gActiveBattler] == 0)
 				{
+					if (ItemId_GetHoldEffect(ITEM(gActiveBattler)) == ITEM_EFFECT_ABILITY_SHIELD)
+						HandleAbilityShieldGetAndLost(gActiveBattler);
 					BattleScriptExecute(BattleScript_EmbargoEnd);
 					effect++;
 				}

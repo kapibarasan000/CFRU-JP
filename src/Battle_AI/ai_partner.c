@@ -46,8 +46,8 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 	u16 atkAbility = GetAIAbility(bankAtk, data->foe1, move);
 	u16 atkPartnerAbility = data->atkPartnerAbility;
 
-	if (!NO_MOLD_BREAKERS(atkAbility, move)
-	&& gMoldBreakerIgnoredAbilities[atkPartnerAbility])
+	if (IsTargetAbilityIgnored(atkPartnerAbility, atkAbility, move)
+	&& atkPartnerItemEffect != ITEM_EFFECT_ABILITY_SHIELD)
 		atkPartnerAbility = ABILITY_NONE;
 
 	u8 moveSplit = CalcMoveSplit(bankAtk, move, bankDef);

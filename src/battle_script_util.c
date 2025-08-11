@@ -268,7 +268,8 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 	if (IsMoldBreakerAbility(ABILITY(bank))
 	|| (ABILITY(bank) == ABILITY_MYCELIUMMIGHT && SPLIT(gCurrentMove) == SPLIT_STATUS))
 	{
-		if (gMoldBreakerIgnoredAbilities[ABILITY(gBankSwitching)])
+		if (gMoldBreakerIgnoredAbilities[ABILITY(gBankSwitching)]
+		&& ITEM_EFFECT(gBankSwitching) != ITEM_EFFECT_ABILITY_SHIELD)
 		{
 			gNewBS->DisabledMoldBreakerAbilities[gBankSwitching] = gBattleMons[gBankSwitching].ability;
 			gBattleMons[gBankSwitching].ability = 0;
@@ -472,6 +473,12 @@ void BestowItem(void)
 		gBattleMons[gBankAttacker].item = 0;
 		HandleUnburdenBoost(gBankAttacker); //Give attacker Unburden boost
 		HandleUnburdenBoost(gBankTarget); //Remove target Unburden boost
+
+		if (ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_ABILITY_SHIELD)
+		{
+			HandleAbilityShieldGetAndLost(gBankAttacker);
+			HandleAbilityShieldGetAndLost(gBankTarget);
+		}
 
 		gActiveBattler = gBankAttacker;
 		EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
@@ -1380,6 +1387,11 @@ void AbilityChangeBSFunc(void)
 		case MOVE_WORRYSEED:
 			if (CheckTableForAbility(defAbility, gWorrySeedBannedAbilities))
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+			else if (ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_ABILITY_SHIELD)
+			{
+				RecordItemEffectBattle(gBankTarget, ITEM_EFFECT(gBankTarget));
+				gBattlescriptCurrInstr = BattleScript_AbilityShieldMoveEnd - 5;
+			}
 			else
 			{
 				*defAbilityLoc = ABILITY_INSOMNIA;
@@ -1395,13 +1407,17 @@ void AbilityChangeBSFunc(void)
 			{
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			}
+			else if (ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_ABILITY_SHIELD)
+			{
+				RecordItemEffectBattle(gBankTarget, ITEM_EFFECT(gBankTarget));
+				gBattlescriptCurrInstr = BattleScript_AbilityShieldMoveEnd - 5;
+			}
 			else
 			{
 				gStatuses3[gBankTarget] |= STATUS3_ABILITY_SUPPRESS;
 				gNewBS->SuppressedAbilities[gBankTarget] = defAbility;
 				*defAbilityLoc = ABILITY_NONE;
-				gNewBS->SlowStartTimers[gBankTarget] = 0;
-				gDisableStructs[gBankTarget].truantCounter = 0;
+				ResetVarsForAbilityChange(gBankTarget);
 				gBattleScripting.bank = gBankTarget;
 				gBattleStringLoader = AbilitySuppressedString;
 				return; //No transfer needed
@@ -1415,6 +1431,11 @@ void AbilityChangeBSFunc(void)
 			||  CheckTableForAbility(atkAbility, gEntrainmentBannedAbilitiesAttacker)
 			||  CheckTableForAbility(defAbility, gEntrainmentBannedAbilitiesTarget))
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+			else if (ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_ABILITY_SHIELD)
+			{
+				RecordItemEffectBattle(gBankTarget, ITEM_EFFECT(gBankTarget));
+				gBattlescriptCurrInstr = BattleScript_AbilityShieldMoveEnd - 5;
+			}
 			else
 			{
 				*defAbilityLoc = atkAbility;
@@ -1432,6 +1453,11 @@ void AbilityChangeBSFunc(void)
 			{
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			}
+			else if (ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_ABILITY_SHIELD)
+			{
+				RecordItemEffectBattle(gBankTarget, ITEM_EFFECT(gBankTarget));
+				gBattlescriptCurrInstr = BattleScript_AbilityShieldMoveEnd - 5;
+			}
 			else
 			{
 				*defAbilityLoc = ABILITY_SIMPLE;
@@ -1440,29 +1466,10 @@ void AbilityChangeBSFunc(void)
 				gBattleStringLoader = SimpleBeamString;
 			}
 			break;
-
-		case MOVE_DOODLE:
-			if (defAbility == ABILITY_NONE
-			||  IsDynamaxed(gBankTarget)
-			||  *defAbilityLoc == *atkAbilityLoc
-			||  CheckTableForAbility(atkAbility, gEntrainmentBannedAbilitiesAttacker)
-			||  CheckTableForAbility(defAbility, gEntrainmentBannedAbilitiesTarget))
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
-			else
-			{
-				*atkAbilityLoc = defAbility;
-				//SetTookAbilityFrom(gBankTarget, gBankAttacker); //Set after the first Ability pop up
-				gLastUsedAbility = atkAbility; //Original ability
-				ResetVarsForAbilityChange(gBankAttacker);
-				gBattleStringLoader = EntrainmentString;
-
-				if (gLastUsedAbility == ABILITY_TRUANT)
-					gDisableStructs[gBankAttacker].truantCounter = 0; //Reset counter
-			}
-			break;
 	}
 
-	if (gBattlescriptCurrInstr != BattleScript_ButItFailed - 5)
+	if (gBattlescriptCurrInstr != BattleScript_ButItFailed - 5
+	&& gBattlescriptCurrInstr != BattleScript_AbilityShieldMoveEnd - 5)
 		TransferAbilityPopUp(gBankTarget, gLastUsedAbility);
 }
 
@@ -1918,15 +1925,29 @@ void TryRemovePrimalWeatherAfterTransformation(void)
 		gBattlescriptCurrInstr -= 5;
 }
 
+void TryRemovePrimalWeatherAfterItemChange(void)
+{
+	if (gNewBS->AbilityShieldLost)
+	{
+		if (HandleSpecialSwitchOutAbilities(gNewBS->AbilityShieldLostBank, gNewBS->backupAbility, FALSE))
+		{
+			gBattlescriptCurrInstr -= 5;
+			return;
+		}
+
+		gNewBS->AbilityShieldLost = FALSE;
+	}
+}
+
 void UndoAbilityEffectsForNeutralizingGas(void)
 {
 	gBattleStringLoader = NULL;
 
-	if (gBattleWeather & WEATHER_RAIN_PRIMAL)
+	if (gBattleWeather & WEATHER_RAIN_PRIMAL && !ABILITY_ON_FIELD(ABILITY_PRIMORDIALSEA))
 		gBattleStringLoader = PrimalRainEndString;
-	else if (gBattleWeather & WEATHER_SUN_PRIMAL)
+	else if (gBattleWeather & WEATHER_SUN_PRIMAL && !ABILITY_ON_FIELD(ABILITY_DESOLATELAND))
 		gBattleStringLoader = PrimalSunEndString;
-	else if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL)
+	else if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL && !ABILITY_ON_FIELD(ABILITY_DELTASTREAM))
 		gBattleStringLoader = PrimalAirCurrentEndString;
 
 	if (gBattleStringLoader != NULL)
@@ -1940,13 +1961,26 @@ void UndoAbilityEffectsForNeutralizingGas(void)
 
 	for (int i = 0; i < gBattlersCount; ++i)
 	{
-		if (gStatuses3[i] & STATUS3_ILLUSION)
+		if (gStatuses3[i] & STATUS3_ILLUSION
+		&& ITEM_EFFECT(i) != ITEM_EFFECT_ABILITY_SHIELD)
 		{
 			gBattleScripting.bank = i;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_TryRemoveIllusion - 5;
 			break;
 		}
+	}
+}
+
+void TryAbilityShieldMsg(void)
+{
+	if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_ABILITY_SHIELD
+	&& ABILITY(gBankAttacker) != ABILITY_NEUTRALIZINGGAS
+	&& ABILITY(gBankAttacker) != ABILITY_NONE)
+	{
+		gBattlescriptCurrInstr += 5;
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_AttackerAbilityShield - 5;
 	}
 }
 
@@ -2495,9 +2529,13 @@ void TryFailCorrosiveGas(void)
 
 void CorrodeItem(void)
 {
+	u8 itemEffect = ITEM_EFFECT(gBankTarget);
 	gNewBS->corrodedItems[SIDE(gBankTarget)] |= gBitTable[gBattlerPartyIndexes[gBankTarget]];
 	gLastUsedItem = ITEM(gBankTarget);
 	gBattleMons[gBankTarget].item = ITEM_NONE; //Inaccessible while on the field (but still on party menu)
+	
+	if (itemEffect == ITEM_EFFECT_ABILITY_SHIELD)
+		HandleAbilityShieldGetAndLost(gBankTarget);
 }
 
 void TryFailSteelRoller(void)
@@ -2958,4 +2996,20 @@ void OrderUpFunc(void)
 
 	if (effect)
 		gBattleCommunication[MOVE_EFFECT_BYTE] = effect | MOVE_EFFECT_AFFECTS_USER;
+}
+
+void AbilityShieldDisable(void)
+{
+	u8 bank = gBanksByTurnOrder[*gSeedHelper];
+
+	if (ItemId_GetHoldEffect(ITEM(bank)) == ITEM_EFFECT_ABILITY_SHIELD)
+		HandleAbilityShieldGetAndLost(bank);
+}
+
+void TryActivateSwitchinAbilityByTurnOrder(void)
+{
+	u8 bank = gBanksByTurnOrder[*gSeedHelper];
+	gBattlescriptCurrInstr += 5;
+	AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0);
+	gBattlescriptCurrInstr -= 5;
 }

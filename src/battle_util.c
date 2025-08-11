@@ -2492,3 +2492,35 @@ bool8 CheckCommandingDondozo(void)
 {
 	return gNewBS->commandingDondozo & gBitTable[gActiveBattler];
 }
+
+void HandleAbilityShieldGetAndLost(u8 bank)
+{
+	if (AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BANK, bank, ABILITY_NEUTRALIZINGGAS, 0, 0))
+	{
+		if (ITEM_EFFECT(bank) == ITEM_EFFECT_ABILITY_SHIELD
+		&& gNewBS->neutralizingGasBlockedAbilities[bank] != ABILITY_NONE)
+		{
+			*GetAbilityLocationIgnoreNeutralizingGas(bank) = gNewBS->neutralizingGasBlockedAbilities[bank];
+			gNewBS->neutralizingGasBlockedAbilities[bank] = ABILITY_NONE;
+			gNewBS->SlowStartTimers[bank] = 0;
+			gDisableStructs[gBankTarget].truantCounter = 0;
+
+			if (IsUnnerveAbility(ABILITY(bank)) || ABILITY(bank) == ABILITY_IMPOSTER) //Never gets another chance
+				gStatuses3[bank] |= STATUS3_SWITCH_IN_ABILITY_DONE;
+			else
+				gStatuses3[bank] &= ~STATUS3_SWITCH_IN_ABILITY_DONE;
+		}
+		else if (ITEM_EFFECT(bank) != ITEM_EFFECT_ABILITY_SHIELD
+		&& !IsAbilitySuppressed(bank)
+		&& ABILITY(bank) != ABILITY_NONE
+		&& !CheckTableForAbility(ABILITY(bank), gNeutralizingGasBannedAbilities))
+		{
+			u16* abilityLoc = GetAbilityLocation(bank);
+			gNewBS->neutralizingGasBlockedAbilities[bank] = gNewBS->backupAbility = *abilityLoc;
+			*abilityLoc = 0;
+			gNewBS->SlowStartTimers[bank] = 0;
+			gNewBS->AbilityShieldLost = TRUE;
+			gNewBS->AbilityShieldLostBank = bank;
+		}
+	}
+}

@@ -63,7 +63,8 @@ void atk00_attackcanceler(void)
 			for (i = 0; i < gBattlersCount; ++i)
 			{
 				if (i != gBankAttacker
-				&& gMoldBreakerIgnoredAbilities[ABILITY(i)])
+				&& gMoldBreakerIgnoredAbilities[ABILITY(i)]
+				&& ITEM_EFFECT(i) != ITEM_EFFECT_ABILITY_SHIELD)
 				{
 					gNewBS->DisabledMoldBreakerAbilities[i] = gBattleMons[i].ability; //Temporarily disable all relevant abilities on the field
 					gBattleMons[i].ability = ABILITY_NONE;

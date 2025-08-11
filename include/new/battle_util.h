@@ -116,6 +116,7 @@ bool8 WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(u8 atkType1, u
 bool8 WeatherHasEffect(void);
 u8 GetImposterBank(u8 bank);
 bool8 ImposterWorks(u8 bankAtk, bool8 checkingMonAtk);
+void HandleAbilityShieldGetAndLost(u8 bank);
 
 void ClearBankStatus(u8 bank);
 bool8 DoesSleepClausePrevent(u8 bank);

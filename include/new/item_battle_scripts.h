@@ -64,5 +64,8 @@ extern const u8 BattleScript_MirrorHerbCopyStatChangeEnd2[];
 extern const u8 BattleScript_MirrorHerbCopyStatChangeRet[];
 extern const u8 BattleScript_MirrorHerbCopyDragonCheer[];
 extern const u8 BattleScript_MirrorHerbEnd[];
+extern const u8 BattleScript_AbilityShieldMoveEnd[];
+extern const u8 BattleScript_AttackerAbilityShield[];
+extern const u8 BattleScript_AbilityShieldNeutralizingGas[];
 
 extern const u8 gText_NotAffectedBecauseOfItem[];

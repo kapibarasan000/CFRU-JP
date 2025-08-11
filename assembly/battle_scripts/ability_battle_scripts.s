@@ -389,6 +389,7 @@ BattleScript_NeutralizingGas:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	call BattleScript_AbilityShieldNeutralizingGas
 	callasm UndoAbilityEffectsForNeutralizingGas
 	call 0x81BD298 @;BattleScript_WeatherFormChanges
 	end3
@@ -849,6 +850,7 @@ CursedBodyReturn:
 BattleScript_MummyActivates:
 	call BattleScript_AbilityPopUp
 	pause DELAY_HALFSECOND
+	jumpifhelditemeffect BANK_ATTACKER ITEM_EFFECT_ABILITY_SHIELD MummyAbilityShield
 	call BattleScript_AbilityPopUpRevert
 	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
 	call BattleScript_AbilityPopUp
@@ -862,11 +864,17 @@ BattleScript_MummyActivates:
 	call BattleScript_AbilityPopUpRevert
 	return
 
+MummyAbilityShield:
+	call BattleScript_AttackerAbilityShield
+	call BattleScript_AbilityPopUpRevert
+	return
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_LingeringAromaActivates:
 	call BattleScript_AbilityPopUp
 	pause DELAY_HALFSECOND
+	jumpifhelditemeffect BANK_ATTACKER ITEM_EFFECT_ABILITY_SHIELD MummyAbilityShield
 	call BattleScript_AbilityPopUpRevert
 	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
 	call BattleScript_AbilityPopUp

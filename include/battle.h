@@ -844,6 +844,7 @@ struct NewBattleStruct
 	u8 originalAttackerBackup : 2;
 	u8 originalTargetBackup : 2;
 	u8 backupBattlerPosition : 2; //For Neutralizing Gas
+	u8 AbilityShieldLostBank;
 
 	//Booleans
 	bool8 MoveBounceInProgress : 2;
@@ -913,6 +914,7 @@ struct NewBattleStruct
 	bool8 poisonPuppeteerConfusion : 1;
 	bool8 mirrorHerbActive : 1;
 	bool8 fickleBeamBoosted : 1;
+	bool8 AbilityShieldLost : 1;
 
 	//Other
 	u16 LastUsedMove;

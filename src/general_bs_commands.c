@@ -1550,11 +1550,9 @@ void atk1B_cleareffectsonfaint(void) {
 
 				if (IS_DOUBLE_BATTLE
 				&& (partnerAbility == ABILITY_RECEIVER
-				#ifdef ABILITY_POWEROFALCHEMY
-				|| partnerAbility == ABILITY_POWEROFALCHEMY
-				#endif
-				)
-				&& !CheckTableForAbility(CopyAbility(gActiveBattler), gReceiverBannedAbilities))
+				|| partnerAbility == ABILITY_POWEROFALCHEMY)
+				&& !CheckTableForAbility(CopyAbility(gActiveBattler), gReceiverBannedAbilities)
+				&& ITEM_EFFECT(partner) != ITEM_EFFECT_ABILITY_SHIELD)
 				{
 					gLastUsedAbility = partnerAbility;
 					*GetAbilityLocation(partner) = CopyAbility(gActiveBattler);
@@ -2360,6 +2358,8 @@ void atk6A_removeitem(void)
 
 		gBattleMons[bank].item = ITEM_NONE;
 		HandleUnburdenBoost(bank);
+		if (oldItemEffect == ITEM_EFFECT_ABILITY_SHIELD)
+			HandleAbilityShieldGetAndLost(bank);
 	}
 
 	gBattlescriptCurrInstr += 2;
@@ -2379,6 +2379,12 @@ void atk6A_removeitem(void)
 		gBattleMons[bank].item = partnerItem;
 		gBattleMons[partner].item = 0;
 		HandleUnburdenBoost(bank); //Remove the Unburden boost it may have gained
+
+		if (ItemId_GetHoldEffect(partnerItem) == ITEM_EFFECT_ABILITY_SHIELD)
+		{
+			HandleAbilityShieldGetAndLost(bank);
+			HandleAbilityShieldGetAndLost(partner);
+		}
 
 		gActiveBattler = bank;
 		EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
@@ -5147,6 +5153,7 @@ void atkD2_tryswapitems(void) //Trick
 		else //Took a while, but all checks passed and items can be safely swapped
 		{
 			u16 oldItemAtk, *newItemAtk;
+			u8 newHoldEffectAtk, newHoldEffectDef;
 
 			newItemAtk = &gBattleStruct->changedItems[gBankAttacker];
 			oldItemAtk = ITEM(gBankAttacker);
@@ -5156,8 +5163,17 @@ void atkD2_tryswapitems(void) //Trick
 			gBattleMons[gBankTarget].item = oldItemAtk;
 			HandleUnburdenBoost(gBankAttacker); //Give or take away Unburden boost
 			HandleUnburdenBoost(gBankTarget); //Give or take away Unburden boost
-			RecordItemEffectBattle(gBankAttacker, ItemId_GetHoldEffect(ITEM(gBankAttacker))); //Must use ItemId_GetHoldEffect explicitly in case item effect can't be used currently
-			RecordItemEffectBattle(gBankTarget, ItemId_GetHoldEffect(ITEM(gBankTarget)));
+			newHoldEffectAtk = ITEM_EFFECT(gBankAttacker);
+			newHoldEffectDef = ITEM_EFFECT(gBankTarget);
+
+			if (newHoldEffectAtk != newHoldEffectDef
+			&& (newHoldEffectAtk == ITEM_EFFECT_ABILITY_SHIELD || newHoldEffectDef == ITEM_EFFECT_ABILITY_SHIELD))
+			{
+				HandleAbilityShieldGetAndLost(gBankAttacker);
+				HandleAbilityShieldGetAndLost(gBankTarget);
+			}
+			RecordItemEffectBattle(gBankAttacker, newHoldEffectAtk); //Must use ItemId_GetHoldEffect explicitly in case item effect can't be used currently
+			RecordItemEffectBattle(gBankTarget, newHoldEffectDef);
 
 			gActiveBattler = gBankAttacker;
 			EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gBankAttacker].item);
@@ -5205,7 +5221,8 @@ void atkD3_trycopyability(void) //Role Play
 	if (atkAbility == defAbility
 	||  defAbility == ABILITY_NONE
 	||  CheckTableForAbility(atkAbility, gRolePlayAttackerBannedAbilities)
-	||  CheckTableForAbility(defAbility, gRolePlayBannedAbilities))
+	||  CheckTableForAbility(defAbility, gRolePlayBannedAbilities)
+	||  ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_ABILITY_SHIELD)
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 	}
@@ -5276,6 +5293,7 @@ void atkDA_tryswapabilities(void) //Skill Swap
 	if (atkAbility == ABILITY_NONE || defAbility == ABILITY_NONE
 	|| IsDynamaxed(gBankAttacker) || IsDynamaxed(gBankTarget)
 	|| CheckTableForAbility(atkAbility, gSkillSwapBannedAbilities) || CheckTableForAbility(defAbility, gSkillSwapBannedAbilities)
+	|| ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_ABILITY_SHIELD || ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_ABILITY_SHIELD
 	|| gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);

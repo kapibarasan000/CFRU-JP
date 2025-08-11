@@ -260,6 +260,7 @@ BattleScript_EmbargoEnd:
 	setword BATTLE_STRING_LOADER EmbargoEndString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	tryactivateswitchinability BANK_ATTACKER
 	end2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -316,7 +317,15 @@ BattleScript_WonderRoomEnd:
 
 BattleScript_MagicRoomEnd:
 	setword BATTLE_STRING_LOADER MagicRoomEndString
-	goto PrintTimerString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	setbyte SEED_HELPER 0
+MagicRoomAbilityShieldEnableLoop:
+	callasm AbilityShieldDisable
+	callasm TryActivateSwitchinAbilityByTurnOrder
+	addbyte SEED_HELPER 1
+	jumpifbytenotequal SEED_HELPER, NUM_POKEMON, MagicRoomAbilityShieldEnableLoop
+	end2
 
 
 BattleScript_GravityEnd:
