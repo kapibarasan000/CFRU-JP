@@ -11095,7 +11095,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_TEATIME] =
-	{	//TODO
+	{
 		.effect = EFFECT_TEATIME,
 		.power = 0,
 		.type = TYPE_NORMAL,

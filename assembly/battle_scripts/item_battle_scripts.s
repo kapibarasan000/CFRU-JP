@@ -37,6 +37,7 @@ item_battle_scripts.s
 .global BattleScript_BerryCureConfusionEnd2
 .global BattleScript_BerryCureChosenStatusRet
 .global BattleScript_BerryCureChosenStatusEnd2
+.global BattleScript_BerryNoEffect
 .global BattleScript_HerbCureChosenStatusRet
 .global BattleScript_HerbCureChosenStatusEnd2
 .global BattleScript_HerbCureChosenStatusFling
@@ -270,6 +271,13 @@ BattleScript_BerryCureChosenStatusRet:
 BattleScript_BerryCureChosenStatusEnd2:
 	call BattleScript_BerryCureChosenStatusRet
 	end2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_BerryNoEffect:
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
+	call BattleScript_CheekPouch
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

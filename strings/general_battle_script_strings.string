@@ -462,3 +462,9 @@ The sleep clause prevents more\nPokemon from being put to sleep！
 
 #org @gText_AbilityShieldProtectedAttacker
 [ATTACKER]は\nとくせいガードの こうかで\lとくせいが まもられている！
+
+#org @gText_TeaTimeAteBerry
+おちゃかいをして\nみんなで きのみを たべた！
+
+#org @gText_ButNothingHappened
+しかし なにも おこらなかった！

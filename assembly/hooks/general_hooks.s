@@ -1611,7 +1611,9 @@ HandleTurnActionSelectionStateCommanderHook:
 	and r3, r0
 	cmp r3, #0x0
 	bne ActionConfirmed
+	push {r3}
 	bl CheckCommandingDondozo
+	pop {r3}
 	cmp r0, #0x0
 	bne ActionConfirmed
 	ldr r4, =0x2023B24

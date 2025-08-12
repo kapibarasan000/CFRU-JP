@@ -3013,3 +3013,28 @@ void TryActivateSwitchinAbilityByTurnOrder(void)
 	AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0);
 	gBattlescriptCurrInstr -= 5;
 }
+
+static bool8 IsTeatimeAffected(u8 bank)
+{
+    if (GetPocketByItemId(ITEM(bank)) != POCKET_BERRIES)
+        return FALSE;
+    if (gStatuses3[bank] & STATUS3_SEMI_INVULNERABLE)
+        return FALSE;
+    return TRUE;
+}
+
+void TeatimeTargets(void)
+{
+    u8 count = 0, i;
+
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        if (IsTeatimeAffected(i))
+            count++;
+    }
+
+    if (count == 0)
+        gBattlescriptCurrInstr = BattleScript_TeatimeFailed - 5;
+
+	gBattleStringLoader = gText_TeaTimeAteBerry;
+}

@@ -2182,3 +2182,86 @@ void atkFF37_TryRevivalBlessing(void)
 		gBattlescriptCurrInstr -= 1;
     }
 }
+
+extern const u16 gBannedBattleEatBerries[];
+//tryteatimeeatberry FAIL_ADDRESS
+void atkFF38_tryteatimeeatberry(void)
+{
+	u8 bank = 0;
+	bool8 priority = PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0;
+
+	for (; gBattleCommunication[0] < gBattlersCount; ++gBattleCommunication[0])
+	{
+		switch (gBattleCommunication[0]) {
+			case 0:
+				bank = gBankTarget = gBankAttacker;
+				break;
+			case 1:
+				bank = gBankTarget = PARTNER(gBankAttacker);
+				break;
+			case 2:
+				bank = gBankTarget = FOE(gBankAttacker);
+				break;
+			case 3:
+				bank = gBankTarget = PARTNER(FOE(gBankAttacker));
+		}
+
+		if (BATTLER_ALIVE(bank))
+		{
+			++gBattleCommunication[0];
+
+			if (IsMaxGuardUp(bank))
+			{
+				gBattleCommunication[MULTISTRING_CHOOSER] = 1; //Protected itself
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+			}
+			else if (BATTLER_SEMI_INVULNERABLE(bank) && ABILITY(gBankAttacker) != ABILITY_NOGUARD && ABILITY(bank) != ABILITY_NOGUARD)
+			{
+				gBattlescriptCurrInstr -= 1;
+			}
+			else if (priority && gBankAttacker != bank && gTerrainType == PSYCHIC_TERRAIN && CheckGrounding(bank))
+			{
+				gBattleStringLoader = PsychicTerrainAttackCancelString;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 5; //Protected by Psychic Terrain
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+			}
+			else if (priority && gBankAttacker != bank && IsPriorityBlockingAbility(ABILITY(bank)))
+			{
+				gBattleScripting.bank = bank;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 4; //Protected by Ability
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+			}
+			else if (IsBerry(ITEM(bank)))
+			{
+				if (CheckTableForItem(ITEM(bank), gBannedBattleEatBerries))
+				{
+					gBattleCommunication[MULTISTRING_CHOOSER] = 3;
+					gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+				}
+				else
+				{
+					gLastUsedItem = ITEM(bank);
+					gBattlescriptCurrInstr -= 1;
+
+					if (!ItemBattleEffects(ItemEffects_Normal, bank, TRUE, TRUE))
+					{
+						//The Berry didn't activate an effect
+						gBattleScripting.bank = bank;
+						gNewBS->canBelch[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_BerryNoEffect;
+					}
+				}
+				
+				gMoveResultFlags = 0;
+			}
+			else
+				gBattlescriptCurrInstr -= 1;
+
+			return;
+		}
+	}
+
+	gBankTarget = gBankAttacker;
+	gBattlescriptCurrInstr += 5;
+}

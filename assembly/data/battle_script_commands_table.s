@@ -328,3 +328,4 @@ gBattleScriptingCommandsTable2:
 .word atkFF35_jumpifmaxchistrikecapped
 .word atkFF36_trygetcottondowntarget
 .word atkFF37_TryRevivalBlessing
+.word atkFF38_tryteatimeeatberry

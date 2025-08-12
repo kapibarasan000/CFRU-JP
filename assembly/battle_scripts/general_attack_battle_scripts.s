@@ -6154,9 +6154,48 @@ BattleScript_SetTerrainReturn:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_244_Blank
-BS_244_Blank:
-	goto BS_STANDARD_HIT
+.global BS_244_Teatime
+BS_244_Teatime:
+	attackcanceler
+	attackstring
+	ppreduce
+	callasm TeatimeTargets
+	attackanimation
+	waitanimation
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	setbyte BATTLE_COMMUNICATION 0x0
+
+TeatimeLoop:
+	tryteatimeeatberry TeatimeDidntEat
+	goto BS_MOVE_END
+
+TeatimeDidntEat:
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 4 TeatimeDidntEat_ShowAbility
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 3 TeatimeDidntEat_BannedBattleEatBerry
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	goto TeatimeLoop
+
+TeatimeDidntEat_ShowAbility:
+	call BattleScript_AbilityPopUp
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto TeatimeLoop
+
+TeatimeDidntEat_BannedBattleEatBerry:
+	removeitem BANK_TARGET
+	goto TeatimeLoop
+
+.global BattleScript_TeatimeFailed
+BattleScript_TeatimeFailed:
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	setword BATTLE_STRING_LOADER gText_ButNothingHappened
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

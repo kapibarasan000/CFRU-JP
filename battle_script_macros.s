@@ -1736,8 +1736,13 @@
 	.4byte \rom_address
 	.endm
 
-	.macro tryrevivalblessing, rom_address
+	.macro tryrevivalblessing rom_address
 	.byte 0xFF, 0x37
+	.4byte \rom_address
+	.endm
+
+	.macro tryteatimeeatberry rom_address
+	.byte 0xFF, 0x38
 	.4byte \rom_address
 	.endm
 
