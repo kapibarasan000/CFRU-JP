@@ -14598,10 +14598,10 @@ ANIM_GRAVITY:
 	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0xFC00 0x1 0xffff
 	waitbgfadein
 	playsound2 0x72 SOUND_PAN_ATTACKER
-	launchtask 0x8098899 0x5 0x5 bank_attacker 0x2 0x0 0x60 0x1e
-	launchtask 0x8098899 0x5 0x5 bank_target 0x2 0x0 0x60 0x1e
-	launchtask 0x8098899 0x5 0x5 attacker_partner 0x2 0x0 0x60 0x1e
-	launchtask 0x8098899 0x5 0x5 target_partner 0x2 0x0 0x60 0x1e
+	launchtask AnimTask_ShakeAndSinkMon 0x5 0x5 bank_attacker 0x2 0x0 0x60 0x1e
+	launchtask AnimTask_ShakeAndSinkMon 0x5 0x5 bank_target 0x2 0x0 0x60 0x1e
+	launchtask AnimTask_ShakeAndSinkMon 0x5 0x5 attacker_partner 0x2 0x0 0x60 0x1e
+	launchtask AnimTask_ShakeAndSinkMon 0x5 0x5 target_partner 0x2 0x0 0x60 0x1e
 	launchtemplate GRAVITY_BLACKHOLE 0x1 0x5 bank_attacker 0x0 0x0 0x45 0xa
 	waitanimation
 	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_attacker 0x0 0x4
@@ -16721,8 +16721,7 @@ ANIM_DRUM_BEATING:
 @Credits to -
 .global ANIM_SNAP_TRAP
 ANIM_SNAP_TRAP:
-	goto 0x81B225A @ANIM_POUND
-	endanimation
+	goto 0x81B225A @Original Clamp animation that uses teeth
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -29165,7 +29164,7 @@ COMEUPPANCE_RIGHT: objtemplate ANIM_TAG_SCRATCH ANIM_TAG_SCRATCH OAM_NORMAL_32x3
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_DOODLE:
-	goto ANIM_SECRETPOWER
+	goto 0x81AEFD7 @MOVE_SKETCH
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

@@ -22,6 +22,7 @@
  u8* PartnerLoadName(void);
  u8 LoadPartnerBackspriteIndex(void);
  void SetControllerToPlayerPartner(void);
+ void PlayerHandleChoosePokemon(void);
 
  #ifdef OPEN_WORLD_TRAINERS
 

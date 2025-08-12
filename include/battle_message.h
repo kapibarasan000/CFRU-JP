@@ -116,7 +116,8 @@
     textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;                                  \
     textVar[1] = B_BUFF_ABILITY;                                            \
     textVar[2] = abilityId;                                                 \
-    textVar[3] = B_BUFF_EOS;                                                \
+    textVar[3] = (abilityId & 0xFF00) >> 8;                                 \
+    textVar[4] = B_BUFF_EOS;                                                \
 }
 
 #define PREPARE_TYPE_BUFFER(textVar, typeId)                                \
@@ -223,7 +224,7 @@ struct BattleMsgData
     u16 currentMove;
     u16 originallyUsedMove;
     u16 lastItem;
-    u8 lastAbility;
+    u8 unused;
     u8 scrActive;
     u8 unk1605E;
     u8 hpScale;
@@ -231,7 +232,8 @@ struct BattleMsgData
     u8 moveType;
 	bool8 zMoveActive;
 	bool8 dynamaxActive;
-    u8 abilities[MAX_BATTLERS_COUNT];
+    u16 lastAbility;
+    u16 abilities[MAX_BATTLERS_COUNT];
     u8 textBuffs[3][TEXT_BUFF_ARRAY_COUNT];
 	u8 battleStringLoader[MAX_BATTLE_STRING_LOADER_LENGTH];
 };

@@ -11,6 +11,7 @@ cmd49_battle_scripts.s
 
 .global BattleScript_CouldntFullyProtect
 .global BattleScript_PoisonTouch
+.global BattleScript_ToxicChain
 .global BattleScript_KingsShield
 .global BattleScript_SpikyShield
 .global BattleScript_BanefulBunker
@@ -54,6 +55,14 @@ BattleScript_CouldntFullyProtect:
 BattleScript_PoisonTouch:
 	setbyte POISONED_BY 0x1
 	setbyte EFFECT_BYTE 0x2
+	seteffectsecondary @;Affected by Safeguard
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_ToxicChain:
+	setbyte POISONED_BY 0x5
+	setbyte EFFECT_BYTE 0x6
 	seteffectsecondary @;Affected by Safeguard
 	return
 
@@ -224,6 +233,7 @@ BattleScript_Pickpocket:
 
 BattleScript_PoisonedBy:
 	jumpifbyte EQUALS POISONED_BY 0x1 PoisonTouchPSN
+	jumpifbyte EQUALS POISONED_BY 0x5 ToxicChainBadPSN
 	statusanimation 0x2
 	jumpifbyte EQUALS POISONED_BY 0x2 ToxicSpikesPSN
 	jumpifbyte EQUALS POISONED_BY 0x3 ToxicOrbBadPSN
@@ -258,8 +268,9 @@ BanefulBunkerPSN:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BadPoisonedBy:
-	statusanimation 0x2
 	jumpifbyte EQUALS POISONED_BY 0x1 PoisonTouchPSN
+	jumpifbyte EQUALS POISONED_BY 0x5 ToxicChainBadPSN
+	statusanimation 0x2
 	jumpifbyte EQUALS POISONED_BY 0x2 ToxicSpikesBadPSN
 	jumpifbyte EQUALS POISONED_BY 0x3 ToxicOrbBadPSN
 	jumpifbyte EQUALS POISONED_BY 0x4 BanefulBunkerPSN
@@ -279,6 +290,15 @@ ToxicOrbBadPSN:
 	setword BATTLE_STRING_LOADER ToxicOrbString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	goto 0x81BD17F
+
+ToxicChainBadPSN:
+	setbyte POISONED_BY 0x0
+	call BattleScript_AbilityPopUp
+	statusanimation 0x2
+	printstring 0x2C
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	goto 0x81BD17F
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -312,6 +332,8 @@ BattleScript_ItemSteal:
 	playanimation BANK_TARGET ANIM_STEAL_ITEM 0x0
 	printstring 0x8E
 	waitmessage DELAY_1SECOND
+	callasm TryRemovePrimalWeatherAfterItemChange
+	tryactivateswitchinability BANK_ATTACKER
 	call 0x81BD298 @;BattleScript_WeatherFormChanges - In case of Utility Umbrella
 	return
 

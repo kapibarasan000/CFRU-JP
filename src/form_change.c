@@ -11,6 +11,7 @@
 #include "../include/new/frontier.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/set_z_effect.h"
+#include "../include/new/terastal.h"
 #include "../include/new/util.h"
 
 /*
@@ -53,6 +54,7 @@ static const species_t sBannedBackupSpecies[] =
 	SPECIES_ZACIAN_CROWNED,
 	SPECIES_ZAMAZENTA_CROWNED,
 	SPECIES_DARMANITAN_G_ZEN,
+	SPECIES_TERAPAGOS_TERASTAL,
 	SPECIES_TABLES_TERMIN
 };
 
@@ -193,6 +195,15 @@ void SwitchOutFormsRevert(u8 bank)
 				DoFormChange(bank, SPECIES_CRAMORANT, FALSE, TRUE, FALSE);
 			break;
 		#endif
+
+		#if (defined SPECIES_PALAFIN && defined SPECIES_PALAFIN_HERO)
+		case SPECIES_PALAFIN:
+			if (backupSpecies != SPECIES_NONE)
+				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
+			else
+				DoFormChange(bank, SPECIES_PALAFIN_HERO, FALSE, TRUE, FALSE);
+			break;
+		#endif
 	}
 }
 
@@ -228,7 +239,8 @@ bool8 TryFormRevert(struct Pokemon* mon)
 		CalculateMonStats(mon);
 
 		#if (defined SPECIES_ZYGARDE && defined SPECIES_ZYGARDE_10)
-		if (mon->species == SPECIES_ZYGARDE || mon->species == SPECIES_ZYGARDE_10)
+		if (mon->species == SPECIES_ZYGARDE || mon->species == SPECIES_ZYGARDE_10
+		|| mon->species == SPECIES_TERAPAGOS || mon->species == SPECIES_TERAPAGOS_TERASTAL)
 			mon->hp = MathMin(mon->maxHP, oldHP);
 		#endif
 		#ifdef SPECIES_ZACIAN
@@ -341,6 +353,15 @@ bool8 TryFormRevert(struct Pokemon* mon)
 			u16 newMove = MOVE_IRONHEAD; //Zamazenta's Behemoth Bash changes to Iron Head in its base forme
 			SetMonData(mon, MON_DATA_MOVE1 + moveIndex, &newMove);
 		}
+	}
+	#endif
+	#if (defined SPECIES_TERAPAGOS && defined SPECIES_TERAPAGOS_TERASTAL)
+	else if (mon->species == SPECIES_TERAPAGOS_TERASTAL)
+	{
+		oldHP = mon->hp;
+		mon->species = SPECIES_TERAPAGOS;
+		CalculateMonStats(mon);
+		mon->hp = MathMin(mon->maxHP, oldHP);
 	}
 	#endif
 
@@ -582,7 +603,7 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 	u16 targetSpecies = SPECIES_NONE;
 
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-	u8 ability = GetMonAbility(mon);
+	u16 ability = GetMonAbility(mon);
 	u8 itemEffect = ItemId_GetHoldEffect(item);
 	u8 type = ItemId_GetHoldEffectParam(item);
 
@@ -655,6 +676,37 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 
 			if (targetSpecies == SPECIES_NONE)
 				targetSpecies = SPECIES_GENESECT;
+			break;
+		#endif
+
+		#ifdef SPECIES_OGERPON
+		case SPECIES_OGERPON:
+		case SPECIES_OGERPON_WELLSPRING_MASK:
+		case SPECIES_OGERPON_HEARTHFLAME_MASK:
+		case SPECIES_OGERPON_CORNERSTONE_MASK:
+			if (itemEffect == ITEM_EFFECT_MASKS)
+			{
+				switch (type) {
+					case TYPE_WATER:
+						targetSpecies = SPECIES_OGERPON_WELLSPRING_MASK;
+						mon->teratype = TYPE_WATER;
+						break;
+					case TYPE_FIRE:
+						targetSpecies = SPECIES_OGERPON_HEARTHFLAME_MASK;
+						mon->teratype = TYPE_FIRE;
+						break;
+					case TYPE_ROCK:
+						targetSpecies = SPECIES_OGERPON_CORNERSTONE_MASK;
+						mon->teratype = TYPE_ROCK;
+						break;
+				}
+			}
+
+			if (targetSpecies == SPECIES_NONE)
+			{
+				targetSpecies = SPECIES_OGERPON;
+				mon->teratype = TYPE_GRASS;
+			}
 			break;
 		#endif
 

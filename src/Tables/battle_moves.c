@@ -11095,7 +11095,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_TEATIME] =
-	{	//TODO
+	{
 		.effect = EFFECT_TEATIME,
 		.power = 0,
 		.type = TYPE_NORMAL,
@@ -15066,7 +15066,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_DOODLE] =
 	{
-		.effect = EFFECT_SKILL_SWAP,
+		.effect = EFFECT_ROLE_PLAY,
 		.power = 0,
 		.type = TYPE_NORMAL,
 		.accuracy = 100,
@@ -15146,7 +15146,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_GIGATONHAMMER] =
     {	
-		.effect = EFFECT_LAST_RESORT,
+		.effect = EFFECT_HIT,
 		.power = 160,
 		.type = TYPE_STEEL,
 		.accuracy = 100,
@@ -15354,7 +15354,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_ORDERUP] =
 	{
-		.effect = EFFECT_ATTACK_UP_HIT,
+		.effect = EFFECT_ORDER_UP,
 		.power = 80,
 		.type = TYPE_DRAGON,
 		.accuracy = 100,
@@ -15802,7 +15802,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_FICKLEBEAM] =
 	{
-		.effect = EFFECT_HIT,
+		.effect = EFFECT_FICKLE_BEAM,
 		.power = 80,
 		.type = TYPE_DRAGON,
 		.accuracy = 100,

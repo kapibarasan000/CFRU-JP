@@ -68,6 +68,7 @@ void __attribute__((long_call)) EventObjectSetGraphicsId(struct EventObject *eve
 void __attribute__((long_call)) EventObjectTurn(struct EventObject *eventObject, u8 direction);
 void __attribute__((long_call)) EventObjectClearHeldMovement(struct EventObject *eventObject);
 u8 __attribute__((long_call)) GetJumpMovementAction(u32 idx);
+u8 __attribute__((long_call)) GetJump2MovementAction(u32 idx);
 u8 __attribute__((long_call)) GetJumpSpecialMovementAction(u32 idx);
 void __attribute__((long_call)) FreezeEventObjects(void);
 void __attribute__((long_call)) UnfreezeEventObjects(void);
@@ -76,6 +77,7 @@ u8 __attribute__((long_call)) GetRunningDirectionAnimNum(u8 direction);
 void __attribute__((long_call)) npc_apply_anim_looping(struct EventObject *eventObject, struct Sprite *sprite, u8 animNum);
 void __attribute__((long_call)) npc_apply_direction(struct EventObject *eventObject, struct Sprite *sprite, u8 direction, u8 speed);
 bool8 __attribute__((long_call)) npc_obj_ministep_stop_on_arrival(struct EventObject *eventObject, struct Sprite *sprite);
+u8 __attribute__((long_call)) GetEventObjectIdByLocalIdAndMap(u8, u8, u8);
 u8 __attribute__((long_call)) GetEventObjectIdByLocalIdAndMapInternal(u8 localId, u8 mapNum, u8 mapGroupId);
 u8 __attribute__((long_call)) GetEventObjectIdByLocalId(u8 localId);
 void __attribute__((long_call)) FaceDirection(struct EventObject *eventObject, struct Sprite *sprite, u8 direction);
@@ -84,8 +86,9 @@ u8 __attribute__((long_call)) CreateVirtualSprite(u8 graphicsId, u8 a1, s16 x, s
 void __attribute__((long_call)) MoveCoords(u8, s16 *, s16 *);
 u8 __attribute__((long_call)) MovementAction_EmoteExclamationMark_Step0(struct EventObject *, struct Sprite *);
 bool8 __attribute__((long_call)) IsZCoordMismatchAt(u8, s16, s16);
-void __attribute__((long_call)) LogCoordsCameraRelative(s32* x, s32* y, u8 size_x, u8 size_y);
+void __attribute__((long_call)) SetSpritePosToOffsetMapCoords(s32* x, s32* y, u8 size_x, u8 size_y);
 void __attribute__((long_call)) RemoveEventObject(struct EventObject *eventObject);
+u8 __attribute__((long_call)) GetCollisionInDirection(struct EventObject*, u8);
 u8 __attribute__((long_call)) GetCollisionAtCoords(struct EventObject *, s16, s16, u32);
 u8 __attribute__((long_call)) GetFaceDirectionMovementAction(u32);
 u8 __attribute__((long_call)) SpawnSpecialEventObject(struct EventObjectTemplate *);
@@ -129,7 +132,6 @@ extern const struct SpriteTemplate *const gFieldEffectObjectTemplatePointers[];
 extern const u8 gReflectionEffectPaletteMap[];
 
 void ResetEventObjects(void);
-u8 GetEventObjectIdByLocalIdAndMap(u8, u8, u8);
 bool8 TryGetEventObjectIdByLocalIdAndMap(u8, u8, u8, u8 *);
 u8 GetEventObjectIdByXY(s16, s16);
 void SetEventObjectDirection(struct EventObject *, u8);
@@ -295,7 +297,6 @@ void MovementType_WalkSlowlyInPlace(struct Sprite *);
 u8 GetSlideMovementAction(u32);
 u8 GetJumpInPlaceMovementAction(u32);
 u8 GetJumpMovementAction(u32);
-u8 GetJump2MovementAction(u32);
 u8 CreateCopySpriteAt(struct Sprite *sprite, s16 x, s16 y, u8 subpriority);
 
 u8 MovementType_WanderAround_Step0(struct EventObject *, struct Sprite *);

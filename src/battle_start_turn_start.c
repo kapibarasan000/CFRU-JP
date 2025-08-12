@@ -3,8 +3,11 @@
 #include "../include/battle_transition.h"
 #include "../include/battle_setup.h"
 #include "../include/event_data.h"
+#include "../include/gpu_regs.h"
 #include "../include/party_menu.h"
 #include "../include/random.h"
+#include "../include/scanline_effect.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
 #include "../include/constants/trainer_classes.h"
@@ -19,6 +22,7 @@
 #include "../include/new/cmd49.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dexnav.h"
+#include "../include/new/dns.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
@@ -29,6 +33,7 @@
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/set_z_effect.h"
+#include "../include/new/terastal.h"
 #include "../include/new/util.h"
 
 /*
@@ -47,11 +52,21 @@ enum BattleBeginStates
 	BTSTART_THIRD_TYPE_REMOVAL,
 	BTSTART_RAID_BATTLE_REVEAL,
 	BTSTART_DYNAMAX_USABLE_INDICATOR,
+	BTSTART_TERA_SHIFT,
 	BTSTART_NEUTRALIZING_GAS,
+	BTSTART_UNNERVE,
 	BTSTART_SWITCH_IN_ABILITIES,
 	BTSTART_SWITCH_IN_ITEMS,
 	BTSTART_AIR_BALLOON,
+	BTSTART_SWITCH_IN_ABILITIES2,
+	BTSTART_SWITCH_IN_ITEMS2,
+	BTSTART_SWITCH_IN_ABILITIES3,
+	BTSTART_BOOSTER_ENERGY,
 	BTSTART_TOTEM_POKEMON,
+	BTSTART_WHITE_HERB,
+	BTSTART_OPPORTUNIST,
+	BTSTART_MIRROR_HERB,
+	BTSTART_EJECT_PACK,
 	BTSTART_END,
 };
 
@@ -92,7 +107,7 @@ static void SavePartyItems(void);
 static void TryPrepareTotemBoostInBattleSands(void);
 static void TrySetupRaidBossRepeatedAttack(u8 turnActionNumber);
 static u8 GetWhoStrikesFirstUseLastBracketCalc(u8 bank1, u8 bank2);
-static u32 BoostSpeedInWeather(u8 ability, u8 itemEffect, u32 speed);
+static u32 BoostSpeedInWeather(u16 ability, u8 itemEffect, u32 speed);
 static u32 BoostSpeedByItemEffect(u8 itemEffect, u8 itemQuality, u16 species, u32 speed, bool8 isDynamaxed);
 
 const u8 gText_EmptyString[] = {EOS};
@@ -116,6 +131,30 @@ void HandleNewBattleRamClearBeforeBattle(void)
 
 	gNewBS->isTrainerBattle = (gBattleTypeFlags & BATTLE_TYPE_TRAINER) != 0; //Used as part of the anti-catch-Trainer-Pokemon cheat
 	FormsRevert(gPlayerParty); //Try to reset all forms before battle
+}
+
+void VBlankCB_Battle(void)
+{
+	#ifndef DEBUG_AI_CHOICES
+	if (!(gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)) //Prevent RNG exploit in Battle Sands
+		AIRandom(); //Change only AI thinking seed every frame
+	#endif
+	SetGpuReg(REG_OFFSET_BG0HOFS, gBattle_BG0_X);
+	SetGpuReg(REG_OFFSET_BG0VOFS, gBattle_BG0_Y);
+	SetGpuReg(REG_OFFSET_BG1HOFS, gBattle_BG1_X);
+	SetGpuReg(REG_OFFSET_BG1VOFS, gBattle_BG1_Y);
+	SetGpuReg(REG_OFFSET_BG2HOFS, gBattle_BG2_X);
+	SetGpuReg(REG_OFFSET_BG2VOFS, gBattle_BG2_Y);
+	SetGpuReg(REG_OFFSET_BG3HOFS, gBattle_BG3_X);
+	SetGpuReg(REG_OFFSET_BG3VOFS, gBattle_BG3_Y);
+	SetGpuReg(REG_OFFSET_WIN0H, gBattle_WIN0H);
+	SetGpuReg(REG_OFFSET_WIN0V, gBattle_WIN0V);
+	SetGpuReg(REG_OFFSET_WIN1H, gBattle_WIN1H);
+	SetGpuReg(REG_OFFSET_WIN1V, gBattle_WIN1V);
+	LoadOam();
+	ProcessSpriteCopyRequests();
+	TransferPlttBuffer();
+	ScanlineEffect_InitHBlankDmaTransfer();
 }
 
 static void SavePartyItems(void)
@@ -202,7 +241,7 @@ void BattleBeginFirstTurn(void)
 				break;
 
 			case BTSTART_ACTIVATE_OW_WEATHER:
-				if (!gBattleStruct->overworldWeatherDone && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFF, 0))
+				if (!gBattleStruct->overworldWeatherDone && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFFFF, 0))
 				{
 					gBattleStruct->overworldWeatherDone = TRUE;
 					return;
@@ -331,6 +370,21 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
+			case BTSTART_TERA_SHIFT:
+				for (; *bank < gBattlersCount; ++*bank)
+				{
+					if (ABILITY(gBanksByTurnOrder[*bank]) == ABILITY_TERASHIFT
+					&& AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*bank], 0, 0, 0))
+					{
+						++*bank;
+						return;
+					}
+				}
+
+				*bank = 0;
+				++*state;
+				break;
+
 			case BTSTART_NEUTRALIZING_GAS:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
@@ -346,10 +400,26 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
+			case BTSTART_UNNERVE:
+				for (; *bank < gBattlersCount; ++*bank)
+				{
+					if (IsUnnerveAbility(ABILITY(gBanksByTurnOrder[*bank]))
+					&& AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*bank], 0, 0, 0))
+					{
+						++*bank;
+						return;
+					}
+				}
+
+				*bank = 0;
+				++*state;
+				break;
+
 			case BTSTART_SWITCH_IN_ABILITIES:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
-					if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*bank], 0, 0, 0))
+					if (SWITCH_IN_ABILITY1(ABILITY(gBanksByTurnOrder[*bank]))
+					&& AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*bank], 0, 0, 0))
 					{
 						++*bank;
 						return;
@@ -363,7 +433,15 @@ void BattleBeginFirstTurn(void)
 			case BTSTART_SWITCH_IN_ITEMS:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
-					if (ItemBattleEffects(ItemEffects_SwitchIn, gBanksByTurnOrder[*bank], FALSE, FALSE))
+					if (ITEM_EFFECT(gBanksByTurnOrder[*bank]) == ITEM_EFFECT_DOUBLE_PRIZE
+					&& ItemBattleEffects(ItemEffects_SwitchIn, gBanksByTurnOrder[*bank], FALSE, FALSE))
+					{
+						++*bank;
+						return;
+					}
+
+					if (ITEM_EFFECT(gBanksByTurnOrder[*bank]) != ITEM_EFFECT_RESTORE_STATS
+					&& ItemBattleEffects(ItemEffects_Normal, gBanksByTurnOrder[*bank], FALSE, FALSE))
 					{
 						++*bank;
 						return;
@@ -394,6 +472,71 @@ void BattleBeginFirstTurn(void)
 
 				*bank = 0; //Reset Bank for next loop
 				TryPrepareTotemBoostInBattleSands();
+				++*state;
+				break;
+
+			case BTSTART_SWITCH_IN_ABILITIES2:
+				for (; *bank < gBattlersCount; ++*bank)
+				{
+					if (SWITCH_IN_ABILITY2(ABILITY(gBanksByTurnOrder[*bank]))
+					&& AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*bank], 0, 0, 0))
+					{
+						++*bank;
+						return;
+					}
+				}
+
+				*bank = 0; //Reset Bank for next loop
+				++*state;
+				break;
+
+			case BTSTART_SWITCH_IN_ITEMS2:
+				for (; *bank < gBattlersCount; ++*bank)
+				{
+					switch (ITEM_EFFECT(gBanksByTurnOrder[*bank])) {
+						case ITEM_EFFECT_SEEDS:
+						case ITEM_EFFECT_ROOM_SERVICE:
+							if (ItemBattleEffects(ItemEffects_SwitchIn, gBanksByTurnOrder[*bank], FALSE, FALSE))
+							{
+								++*bank;
+								return;
+							}
+					}
+				}
+
+				*bank = 0; //Reset Bank for next loop
+				++*state;
+				break;
+
+			case BTSTART_SWITCH_IN_ABILITIES3:
+				for (; *bank < gBattlersCount; ++*bank)
+				{
+					if (SWITCH_IN_ABILITY3(ABILITY(gBanksByTurnOrder[*bank]))
+					&& AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*bank], 0, 0, 0))
+					{
+						++*bank;
+						return;
+					}
+				}
+
+				*bank = 0; //Reset Bank for next loop
+				++*state;
+				break;
+
+			case BTSTART_BOOSTER_ENERGY:
+				for (; *bank < gBattlersCount; ++*bank)
+				{
+					if (ITEM_EFFECT(gBanksByTurnOrder[*bank]) == ITEM_EFFECT_BOOSTER_ENERGY)
+					{
+						if (ItemBattleEffects(ItemEffects_SwitchIn, gBanksByTurnOrder[*bank], FALSE, FALSE))
+						{
+							++*bank;
+							return;
+						}
+					}
+				}
+
+				*bank = 0; //Reset Bank for next loop
 				++*state;
 				break;
 
@@ -439,6 +582,50 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
+			case BTSTART_WHITE_HERB:
+				for (; *bank < gBattlersCount; ++*bank)
+				{
+					if (ITEM_EFFECT(gBanksByTurnOrder[*bank]) == ITEM_EFFECT_RESTORE_STATS
+					&& ItemBattleEffects(ItemEffects_SwitchIn, gBanksByTurnOrder[*bank], FALSE, FALSE))
+					{
+						++*bank;
+						return;
+					}
+				}
+
+				*bank = 0; //Reset Bank for next loop
+				++*state;
+				break;
+
+			case BTSTART_OPPORTUNIST:
+				if (AbilityBattleEffects(ABILITYEFFECT_OPPORTUNIST, 0, 0, 0, 0))
+					return;
+
+				++*state;
+				break;
+
+			case BTSTART_MIRROR_HERB:
+				if (ItemBattleEffects(ItemEffects_MirrorHerb, 0, FALSE, FALSE))
+					return;
+
+				++*state;
+				break;
+
+			case BTSTART_EJECT_PACK:
+				for (; *bank < gBattlersCount; ++*bank)
+				{
+					if (ITEM_EFFECT(gBanksByTurnOrder[*bank]) == ITEM_EFFECT_EJECT_PACK
+					&& ItemBattleEffects(ItemEffects_SwitchIn, gBanksByTurnOrder[*bank], FALSE, FALSE))
+					{
+						++*bank;
+						return;
+					}
+				}
+
+				*bank = 0; //Reset Bank for next loop
+				++*state;
+				break;
+
 			case BTSTART_END:
 				for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 				{
@@ -471,6 +658,7 @@ void BattleBeginFirstTurn(void)
 				BattlePutTextOnWindow(gText_EmptyString, 0); //Wipes the old string
 				gBattleMainFunc = (void*) (0x8013860 | 1);
 				ResetSentPokesToOpponentValue();
+				ClearCopyStats();
 				for (i = 0; i < 8; i++)
 					gBattleCommunication[i] = 0;
 
@@ -493,6 +681,9 @@ void BattleBeginFirstTurn(void)
 				gBattleStruct->turncountersTracker = 0;
 				gMoveResultFlags = 0;
 				gRandomTurnNumber = Random();
+				#ifdef DEBUG_AI_CHOICES
+				gNewBS->ai.randSeed = Random32(); //So the seed doesn't start at 0
+				#endif
 				gSelectedMonPartyId = PARTY_SIZE; // Revival Blessing
 				CalculateShellSideArmSplits(); //Only done at the beginning of each turn
 				*state = 0;
@@ -672,6 +863,13 @@ static void TryPrepareTotemBoostInBattleSands(void)
 
 void CleanUpExtraTurnValues(void)
 {
+	s32 i;
+
+    for (i = 0; i < gBattlersCount; i++)
+	{
+		if (!(gStatuses3[i] & STATUS3_COMMANDER))
+			gNewBS->commandingDondozo &= ~gBitTable[i];
+	}
 	gNewBS->NoMoreMovingThisTurn = 0;
 	gNewBS->OriginalAttackerTargetCount = 0;
 	gNewBS->ParentalBondOn = FALSE;
@@ -800,6 +998,8 @@ enum MegaStates
 	Mega_Check,
 	Mega_CalcTurnOrder,
 	Mega_SwitchInAbilities,
+	Mega_Opportunist,
+	Mega_MirrorHerb,
 	Mega_Intimidate,
 	Mega_End
 };
@@ -807,7 +1007,7 @@ enum MegaStates
 void RunTurnActionsFunctions(void)
 {
 	int i, j;
-	u8 effect, savedActionFuncId;
+	u8 savedActionFuncId;
 	u8* megaBank = &(gNewBS->megaData.activeBank);
 
 	if (gBattleOutcome != 0)
@@ -871,6 +1071,7 @@ void RunTurnActionsFunctions(void)
 				u8 bank = gActiveBattler = gBanksByTurnOrder[i];
 				if (gNewBS->megaData.chosen[bank]
 				&& !gNewBS->megaData.done[bank]
+				&& !(gNewBS->commandingDondozo & gBitTable[bank])
 				&& !DoesZMoveUsageStopMegaEvolution(bank)
 				&& (gCurrentActionFuncId == ACTION_USE_MOVE
 				 || (gCurrentActionFuncId == ACTION_SWITCH && gChosenMovesByBanks[bank] == MOVE_PURSUIT)))
@@ -931,7 +1132,52 @@ void RunTurnActionsFunctions(void)
 						return;
 					}
 				}
+				else if (gNewBS->terastalData.chosen[bank]
+				&& !gNewBS->terastalData.done[bank]
+				&& !(gNewBS->commandingDondozo & gBitTable[bank])
+				&& !DoesZMoveUsageStopMegaEvolution(bank)
+				&& (gCurrentActionFuncId == ACTION_USE_MOVE
+				 || (gCurrentActionFuncId == ACTION_SWITCH && gChosenMovesByBanks[bank] == MOVE_PURSUIT)))
+				{
+					const u8* script = DoTerastal(bank);
+					if (script != NULL)
+					{
+						gNewBS->terastalData.chosen[bank] = FALSE;
+						gNewBS->terastalData.done[bank] = TRUE;
+						gNewBS->terastalData.partyIndex[SIDE(bank)] = gBitTable[gBattlerPartyIndexes[bank]];
+						gNewBS->megaData.megaEvoInProgress = TRUE;
+						gBattleMons[bank].type3 = TYPE_BLANK;
+
+						if (SIDE(bank) == B_SIDE_PLAYER)
+						{
+							if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+							{
+								if (GetBattlerPosition(bank) == B_POSITION_PLAYER_LEFT
+								&& FlagGet(FLAG_TERASTAL_CHARGE))
+									FlagClear(FLAG_TERASTAL_CHARGE);
+							}
+							else
+							{
+								gNewBS->terastalData.chosen[PARTNER(bank)] = FALSE;
+								gNewBS->terastalData.done[PARTNER(bank)] = TRUE;
+								if (FlagGet(FLAG_TERASTAL_CHARGE))
+									FlagClear(FLAG_TERASTAL_CHARGE);
+							}
+						}
+						else if (!(gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
+						{
+							gNewBS->terastalData.chosen[PARTNER(bank)] = FALSE;
+							gNewBS->terastalData.done[PARTNER(bank)] = TRUE;
+						}
+
+						gBattleScripting.bank = bank;
+						BattleScriptExecute(script);
+						gCurrentActionFuncId = savedActionFuncId;
+						return;
+					}
+				}
 			}
+
 			if (gNewBS->megaData.megaEvoInProgress)
 				++gNewBS->megaData.state;
 			else
@@ -963,13 +1209,29 @@ void RunTurnActionsFunctions(void)
 
 		case Mega_SwitchInAbilities:
 			while (*megaBank < gBattlersCount) {
-				if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*megaBank], 0, 0, 0))
-					++effect;
+				if (BATTLER_ALIVE(gBanksByTurnOrder[*megaBank])
+				&& AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*megaBank], 0, 0, 0))
+				{
+					++*megaBank;
+					return;
+				}
 				++*megaBank;
-
-				if (effect) return;
 			}
 			*megaBank = 0;
+			++gNewBS->megaData.state;
+			return;
+
+		case Mega_Opportunist:
+			if (AbilityBattleEffects(ABILITYEFFECT_OPPORTUNIST, 0, 0, 0, 0))
+				return;
+
+			++gNewBS->megaData.state;
+			return;
+
+		case Mega_MirrorHerb:
+			if (ItemBattleEffects(ItemEffects_MirrorHerb, 0, FALSE, FALSE))
+				return;
+
 			++gNewBS->megaData.state;
 			return;
 
@@ -978,6 +1240,7 @@ void RunTurnActionsFunctions(void)
 			gNewBS->megaData.state = Mega_End;
 			gNewBS->megaData.activeBank = 0;
 			gNewBS->megaData.megaEvoInProgress = FALSE;
+			ClearCopyStats();
 			//Fallthrough
 		case Mega_End:
 			if (gCurrentActionFuncId != ACTION_USE_MOVE && gCurrentActionFuncId != ACTION_RUN_BATTLESCRIPT) //Necessary because of Mega Evolving before Pursuit
@@ -995,6 +1258,7 @@ void RunTurnActionsFunctions(void)
 
 			if (gNewBS->dynamaxData.toBeUsed[bank]
 			&& !gNewBS->dynamaxData.used[bank]
+			&& !(gNewBS->commandingDondozo & gBitTable[bank])
 			&& !DoesZMoveUsageStopMegaEvolution(bank)) //Same for Dynamax
 			{
 				const u8* script = GetDynamaxScript(bank);
@@ -1031,40 +1295,6 @@ void RunTurnActionsFunctions(void)
 					}
 					return;
 				}
-			}
-			else if (gNewBS->terastalData.chosen[bank]
-			&& !gNewBS->terastalData.done[bank]
-			&& !DoesZMoveUsageStopMegaEvolution(bank))
-			{
-				gNewBS->terastalData.chosen[bank] = FALSE;
-				gNewBS->terastalData.done[bank] = TRUE;
-				gNewBS->terastalData.partyIndex[SIDE(bank)] = gBitTable[gBattlerPartyIndexes[bank]];
-				gBattleMons[bank].type3 = TYPE_BLANK;
-
-				if (SIDE(bank) == B_SIDE_PLAYER)
-				{
-					if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
-					{
-						if (GetBattlerPosition(bank) == B_POSITION_PLAYER_LEFT)
-							FlagClear(FLAG_TERASTAL_CHARGE);
-					}
-					else
-					{
-						gNewBS->terastalData.chosen[PARTNER(bank)] = FALSE;
-						gNewBS->terastalData.done[PARTNER(bank)] = TRUE;
-						FlagClear(FLAG_TERASTAL_CHARGE);
-					}
-				}
-				else if (!(gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
-				{
-					gNewBS->terastalData.chosen[PARTNER(bank)] = FALSE;
-					gNewBS->terastalData.done[PARTNER(bank)] = TRUE;
-				}
-
-				gBattleScripting.bank = bank;
-				BattleScriptExecute(BattleScript_Terastal);
-				gCurrentActionFuncId = savedActionFuncId;
-				return;
 			}
 		}
 	
@@ -1154,7 +1384,8 @@ void HandleAction_UseMove(void)
 
 	gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber];
 
-	if (gBattleStruct->field_91 & gBitTable[gBankAttacker])
+	if (gBattleStruct->field_91 & gBitTable[gBankAttacker]
+	|| gNewBS->commandingDondozo & gBitTable[gBankAttacker])
 	{
 		gCurrentActionFuncId = ACTION_FINISHED;
 		return;
@@ -1328,7 +1559,7 @@ void HandleAction_UseMove(void)
 	moveType = gBattleStruct->dynamicMoveType;
 
 //Get Move Target
-	u8 atkAbility = ABILITY(gBankAttacker);
+	u16 atkAbility = ABILITY(gBankAttacker);
 	u8 moveTarget = GetBaseMoveTarget(gCurrentMove, gBankAttacker);
 	side = SIDE(gBankAttacker) ^ BIT_SIDE;
 	bank_t selectedTarget = gBattleStruct->moveTarget[gBankAttacker];
@@ -1958,13 +2189,15 @@ bool8 QuickClawActivatesThisTurn(u8 bank)
 s32 BracketCalc(u8 bank, unusedArg u8 action, unusedArg u16 move)
 {
 	u8 itemEffect = ITEM_EFFECT(bank);
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 
 	gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
 	gNewBS->quickDrawIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
 	if (BATTLER_ALIVE(bank))
 	{
-		if (gNewBS->ateCustapBerry & gBitTable[bank]) //Already ate the Berry
+		if (ability == ABILITY_MYCELIUMMIGHT && SPLIT(move) == SPLIT_STATUS)
+			return -1;
+		else if (gNewBS->ateCustapBerry & gBitTable[bank]) //Already ate the Berry
 			return 1;
 		else
 		{
@@ -1997,7 +2230,7 @@ s32 BracketCalc(u8 bank, unusedArg u8 action, unusedArg u16 move)
 					break;
 
 				case ITEM_EFFECT_LAGGING_TAIL:
-					return -2;
+					return -1;
 			}
 		}
 
@@ -2008,7 +2241,7 @@ s32 BracketCalc(u8 bank, unusedArg u8 action, unusedArg u16 move)
 	return 0;
 }
 
-static u32 BoostSpeedInWeather(u8 ability, u8 itemEffect, u32 speed)
+static u32 BoostSpeedInWeather(u16 ability, u8 itemEffect, u32 speed)
 {
 	if (WEATHER_HAS_EFFECT) {
 		switch (ability) {
@@ -2062,7 +2295,7 @@ u32 SpeedCalc(u8 bank)
 	if (!BATTLER_ALIVE(bank))
 		return 0;
 
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 	u8 itemEffect = ITEM_EFFECT(bank);
 	u8 itemQuality = ITEM_QUALITY(bank);
 
@@ -2086,6 +2319,10 @@ u32 SpeedCalc(u8 bank)
 			if (gTerrainType == ELECTRIC_TERRAIN)
 				speed *= 2;
 			break;
+		case ABILITY_PROTOSYNTHESIS:
+		case ABILITY_QUARKDRIVE:
+			if (gNewBS->paradoxBoostStats[bank] == STAT_SPD)
+				speed = (speed * 15) / 10;
 	}
 
 	speed = BoostSpeedByItemEffect(itemEffect, itemQuality, SPECIES(bank), speed, IsDynamaxed(bank));
@@ -2126,7 +2363,7 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon)
 		return 0;
 
 	u8 itemEffect;
-	u8 ability = GetMonAbilityAfterTrace(mon, FOE(side));
+	u16 ability = GetMonAbilityAfterTrace(mon, FOE(side));
 	u32 speed = mon->speed;
 	u8 statVal = 6;
 

@@ -19,6 +19,9 @@
 #org @gText_UnnerveActivate
 [FD][37] きんちょうして\nきのみが たべられなくなった！
 
+#org @gText_ActivateAsOne
+[SCRIPTING_BANK]は\nふたつの とくせいを あわせもつ！
+
 #org @gText_DarkAuraActivate
 [SCRIPTING_BANK]は\nダークオーラを はなっている！
 
@@ -45,6 +48,12 @@
 
 #org @gText_FogIsDeep
 きりが ふかい
+
+#org @gText_OrichalcumPulseSunActivate
+[SCRIPTING_BANK]は\nひざしを つよめ\lこだいの こどうが あばれだす！！
+
+#org @gText_OrichalcumPulseActivate
+[SCRIPTING_BANK]は\nひざしを うけて\lこだいの こどうが あばれだす！！
 
 #org @gText_PrimordialSeaActivate
 つよい あめが ふりはじめた！
@@ -101,13 +110,73 @@
 すべての バリアが なくなった！
 
 #org @gText_NeutralizingGasActivate
-あたりに かがくへんかガスが じゅうまんした！
+あたりに かがくへんかガスが\nじゅうまんした！
 
 #org @gText_NeutralizingGasEnd
 かがくへんかガスの こうかが きれた！
+
+#org @gText_CuriousMedicineActivate
+[TARGET]の\nのうりょくへんかが もとに もどった！
 
 #org @gText_PkmnHurtsWith
 [ATTACKER]は\nきずついた！
 
 #org @gText_AbilityIncreasedSpeedBracket
 [SCRIPTING_BANK]は\nこうどうが はやくなった！
+
+#org @gText_LingeringAromaActivate
+[ATTACKER]は においが\nうつって とれなくなっちゃった！
+
+#org @gText_ToxicSpikesLayAttacker
+[FD][36] あしもとに\nどくびしが ちらばった！
+
+#org @gText_ZerotoHeroActivate
+[SCRIPTING_BANK]は\nへんしんして かえってきた！
+
+#org @gText_RuinAbilityActivate
+[SCRIPTING_BANK]の\n[SCRIPTING_BANK_ABILITY]で\lまわりの [BUFFER][00]が よわまった！
+
+#org @gText_EmbodyAspectActivate
+[ATTACKER]は [LAST_ITEM]を\nかがやかせ [BUFFER][00]が [BUFFER][01]
+
+#org @gText_HadronEngineSetString
+[SCRIPTING_BANK]は\nエレキフィールドを はり\lみらいの きかんを やくどうさせる！！
+
+#org @gText_HadronEngineActivate
+[SCRIPTING_BANK]は\nエレキフィールドで\lみらいの きかんを やくどうさせる！！
+
+#org @gText_ElectromorphosisActivates
+[SCRIPTING_BANK]は\n[CURRENT_MOVE]を うけて\lじゅうでん した！
+
+#org @gText_CostarActivate
+[SCRIPTING_BANK]は\n[TARGET]の\lのうりょくへんかを コピーした！
+
+#org @gText_HospitalityRestoration
+[SCRIPTING_BANK]が たてた おちゃを\n[TARGET]は のみほした！
+
+#org @gText_SupremeOverlordActivate
+[SCRIPTING_BANK]は たおされた\nなかまから ちからを もらった！
+
+#org @gText_SupersweetSyrupActivate
+[SCRIPTING_BANK]の ミツから\nあまいかおりが ただよっている！
+
+#org @gText_TeraShellActivate
+[SCRIPTING_BANK]は\nこうらを かがやかせ\lタイプあいしょうを ゆがめる！！
+
+#org @gText_ProtosynthesisActivate
+[SCRIPTING_BANK]は\nにほんばれで\lこだいかっせいを はつどうした！
+
+#org @gText_QuarkDriveActivate
+[SCRIPTING_BANK]は\nエレキフィールドで\lクォークチャージを はつどうした！
+
+#org @gText_BoosterEnergyActivate
+[SCRIPTING_BANK]は\n[LAST_ITEM]で\l[SCRIPTING_BANK_ABILITY]を はつどうした！
+
+#org @gText_ParadoxStatRaise
+[SCRIPTING_BANK]の\n[BUFFER][00]が たかまった！
+
+#org @gText_ParadoxAbilityEnd
+[SCRIPTING_BANK]は\n[SCRIPTING_BANK_ABILITY]の こうかが きれた！
+
+#org @gText_CommanderActivate
+[SCRIPTING_BANK]は\nしれいとう として\l[ATTACKER]に のみこまれた！

@@ -140,7 +140,7 @@ species_t GetMegaSpecies(unusedArg u16 species, unusedArg u16 item, unusedArg co
 
 ability_t GetBankMegaFormAbility(u8 megaBank, u8 foe)
 {
-	u8 ability = ABILITY_NONE;
+	u16 ability = ABILITY_NONE;
 	const struct Evolution* evos;
 
 	if (!IsAbilitySuppressed(megaBank))
@@ -158,7 +158,7 @@ ability_t GetBankMegaFormAbility(u8 megaBank, u8 foe)
 
 		if (ability == ABILITY_TRACE && IS_SINGLE_BATTLE)
 		{
-			u8 foeAbility = *GetAbilityLocation(foe);
+			u16 foeAbility = *GetAbilityLocation(foe);
 			if (!CheckTableForAbility(foeAbility, gTraceBannedAbilities))
 				ability = foeAbility; //What the Ability will become
 		}

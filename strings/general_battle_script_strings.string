@@ -55,6 +55,18 @@
 #org @PsychicTerrainSetString
 あしもとが ふしぎなかんじに なった！
 
+#org @gText_ElectricTerrainEnd
+あしもとの でんきが きえさった！
+
+#org @gText_GrassyTerrainEnd
+あしもとの くさが きえさった！
+
+#org @gText_MistyTerrainEnd
+あしもとの きりが きえさった！
+
+#org @gText_PsychicTerrainEnd
+あしもとの ふしぎかんが きえさった！
+
 #org @TargetTransformedIntoType
 [TARGET]は\n[BUFFER][00]タイプになった！
 
@@ -185,6 +197,9 @@
 
 #org @gText_RevivalBlessing
 [BUFFER][00]は ふっかつして\nたたかえるように なった！
+
+#org @gText_FickleBeamDoubled
+[ATTACKER]は\nほんきを だした！
 
 //Status Strings
 
@@ -438,3 +453,18 @@ The sleep clause prevents more\nPokemon from being put to sleep！
 
 #org @gText_MonTerastal
 [SCRIPTING_BANK]は\nテラスタルした！
+
+#org @gText_MirrorHerbActivate
+[SCRIPTING_BANK]は\n[LAST_ITEM]を つかって\lあいての のうりょくへんかを まねした！
+
+#org @gText_AbilityShieldProtected
+[TARGET]は\nとくせいガードの こうかで\lとくせいが まもられている！
+
+#org @gText_AbilityShieldProtectedAttacker
+[ATTACKER]は\nとくせいガードの こうかで\lとくせいが まもられている！
+
+#org @gText_TeaTimeAteBerry
+おちゃかいをして\nみんなで きのみを たべた！
+
+#org @gText_ButNothingHappened
+しかし なにも おこらなかった！

@@ -15,19 +15,16 @@
 #include "../include/new/build_pokemon.h"
 #include "../include/new/catching.h"
 #include "../include/new/daycare.h"
+#include "../include/new/exp.h"
 #include "../include/new/form_change.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/item.h"
+#include "../include/new/pokemon_storage_system.h"
 #include "../include/new/util.h"
 /*
 daycare.c
 	functions that handle all daycare functions, including attribute inheritance and step counts
 */
-
-#define sHatchedEggFatherMoves ((u16*) 0x20244BC)
-#define sHatchedEggMotherMoves ((u16*)0x20244E0)
-#define sHatchedEggFinalMoves ((u16*) 0x20244C4)
-#define sHatchedEggLevelUpMoves ((u16*) 0x2024458)
 
 #define EGG_LVL_UP_MOVES_ARRAY_COUNT 50
 
@@ -834,6 +831,8 @@ void CreateHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 	temp->hiddenAbility = hidden;
 
 	*egg = *temp;
+	CalculateMonStats(egg);
+	HealMon(egg); //Fixes a bug where new Pokemon could hatch with more HP
 }
 
 static u8 GetEggStepsToSubtract(void)
@@ -848,7 +847,7 @@ static u8 GetEggStepsToSubtract(void)
 	
 		if (species != SPECIES_NONE && species != SPECIES_EGG)
 		{
-			u8 ability = GetMonAbility(&gPlayerParty[i]);
+			u16 ability = GetMonAbility(&gPlayerParty[i]);
 
 			if (ability == ABILITY_MAGMAARMOR || ability == ABILITY_FLAMEBODY || ability == ABILITY_STEAMENGINE)
 			{
@@ -875,7 +874,7 @@ u32 SubtractEggSteps(u32 steps, struct Pokemon* mon)
 	if (steps >= toSub)
 		steps -= toSub;
 	else
-		steps -= 1;
+		steps = 0;
 
 	SetMonData(mon, MON_DATA_FRIENDSHIP, &steps);
 	return steps;
@@ -998,6 +997,7 @@ u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves
 	bool8 moveInList[MOVES_COUNT] = {FALSE};
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u16 eggSpecies = GetEggSpecies(species);
+	eggSpecies = GetOverrideEggSpecies(eggSpecies);
 
 	SetMonData(&dummyMon, MON_DATA_SPECIES, &eggSpecies);
 	numEggMoves = GetEggMoves(&dummyMon, eggMovesBuffer);
@@ -1022,8 +1022,11 @@ u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves
 		//Filter out any egg moves the Pokemon already knows
 		for (i = 0; i < numEggMoves && j < EGG_MOVES_ARRAY_COUNT; ++i)
 		{
-			if (!moveInList[eggMovesBuffer[i]] && !MoveInMonMoveset(eggMovesBuffer[i], mon))
-				moves[j++] = eggMovesBuffer[i];
+			if (!moveInList[eggMovesBuffer[i]]) //Move wasn't already added above
+			{
+				if (!ignoreAlreadyKnownMoves || !MoveInMonMoveset(eggMovesBuffer[i], mon))
+					moves[j++] = eggMovesBuffer[i];
+			}
 		}
 	}
 
@@ -1059,4 +1062,13 @@ u8 GetLevelAfterDaycareSteps(struct BoxPokemon* mon, u32 steps)
 	u32 experience = GetExperienceAfterDaycareSteps(mon, steps);
 	SetBoxMonData(&tempMon, MON_DATA_EXP, &experience);
 	return GetLevelFromBoxMonExp(&tempMon);
+}
+
+bool8 ShouldSkipOfferEggHatchNickname(void)
+{
+	#ifdef FLAG_DONT_OFFER_NICKNAMES_BATTLE
+	return FlagGet(FLAG_DONT_OFFER_NICKNAMES_BATTLE);
+	#else
+	return FALSE;
+	#endif
 }

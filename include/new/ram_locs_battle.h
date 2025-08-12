@@ -176,10 +176,10 @@
 #define gMagicianHelper *((u8*) 0x203DFA3)
 #define gShakerData (((u8*) 0x203DFA4))
 #define gForceSwitchHelper (*((u8*) 0x203DFA6))
-#define gAbilityPopUpHelper (*((u8*) 0x203DFA7))
-#define gBackupHWord (*((u16*) 0x203DFA8))
-#define gDontRemoveTransformSpecies (*((bool8*) 0x203DFAA))
-#define gBankSwitching (*((u8*) 0x203DFAB))
+#define gAbilityPopUpHelper (*((u16*) 0x203DFA7))
+#define gBackupHWord (*((u16*) 0x203DFA9))
+#define gDontRemoveTransformSpecies (*((bool8*) 0x203DFAB))
+#define gBankSwitching (*((u8*) 0x203DFAC))
 
 //#define gInShop (*((bool8*) 0x203E043))
 //#define gBattleCircusFlags (*((u32*) 0x203E044))
@@ -188,4 +188,4 @@
 //Don't go past 0x203E048
 
 #define FIRST_NEW_BATTLE_RAM_LOC ((u8*) 0x203DF98)
-#define LAST_NEW_BATTLE_RAM_LOC ((u8*) 0x203DFAC)
+#define LAST_NEW_BATTLE_RAM_LOC ((u8*) 0x203DFAD)

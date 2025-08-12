@@ -588,7 +588,8 @@ static u8 GetMaxMoveType(u16 move, u8 bank, struct Pokemon* mon)
 
 	if (moveType == 0xFF) //No overridden type
 	{
-		u8 moveSplit, ability;
+		u8 moveSplit;
+		u16 ability;
 
 		if (mon != NULL)
 		{

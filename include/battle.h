@@ -353,7 +353,8 @@ struct DisableStruct
     /*0x18*/ u8 unk18_a_2 : 2;
     /*0x18*/ u8 mimickedMoves : 4;
     /*0x19*/ u8 rechargeTimer;
-    /*0x1A*/ u8 unk1A[2];
+    /*0x1A*/ u8 unk1A;
+	/*0x1B*/ u8 boosterEnergyActive : 1;
 };
 
 extern struct DisableStruct gDisableStructs[BATTLE_BANKS_COUNT];
@@ -421,7 +422,8 @@ struct SpecialStatus
     s32 moveturnLostHP_special;
     u8 moveturnPhysicalBank;
     u8 moveturnSpecialBank;
-    u8 field12 : 1;
+	u8 distortedTypeMatchups : 1;
+    u8 teraShellDone : 1;
     u8 field13;
 };
 
@@ -496,7 +498,7 @@ extern struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT];
 struct BattleHistory //0x20003D0
 {
     /*0x00*/ u16 usedMoves[2][8]; // 0xFFFF means move not used (confuse self hit, etc)
-    /*0x20*/ u8 abilities[MAX_BATTLERS_COUNT/* / 2*/];
+    /*0x20*/ u8 unused[MAX_BATTLERS_COUNT/* / 2*/];
     /*0x22*/ //u8 itemEffects[MAX_BATTLERS_COUNT / 2]; //Moved to gNewBS
     /*0x24*/ u16 trainerItems[MAX_BATTLERS_COUNT]; //0x20003F4
     /*0x2C*/ u8 itemsNo;
@@ -728,7 +730,6 @@ struct NewBattleStruct
 	u8 maxWildfireTimers[NUM_BATTLE_SIDES];
 	u8 maxCannonadeTimers[NUM_BATTLE_SIDES];
 	u8 maxVolcalithTimers[NUM_BATTLE_SIDES];
-	u8 FaintedCounters[NUM_BATTLE_SIDES];
 	u8 ragePowdered;
 
 	//Personal Counters
@@ -750,9 +751,9 @@ struct NewBattleStruct
 	u8 LastUsedTypes[MAX_BATTLERS_COUNT];
 	u8 lastTargeted[MAX_BATTLERS_COUNT];
 	u8 usedMoveIndices[MAX_BATTLERS_COUNT];
-	u8 DisabledMoldBreakerAbilities[MAX_BATTLERS_COUNT];
-	u8 SuppressedAbilities[MAX_BATTLERS_COUNT];
-	u8 neutralizingGasBlockedAbilities[MAX_BATTLERS_COUNT];
+	u16 DisabledMoldBreakerAbilities[MAX_BATTLERS_COUNT];
+	u16 SuppressedAbilities[MAX_BATTLERS_COUNT];
+	u16 neutralizingGasBlockedAbilities[MAX_BATTLERS_COUNT];
 	u8 skyDropAttackersTarget[MAX_BATTLERS_COUNT]; //skyDropAttackersTarget[gBankAttacker] = gBankTarget
 	u8 skyDropTargetsAttacker[MAX_BATTLERS_COUNT]; //skyDropTargetsAttacker[gBankTarget] = gBankAttacker
 	u8 pickupStack[MAX_BATTLERS_COUNT];
@@ -772,6 +773,13 @@ struct NewBattleStruct
 	u8 rageFistCounter[NUM_BATTLE_SIDES][PARTY_SIZE];
 	u8 SyrupBombTimers[MAX_BATTLERS_COUNT];
 	u8 DragonCheerRanks[MAX_BATTLERS_COUNT];
+	u8 supremeOverlordMultiplier[MAX_BATTLERS_COUNT];
+	u16 cudChewBerries[MAX_BATTLERS_COUNT];
+	u8 cudChewTimers[MAX_BATTLERS_COUNT];
+	u8 paradoxBoostStats[MAX_BATTLERS_COUNT];
+	u8 opportunistBoostStats[MAX_BATTLERS_COUNT][BATTLE_STATS_NO];
+	u8 opportunistState[MAX_BATTLERS_COUNT];
+	u16 commanderActive[MAX_BATTLERS_COUNT];
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -799,10 +807,13 @@ struct NewBattleStruct
 	u8 hiddenAnimBattlerSprites;
 	u8 enduredDamage;
 	u8 SaltcureBits;
+	u8 commandingDondozo;
 
 	//Bit Fields for Party
 	u8 canBelch[NUM_BATTLE_SIDES];
 	u8 corrodedItems[NUM_BATTLE_SIDES];
+	u8 supersweetSyrupDone[NUM_BATTLE_SIDES];
+	u8 ZerotoHeroDone[NUM_BATTLE_SIDES];
 
 	//Other Helpers
 	u8 switchOutAbilitiesState; //For tracking effects that happen on switch-out
@@ -824,7 +835,8 @@ struct NewBattleStruct
 	u8 savedObjId;
 	u8 lastFainted;
 	s8 intimidateActive;
-	u8 backupAbility;
+	u16 abilityPreventingSwitchout;
+	u16 backupAbility;
 	u8 switchOutBankLooper;
 	u8 skipBankStatAnim;
 	u8 maxGoldrushUses;
@@ -832,6 +844,7 @@ struct NewBattleStruct
 	u8 originalAttackerBackup : 2;
 	u8 originalTargetBackup : 2;
 	u8 backupBattlerPosition : 2; //For Neutralizing Gas
+	u8 AbilityShieldLostBank;
 
 	//Booleans
 	bool8 MoveBounceInProgress : 2;
@@ -878,6 +891,7 @@ struct NewBattleStruct
 	bool8 breakDisguiseSpecialDmg : 1;
 	bool8 handlingFaintSwitching : 1;
 	bool8 doingPluckItemEffect : 1;
+	bool8 cudChewActive : 1;
 	bool8 usedXSpDef : 1; //Needed because it's hooked into the X Sp. Atk
 	bool8 lessThanHalfHPBeforeShellBell : 1; //For Emergency Exit
 	bool8 statBuffEffectNotProtectAffected : 1; //For Max Moves
@@ -893,9 +907,14 @@ struct NewBattleStruct
 	bool8 printedStrongWindsWeakenedAttack : 1;
 	bool8 isTrainerBattle : 1;
 	bool8 cottonDownActive : 1;
+	bool8 supersweetSyrupActive : 1;
 	bool8 cramorantTransformed : 1;
-	bool8 activateTemperFlare : 1;
 	bool8 terastalBoost : 1;
+	bool8 terastalBoostAnimationPlayed : 1;
+	bool8 poisonPuppeteerConfusion : 1;
+	bool8 mirrorHerbActive : 1;
+	bool8 fickleBeamBoosted : 1;
+	bool8 AbilityShieldLost : 1;
 
 	//Other
 	u16 LastUsedMove;
@@ -904,10 +923,11 @@ struct NewBattleStruct
 	u32 selfInflictedDamage; //For Emergency Exit
 	u8 DancerTurnOrder[MAX_BATTLERS_COUNT];
 	u8 PayDayByPartyIndices[PARTY_SIZE];
-	item_t SavedConsumedItems[PARTY_SIZE];
+	item_t SavedConsumedItems[PARTY_SIZE][NUM_BATTLE_SIDES];
 	u8 expHelper[MAX_BATTLERS_COUNT];
 	u8 megaIndicatorObjIds[MAX_BATTLERS_COUNT];
 	u8 abilityPopUpIds[MAX_BATTLERS_COUNT][2];
+	u16 abilityPopupOverwrite;
 	u8 backupSynchronizeBanks[2];
 	u16 failedThrownPokeBall;
 	u32 maxGoldrushMoney;
@@ -994,10 +1014,12 @@ struct NewBattleStruct
 	struct 
 	{
 		u16 zMoveHelper;
+		u32 randSeed; //Seeded every frame regardless of whether or not the Random seed is normally
 		bool8 sideSwitchedThisRound;
 		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //~0x2017B5B
 		u8 typeAbsorbSwitchingCooldown[MAX_BATTLERS_COUNT]; //Prevent a type absorb switching loop
 		u8 itemEffects[MAX_BATTLERS_COUNT];
+		u16 abilities[MAX_BATTLERS_COUNT];
 		u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef]
 		u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
 		bool8 moveKnocksOut1Hit[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut1Hit[bankAtk][bankDef][monMoveIndex]
@@ -1505,7 +1527,7 @@ extern s32 gBattleMoveDamage;
 extern s32 gHpDealt;
 extern s32 gTakenDmg[MAX_BATTLERS_COUNT];
 extern u16 gLastUsedItem;
-extern u8 gLastUsedAbility;
+extern u16 gLastUsedAbility;
 extern u8 gBankAttacker;
 extern u8 gBankTarget;
 extern u8 gBankFainted;

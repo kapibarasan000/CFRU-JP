@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_anim.h"
 #include "../include/event_data.h"
 #include "../include/party_menu.h"
 #include "../include/pokeball.h"
@@ -9,6 +10,7 @@
 #include "../include/new/ai_util.h"
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_controller_opponent.h"
+#include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
@@ -191,6 +193,37 @@ static void TryRechoosePartnerMove(u16 chosenMove)
 				break;
 		}
 	}
+}
+
+#define STATE_WAIT_ACTION_CONFIRMED 4
+bool8 ShouldAIChooseAction(u8 position)
+{
+	//Try prioritizing AI mons in order from fastest to slowest (gets better calcs)
+	u8 bank = GetBattlerAtPosition(position);
+	u8 partner = GetBattlerAtPosition(BATTLE_PARTNER(position));
+
+	if (gBattleTypeFlags & BATTLE_TYPE_MULTI
+	|| gBattleStruct->field_91 & gBitTable[partner] //Only mon on side
+	|| gBattleCommunication[partner] == STATE_WAIT_ACTION_CONFIRMED) //Partner already chose action
+		return TRUE;
+
+	if (!(gBattleTypeFlags & BATTLE_TYPE_LINK) //Vs AI
+	&& IS_DOUBLE_BATTLE
+	&& (SIDE(bank) == B_SIDE_OPPONENT || IsMockBattle())) //AI controlled side
+	{
+		u32 speedCalcBank = SpeedCalc(bank);
+		u32 speedCalcPartner = SpeedCalc(partner);
+
+		if (speedCalcBank > speedCalcPartner) //This mon would probably hit before partner
+			return TRUE;
+		else if (speedCalcBank == speedCalcPartner //Speed tie
+		&& (position & BIT_FLANK) == B_FLANK_LEFT) //Then assume left slot would move first
+			return TRUE;
+	}
+	else if ((position & BIT_FLANK) == B_FLANK_LEFT) //Left slot
+		return TRUE;
+
+	return FALSE;
 }
 
 void OpponentHandleDrawTrainerPic(void)
@@ -406,5 +439,22 @@ void SpriteCB_WildMonShowHealthbox(struct Sprite *sprite)
         if (!BeginNormalPaletteFade(selectedPalettes, 0, 10, 0, RGB(8, 8, 8))) //If a fade is already in progress,
 			gPaletteFade_selectedPalettes |= selectedPalettes; //Then add second mon in wild doubles to the palettes to unfade
     }
+}
+#undef sBattler
+
+#define sBattler data[6]
+void SpriteCB_OpponentMonSendOut_1(struct Sprite* sprite)
+{
+	sprite->data[0] = 25;
+	sprite->data[2] = GetBattlerSpriteCoord(sprite->sBattler, BATTLER_COORD_X_2);
+	sprite->data[4] = GetBattlerSpriteCoord(sprite->sBattler, BATTLER_COORD_Y) + 24;
+	sprite->data[5] = -30;
+
+	if (IS_DOUBLE_BATTLE && GetBattlerPosition(sprite->sBattler) == B_POSITION_OPPONENT_LEFT)
+		sprite->data[0] = 23; //Slightly faster than the second mon
+
+	sprite->oam.affineParam = sprite->sBattler;
+	InitAnimArcTranslation(sprite);
+	sprite->callback = SpriteCB_PlayerMonSendOut_2;
 }
 #undef sBattler

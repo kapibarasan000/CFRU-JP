@@ -12,41 +12,32 @@
 #include "../include/new/util.h"
 
 
-bool8 IsTargetAbilityIgnored(u8 defAbility, u8 atkAbility, u16 move)
+bool8 IsTargetAbilityIgnored(u16 defAbility, u16 atkAbility, u16 move)
 {
 	return IS_MOLD_BREAKER(atkAbility, move) && gMoldBreakerIgnoredAbilities[defAbility];
 }
 
-bool8 IsTargetAbilityIgnoredNoMove(u8 defAbility, u8 atkAbility)
+bool8 IsTargetAbilityIgnoredNoMove(u16 defAbility, u16 atkAbility)
 {
-	return IsMoldBreakerAbility(atkAbility) && gMoldBreakerIgnoredAbilities[defAbility];
+	return (IsMoldBreakerAbility(atkAbility) && gMoldBreakerIgnoredAbilities[defAbility])
+		|| (atkAbility == ABILITY_MYCELIUMMIGHT && gMoldBreakerIgnoredAbilities[defAbility] && SPLIT(gCurrentMove) == SPLIT_STATUS);
 }
 
-bool8 IsClearBodyAbility(u8 ability)
+bool8 IsClearBodyAbility(u16 ability)
 {
 	return ability == ABILITY_CLEARBODY
-		#ifdef ABILITY_FULLMETALBODY
 		|| ability == ABILITY_FULLMETALBODY
-		#endif
-		#ifdef ABILITY_WHITESMOKE
-		|| ability == ABILITY_WHITESMOKE
-		#endif
-		;
+		|| ability == ABILITY_WHITESMOKE;
 }
 
-bool8 IsMoldBreakerAbility(u8 ability)
+bool8 IsMoldBreakerAbility(u16 ability)
 {
 	return ability == ABILITY_MOLDBREAKER
-		#ifdef ABILITY_TURBOBLAZE
 		|| ability == ABILITY_TURBOBLAZE
-		#endif
-		#ifdef ABILITY_TERAVOLT
-		|| ability == ABILITY_TERAVOLT
-		#endif
-		;
+		|| ability == ABILITY_TERAVOLT;
 }
 
-bool8 AbilityBlocksIntimidate(u8 ability)
+bool8 AbilityBlocksIntimidate(u16 ability)
 {
 	return ability == ABILITY_INNERFOCUS
 		|| ability == ABILITY_OWNTEMPO
@@ -54,14 +45,14 @@ bool8 AbilityBlocksIntimidate(u8 ability)
 		|| ability == ABILITY_SCRAPPY;
 }
 
-bool8 AbilityPreventsLoweringAtk(u8 ability)
+bool8 AbilityPreventsLoweringAtk(u16 ability)
 {
 	return ability == ABILITY_HYPERCUTTER
 		|| ability == ABILITY_MIRRORARMOR
 		|| IsClearBodyAbility(ability);
 }
 
-bool8 AbilityPreventsLoweringStat(u8 ability, u8 statId)
+bool8 AbilityPreventsLoweringStat(u16 ability, u8 statId)
 {
 	switch (ability)
 	{
@@ -70,13 +61,14 @@ bool8 AbilityPreventsLoweringStat(u8 ability, u8 statId)
 		case ABILITY_BIGPECKS:
 			return statId == STAT_STAGE_DEF;
 		case ABILITY_KEENEYE:
+		case ABILITY_MINDSEYE:
 			return statId == STAT_STAGE_ACC;
 		default:
 			return FALSE;
 	}
 }
 
-bool8 IsAffectedBySturdy(u8 defAbility, u8 bankDef)
+bool8 IsAffectedBySturdy(u16 defAbility, u8 bankDef)
 {
 	return defAbility == ABILITY_STURDY
 		&& BATTLER_MAX_HP(bankDef);
@@ -86,11 +78,11 @@ bool8 IsAffectedByBadDreams(u8 bank)
 {
 	return BATTLER_ALIVE(bank)
 		&& (gBattleMons[bank].status1 & STATUS_SLEEP
-		 || ABILITY(FOE(bank)) == ABILITY_COMATOSE)
+		 || ABILITY(bank) == ABILITY_COMATOSE)
 		&& ABILITY(bank) != ABILITY_MAGICGUARD;
 }
 
-bool8 IsTrappedByAbility(u8 bankDef, u8 trapAbility)
+bool8 IsTrappedByAbility(u8 bankDef, u16 trapAbility)
 {
 	if (!CanBeTrapped(bankDef))
 		return FALSE;
@@ -108,45 +100,74 @@ bool8 IsTrappedByAbility(u8 bankDef, u8 trapAbility)
 	}
 }
 
-bool8 IsPriorityBlockingAbility(u8 ability)
+bool8 IsPriorityBlockingAbility(u16 ability)
 {
 	switch (ability)
 	{
 		case ABILITY_DAZZLING:
-		#ifdef ABILITY_QUEENLYMAJESTY
 		case ABILITY_QUEENLYMAJESTY:
-		#endif
+		case ABILITY_ARMORTAIL:
 			return TRUE;
 		default:
 			return FALSE;
 	}
 }
 
-bool8 IsUnnerveAbility(u8 ability)
+bool8 IsUnnerveAbility(u16 ability)
 {
 	return ability == ABILITY_UNNERVE
-		#ifdef ABILITY_ASONE_GRIM
 		|| ability == ABILITY_ASONE_GRIM
-		#endif
-		#ifdef ABILITY_ASONE_CHILLING
-		|| ability == ABILITY_ASONE_CHILLING
-		#endif
-		;
+		|| ability == ABILITY_ASONE_CHILLING;
 }
 
 bool8 UnnerveOnOpposingField(u8 bank)
 {
 	return ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_UNNERVE)
-		#ifdef ABILITY_ASONE_GRIM
 		|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_GRIM)
-		#endif
-		#ifdef ABILITY_ASONE_CHILLING
-		|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING)
-		#endif
-		;
+		|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING);
 }
 
-bool8 AbilityIncreasesWildItemChance(u8 ability)
+bool8 AbilityIncreasesWildItemChance(u16 ability)
 {
 	return ability == ABILITY_COMPOUNDEYES || ability == ABILITY_SUPERLUCK;
+}
+
+bool8 AngerShellStatsCheck(u8 bank)
+{
+    return (STAT_STAGE(bank, STAT_ATK) != STAT_STAGE_MAX
+         || STAT_STAGE(bank, STAT_SPATK) != STAT_STAGE_MAX
+         || STAT_STAGE(bank, STAT_SPEED) != STAT_STAGE_MAX
+         || STAT_STAGE(bank, STAT_DEF) > STAT_STAGE_MIN
+         || STAT_STAGE(bank, STAT_SPDEF) > STAT_STAGE_MIN);
+}
+
+bool8 SwitchInAbilityBlock2(u16 ability)
+{
+	switch (ability)
+	{
+		case ABILITY_MIMICRY:
+		case ABILITY_SCHOOLING:
+		case ABILITY_SHIELDSDOWN:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 SwitchInAbilityBlock3(u16 ability)
+{
+	switch (ability)
+	{
+		case ABILITY_ICEFACE:
+		case ABILITY_COSTAR:
+		case ABILITY_QUARKDRIVE:
+		case ABILITY_PROTOSYNTHESIS:
+		case ABILITY_COMMANDER:
+		case ABILITY_HOSPITALITY:
+		case ABILITY_FORECAST:
+		case ABILITY_FLOWERGIFT:
+			return TRUE;
+		default:
+			return FALSE;
+	}
 }

@@ -22,12 +22,17 @@ extern u8 SeverelyString[];
 
 static bool8 IsIntimidateActive(void)
 {
-	return gNewBS->intimidateActive != 0 && !gNewBS->cottonDownActive;
+	return gNewBS->intimidateActive != 0 && !gNewBS->cottonDownActive && !gNewBS->supersweetSyrupActive;
 }
 
 static bool8 IsCottonDownActive(void)
 {
-	return gNewBS->intimidateActive != 0 && gNewBS->cottonDownActive;
+	return gNewBS->intimidateActive != 0 && gNewBS->cottonDownActive && !gNewBS->supersweetSyrupActive;
+}
+
+static bool8 IsSupersweetSyrupActive(void)
+{
+	return gNewBS->intimidateActive != 0 && !gNewBS->cottonDownActive && gNewBS->supersweetSyrupActive;
 }
 
 void atk13_printfromtable(void)
@@ -48,6 +53,7 @@ void atk13_printfromtable(void)
 
 		if (IsIntimidateActive()
 		|| (IsCottonDownActive() && defSide != atkSide)
+		|| IsSupersweetSyrupActive()
 		|| (gNewBS->stickyWebActive && SIDE(gSideTimers[defSide].stickyWebBank) != defSide) //Was set by foe and not Court Change
 		|| defSide != atkSide)
 			DefiantActivation(); //Stat fell from enemy
@@ -149,7 +155,7 @@ void atk48_playstatchangeanimation(void)
 
 	STAT_ANIM_DOWN:	;
 		s16 startingStatAnimId;
-		u8 ability = ABILITY(gActiveBattler);
+		u16 ability = ABILITY(gActiveBattler);
 
 		if (flags & ATK48_STAT_BY_TWO)
 			startingStatAnimId = STAT_ANIM_MINUS2 - 1;
@@ -283,7 +289,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 	else
 		gActiveBattler = gBankTarget;
 
-	u8 ability = ABILITY(gActiveBattler);
+	u16 ability = ABILITY(gActiveBattler);
 
 	flags &= ~(MOVE_EFFECT_AFFECTS_USER);
 
@@ -392,6 +398,15 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			}
 			return STAT_CHANGE_DIDNT_WORK;
 		}
+		else if (ability == ABILITY_GUARDDOG && IsIntimidateActive() && !certain)
+		{
+			if (flags == STAT_CHANGE_BS_PTR)
+			{
+				gBattleScripting.bank = gActiveBattler;
+				gBattlescriptCurrInstr = BattleScript_GuardDogActivates;
+			}
+			return STAT_CHANGE_DIDNT_WORK;
+		}
 		else if (ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_CLEAR_AMULET
 			&& !certain && gCurrentMove != MOVE_CURSE)
 		{
@@ -406,7 +421,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			}
 			return STAT_CHANGE_DIDNT_WORK;
 		}
-		else if (ability == ABILITY_MIRRORARMOR && (IsIntimidateActive() || IsCottonDownActive()) && !certain)
+		else if (ability == ABILITY_MIRRORARMOR && (IsIntimidateActive() || IsCottonDownActive() || IsSupersweetSyrupActive()) && !certain)
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
@@ -520,7 +535,10 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 		if (gBattleMons[gActiveBattler].statStages[statId - 1] == STAT_STAGE_MAX)
 			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 		else
+		{
 			gBattleCommunication[MULTISTRING_CHOOSER] = (gBankTarget == gActiveBattler);
+			SetOpportunistStats(gActiveBattler, statValue, statId);
+		}
 
 		gNewBS->statRoseThisRound[gActiveBattler] = TRUE;
 	}
@@ -540,7 +558,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 	return STAT_CHANGE_WORKED;
 }
 
-u8 CanStatNotBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u8 defAbility)
+u8 CanStatNotBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u16 defAbility)
 {
 	if (!BATTLER_ALIVE(bankDef))
 		return STAT_FAINTED; 
@@ -570,7 +588,7 @@ u8 CanStatNotBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u8 defAbility)
 	return STAT_CAN_BE_LOWERED;
 }
 
-bool8 CanStatBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u8 defAbility)
+bool8 CanStatBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u16 defAbility)
 {
 	return CanStatNotBeLowered(statId, bankDef, bankAtk, defAbility) == STAT_CAN_BE_LOWERED;
 }

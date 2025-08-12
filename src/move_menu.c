@@ -252,7 +252,7 @@ void HandleInputChooseMove(void)
 		else if (chosenMove == MOVE_ACUPRESSURE && !(IS_DOUBLE_BATTLE))
 			moveTarget = MOVE_TARGET_USER; //Only can target yourself in singles
 		else
-			moveTarget = GetBaseMoveTargetByGrounding(chosenMove, moveInfo->atkIsGrounded);
+			moveTarget = GetBaseMoveTarget(chosenMove, gActiveBattler);
 
 		if (gNewBS->zMoveData.viewing && moveInfo->moveSplit[gMoveSelectionCursor[gActiveBattler]] != SPLIT_STATUS) //Status moves keep original targets
 			moveTarget = gBattleMoves[moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]]].target;
@@ -765,7 +765,8 @@ static void MoveSelectionDisplayMoveType(void)
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
 	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
-	if (moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] == MOVE_TERABLAST && gNewBS->terastalData.chosen[gActiveBattler])
+	if ((moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] == MOVE_TERABLAST || moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] == MOVE_TERASTARSTORM)
+	&& gNewBS->terastalData.chosen[gActiveBattler])
 	{
 		moveType = moveInfo->monTeraType;
 		split = CalcMoveSplit(gActiveBattler, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]], gActiveBattler);
@@ -803,7 +804,8 @@ void MoveSelectionDisplayMoveEffectiveness(void)
 	u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
 
 	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
-	if (move == MOVE_TERABLAST && gNewBS->terastalData.chosen[gActiveBattler])
+	if ((move == MOVE_TERABLAST || move == MOVE_TERASTARSTORM)
+	&& gNewBS->terastalData.chosen[gActiveBattler])
 		moveType = moveInfo->monTeraType;
 	else
 		moveType = moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]];
@@ -1668,10 +1670,10 @@ void HandleInputChooseTarget(void)
 				case B_POSITION_PLAYER_RIGHT:
 					if (gActiveBattler != gMultiUsePlayerCursor)
 						i++;
-					else if (GetBaseMoveTargetByGrounding(move, moveInfo->atkIsGrounded) & MOVE_TARGET_USER_OR_PARTNER)
+					else if (GetBaseMoveTarget(move, gActiveBattler) & MOVE_TARGET_USER_OR_PARTNER)
 						i++;
 
-					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
+					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing || move == MOVE_DOODLE) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
 						i = FALSE; //Can't use Max Move on partner
 
 					break;
@@ -1737,10 +1739,10 @@ void HandleInputChooseTarget(void)
 				case B_POSITION_PLAYER_RIGHT:
 					if (gActiveBattler != gMultiUsePlayerCursor)
 						i++;
-					else if (GetBaseMoveTargetByGrounding(move, moveInfo->atkIsGrounded) & MOVE_TARGET_USER_OR_PARTNER)
+					else if (GetBaseMoveTarget(move, gActiveBattler) & MOVE_TARGET_USER_OR_PARTNER)
 						i++;
 
-					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
+					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing || move == MOVE_DOODLE) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
 						i = FALSE; //Can't use Max Move on partner
 					break;
 				case B_POSITION_OPPONENT_LEFT:
@@ -1785,7 +1787,7 @@ static void HighlightPossibleTargets(void)
 				moveTarget = MOVE_TARGET_SELECTED;
 		}
 		else
-			moveTarget = GetBaseMoveTargetByGrounding(chosenMove, moveInfo->atkIsGrounded);
+			moveTarget = GetBaseMoveTarget(chosenMove, gActiveBattler);
 
 		if (gNewBS->zMoveData.viewing && moveInfo->moveSplit[gMoveSelectionCursor[gActiveBattler]] != SPLIT_STATUS) //Status moves keep original targets
 			moveTarget = gBattleMoves[moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]]].target;
@@ -1886,8 +1888,8 @@ static void HighlightPossibleTargets(void)
 
 u8 TrySetCantSelectMoveBattleScript(void)
 {
-	u8 limitations, ability, holdEffect, isAnyMaxMove;
-	u16 move, *choicedMove;
+	u8 limitations, holdEffect, isAnyMaxMove;
+	u16 move, *choicedMove, ability;
 
 	limitations = 0; isAnyMaxMove = FALSE;
 	ability = ABILITY(gActiveBattler);
@@ -2075,6 +2077,7 @@ void PlayerHandleChooseAction(void)
 	else if ((IS_DOUBLE_BATTLE)
 	&& GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
 	&& !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
+	&& !(gNewBS->commandingDondozo & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
 	&& !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
 	&& gBattleBufferA[gActiveBattler][1] != ACTION_USE_ITEM) //Mon 1 didn't use item
 	{
@@ -2165,6 +2168,7 @@ void HandleInputChooseAction(void)
 					if ((IS_DOUBLE_BATTLE)
 					&& GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
 					&& !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
+					&& !(gNewBS->commandingDondozo & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
 					&& !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
 					&& gBattleBufferA[gActiveBattler][1] != ACTION_USE_ITEM) //Mon 1 didn't use item
 						goto CANCEL_PARTNER;

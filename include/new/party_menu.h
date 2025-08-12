@@ -28,6 +28,7 @@ bool8 HasBadgeToUseFlash(void);
 bool8 HasBadgeToUseWaterfall(void);
 bool8 HasBadgeToUseRockClimb(void);
 bool8 HasBadgeToUseDive(void);
+void EmitChoosePokemon(u8 bufferId, u8 caseId, u8 slotId, u16 abilityId, u8 *data);
 
 void sp100_CanPlayerUseFlashInCurrentLocation(void);
 void sp101_CanPlayerFlyInCurrentLocation(void);

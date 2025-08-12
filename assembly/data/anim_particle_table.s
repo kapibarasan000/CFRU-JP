@@ -5,6 +5,9 @@
 .global gBattleAnimPaletteTable
 .global gThinRingSpriteSheet
 .global gThinRingSpritePalette
+.global gExplosionSpriteSheet
+.global gExplosionSpritePalette
+
 /*
 anim_particle_table.s
 	tables for animation particles
@@ -159,7 +162,7 @@ animparticle 0x8c1aea4,	0x1c0,	ANIM_TAG_ICE_CRYSTALS
 animparticle 0x8c1afcc,	0x100,	ANIM_TAG_ICE_SPIKES
 animparticle HANDS_AND_FEET_IMG,	0x800,	ANIM_TAG_HANDS_AND_FEET
 animparticle 0x8c1bddc,	0x200,	ANIM_TAG_MIST_CLOUD
-animparticle 0x8c0ab34,	0x800,	ANIM_TAG_CLAMP
+animparticle 0x8c1ab18,	0x800,	ANIM_TAG_CLAMP
 animparticle 0x8c02460,	0x180,	ANIM_TAG_BUBBLE
 animparticle 0x8c1b0e4,	0x180,	ANIM_TAG_ORBS
 animparticle 0x8c1b2f0,	0x200,	ANIM_TAG_WATER_IMPACT
@@ -212,6 +215,7 @@ animparticle 0x8c20e20,	0x800,	ANIM_TAG_MOON
 animparticle 0x8c21180,	0x200,	ANIM_TAG_GREEN_SPARKLE
 animparticle 0x8c20a64,	0x800,	ANIM_TAG_SPIRAL
 animparticle 0x8c21258,	0x200,	ANIM_TAG_SNORE_Z
+gExplosionSpriteSheet:
 animparticle 0x8c213f0,	0x800,	ANIM_TAG_EXPLOSION
 animparticle NAIL_IMG,	0x400,	ANIM_TAG_NAIL
 animparticle 0x8c218ec,	0x200,	ANIM_TAG_GHOSTLY_SPIRIT
@@ -533,7 +537,7 @@ animparticlepal 0x8c1afac,	ANIM_TAG_ICE_CRYSTALS
 animparticlepal 0x8c1afac,	ANIM_TAG_ICE_SPIKES
 animparticlepal HANDS_AND_FEET_PAL,	ANIM_TAG_HANDS_AND_FEET
 animparticlepal 0x8c1be54,	ANIM_TAG_MIST_CLOUD
-animparticlepal 0x8c1ac98,	ANIM_TAG_CLAMP
+animparticlepal 0x8c1aaf8,	ANIM_TAG_CLAMP
 animparticlepal 0x8c02894,	ANIM_TAG_BUBBLE
 animparticlepal 0x8c1b1f8,	ANIM_TAG_ORBS
 animparticlepal 0x8c1b3d4,	ANIM_TAG_WATER_IMPACT
@@ -586,6 +590,7 @@ animparticlepal 0x8c21158,	ANIM_TAG_MOON
 animparticlepal 0x8c21238,	ANIM_TAG_GREEN_SPARKLE
 animparticlepal 0x8c20e08,	ANIM_TAG_SPIRAL
 animparticlepal 0x8c213c8,	ANIM_TAG_SNORE_Z
+gExplosionSpritePalette:
 animparticlepal 0x8c217e0,	ANIM_TAG_EXPLOSION
 animparticlepal NAIL_PAL,	ANIM_TAG_NAIL
 animparticlepal 0x8c21a2c,	ANIM_TAG_GHOSTLY_SPIRIT

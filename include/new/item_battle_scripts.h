@@ -43,6 +43,8 @@ extern const u8 BattleScript_ItemStatChangeEnd2[];
 extern const u8 BattleScript_ItemStatChangeRet[];
 extern const u8 BattleScript_WhiteHerbFling[];
 extern const u8 BattleScript_ItemHealHP_RemoveItemRet[];
+extern const u8 BattleScript_BoosterEnergyEnd2[];
+extern const u8 BattleScript_BoosterEnergyRet[];
 
 extern const u8 BattleScript_AirBallooonPop[];
 extern const u8 BattleScript_AirBalloonSub[];
@@ -58,5 +60,12 @@ extern const u8 BattleScript_EjectPackEnd2[];
 extern const u8 BattleScript_EjectPackRet[];
 extern const u8 BattleScript_EjectPackCMD49[];
 extern const u8 BattleScript_ClearAmulet[];
+extern const u8 BattleScript_MirrorHerbCopyStatChangeEnd2[];
+extern const u8 BattleScript_MirrorHerbCopyStatChangeRet[];
+extern const u8 BattleScript_MirrorHerbCopyDragonCheer[];
+extern const u8 BattleScript_MirrorHerbEnd[];
+extern const u8 BattleScript_AbilityShieldMoveEnd[];
+extern const u8 BattleScript_AttackerAbilityShield[];
+extern const u8 BattleScript_AbilityShieldNeutralizingGas[];
 
 extern const u8 gText_NotAffectedBecauseOfItem[];

@@ -29,7 +29,6 @@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Reusable TMs
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.align 2
 .pool
 ReusableTMCheck1:
 	mov r0, r1	@item ID
@@ -45,7 +44,6 @@ IsReusable1:
 	ldr r1, =(0x08125814 +1)
 	bx r1
 
-.align 2
 .pool
 ReusableTMCheck2:
 	mov r0, r1	@item ID
@@ -61,7 +59,6 @@ IsReusable2:
 	ldr r1, =(0x081258E0 +1)
 	bx r1
 
-.align 2
 .pool
 ReusableTMCheck3:
 	mov r0, r4	@item id
@@ -75,7 +72,6 @@ IsReusable3:
 	ldr r1, =(0x081265D0 +1)
 	bx r1
 
-.align 2
 .pool
 SingleTmPurchaseFix:
 	mov r0, r4	@item id
@@ -83,7 +79,6 @@ SingleTmPurchaseFix:
 	bl CheckTmPurchase
 	pop {r4-r7, pc}
 
-.align 2
 .pool
 AddSingleTmFix:
 	bl CheckSingleBagTm
@@ -103,7 +98,6 @@ BagAddItem:
 	ldr r2, =(0x8099A8C +1)
 	bx r2
 
-.align 2
 .pool
 UnbuyableTmFix:
 	mov r0, r4	@item id
@@ -116,7 +110,6 @@ AskPurchaseQty:
 	ldr r1, =(0x0809B66C +1)
 	bx r1
 
-.align 2
 .pool
 UnsellableTmFix:
 	ldrh r0, [r6]	@item id
@@ -129,7 +122,6 @@ Unsellable:
 	ldr r0, =(0x08133128 +1)
 	bx r0
     
-.align 2
 .pool
 FixTmShopPrice:
     mov r0, r6  @window
@@ -138,7 +130,6 @@ FixTmShopPrice:
     add sp, sp, #0x14
     pop {r4-r6, pc}
     
-.align 2
 .pool
 ReloadMartList:
     mov r0, r5  @taskID
@@ -146,6 +137,13 @@ ReloadMartList:
     ldr r0, =(0x0809B8C4 +1)
     bx r0
     
+.pool
+@0x8126910 with r2
+RemoveTMPPRestoreHook:
+	mov r0, r6 @Mon
+	bl NewTMReplaceMove
+	ldr r0, =0x8126918 | 1
+	bx r0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ TM/HM Expansion - Fix Mart Listings
@@ -276,6 +274,7 @@ ReturnDiscPal:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ TM/HM Expansion - Disc Position
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ 08133798
 .align 2
 .pool

@@ -229,7 +229,7 @@ gBattleScriptsForMoveEffects:
 .word BS_211_CalmMind
 .word BS_212_DragonDance
 .word BS_213_StatSwapSplitters
-.word BS_214_Blank
+.word BS_214_FickleBeam
 .word BS_215_Blank
 .word BS_216_Blank
 .word BS_217_Blank
@@ -259,13 +259,13 @@ gBattleScriptsForMoveEffects:
 .word BS_241_FlameBurst
 .word BS_242_LastResort
 .word BS_243_DamageSetTerrain
-.word BS_244_Blank
+.word BS_244_Teatime
 .word BS_245_Poltergeist
 .word BS_246_SkyDrop
 .word BS_247_Glaive_Rush
 .word BS_248_TeraBlast
 .word BS_249_RevivalBlessing
-.word BS_250_Blank
+.word BS_250_OrderUp
 .word BS_251_Blank
 .word BS_252_Blank
 .word BS_253_MaxMove

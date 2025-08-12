@@ -217,10 +217,34 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 						BattleScriptExecute(BattleScript_ItemStatChangeEnd2);
 				}
 				break;
+
+			case ITEM_EFFECT_BOOSTER_ENERGY:
+				if ((ABILITY(bank) == ABILITY_PROTOSYNTHESIS && !(WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)))
+				|| (ABILITY(bank) == ABILITY_QUARKDRIVE && gTerrainType != ELECTRIC_TERRAIN))
+				{
+					if (gNewBS->paradoxBoostStats[bank] == 0 && !gDisableStructs[bank].boosterEnergyActive && !IS_TRANSFORMED(bank))
+					{
+						u8 statId = GetHighestStatId(bank);
+						gNewBS->paradoxBoostStats[bank] = statId;
+						gDisableStructs[bank].boosterEnergyActive = TRUE;
+						gBattleScripting.bank = bank;
+						PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
+						effect = ITEM_EFFECT_OTHER;
+
+						if (moveTurn)
+						{
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_BoosterEnergyRet;
+						}
+						else
+							BattleScriptExecute(BattleScript_BoosterEnergyEnd2);
+					}						
+				}
+				break;
 		}
 		break;
 
-	case ItemEffects_EndTurn:
+	case ItemEffects_Normal:
 		gBattleScripting.bank = bank;
 
 		if (BATTLER_ALIVE(bank))
@@ -344,23 +368,6 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					}
 					else
 						BattleScriptExecute(BattleScript_WhiteHerbEnd2);
-				}
-				break;
-
-			case ITEM_EFFECT_LEFTOVERS:
-			LEFTOVERS_HEAL:
-				if (!moveTurn && !BATTLER_MAX_HP(bank)
-				&&  !IsHealBlocked(bank)
-				&&  !gNewBS->leftoverHealingDone[bank])
-				{
-					gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 16);
-					if (gBattleMons[bank].hp + gBattleMoveDamage > gBattleMons[bank].maxHP)
-						gBattleMoveDamage = gBattleMons[bank].maxHP - gBattleMons[bank].hp;
-					gBattleMoveDamage *= -1;
-					BattleScriptExecute(BattleScript_ItemHealHP_End2);
-					effect = ITEM_HP_CHANGE;
-					RecordItemEffectBattle(bank, bankHoldEffect);
-					gNewBS->leftoverHealingDone[bank] = TRUE;
 				}
 				break;
 
@@ -664,21 +671,72 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					effect = ITEM_EFFECT_OTHER;
 				}
 				break;
+			}
 
-			case ITEM_EFFECT_BLACK_SLUDGE:
-				if (!moveTurn)
-				{
-					if (IsOfType(bank, TYPE_POISON))
-						goto LEFTOVERS_HEAL;
-					else if (!moveTurn && ABILITY(bank) != ABILITY_MAGICGUARD
-					&& !gNewBS->leftoverHealingDone[bank])
+			if (effect)
+			{
+				if (GetPocketByItemId(gLastUsedItem) == POCKET_BERRY_POUCH)
+					gNewBS->canBelch[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
+
+				gBattleScripting.bank = bank;
+				gStringBank = bank;
+				gActiveBattler = bank;
+				switch (effect) {
+					case ITEM_STATUS_CHANGE:
+						EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[bank].status1);
+						MarkBufferBankForExecution(gActiveBattler);
+						break;
+					case ITEM_PP_CHANGE:
+						if (!(gBattleMons[bank].status2 & STATUS2_TRANSFORMED) && !(gDisableStructs[bank].mimickedMoves & gBitTable[i]))
+							gBattleMons[bank].pp[i] = changedPP;
+						break;
+					case ITEM_HP_CHANGE:
+						EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &gBattleMons[bank].hp);
+						MarkBufferBankForExecution(gActiveBattler);
+						break;
+				}
+			}
+		}
+		break;
+
+	case ItemEffects_EndTurn:
+		gBattleScripting.bank = bank;
+
+		if (BATTLER_ALIVE(bank))
+		{
+			switch (bankHoldEffect) {
+				case ITEM_EFFECT_LEFTOVERS:
+				LEFTOVERS_HEAL:
+					if (!moveTurn && !BATTLER_MAX_HP(bank)
+					&&  !IsHealBlocked(bank)
+					&&  !gNewBS->leftoverHealingDone[bank])
 					{
-						gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 8);
-						BattleScriptExecute(BattleScript_BlackSludgeHurt);
-						effect = ITEM_EFFECT_OTHER;
+						gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 16);
+						if (gBattleMons[bank].hp + gBattleMoveDamage > gBattleMons[bank].maxHP)
+							gBattleMoveDamage = gBattleMons[bank].maxHP - gBattleMons[bank].hp;
+						gBattleMoveDamage *= -1;
+						BattleScriptExecute(BattleScript_ItemHealHP_End2);
+						effect = ITEM_HP_CHANGE;
+						RecordItemEffectBattle(bank, bankHoldEffect);
 						gNewBS->leftoverHealingDone[bank] = TRUE;
 					}
-				}
+					break;
+					
+				case ITEM_EFFECT_BLACK_SLUDGE:
+					if (!moveTurn)
+					{
+						if (IsOfType(bank, TYPE_POISON))
+							goto LEFTOVERS_HEAL;
+						else if (!moveTurn && ABILITY(bank) != ABILITY_MAGICGUARD
+						&& !gNewBS->leftoverHealingDone[bank])
+						{
+							gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 8);
+							BattleScriptExecute(BattleScript_BlackSludgeHurt);
+							effect = ITEM_EFFECT_OTHER;
+							gNewBS->leftoverHealingDone[bank] = TRUE;
+						}
+					}
+					break;
 			}
 
 			if (effect)
@@ -997,6 +1055,59 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					gNewBS->activateBlunderPolicy = FALSE;
 					break;
 			}
+		break;
+	case ItemEffects_MirrorHerb:
+		for (i = 0; i < gBattlersCount; i++)
+		{
+			bank = gBanksByTurnOrder[i];
+				
+			switch (ITEM_EFFECT(bank))
+			{
+			case ITEM_EFFECT_MIRROR_HERB:
+				if (BATTLER_ALIVE(bank))
+				{
+					for (u8 statId = 0; statId < BATTLE_STATS_NO - 1; statId++)
+					{
+						if (gNewBS->opportunistBoostStats[bank][statId] != 0)
+						{
+							if (ABILITY(bank) == ABILITY_CONTRARY
+							&& gBattleMons[bank].statStages[statId] > STAT_STAGE_MIN)
+							{
+								effect = ITEM_STATS_CHANGE;
+								break;
+							}
+							else if (gBattleMons[bank].statStages[statId] < STAT_STAGE_MAX)
+							{
+								effect = ITEM_STATS_CHANGE;
+								break;
+							}
+						}
+					}
+
+					if (gNewBS->opportunistBoostStats[bank][BATTLE_STATS_NO - 1] != 0
+					&& gNewBS->DragonCheerRanks[bank] < 3)
+						effect = ITEM_STATS_CHANGE;
+				}
+
+				if (effect)
+				{
+					gBattleScripting.bank = bank;
+					gLastUsedItem = ITEM(bank);
+					gNewBS->mirrorHerbActive = TRUE;
+
+					if (moveTurn)
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_MirrorHerbCopyStatChangeRet;
+					}
+					else
+						BattleScriptExecute(BattleScript_MirrorHerbCopyStatChangeEnd2);
+					
+					return effect;
+				}
+				break;
+			}
+		}
 		break;
 	}
 

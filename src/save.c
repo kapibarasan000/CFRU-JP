@@ -3,6 +3,7 @@
 #include "../include/menu_helpers.h"
 #include "../include/rtc.h"
 #include "../include/save.h"
+#include "../include/string_util.h"
 #include "../include/constants/vars.h"
 
 #include "../include/new/dns.h"
@@ -23,7 +24,7 @@ extern struct SaveSection gSaveDataBuffer;
 #define PARASITE_SIZE 0xEC4
 
 // old 0x080DA23C table changes
-const struct SaveSectionOffset gSaveSectionOffsets[] =
+const struct SaveSectionOffsets gSaveSectionOffsets[] =
 {
 	{SECTOR_DATA_SIZE * 0, 0xF24}, // saveblock2
 	// 0xCC byes saved
@@ -76,7 +77,7 @@ static bool8 IsValidFileSignature(u32 signature)
 		;
 }
 
-/* Saving and loading for sector 30 and 31. Could potentially add the Hall of fame sectors too */
+//Saving and loading for sector 30 and 31.
 static void LoadSector30And31(void)
 {
 	struct SaveSection* saveBuffer = &gSaveDataBuffer;
@@ -114,8 +115,7 @@ static u8 SaveSector30And31(void)
 	return TryWriteSector(31, saveBuffer->data);
 }
 
-
-/* This parasitic saveblock idea originated from JPAN's work. Frees up 0xEC4 bytes - almost a sector */
+//This parasitic saveblock idea originated from JPAN's work. Frees up 0xEC4 bytes - almost a sector
 void SaveParasite(void)
 {
 	struct SaveSection* sector = gFastSaveSection;
@@ -145,7 +145,6 @@ void SaveParasite(void)
 	u16 index = SECTOR_DATA_SIZE - size;
 	Memcpy(&sector->data[index], (u32*) data, size);
 }
-
 
 static void LoadParasite(void)
 {
@@ -486,13 +485,13 @@ u8 HandleSavingData(u8 saveType)
 	return 0;
 }
 
-//Vanilla save wasn't saving the new sectors
+//Hard to save the parasite with the vanilla save splitting to prevent cheating
 u8 SaveDataAfterLinkBattle(void)
 {
 	gTerrainType = 0; //Doesn't get cleared for the second player
 	TrySavingData(SAVE_NORMAL);
 	ClearContinueGameWarpStatus2();
-	return 3; //New state in switch statemeny
+	return 3; //New state in switch statement
 }
 
 u8 SaveDataAfterLinkTrade(void)

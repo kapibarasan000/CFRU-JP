@@ -6,7 +6,6 @@ gMoveDescriptions 081383A4
 gAbilityDescriptions 080001C4
 gAbilityDescriptions 08136F90
 gMoveAnimations 08071D74
-gMovesWithQuietBGM 08071E8C
 gBattleAnimPicTable 080720B8
 gBattleAnimPicTable 0807239C
 gAnimationBackgrounds 08073104
@@ -57,12 +56,8 @@ BattleScript_AIUseFullRestoreOrHpHeal 081BD9A8
 BattleScript_AIUseStatRestore 081BD9AC
 BattleScript_AIUseXstat 081BD9B0
 BattleScript_AIUseGuardSpec 081BD9B4
-FieldEffectScript_CaveDust 081BD6D0
-FieldEffectScript_Sparkles 081BD6D4
-FieldEffectScript_LavaBubbles 081BD724
-FieldEffectScript_MiningScanRing 081BD728
-SystemScript_FindItemMessage 081940A9
 SystemScript_ObtainItem 08163758
+SystemScript_FindItem 0816375C
 SystemScript_ObtainItemMessage 08193F78
 SystemScript_PickedUpHiddenItem 0819412A
 
@@ -99,6 +94,8 @@ gText_AbilityPreventsSpecificStatLoss 083C43AC
 #gText_ItemPumpedMon 083C43F0
 gText_AbilityBlocksHealBell 083C4450
 gText_AbilityCuredStatusProblem 083C4468
+gText_BattleMenu 080EB70C
+gText_UnknownLocation 08137DD4
 
 #sText_GotMoneyForWinning 083C3F50
 sText_OutofUsablePokemon 083C3F54
@@ -197,12 +194,22 @@ sItemMenuActions 0810A71C
 sItemMenuActions 0810A744
 
 ##Grass Field Effects and Footstep Noises
-gFieldEffectScript_TallGrass 081BD678
-gFieldEffectScript_JumpTallGrass 081BD698
-gFieldEffectScript_LongGrass 081BD6AC
-gFieldEffectScript_JumpLongGrass 081BD6B0
-gFieldEffectScript_ShakingTallGrass 081BD6B4
-gFieldEffectScript_ShakingLongGrass 081BD6B8
+FieldEffectScript_TallGrass 081BD678
+FieldEffectScript_Dust 081BD690
+FieldEffectScript_JumpTallGrass 081BD698
+FieldEffectScript_SandFootprints 081BD69C
+FieldEffectScript_LongGrass 081BD6AC
+FieldEffectScript_JumpLongGrass 081BD6B0
+FieldEffectScript_ShakingTallGrass 081BD6B4
+FieldEffectScript_ShakingLongGrass 081BD6B8
+FieldEffectScript_BikeTireTracks 081BD6F4
+FieldEffectScript_ShortGrass 081BD70C
+FieldEffectScript_CaveDust 081BD6D0
+FieldEffectScript_Sparkles 081BD6D4
+FieldEffectScript_LavaBubbles 081BD724
+FieldEffectScript_MiningScanRing 081BD728
+FieldEffectScript_Explosion 081BD738
+FieldEffectScript_Sparkle 081BD740
 FieldEffectScript_UseRockClimb 081BD744
 FieldEffectScript_RockClimbDust 081BD748
 Wav_grass_footstep_sample 08453A54

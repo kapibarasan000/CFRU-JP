@@ -96,11 +96,16 @@
 #define SE_FLUTE 0x6E
 #define SE_CUT 0x79
 #define SE_ROCK_SMASH 0x7C
+#define SE_RECOVER 0x85
 #define SE_CHOMP 0x9A
 #define SE_MUD_SLAP 0xA1
 #define SE_LEAVES 0xA2
+#define SE_EXPLOSION 0xAA
+#define SE_M_METRONOME 0xB3
 #define SE_GLASS_BREAK 0xBF
+#define SE_M_LOCK_ON 0xCB
 #define SE_EARTHQUAKE 0xE3
+#define SE_M_STAT_INCREASE 0xE8
 
 #define SE_RG_W_DOOR 241        // Door
 #define SE_RG_CARD1 242         // Trainer Card 1

@@ -4,8 +4,10 @@
 #include "../include/field_weather.h"
 #include "../include/item_menu.h"
 #include "../include/item_use.h"
+#include "../include/load_save.h"
 #include "../include/malloc.h"
 #include "../include/random.h"
+#include "../include/constants/maps.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainer_classes.h"
 
@@ -21,6 +23,7 @@
 #include "../include/new/util.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
+#include "../include/new/terastal.h"
 /*
 end_battle.c
 	handles all battle termination logic and data resetting/saving
@@ -48,6 +51,9 @@ const u16 gEndBattleFlagClearTable[] =
 #endif
 #ifdef FLAG_NO_CATCHING_AND_RUNNING
 	FLAG_NO_CATCHING_AND_RUNNING,
+#endif
+#ifdef FLAG_ALWAYS_CATCHABLE
+	FLAG_ALWAYS_CATCHABLE,
 #endif
 #ifdef FLAG_WILD_CUSTOM_MOVES
 	FLAG_WILD_CUSTOM_MOVES,
@@ -105,6 +111,9 @@ const u16 gEndBattleFlagClearTable[] =
 #endif
 #ifdef FLAG_GIGANTAMAXABLE
 	FLAG_GIGANTAMAXABLE,
+#endif
+#ifdef FLAG_CUSTOM_TERA_TYPE
+	FLAG_CUSTOM_TERA_TYPE,
 #endif
 #ifdef FLAG_TEMP_DISABLE_RANDOMIZER
 	FLAG_TEMP_DISABLE_RANDOMIZER,
@@ -402,6 +411,8 @@ u8 IsRunningFromBattleImpossible(void)
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER))
 		return FALSE;
+	else if (RAID_BATTLE_END)
+		return FALSE;
 	else if (AreAllKindsOfRunningPrevented())
 		return TRUE;
 	else if (itemEffect == ITEM_EFFECT_CAN_ALWAYS_RUN)
@@ -417,7 +428,7 @@ u8 IsRunningFromBattleImpossible(void)
 	{
 		if (side != SIDE(i))
 		{
-			u8 ability = ABILITY(i);
+			u16 ability = ABILITY(i);
 			if (IsTrappedByAbility(gActiveBattler, ability))
 			{
 				gBattleScripting.bank = i;
@@ -579,6 +590,7 @@ void EndOfBattleThings(void)
 		FormsRevert(gPlayerParty);
 		MegaRevert(gPlayerParty);
 		GigantamaxRevert(gPlayerParty);
+		TerastalFormRevert(gPlayerParty);
 		UpdateBurmy();
 		EndPartnerBattlePartyRestore();
 		EndSkyBattlePartyRestore();

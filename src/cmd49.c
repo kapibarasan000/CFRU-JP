@@ -21,6 +21,7 @@
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/set_effect.h"
+#include "../include/new/terastal.h"
 #include "../include/new/util.h"
 
 /*
@@ -44,6 +45,7 @@ enum
 	ATK49_ATTACKER_ABILITIES,
 	ATK49_ADVERSE_PROTECTION,
 	ATK49_RAGE,
+	ATK49_TOOK_DAMAGE_COUNT,
 	ATK49_SYNCHRONIZE_TARGET,
 	ATK49_BEAK_BLAST_BURN,
 	ATK49_SYNCHRONIZE_ATTACKER,
@@ -86,6 +88,8 @@ enum
 	ATK49_SWITCH_OUT_ABILITIES,
 	ATK49_RESTORE_ABILITIES,
 	ATK49_PICKPOCKET,
+	ATK49_OPPORTUNIST,
+	ATK49_MIRROR_HERB,
 	ATK49_RAID_MON_PREP_MORE_ATTACKS,
 	ATK49_SUBSTITUTE,
 	ATK49_END_ZMOVES,
@@ -170,34 +174,10 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 
 		case ATK49_ATTACKER_ABILITIES:
-			if (arg1 != ARG_IN_FUTURE_ATTACK
-			&& TOOK_DAMAGE(gBankTarget)
-			&& MOVE_HAD_EFFECT
-			&& BATTLER_ALIVE(gBankTarget)
-			&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
-			&& !gProtectStructs[gBankAttacker].confusionSelfDmg)
+			if (arg1 != ARG_IN_FUTURE_ATTACK)
 			{
-				switch (ABILITY(gBankAttacker)) {
-					case ABILITY_STENCH: //Check for Stench is taken care of in King's Rock check
-						if (umodsi(Random(), 100) < 10
-						&& gCurrentTurnActionNumber < GetBattlerTurnOrderNum(gBankTarget)) //Attacker moved before target
-						{
-							gBattleMons[gBankTarget].status2 |= STATUS2_FLINCHED;
-						}
-						break;
-
-					case ABILITY_POISONTOUCH:
-						if (CheckContact(gCurrentMove, gBankAttacker, gBankTarget)
-						&& ABILITY(gBankTarget) != ABILITY_SHIELDDUST
-						&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
-						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
-						&& umodsi(Random(), 100) < 30)
-						{
-							BattleScriptPushCursor();
-							gBattlescriptCurrInstr = BattleScript_PoisonTouch;
-							effect = TRUE;
-						}
-				}
+				if (AbilityBattleEffects(ABILITYEFFECT_MOVE_END_ATTACKER, gBankAttacker, 0, 0, 0))
+					effect = TRUE;
 			}
 			gBattleScripting.atk49_state++;
 			break;
@@ -313,6 +293,16 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				gBattlescriptCurrInstr = BattleScript_RageIsBuilding;
 				effect = TRUE;
 			}
+			gBattleScripting.atk49_state++;
+			break;
+
+		case ATK49_TOOK_DAMAGE_COUNT:
+			if (MOVE_HAD_EFFECT
+			&& TOOK_DAMAGE(gBankTarget)
+			&& gBankAttacker != gBankTarget
+			&& (SPLIT(gCurrentMove) == SPLIT_PHYSICAL || SPLIT_SPECIAL)
+			&& gNewBS->rageFistCounter[SIDE(gBankTarget)][gBattlerPartyIndexes[gBankTarget]] < 6)
+				gNewBS->rageFistCounter[SIDE(gBankTarget)][gBattlerPartyIndexes[gBankTarget]]++;
 			gBattleScripting.atk49_state++;
 			break;
 
@@ -544,7 +534,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			||  !CanKnockOffItem(gBankTarget)
 			||  gBattleMoves[gCurrentMove].effect != EFFECT_KNOCK_OFF) //Don't activate items that should be knocked off
 			{
-				if (ItemBattleEffects(ItemEffects_EndTurn, gBankTarget, TRUE, FALSE))
+				if (ItemBattleEffects(ItemEffects_Normal, gBankTarget, TRUE, FALSE))
 					effect = TRUE;
 			}
 			gBattleScripting.atk49_state++;
@@ -563,7 +553,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_ITEM_EFFECTS_END_TURN_ATTACKER:
 		case ATK49_ITEM_EFFECTS_END_TURN_ATTACKER_2:
 		case ATK49_ITEM_EFFECTS_END_TURN_ATTACKER_3:
-			if (ItemBattleEffects(ItemEffects_EndTurn, gBankAttacker, TRUE, FALSE))
+			if (ItemBattleEffects(ItemEffects_Normal, gBankAttacker, TRUE, FALSE))
 				effect = TRUE;
 			gBattleScripting.atk49_state++;
 			break;
@@ -873,6 +863,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						gBattleScripting.animArg1 = 0xE + STAT_STAGE_ATK;
 						gBattleScripting.animArg2 = 0;
 
+						if (ABILITY(gBankAttacker) == ABILITY_ASONE_CHILLING)
+							gNewBS->abilityPopupOverwrite = ABILITY_CHILLINGNEIGH;
+
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_Moxie;
 						effect = 1;
@@ -896,6 +889,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						gBattleScripting.statChanger = INCREASE_1 | STAT_STAGE_SPATK;
 						gBattleScripting.animArg1 = 0xE + STAT_STAGE_SPATK;
 						gBattleScripting.animArg2 = 0;
+
+						if (ABILITY(gBankAttacker) == ABILITY_ASONE_GRIM)
+							gNewBS->abilityPopupOverwrite = ABILITY_GRIMNEIGH;
 
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_Moxie;
@@ -1249,6 +1245,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&&  !(gNewBS->ResultFlags[banks[i]] & MOVE_RESULT_NO_EFFECT)
 					&&  gNewBS->turnDamageTaken[banks[i]] != 0
 					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, banks[i])
+					&&  HasMonToSwitchTo(gBankAttacker)
 					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || IsRaidBattle() || SIDE(banks[i]) == B_SIDE_PLAYER)) //Wild attackers can't activate
 					{
 						gNewBS->NoSymbiosisByte = TRUE;
@@ -1301,7 +1298,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 					if (bank != gBankAttacker)
 					{
-						if ((/*ABILITY(bank) == ABILITY_WIMPOUT ||*/ ABILITY(bank) == ABILITY_EMERGENCYEXIT)
+						if ((ABILITY(bank) == ABILITY_WIMPOUT || ABILITY(bank) == ABILITY_EMERGENCYEXIT)
 						&&  !(gNewBS->ResultFlags[bank] & MOVE_RESULT_NO_EFFECT)
 						&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 						&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
@@ -1322,7 +1319,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					}
 					else //Self inflicted damage
 					{
-						if ((/*ABILITY(bank) == ABILITY_WIMPOUT ||*/ ABILITY(bank) == ABILITY_EMERGENCYEXIT)
+						if ((ABILITY(bank) == ABILITY_WIMPOUT || ABILITY(bank) == ABILITY_EMERGENCYEXIT)
 						&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
 						&&  BATTLER_ALIVE(bank)
 						&&  (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2 || gNewBS->lessThanHalfHPBeforeShellBell) //Ignore Shell Bell Recovery
@@ -1406,6 +1403,20 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gBattleScripting.atk49_state++;
 			break;
 
+		case ATK49_OPPORTUNIST:
+			if (AbilityBattleEffects(ABILITYEFFECT_OPPORTUNIST, 0, 0, 0, 0))
+				effect = TRUE;
+			else
+				gBattleScripting.atk49_state++;
+			break;
+
+		case ATK49_MIRROR_HERB:
+			if (ItemBattleEffects(ItemEffects_MirrorHerb, 0, TRUE, FALSE))
+				effect = TRUE;
+			else
+				gBattleScripting.atk49_state++;
+			break;
+
 		case ATK49_RAID_MON_PREP_MORE_ATTACKS:
 			if (IsRaidBattle()
 			&& BATTLER_ALIVE(gBankAttacker)
@@ -1466,13 +1477,25 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				gNewBS->missStringId[i] = 0;
 				gNewBS->noResultString[i] = 0;
 				gNewBS->statFellThisTurn[i] = 0;
+				gSpecialStatuses[i].distortedTypeMatchups = FALSE;
+				gSpecialStatuses[i].teraShellDone = FALSE;
+
+				if (gNewBS->commanderActive[i] != SPECIES_NONE && !BATTLER_ALIVE(i))
+                {
+                    u8 partner = PARTNER(i);
+                    gNewBS->commanderActive[i] = SPECIES_NONE;
+                    if (BATTLER_ALIVE(partner))
+                        gStatuses3[partner] &= ~STATUS3_COMMANDER;
+                }
 			}
 
 			gNewBS->totalDamageGiven = 0;
 			gNewBS->selfInflictedDamage = 0;
 			gNewBS->lessThanHalfHPBeforeShellBell = FALSE;
 			ResetDoublesSpreadMoveCalcs();
+			ClearCopyStats();
 
+			gNewBS->fickleBeamBoosted = FALSE;
 			gNewBS->fusionFlareUsedPrior = FALSE;
 			gNewBS->fusionBoltUsedPrior = FALSE;
 			if (MOVE_HAD_EFFECT && !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE))
@@ -1490,6 +1513,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				}
 			}
 
+			if (GetBattlerTeraType(gBankAttacker) == TYPE_STELLAR && gNewBS->terastalBoostAnimationPlayed)
+				SetStellarBoostFlag(gBankAttacker, gBattleStruct->dynamicMoveType);
+
 			gNewBS->zMoveData.active = FALSE;
 			gNewBS->zMoveData.effectApplied = FALSE;
 			gNewBS->zMoveData.toBeUsed[gBankAttacker] = 0;
@@ -1504,6 +1530,13 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->rolloutFinalHit = FALSE;
 			gNewBS->dontActivateMoldBreakersAnymoreThisTurn = FALSE;
 			gNewBS->printedStrongWindsWeakenedAttack = FALSE;
+			gNewBS->terastalBoost = FALSE;
+			gNewBS->terastalBoostAnimationPlayed = FALSE;
+			gNewBS->poisonPuppeteerConfusion = FALSE;
+			#ifdef GEN9_CHARGE
+			if (moveType == TYPE_ELECTRIC)
+				gStatuses3[gBankAttacker] &= ~STATUS3_CHARGED_UP;
+			#endif
 			gBattleScripting.atk49_state++;
 			break;
 

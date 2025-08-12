@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/battle_anim.h"
+#include "../include/bg.h"
 #include "../include/event_data.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_specials.h"
@@ -10,15 +11,18 @@
 #include "../include/string_util.h"
 #include "../include/constants/game_stat.h"
 #include "../include/constants/items.h"
+#include "../include/constants/songs.h"
 
 #include "../include/new/battle_util.h"
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
 #include "../include/new/dynamax.h"
+#include "../include/new/end_battle_battle_scripts.h"
 #include "../include/new/form_change.h"
 #include "../include/new/util.h"
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"
+#include "../include/new/terastal.h"
 /*
 catching.c
 	handles the catch probability logic, expands pokeballs, etc.
@@ -199,6 +203,14 @@ void atkEF_handleballthrow(void)
 				shakes = maxShakes;
 			else
 			{
+				#ifdef BUTTON_PRESS_INCREASES_CATCH_ODDS
+				if (JOY_HELD(A_BUTTON)
+				|| JOY_REPT(A_BUTTON)
+				|| (JOY_HELD(B_BUTTON) && JOY_HELD(DPAD_DOWN))
+				|| (JOY_REPT(B_BUTTON) && JOY_REPT(DPAD_DOWN)))
+					odds += (Sqrt(odds * 5)); //Bigger gains for lower numbers
+				#endif
+
 				odds = udivsi(0xFFFF0, Sqrt(Sqrt(udivsi(0xFF0000, odds))));
 				for (shakes = 0; shakes < maxShakes && Random() < odds; ++shakes) ;
 			}
@@ -569,6 +581,7 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 	TryFormRevert(mon);
 	TryRevertMega(mon);
 	TryRevertGigantamax(mon);
+	TryRevertTerastalForm(mon);
 
 	SetMonData(mon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
 	SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
@@ -635,6 +648,7 @@ void atkF0_givecaughtmon(void)
 		IncrementGameStat(GAME_STAT_CAUGHT_TODAY);
 	else
 		SetGameStat(GAME_STAT_CAUGHT_TODAY, 0);
+
 	gBattleResults.caughtMonSpecies = SPECIES(gBankTarget);
 	GetMonData(mon, MON_DATA_NICKNAME, gBattleResults.caughtMonNick);
 	++gBattlescriptCurrInstr;
@@ -646,6 +660,7 @@ void atkF1_trysetcaughtmondexflags(void)
 
 	TryRevertMega(mon); //Megas aren't set in the habitat table
 	TryRevertGigantamax(mon); //Gigantamaxes aren't set in the habitat table
+	TryRevertTerastalForm(mon);
 	TryFormRevert(mon);
 
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);

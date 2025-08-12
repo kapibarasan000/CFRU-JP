@@ -283,7 +283,9 @@ struct BoxPokemon
 {
     u32 personality;
     u32 otId;
-    u8 nickname[POKEMON_NAME_LENGTH - 1];
+    u8 nickname[POKEMON_NAME_LENGTH - 3];
+    u8 natureMint;
+    u8 hyperTraining;
     u8 teratype;
     u8 language;
     u8 isBadEgg:1;
@@ -305,8 +307,10 @@ typedef struct Pokemon
 {
 	u32 personality;	//0x0
 	u32 otid;			//0x4
-	u8 nickname[9];	//0x8
-    u8 teratype;
+	u8 nickname[7];	//0x8
+    u8 natureMint; //0xF
+    u8 hyperTraining; //0x10
+    u8 teratype; //0x11
 	u8 language;		//0x12
 	u8 sanity;			//0x13
 	u8 otname[7];
@@ -449,9 +453,9 @@ struct BattlePokemon
     /*0x17*/ u32 spDefenseIV:5;
     /*0x17*/ u32 isEgg:1;
     /*0x17*/ u32 altAbility:1;
-	/*0x18*/ u8 type3;
-    /*0x19*/ s8 statStages[BATTLE_STATS_NO-1];
-    /*0x20*/ u8 ability;
+    /*0x18*/ u8 type3;
+	/*0x19*/ s8 statStages[BATTLE_STATS_NO-1];
+    /*0x20*/ u8 oldAbility;
     /*0x21*/ u8 type1;
     /*0x22*/ u8 type2;
     /*0x23*/ u8 unknown;
@@ -461,7 +465,9 @@ struct BattlePokemon
     /*0x2B*/ u8 friendship;
     /*0x2C*/ u16 maxHP;
     /*0x2E*/ u16 item;
-    /*0x30*/ u8 nickname[POKEMON_NAME_LENGTH + 1];
+    /*0x30*/ u8 nickname[POKEMON_NAME_LENGTH - 2];
+    /*0x38*/ u16 ability;
+    /*0x3A*/ u8 padding;
     /*0x3B*/ u8 ppBonuses;
     /*0x3C*/ u8 otName[8];
     /*0x44*/ u32 experience;
@@ -521,7 +527,7 @@ struct BaseStats
  /* 0x06 */ u8 type1;
  /* 0x07 */ u8 type2;
  /* 0x08 */ u8 catchRate;
- /* 0x09 */ u8 expYield;
+ /* 0x09 */ u8 padding; //was expYield
  /* 0x0A */ u16 evYield_HP:2;
  /* 0x0A */ u16 evYield_Attack:2;
  /* 0x0A */ u16 evYield_Defense:2;
@@ -536,12 +542,13 @@ struct BaseStats
  /* 0x13 */ u8 growthRate;
  /* 0x14 */ u8 eggGroup1;
  /* 0x15 */ u8 eggGroup2;
- /* 0x16 */ u8 ability1;
- /* 0x17 */ u8 ability2;
+ /* 0x16 */ u16 ability1;
  /* 0x18 */ u8 safariZoneFleeRate;
  /* 0x19 */ u8 bodyColor : 7;
             u8 noFlip : 1;
- /* 0x1A */	u8 hiddenAbility;
+ /* 0x1A */ u16 ability2;
+ /* 0x1C */	u16 hiddenAbility;
+ /* 0x1E */	u16 expYield;
 };
 
 struct SpindaSpot
@@ -626,6 +633,7 @@ enum EvolutionMethods
 	EVO_MOVE_FEMALE, // Knows a given move and is female
 	EVO_ITEM_NIGHT, // Item is used on it at night
 };
+#define EVO_TERASTAL 0xFC
 #define EVO_GIGANTAMAX 0xFD
 #define EVO_MEGA 0xFE
 
@@ -668,7 +676,7 @@ extern struct SaveBlock3* gSaveBlock3;
 extern const u8 gFacilityClassToPicIndex[];
 extern const u8 gFacilityClassToTrainerClass[];
 
-u8 GetMonAbility(const struct Pokemon* const);
+u16 GetMonAbility(const struct Pokemon* const);
 u8 CountAliveMons(u8 caseId);
 #define BATTLE_ALIVE_EXCEPT_ACTIVE  0
 #define BATTLE_ALIVE_ATK_SIDE       1

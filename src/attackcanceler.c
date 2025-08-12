@@ -56,14 +56,15 @@ void atk00_attackcanceler(void)
 		return;
 	}
 
-	if (!NO_MOLD_BREAKERS(ABILITY(gBankAttacker), gCurrentMove) || gNewBS->dynamaxData.nullifiedStats) //There is a Mold Breaker
+	if (IS_MOLD_BREAKER(ABILITY(gBankAttacker), gCurrentMove) || gNewBS->dynamaxData.nullifiedStats) //There is a Mold Breaker
 	{
 		if (!gNewBS->dontActivateMoldBreakersAnymoreThisTurn) //Like after Neutralizing Gas disappears during a spread move
 		{
 			for (i = 0; i < gBattlersCount; ++i)
 			{
 				if (i != gBankAttacker
-				&& gMoldBreakerIgnoredAbilities[ABILITY(i)])
+				&& gMoldBreakerIgnoredAbilities[ABILITY(i)]
+				&& ITEM_EFFECT(i) != ITEM_EFFECT_ABILITY_SHIELD)
 				{
 					gNewBS->DisabledMoldBreakerAbilities[i] = gBattleMons[i].ability; //Temporarily disable all relevant abilities on the field
 					gBattleMons[i].ability = ABILITY_NONE;
@@ -919,7 +920,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		case CANCELLER_MULTIHIT_MOVES:
 			if (CheckTableForMove(gCurrentMove, gTwoToFiveStrikesMoves))
 			{
-				u8 ability = ABILITY(gBankAttacker);
+				u16 ability = ABILITY(gBankAttacker);
 
 				if (ability == ABILITY_SKILLLINK)
 				{

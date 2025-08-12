@@ -81,7 +81,7 @@ gBattleScriptingCommandsTable:
 .word atk40_jumpifaffectedbyprotect
 .word 0x8022541					@call
 .word atk42_jumpiftype2
-.word 0x80225CD					@jumpifabilitypresent
+.word atk43_jumpifabilitypresent
 .word 0x8022619					@endselectionscript
 .word atk45_playanimation
 .word atk46_playanimation2
@@ -217,7 +217,7 @@ gBattleScriptingCommandsTable:
 .word atkC8_sethail
 .word atkC9_jumpifattackandspecialattackcannotfall
 .word atkCA_setforcedtarget
-.word 0x802B58D					@setcharge
+.word atkCB_setcharge
 .word atkCC_callterrainattack
 .word atkCD_cureifburnedparalysedorpoisoned
 .word atkCE_settorment
@@ -328,3 +328,4 @@ gBattleScriptingCommandsTable2:
 .word atkFF35_jumpifmaxchistrikecapped
 .word atkFF36_trygetcottondowntarget
 .word atkFF37_TryRevivalBlessing
+.word atkFF38_tryteatimeeatberry

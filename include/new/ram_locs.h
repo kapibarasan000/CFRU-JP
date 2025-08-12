@@ -80,23 +80,23 @@
 
 /*u8*/  //#define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0)
 
-		#define gShopDataPtr ((struct ShopData*) 0x2039880)
+		//#define gShopDataPtr ((struct ShopData*) 0x2039880)
 
 		#define gNamingScreenData ((struct NamingScreenData*) (*(u32*) 0x2039904))
 /*u8*/ //#define gSafariBallNumber 	(*((u8*) 0x0203990C))	// see src/scripting.c
 /*u16*/ #define gSafariSteps	   (*((u16*) 0x0203990E))
 
-/*u8*/  #define gAbilitiesPerBank ((u8*) 0x20399A8)
+/*u8*/  //#define gAbilitiesPerBank ((u8*) 0x20399A8)
 		//#define gStringInfo ((struct BattleMsgData*) *((u32*) 0x2039A34))
 
-		#define sHofFadingRelated (*((u32*) 0x0203AAAC))
+		#define sHofSelectedPaletteIndices (*((u32*) 0x0203AAAC))
 		#define gHasHallOfFameRecords (*(u8*) 0x0203AABC)
 
 /*u8*/	#define gQuestLogMode (*((u8*) 0x203AD72))
 		//#define sPartyMenuInternal ((struct PartyMenuViewing*) 0x203B09C)
 		//#define gSelectedOrderFromParty ((u8*) 0x203B0D4)
 		#define gSummaryScreenData ((struct MonSummaryData*) *((u32*) 0x203B0B4))
-		#define gCurrentPartyIndex (*(u8*) 0x203B0E0)
+		#define sLastViewedMonIndex (*(u8*) 0x203B0E0)
 
 /*u8*/  #define gBattlePartyCurrentOrder ((u8*) 0x203B050)
 
@@ -168,15 +168,15 @@ extern u16 gLastUsedBall;
 #define gLastUsedRepel (*(u16*) 0x203C6C0)
 //#define sBagItemAmounts ((u16*) 0x203C74A)
 #define gSelectedOrderFromParty ((u8*) 0x203C6C8)
-#define gDontFadeWhite (*((bool8*) 0x203C6CE))
+extern bool8 gDontFadeWhite; //0x203C6CE
 #define gWindowsLitUp (*((bool8*) 0x203C6CF))
 #define gWildDataSwitch (*((const u8**) 0x203C6D0))
-//#define sDexNavSearchLevels //0x203C75C -999 slots
+extern u8 gDexNavSearchLevels[999]; //0x203C6D4 -999 slots
 //extern struct CompressedPokemon gBox20[30] //0x203CB44
 //extern struct CompressedPokemon gBox21[30] //0x203D210
 //extern struct CompressedPokemon gBox22[30] //0x203D8DC
 
-#define gPokeBackupPtr (*((const void**) 0x203DFAC))
+#define gPokeBackupPtr (*((const void**) 0x203DFAD))
 //#define sDexNavStatePtr/sFrontierRecordsPtr/gNewBS //0x203E038
 extern bool8 gInShop; //0x203E043
 #define gBattleCircusFlags (*((u32*) 0x203DFBC))
@@ -186,7 +186,7 @@ extern bool8 gInShop; //0x203E043
 #define gRaidBattleSpecies (*((u16*) 0x203DFC4))
 #define gRaidBattleStars (*((u8*) 0x203DFC6))
 #define gRaidBattleLevel (*((u8*) 0x203DFC7))
-#define gRainFadeHelper (*((u8*) 0x203DFC8))
+#define gInvertAMPM (*((bool8*) 0x203DFC8))
 #define gCurrentDexNavChain (*((u8*) 0x203DFC9))
 #define gDexNavStartedBattle (*((bool8*) 0x203DFCA))
 //#define sItemDescriptionPocket (*((bool8*) 0x203E053))
@@ -207,6 +207,7 @@ extern u16 gLastDexNavSpecies; //0x203E086
 //extern struct ListMenuItem[7] gMultiChoice; //0x203E088 - up to 7 pointers, 8 bytes each
 //extern u8 gPartyPresetTeamIndices[PARTY_SIZE]; //0x203E0C0
 extern u8 gScored3CritsInBattle;
+#define gAbilitiesPerBank ((u16*) 0x203E040)
 //FREE: 0x203E03E
 
 //DON'T GO PAST 0x203E0D4 for BTS!

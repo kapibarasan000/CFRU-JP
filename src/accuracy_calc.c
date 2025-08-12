@@ -21,7 +21,7 @@ extern const struct StatFractions gAccuracyStageRatios[];
 
 //This file's functions:
 static bool8 AccuracyCalcHelper(move_t, u8 bankDef);
-static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef, u8 defAbility, u8 defEffect);
+static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef, u16 defAbility, u8 defEffect);
 
 void atk01_accuracycheck(void)
 {
@@ -348,7 +348,8 @@ bool8 MissesDueToSemiInvulnerability(u8 bankAtk, u8 bankDef, u16 move)
 		if (((gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && !CheckTableForMove(move, gIgnoreInAirMoves))
 		||  ((gStatuses3[bankDef] & STATUS3_UNDERGROUND) && !CheckTableForMove(move, gIgnoreUndergoundMoves))
 		||  ((gStatuses3[bankDef] & STATUS3_UNDERWATER) && !CheckTableForMove(move, gIgnoreUnderwaterMoves))
-		||   (gStatuses3[bankDef] & STATUS3_DISAPPEARED))
+		||   (gStatuses3[bankDef] & STATUS3_DISAPPEARED)
+		||   (gStatuses3[bankDef] & STATUS3_COMMANDER))
 		{
 			return TRUE;
 		}
@@ -405,7 +406,7 @@ u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef)
 	return AccuracyCalcPassDefAbilityItemEffect(move, bankAtk, bankDef, ABILITY(bankDef), ITEM_EFFECT(bankDef));
 }
 
-static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef, u8 defAbility, u8 defEffect)
+static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef, u16 defAbility, u8 defEffect)
 {
 	u8 moveAcc;
 	s8 buff;
@@ -414,7 +415,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 	//u8 defEffect  = ITEM_EFFECT(bankDef);
 	u8 atkQuality = ITEM_QUALITY(bankAtk);
 	u8 defQuality = ITEM_QUALITY(bankDef);
-	u8 atkAbility = ABILITY(bankAtk);
+	u16 atkAbility = ABILITY(bankAtk);
 	//u8 defAbility = ABILITY(bankDef);
 	u8 moveSplit = CalcMoveSplit(gBankAttacker, move, bankDef);
 
@@ -431,7 +432,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 	{
 		buff = acc;
 	}
-	else if (atkAbility == ABILITY_KEENEYE)
+	else if (atkAbility == ABILITY_KEENEYE || atkAbility == ABILITY_MINDSEYE)
 	{
 		if (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6) //Stops higher evasion, allows lower
 			buff = acc;
@@ -537,7 +538,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 u32 VisualAccuracyCalc(u16 move, u8 bankAtk, u8 bankDef)
 {
 	u8 defEffect  = GetRecordedItemEffect(bankDef);
-	u8 defAbility = GetRecordedAbility(bankDef);
+	u16 defAbility = GetRecordedAbility(bankDef);
 	u32 acc = AccuracyCalcPassDefAbilityItemEffect(move, bankAtk, bankDef, defAbility, defEffect);
 
 	if (ABILITY(bankAtk) == ABILITY_NOGUARD || defAbility == ABILITY_NOGUARD
@@ -563,7 +564,7 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 	u32 calc;
 	u8 atkEffect  = ITEM_EFFECT(bankAtk);
 	u8 atkQuality = ITEM_QUALITY(bankAtk);
-	u8 atkAbility = ABILITY(bankAtk);
+	u16 atkAbility = ABILITY(bankAtk);
 	u8 moveSplit = SPLIT(move);
 
 	acc = STAT_STAGE(bankAtk, STAT_STAGE_ACC);

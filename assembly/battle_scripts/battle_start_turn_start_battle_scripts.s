@@ -36,6 +36,8 @@ battle_start_turn_start_battle_scripts.s
 .global BattleScript_RaidBattleStart_NoDynamax
 .global BattleScript_RaidBattleStorm
 .global BattleScript_RaidShieldsBattleStart
+.global BattleScript_WeatherEnd
+.global BattleScript_TerrainEndRet
 
 .global StringNull
 
@@ -280,6 +282,22 @@ BattleScript_RaidShieldsBattleStart:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	end3
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_WeatherEnd:
+	printfromtable gWeatherEndStringIds
+	waitmessage DELAY_1SECOND
+	return
+
+BattleScript_TerrainEndRet:
+	setbyte TERRAIN_BYTE 0x0
+	callasm TransferTerrainData
+	waitstateatk
+	playanimation 0x0 ANIM_LOAD_DEFAULT_BG 0x0
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

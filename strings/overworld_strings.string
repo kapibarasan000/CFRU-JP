@@ -25,6 +25,12 @@ A second item in the Cube can be\nregistered to [L_BUTTON] for easy use。
 #org @gText_BikeTurboBoostDisable
 ターボブースト [GREEN]むこう[BLACK]
 
+#org @gText_SurfTurboBoostEnable
+ターボブースト [GREEN]ゆうこう[BLACK]
+
+#org @gText_SurfTurboBoostDisable
+ターボブースト [GREEN]むこう[BLACK]
+
 #org @gText_PoisonSurvial
 [BUFFER][02]は なんとか どくにたえた\nどくが きえさった！
 
@@ -38,19 +44,37 @@ A second item in the Cube can be\nregistered to [L_BUTTON] for easy use。
 スプレーの こうかが きれた！\nつづけて つかいますか？
 
 #org @gText_UsedAnotherRepel
-[BUFFER][01]は [BUFFER][04]を つかった！
+[BUFFER][01]は [BUFFER][04]を\nつかった！
 
 #org @gText_RepelWoreOff
 スプレーの こうかが きれた！
 
 #org @gText_FoundMultipleItems
-[PLAYER]は\n[BUFFER2]を  [BUFFER1]コ みつけた！
+[PLAYER]は [BUFFER2]を\n[BUFFER1]コ みつけた！
 
 #org @gText_ObtainedMultipleItems
-[PLAYER]は\n[BUFFER2]を [BUFFER1]コ てにいれた！
+[PLAYER]は [BUFFER2]を\n[BUFFER1]コ てにいれた！
 
 #org @gText_ObtainedTMHM
 [PLAYER]は[BUFFER][03]\n‘[BUFFER][02]’を みつけた！
+
+#org @gText_RegisteredItemSelectButton
+[SELECT_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemLButton
+[L_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemRButton
+[R_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemStartButton
+[START_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemLeftButton
+[DPAD_LEFT] [ALIGN][1E]
+
+#org @gText_RegisteredItemRightButton
+[DPAD_RIGHT] [ALIGN][1E]
 
 #org @gText_UseWhichRegisteredItem
 どれを つかう？
@@ -65,7 +89,7 @@ A second item in the Cube can be\nregistered to [L_BUTTON] for easy use。
 いわはだが ゴツゴツしている……\nポケモンのわざで いどうできるかも？
 
 #org @gText_DefogBlewAwayFog
-ふかいきりが きえさった！
+ふかい きりが きえさった！
 
 #org @gText_WaterDyed
 みずは ふかい あおに\nそまっている……
@@ -96,6 +120,9 @@ A second item in the Cube can be\nregistered to [L_BUTTON] for easy use。
 
 #org @gText_CantSurface
 うえから ひかりが さしこんでいる！\nポケモンの わざで あがれるかも？
+
+#org @gText_TVSwarm
+こんにちは\n『ポケモン ニュース』の じかんです\pたいへん めずらしい ニュースが\nはいって きました\p[GREEN][BUFFER1][BLACK]で\n[GREEN][BUFFER2][BLACK]が たいりょうはっせい した\lという ほうこくが ありました！\p[GREEN][BUFFER2][BLACK]と いえば\nなかなか みつけることが むずかしい\lポケモンとしても ゆうめい ですね\pあなたも このしんぴてきな\n[GREEN][BUFFER2][BLACK]の たいりょうはっせいを\lみにいっては いかが でしょうか？\pいじょう\n『ポケモン ニュース』でした
 
 #org @gText_DoorIsLocked
 カギが かかっている
@@ -214,6 +241,9 @@ You can't reach the ladder from\nhere！
 #org @gText_EnterPassword
 パスワードを にゅうりょく してください
 
+#org @gText_EnterSpeciesName
+ポケモンの なまえを にゅうりょく してください
+
 #org @gText_Purchased
 ーーーー\$
 
@@ -231,3 +261,45 @@ Stop zooming！
 
 #org @gText_Exp_Share_Off
 がくしゅうそうちが オフになった
+
+#org @gText_HyperTrainingMonChoice
+すごいとっくんを する\nポケモンを えらんで ください
+
+#org @gText_GoldBottleCap
+きんのおうかん
+
+#org @gText_BottleCap
+ぎんのおうかん
+
+#org @gText_BottleCapChoice
+きんのおうかんと ぎんのおうかん\nどちらを つかいますか？
+
+#org @gText_HyperTrainingEnd
+[BUFFER1]は すごいとっくんで\nつよくなった！[PAUSE_UNTIL_PRESS]
+
+#org @gText_HyperTrainingHP
+ H P
+
+#org @gText_HyperTrainingATK
+こうげき
+
+#org @gText_HyperTrainingDEF
+ぼうぎょ
+
+#org @gText_HyperTrainingSPD
+すばやさ
+
+#org @gText_HyperTrainingSPATK
+とくこう
+
+#org @gText_HyperTrainingSPDEF
+とくぼう
+
+#org @gText_HyperTrainingStatChoice
+きたえる のうりょくを\nえらんで ください
+
+#org @gText_HyperTrainingCant
+これいじょう きたえる ことは\nできない ようだ[PAUSE_UNTIL_PRESS]
+
+#org @gText_HyperTrainingNoItem
+おうかんを もっていません[PAUSE_UNTIL_PRESS]

@@ -37,6 +37,7 @@ item_battle_scripts.s
 .global BattleScript_BerryCureConfusionEnd2
 .global BattleScript_BerryCureChosenStatusRet
 .global BattleScript_BerryCureChosenStatusEnd2
+.global BattleScript_BerryNoEffect
 .global BattleScript_HerbCureChosenStatusRet
 .global BattleScript_HerbCureChosenStatusEnd2
 .global BattleScript_HerbCureChosenStatusFling
@@ -46,6 +47,8 @@ item_battle_scripts.s
 .global BattleScript_RoomServiceEnd2
 .global BattleScript_RoomServiceRet
 .global BattleScript_WhiteHerbFling
+.global BattleScript_BoosterEnergyEnd2
+.global BattleScript_BoosterEnergyRet
 
 .global BattleScript_AirBallooonPop
 .global BattleScript_WeaknessPolicy
@@ -64,6 +67,15 @@ item_battle_scripts.s
 .global BattleScript_Gems
 .global BattleScript_WeaknessBerryActivate
 .global BattleScript_ClearAmulet
+.global BattleScript_MirrorHerbCopyStatChangeEnd2
+.global BattleScript_MirrorHerbCopyStatChangeRet
+.global BattleScript_MirrorHerbCopyDragonCheer
+.global BattleScript_MirrorHerbEnd
+.global BattleScript_AbilityShield
+.global BattleScript_AbilityShieldMoveEnd
+.global BattleScript_AttackerAbilityShieldEnd3
+.global BattleScript_AttackerAbilityShield
+.global BattleScript_AbilityShieldNeutralizingGas
 
 .global BattleScript_CheekPouch
 
@@ -259,6 +271,13 @@ BattleScript_BerryCureChosenStatusRet:
 BattleScript_BerryCureChosenStatusEnd2:
 	call BattleScript_BerryCureChosenStatusRet
 	end2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_BerryNoEffect:
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
+	call BattleScript_CheekPouch
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -501,7 +520,6 @@ BattleScript_EjectPackGiveEXP:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_RedCard:
-	jumpifcannotswitch BANK_ATTACKER | ATK4F_DONT_CHECK_STATUSES RedCardRet
 	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
 	setword BATTLE_STRING_LOADER RedCardString
 	printstring 0x184
@@ -635,6 +653,91 @@ BattleScript_ClearAmulet:
 	setword BATTLE_STRING_LOADER ClearAmuletString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_BoosterEnergyRet:
+	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_BoosterEnergyActivate
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	removeitem BANK_SCRIPTING
+	setword BATTLE_STRING_LOADER gText_ParadoxStatRaise
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+BattleScript_BoosterEnergyEnd2:
+	call BattleScript_BoosterEnergyRet
+	end2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MirrorHerbCopyStatChangeEnd2:
+	call BattleScript_MirrorHerbCopyStatChangeRet
+	end2
+
+BattleScript_MirrorHerbCopyStatChangeRet:
+	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
+	copyhword BACKUP_HWORD USER_BANK
+	setbyte SEED_HELPER 1
+
+BattleScript_MirrorHerbCopyStatChangeLoop:
+	callasm SetCopyStatChange
+	setgraphicalstatchangevalues
+	playanimation BANK_SCRIPTING ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	addbyte SEED_HELPER 1
+	jumpifbyte LESSTHAN SEED_HELPER 8 BattleScript_MirrorHerbCopyStatChangeLoop
+
+BattleScript_MirrorHerbCopyDragonCheer:
+	callasm SetCopyDragonCheer
+	setword BATTLE_STRING_LOADER gText_DragonCheerString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+
+BattleScript_MirrorHerbEnd:
+	setbyte SEED_HELPER 0
+	copyhword USER_BANK BACKUP_HWORD
+	setword BATTLE_STRING_LOADER gText_MirrorHerbActivate
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	removeitem BANK_SCRIPTING
+	callasm ClearMirrorHerbActive
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_AbilityShieldMoveEnd:
+	call BattleScript_AbilityShield
+	goto BS_MOVE_END
+
+BattleScript_AbilityShield:
+	setword BATTLE_STRING_LOADER gText_AbilityShieldProtected
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+BattleScript_AttackerAbilityShieldEnd3:
+	call BattleScript_AttackerAbilityShield
+	end3
+
+BattleScript_AttackerAbilityShield:
+	setword BATTLE_STRING_LOADER gText_AbilityShieldProtectedAttacker
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+BattleScript_AbilityShieldNeutralizingGas:
+	setbyte USER_BANK 0
+BattleScript_AbilityShieldNeutralizingGasLoop:
+	callasm TryAbilityShieldMsg
+	addbyte USER_BANK 1
+	jumpifarraynotequal USER_BANK NUM_POKEMON 0x1 BattleScript_AbilityShieldNeutralizingGasLoop
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

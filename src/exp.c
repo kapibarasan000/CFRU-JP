@@ -110,7 +110,6 @@ void atk23_getexp(void)
 			gBattleMoveDamage = 0; // used for exp
 			break;
 		}
-
 		#ifndef FLAG_EXP_SHARE
 		else if (holdEffect != ITEM_EFFECT_EXP_SHARE && !(gBattleStruct->sentInPokes & 1))
 		{
@@ -192,11 +191,7 @@ void atk23_getexp(void)
 			tradeBonus = 15;
 
 		//Base Experience - b
-		#ifdef GEN_7_BASE_EXP_YIELD
-			baseExp = gBaseExpBySpecies[gBattleMons[gBankFainted].species];
-		#else
-			baseExp = gBaseStats[gBattleMons[gBankFainted].species].expYield;
-		#endif
+		baseExp = gBaseStats[gBattleMons[gBankFainted].species].expYield;
 
 		//Lucky Egg Boost - e
 		eggBoost = 10;
@@ -429,13 +424,15 @@ void atk23_getexp(void)
 		else
 		{
 			gBattleStruct->expGetterMonId++;
-			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
+			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+			{
 				if (gBattleStruct->expGetterMonId < PARTY_SIZE / 2)
 					gBattleScripting.expStateTracker = GetExp_CheckCurrentMonDeserving; // loop again
 				else
 					gBattleScripting.expStateTracker = GetExp_End; // we're done
 			}
-			else {
+			else
+			{
 				if (gBattleStruct->expGetterMonId < PARTY_SIZE)
 					gBattleScripting.expStateTracker = GetExp_CheckCurrentMonDeserving; // loop again
 				else
@@ -510,7 +507,7 @@ static bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn)
 	u8 start, end;
 	int i;
 
-	pokemon_t* party = LoadPartyRange(bank, &start, &end);
+	struct Pokemon* party = LoadPartyRange(bank, &start, &end);
 
 	for (i = start; i < end; ++i) {
 		if (party[i].species == 0)
@@ -554,7 +551,7 @@ static bool8 MonGetsAffectionBoost(struct Pokemon* mon)
 	{
 		#ifdef EXP_AFFECTION_BOOST
 			#ifdef UNBOUND
-			if (VarGet(VAR_GAME_DIFFICULTY) == OPTIONS_EASY_DIFFICULTY || FlagGet(FLAG_SYS_GAME_CLEAR)) //Too OP before game end
+			if (FlagGet(FLAG_SYS_GAME_CLEAR)) //Too OP before game end
 			#endif
 				return TRUE;
 		#endif

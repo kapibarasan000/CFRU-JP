@@ -43,11 +43,11 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 	u16 partnerMove = data->partnerMove;
 
 	u8 atkPartnerItemEffect = ITEM_EFFECT(bankAtkPartner);
-	u8 atkAbility = GetAIAbility(bankAtk, data->foe1, move);
-	u8 atkPartnerAbility = data->atkPartnerAbility;
+	u16 atkAbility = GetAIAbility(bankAtk, data->foe1, move);
+	u16 atkPartnerAbility = data->atkPartnerAbility;
 
-	if (!NO_MOLD_BREAKERS(atkAbility, move)
-	&& gMoldBreakerIgnoredAbilities[atkPartnerAbility])
+	if (IsTargetAbilityIgnored(atkPartnerAbility, atkAbility, move)
+	&& atkPartnerItemEffect != ITEM_EFFECT_ABILITY_SHIELD)
 		atkPartnerAbility = ABILITY_NONE;
 
 	u8 moveSplit = CalcMoveSplit(bankAtk, move, bankDef);
@@ -109,6 +109,14 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 					IncreaseHelpingHandViability(&viability, class);
 				}
 				break;
+			case ABILITY_WELLBAKEDBODY:
+				if (moveType == TYPE_FIRE
+				&&  SpecialMoveInMoveset(bankAtkPartner)
+				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_DEF))
+				{
+					IncreaseHelpingHandViability(&viability, class);
+				}
+				break;
 
 			// Grass
 			case ABILITY_SAPSIPPER:
@@ -118,6 +126,11 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
+				break;
+
+			case ABILITY_EARTHEATER:
+				if (moveType == TYPE_GROUND)
+					IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
 				break;
 
 			// Dark
@@ -167,7 +180,8 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				break;
 
 			//Mummy
-			case ABILITY_MUMMY: ;
+			case ABILITY_MUMMY:
+			case ABILITY_LINGERINGAROMA: ;
 				u8 atkSpd = SpeedCalc(bankAtk);
 				if (SpeedCalc(data->foe1) < atkSpd) //Attacker is faster than foe 1
 				{

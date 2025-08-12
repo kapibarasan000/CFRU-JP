@@ -31,6 +31,7 @@
 	}																																						\
 																																							\
 	CreateMon(&party[i], speciesToCreate, lvl, baseIV, TRUE, personalityValue, otIdType, otid);																\
+	TryFixMiniorForm(&party[i]);																															\
 	party[i].metLevel = structure[i].lvl;																													\
 }
 
@@ -86,6 +87,7 @@ struct TrainersWithEvs
 	u8 spDefEv;
 	u8 ball; //0FE = Class-Based Ball, 0xFF = Random Ball
 	u8 ability; //0 = Hidden, 1 = Ability_1, 2 = Ability_2, 3 = Random Ability 1 & 2, 4 = Random Any Ability
+	u8 teraType;
 };
 
 enum
@@ -96,6 +98,27 @@ enum
 	Ability_Random_1_2,
 	Ability_RandomAll,
 };
+
+#define TERA_TYPE_DEFAULT  0x00
+#define TERA_TYPE_NORMAL   0x01
+#define TERA_TYPE_FIGHTING 0x02
+#define TERA_TYPE_FLYING   0x03
+#define TERA_TYPE_POISON   0x04
+#define TERA_TYPE_GROUND   0x05
+#define TERA_TYPE_ROCK     0x06
+#define TERA_TYPE_BUG      0x07
+#define TERA_TYPE_GHOST    0x08
+#define TERA_TYPE_STEEL    0x09
+#define TERA_TYPE_FIRE     0x0B
+#define TERA_TYPE_WATER    0x0C
+#define TERA_TYPE_GRASS    0x0D
+#define TERA_TYPE_ELECTRIC 0x0E
+#define TERA_TYPE_PSYCHIC  0x0F
+#define TERA_TYPE_ICE      0x10
+#define TERA_TYPE_DRAGON   0x11
+#define TERA_TYPE_DARK     0x12
+#define TERA_TYPE_FAIRY	   0x18
+#define TERA_TYPE_STELLAR  0x19
 
 #define TRAINER_EV_CLASS_BALL 0xFE
 #define TRAINER_EV_RANDOM_BALL 0xFF

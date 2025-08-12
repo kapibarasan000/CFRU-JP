@@ -34,6 +34,15 @@ ai_util.c
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef);
 static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 
+u16 AIRandom()
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE)
+		return Random(); //Use regular random since AI vs AI isn't exploitable
+
+    gNewBS->ai.randSeed = 1103515245 * gNewBS->ai.randSeed + 24691; //Seeded every frame no matter what
+    return gNewBS->ai.randSeed >> 16;
+}
+
 bool8 CanKillAFoe(u8 bank)
 {
 	u8 foe = FOE(bank);
@@ -54,7 +63,7 @@ bool8 CanKnockOut(u8 bankAtk, u8 bankDef)
 	if (gNewBS->ai.canKnockOut[bankAtk][bankDef] == 0xFF) //Hasn't been calculated yet
 	{
 		struct BattlePokemon backupMonAtk, backupMonDef;
-		u8 backupAbilityAtk = ABILITY_NONE; u8 backupAbilityDef = ABILITY_NONE;
+		u16 backupAbilityAtk = ABILITY_NONE; u16 backupAbilityDef = ABILITY_NONE;
 		u16 backupSpeciesAtk = SPECIES_NONE; u16 backupSpeciesDef = SPECIES_NONE;
 
 		TryTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
@@ -112,7 +121,7 @@ bool8 Can2HKO(u8 bankAtk, u8 bankDef)
 	if (gNewBS->ai.can2HKO[bankAtk][bankDef] == 0xFF) //Hasn't been calculated yet
 	{
 		struct BattlePokemon backupMonAtk, backupMonDef;
-		u8 backupAbilityAtk = ABILITY_NONE; u8 backupAbilityDef = ABILITY_NONE;
+		u16 backupAbilityAtk = ABILITY_NONE; u16 backupAbilityDef = ABILITY_NONE;
 		u16 backupSpeciesAtk = SPECIES_NONE; u16 backupSpeciesDef = SPECIES_NONE;
 
 		TryTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
@@ -745,7 +754,7 @@ bool8 RangeMoveCanHurtPartner(u16 move, u8 bankAtk, u8 bankAtkPartner)
 
 static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 {
-	u8 ability = ABILITY(bankDef);
+	u16 ability = ABILITY(bankDef);
 	u16 species = SPECIES(bankDef);
 	bool8 noMoldBreakers = NO_MOLD_BREAKERS(ABILITY(bankAtk), move);
 
@@ -803,7 +812,7 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 
 bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData)
 {
-	u8 ability = ABILITY(bankDef);
+	u16 ability = ABILITY(bankDef);
 	u16 species = SPECIES(bankDef);
 	bool8 noMoldBreakers = NO_MOLD_BREAKERS(GetMonAbility(monAtk), move);
 
@@ -888,7 +897,7 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct D
 	if (dmg >= gBattleMons[bankDef].hp)
 		return gBattleMons[bankDef].hp;
 
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 	if (numHits >= 2 && BATTLER_MAX_HP(bankDef) && (defAbility == ABILITY_MULTISCALE || defAbility == ABILITY_SHADOWSHIELD))
 		return MathMin(dmg + (dmg * 2) * (numHits - 1), gBattleMons[bankDef].maxHP); //Adjust damage on subsequent hits
 
@@ -1094,10 +1103,13 @@ static void ClearStrongestMoveAndCanKnockOut(const u8 bankAtk, const u8 bankDef)
 bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)
 {
 	#ifdef REALLY_SMART_AI
-		u8 defAbility = BATTLE_HISTORY->abilities[bankDef];
+		u16 defAbility = gNewBS->ai.abilities[bankDef];
 	#else
-		u8 defAbility = ABILITY(bankDef);
+		u16 defAbility = ABILITY(bankDef);
 	#endif
+
+	if (gStatuses3[bankDef] & STATUS3_COMMANDER)
+		return FALSE;
 
 	if (ABILITY(bankAtk) == ABILITY_NOGUARD
 	||  defAbility == ABILITY_NOGUARD
@@ -1337,9 +1349,9 @@ u16 GetBattleMonMove(u8 bank, u8 i)
 	return move;
 }
 
-u8 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move)
+u16 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move)
 {
-	u8 ability = ABILITY_NONE;
+	u16 ability = ABILITY_NONE;
 
 	if (!ShouldAIDelayMegaEvolution(bankAtk, bankDef, move))
 		ability = GetBankMegaFormAbility(bankAtk, bankDef);
@@ -1350,7 +1362,7 @@ u8 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move)
 	return ability;
 }
 
-u8 GetPredictedAIAbility(u8 bankAtk, u8 bankDef)
+u16 GetPredictedAIAbility(u8 bankAtk, u8 bankDef)
 {
 	u16 predictedUserMove = IsValidMovePrediction(bankAtk, bankDef);
 	if (predictedUserMove != MOVE_NONE)
@@ -1359,13 +1371,13 @@ u8 GetPredictedAIAbility(u8 bankAtk, u8 bankDef)
 		return ABILITY(bankAtk);
 }
 
-u8 GetMonAbilityAfterTrace(struct Pokemon* mon, u8 foe)
+u16 GetMonAbilityAfterTrace(struct Pokemon* mon, u8 foe)
 {
-	u8 ability = GetMonAbility(mon);
+	u16 ability = GetMonAbility(mon);
 	
 	if (IS_SINGLE_BATTLE && ability == ABILITY_TRACE)
 	{
-		u8 foeAbility = *GetAbilityLocation(foe);
+		u16 foeAbility = *GetAbilityLocation(foe);
 		if (!CheckTableForAbility(foeAbility, gTraceBannedAbilities))
 			ability = foeAbility; //What the Ability will become
 	}
@@ -1392,6 +1404,9 @@ u16 GetAIChosenMove(u8 bankAtk, u8 bankDef)
 
 bool8 IsTrapped(u8 bank, bool8 switching)
 {
+	if (gNewBS->commanderActive[bank] != SPECIES_NONE)
+		return TRUE;
+
 	if (IsOfType(bank, TYPE_GHOST)
 	|| (switching && ITEM_EFFECT(bank) == ITEM_EFFECT_SHED_SHELL)
 	|| (!switching && ABILITY(bank) == ABILITY_RUNAWAY)
@@ -1413,7 +1428,7 @@ bool8 IsTrapped(u8 bank, bool8 switching)
 
 bool8 IsTakingSecondaryDamage(u8 bank)
 {
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 
 	if (gStatuses3[bank] & STATUS3_PERISH_SONG)
 		return TRUE;
@@ -1442,7 +1457,7 @@ bool8 IsTakingSecondaryDamage(u8 bank)
 bool8 WillFaintFromSecondaryDamage(u8 bank)
 {
 	u8 hp = gBattleMons[bank].hp + GetAmountToRecoverBy(bank, 0, MOVE_PROTECT); //Assume leftover etc. healing first
-	u8 ability = ABILITY(bank);
+	u16 ability = ABILITY(bank);
 
 	if (gStatuses3[bank] & STATUS3_PERISH_SONG
 	&&  gDisableStructs[bank].perishSongTimer == 0)
@@ -1477,7 +1492,7 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 	return FALSE;
 }
 
-static u32 GetContactDamageByDefAbilityItemEffect(u8 defAbility, u8 defItemEffect, u16 baseMaxHP)
+static u32 GetContactDamageByDefAbilityItemEffect(u16 defAbility, u8 defItemEffect, u16 baseMaxHP)
 {
 	u32 dmg = 0;
 
@@ -1533,8 +1548,8 @@ u16 CalcAIAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 
 bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, unusedArg u8 bankDef, u16 move)
 {
-	u8 atkAbility = ABILITY(bankAtk);
-	u8 megaAbility = GetBankMegaFormAbility(bankAtk, bankDef);
+	u16 atkAbility = ABILITY(bankAtk);
+	u16 megaAbility = GetBankMegaFormAbility(bankAtk, bankDef);
 
 	if (BATTLER_SEMI_INVULNERABLE(bankAtk))
 		return TRUE; //Can't Mega Evolve this turn
@@ -1583,7 +1598,7 @@ void ClearMovePredictionsOnBank(u8 bank)
 bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk)
 {
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 
 	return !CanBePutToSleep(bankDef, bankAtk, TRUE)
 		|| gStatuses3[bankDef] & STATUS3_YAWN
@@ -1599,8 +1614,8 @@ bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk)
 bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk)
 {
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
-	u8 defAbility = ABILITY(bankDef);
-	u8 atkAbility = ABILITY(bankAtk);
+	u16 defAbility = ABILITY(bankDef);
+	u16 atkAbility = ABILITY(bankAtk);
 
 	return !CanBePoisoned(bankDef, bankAtk, TRUE)
 		||  defItemEffect == ITEM_EFFECT_CURE_PSN
@@ -1615,6 +1630,7 @@ bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk)
 		|| (defAbility == ABILITY_TOXICBOOST && PhysicalMoveInMoveset(bankDef))
 		|| (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
 		|| (atkAbility == ABILITY_POISONTOUCH && ContactMovesThatAffectTargetInMoveset(bankAtk, bankDef)) //Just poison it using attacker's ability
+		||  atkAbility == ABILITY_TOXICCHAIN
 		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
 		||  MoveInMoveset(MOVE_FACADE, bankDef)
@@ -1623,7 +1639,7 @@ bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk)
 
 bool8 GoodIdeaToPoisonSelf(u8 bankAtk)
 {
-	u8 atkAbility = ABILITY(bankAtk);
+	u16 atkAbility = ABILITY(bankAtk);
 
 	return CanBePoisoned(bankAtk, bankAtk, FALSE)
 		&&  (atkAbility == ABILITY_MARVELSCALE
@@ -1639,7 +1655,7 @@ bool8 GoodIdeaToPoisonSelf(u8 bankAtk)
 bool8 BadIdeaToParalyze(u8 bankDef, u8 bankAtk)
 {
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 
 	return !CanBeParalyzed(bankDef, bankAtk, TRUE)
 	   ||  defItemEffect == ITEM_EFFECT_CURE_PAR
@@ -1658,7 +1674,7 @@ bool8 BadIdeaToParalyze(u8 bankDef, u8 bankAtk)
 
 bool8 GoodIdeaToParalyzeSelf(u8 bankAtk)
 {
-	u8 atkAbility = ABILITY(bankAtk);
+	u16 atkAbility = ABILITY(bankAtk);
 
 	return CanBeParalyzed(bankAtk, bankAtk, FALSE)
 		&&  (atkAbility == ABILITY_MARVELSCALE
@@ -1671,7 +1687,7 @@ bool8 GoodIdeaToParalyzeSelf(u8 bankAtk)
 bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk)
 {
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 
 	return !CanBeBurned(bankDef, bankAtk, TRUE)
 		||  defItemEffect == ITEM_EFFECT_CURE_BRN
@@ -1692,7 +1708,7 @@ bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk)
 
 bool8 GoodIdeaToBurnSelf(u8 bankAtk)
 {
-	u8 atkAbility = ABILITY(bankAtk);
+	u16 atkAbility = ABILITY(bankAtk);
 
 	return CanBeBurned(bankAtk, bankAtk, FALSE)
 		&&  (atkAbility == ABILITY_QUICKFEET
@@ -1706,7 +1722,7 @@ bool8 GoodIdeaToBurnSelf(u8 bankAtk)
 
 bool8 BadIdeaToFreeze(u8 bankDef, u8 bankAtk)
 {
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
 
 	return !CanBeFrozen(bankDef, bankAtk, TRUE)
@@ -1722,12 +1738,12 @@ bool8 GoodIdeaToLowerAttack(u8 bankDef, u8 bankAtk, u16 move)
 	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
 		return FALSE; //Don't bother lowering stats if can kill enemy.
 
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 
 	return STAT_STAGE(bankDef, STAT_STAGE_ATK) > 4 && PhysicalMoveInMoveset(bankDef)
 		&& defAbility != ABILITY_CONTRARY
 		&& defAbility != ABILITY_CLEARBODY
-		//&& defAbility != ABILITY_WHITESMOKE
+		&& defAbility != ABILITY_WHITESMOKE
 		&& defAbility != ABILITY_FULLMETALBODY
 		&& defAbility != ABILITY_HYPERCUTTER
 		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
@@ -1738,13 +1754,13 @@ bool8 GoodIdeaToLowerDefense(u8 bankDef, u8 bankAtk, u16 move)
 	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
 		return FALSE; //Don't bother lowering stats if can kill enemy.
 
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 
 	return STAT_STAGE(bankDef, STAT_STAGE_DEF) > 4
 		&& PhysicalMoveInMoveset(bankAtk)
 		&& defAbility != ABILITY_CONTRARY
 		&& defAbility != ABILITY_CLEARBODY
-		//&& defAbility != ABILITY_WHITESMOKE
+		&& defAbility != ABILITY_WHITESMOKE
 		&& defAbility != ABILITY_FULLMETALBODY
 		&& defAbility != ABILITY_BIGPECKS
 		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
@@ -1755,13 +1771,13 @@ bool8 GoodIdeaToLowerSpAtk(u8 bankDef, u8 bankAtk, u16 move)
 	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
 		return FALSE; //Don't bother lowering stats if can kill enemy.
 
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 
 	return STAT_STAGE(bankDef, STAT_STAGE_SPATK) > 4 && SpecialMoveInMoveset(bankDef)
 		&& defAbility != ABILITY_CONTRARY
 		&& defAbility != ABILITY_CLEARBODY
 		&& defAbility != ABILITY_FULLMETALBODY
-		//&& defAbility != ABILITY_WHITESMOKE
+		&& defAbility != ABILITY_WHITESMOKE
 		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
@@ -1770,13 +1786,13 @@ bool8 GoodIdeaToLowerSpDef(u8 bankDef, u8 bankAtk, u16 move)
 	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
 		return FALSE; //Don't bother lowering stats if can kill enemy.
 
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 
 	return STAT_STAGE(bankDef, STAT_STAGE_SPDEF) > 4 && SpecialMoveInMoveset(bankAtk)
 		&& defAbility != ABILITY_CONTRARY
 		&& defAbility != ABILITY_CLEARBODY
 		&& defAbility != ABILITY_FULLMETALBODY
-		//&& defAbility != ABILITY_WHITESMOKE
+		&& defAbility != ABILITY_WHITESMOKE
 		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
@@ -1785,13 +1801,13 @@ bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move)
 	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
 		return FALSE; //Don't bother lowering stats if can kill enemy.
 
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 
 	return SpeedCalc(bankAtk) <= SpeedCalc(bankDef)
 		&& defAbility != ABILITY_CONTRARY
 		&& defAbility != ABILITY_CLEARBODY
 		&& defAbility != ABILITY_FULLMETALBODY
-		//&& defAbility != ABILITY_WHITESMOKE
+		&& defAbility != ABILITY_WHITESMOKE
 		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
@@ -1800,25 +1816,26 @@ bool8 GoodIdeaToLowerAccuracy(u8 bankDef, u8 bankAtk, u16 move)
 	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
 		return FALSE; //Don't bother lowering stats if can kill enemy.
 
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 
 	return defAbility != ABILITY_CONTRARY
 		&& defAbility != ABILITY_CLEARBODY
-		//&& defAbility != ABILITY_WHITESMOKE
+		&& defAbility != ABILITY_WHITESMOKE
 		&& defAbility != ABILITY_FULLMETALBODY
 		&& defAbility != ABILITY_KEENEYE
+		&& defAbility != ABILITY_MINDSEYE
 		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
 bool8 GoodIdeaToLowerEvasion(u8 bankDef, u8 bankAtk, unusedArg u16 move)
 {
-	u8 defAbility = ABILITY(bankDef);
+	u16 defAbility = ABILITY(bankDef);
 
 	return (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6 || MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, TRUE))
 		&& defAbility != ABILITY_CONTRARY
 		&& defAbility != ABILITY_CLEARBODY
 		&& defAbility != ABILITY_FULLMETALBODY
-		//&& defAbility != ABILITY_WHITESMOKE
+		&& defAbility != ABILITY_WHITESMOKE
 		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
@@ -3082,7 +3099,7 @@ bool8 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 	{
 		if (zMove != 0xFFFF) //Damaging Z-Move
 		{
-			u8 defAbility = ABILITY(bankDef);
+			u16 defAbility = ABILITY(bankDef);
 			u16 defSpecies = SPECIES(bankDef);
 			bool8 noMoldBreakers = NO_MOLD_BREAKERS(ABILITY(bankAtk), zMove);
 
@@ -3288,7 +3305,8 @@ void CalcAIDynamaxMon(u8 bank)
 		for (i = 0, bestMonScore = 0, bestStatAmount = 0; i < PARTY_SIZE; ++i) //Do entire party at once, even for Multi Battles
 		{
 			struct Pokemon* mon = &party[i];
-			u8 updateScore, itemEffect, ability;
+			u8 updateScore, itemEffect;
+			u16 ability;
 			u32 bestMonStat, attack, spAttack;
 
 			if (mon->species == SPECIES_NONE
@@ -3592,13 +3610,13 @@ void CalcAITerastalMon(u8 bank)
 			else if (SpecialMoveInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP)) //Only set if mon has Special move
 				bestMonStat = spAttack;
 
-			if (MonKnowsMove(mon, MOVE_TERABLAST))
+			if (MonKnowsMove(mon, MOVE_TERABLAST) || MonKnowsMove(mon, MOVE_TERASTARSTORM))
 				updateScore = 4;
-			else if (type1 != teraType && type2 != teraType)
+			else if (MonKnowsMove(mon, MOVE_IVYCUDGEL))
 				updateScore = 3;
-			else if (DamagingMoveTypeInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP, teraType) && (type1 == teraType || type2 == teraType))
+			else if (type1 != teraType && type2 != teraType)
 				updateScore = 2;
-			else if (DamagingMoveTypeInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP, teraType))
+			else if (DamagingMoveTypeInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP, teraType) && (type1 == teraType || type2 == teraType))
 				updateScore = 1;
 
 			if (updateScore >= bestMonScore)

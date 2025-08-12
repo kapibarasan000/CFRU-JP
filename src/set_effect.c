@@ -308,6 +308,10 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					gNewBS->synchronizeTarget[gEffectBank] = gBankAttacker + 1;
 				}
 			}
+
+			if (gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_POISON || gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_TOXIC)
+				gNewBS->poisonPuppeteerConfusion = TRUE;
+
 			return;
 		}
 		else
@@ -787,7 +791,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				&& gEffectBank == gBankAttacker) //Don't do Pluck here
 				{
 					gLastUsedItem = ITEM(gEffectBank);
-					if (!ItemBattleEffects(ItemEffects_EndTurn, gBankAttacker, TRUE, TRUE))
+					if (!ItemBattleEffects(ItemEffects_Normal, gBankAttacker, TRUE, TRUE))
 					{
 						//The Berry didn't activate an effect
 						BattleScriptPush(gBattlescriptCurrInstr + 1);
@@ -810,19 +814,28 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				&& !IsAbilitySuppressed(gEffectBank)
 				&&  GetBattlerTurnOrderNum(gEffectBank) < gCurrentTurnActionNumber) //Target moved before attacker
 				{
-					gNewBS->secondaryEffectApplied = TRUE;
-					u8* defAbilityLoc;
-					defAbilityLoc = GetAbilityLocation(gBankTarget);
+					if (ITEM_EFFECT(gEffectBank) == ITEM_EFFECT_ABILITY_SHIELD)
+					{
+						RecordItemEffectBattle(gEffectBank, ITEM_EFFECT(gEffectBank));
+						BattleScriptPush(gBattlescriptCurrInstr + 1);
+						gBattlescriptCurrInstr = BattleScript_AbilityShield;
+					}
+					else
+					{
+						gNewBS->secondaryEffectApplied = TRUE;
+						u16* defAbilityLoc;
+						defAbilityLoc = GetAbilityLocation(gBankTarget);
 
-					gStatuses3[gEffectBank] |= STATUS3_ABILITY_SUPPRESS;
-					gNewBS->SuppressedAbilities[gEffectBank] = *defAbilityLoc;
-					*defAbilityLoc = 0;
+						gStatuses3[gEffectBank] |= STATUS3_ABILITY_SUPPRESS;
+						gNewBS->SuppressedAbilities[gEffectBank] = *defAbilityLoc;
+						*defAbilityLoc = 0;
 
-					gNewBS->backupAbility = gNewBS->SuppressedAbilities[gEffectBank];
+						gNewBS->backupAbility = gNewBS->SuppressedAbilities[gEffectBank];
 
-					gBattleScripting.bank = gEffectBank;
-					BattleScriptPush(gBattlescriptCurrInstr + 1);
-					gBattlescriptCurrInstr = BattleScript_AbilityWasSuppressed;
+						gBattleScripting.bank = gEffectBank;
+						BattleScriptPush(gBattlescriptCurrInstr + 1);
+						gBattlescriptCurrInstr = BattleScript_AbilityWasSuppressed;
+					}
 				}
 				else
 					gBattlescriptCurrInstr++;
@@ -975,6 +988,12 @@ bool8 SetMoveEffect2(void)
 				HandleUnburdenBoost(gEffectBank); //Give target Unburden boost
 				HandleUnburdenBoost(gBankAttacker); //Remove attacker's Unburden boost
 
+				if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_ABILITY_SHIELD)
+				{
+					HandleAbilityShieldGetAndLost(gEffectBank);
+					HandleAbilityShieldGetAndLost(gBankAttacker);
+				}
+
 				gActiveBattler = gBankAttacker;
 				EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gLastUsedItem);
 				MarkBufferBankForExecution(gActiveBattler);
@@ -1010,9 +1029,13 @@ bool8 SetMoveEffect2(void)
 			}
 			else
 			{
+				u8 itemEffect = ITEM_EFFECT(gEffectBank);
 				gLastUsedItem = gBattleMons[gEffectBank].item;
 				gBattleMons[gEffectBank].item = 0;
 				HandleUnburdenBoost(gEffectBank); //Give target Unburden boost
+
+				if (itemEffect == ITEM_EFFECT_ABILITY_SHIELD)
+					HandleAbilityShieldGetAndLost(gEffectBank);
 
 				gActiveBattler = gEffectBank;
 				EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);

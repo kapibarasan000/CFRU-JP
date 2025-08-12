@@ -1,17 +1,4 @@
-#org @gText_DexNav
-ずかんナビ
-
-#org @gText_MissionLog
-ミッション
-
-#org @gText_MenuExitRight
-とじる [DPAD_RIGHT]
-
-#org @gText_MenuExitLeft
-とじる [DPAD_LEFT]
-
-#org @gText_DexNavInstructions
-[R_BUTTON]とうろく [B_BUTTON]とじる
+//GUI Strings
 
 #org @gText_DexNavWater
 すいちゅう
@@ -43,8 +30,89 @@
 #org @gText_Sand
 すなち
 
+#org @gText_DexNavReeds
+みずくさ
+
+#org @gText_DexNavDeepWater
+しんかい
+
+#org @gText_DexNav_Chain
+れんさ: 
+
+#org @gText_DexNav_CaptureToSee
+つかまえてみよう！
+
+#org @gText_DexNav_Walk
+あるき
+
+#org @gText_DexNav_Surf
+なみのり
+
+#org @gText_DexNav_LavaSurf
+なみのり
+
+#org @gText_DexNav_OldRod
+ボロのつりざお
+
+#org @gText_DexNav_GoodRod
+いいつりざお
+
+#org @gText_DexNav_SuperRod
+すごいつりざお
+
+#org @gText_DexNav_SurfOldRod
+なみのり/つりざお
+
+#org @gText_DexNav_SurfGoodRod
+なみのり/つりざお
+
+#org @gText_DexNav_SurfSuperRod
+なみのり/つりざお
+
+#org @gText_DexNav_Swarm
+たいりょうはっせい
+
+#org @gText_DexNav_NoInfo
+ーーーーーーーー
+
+#org @gText_DexNav_Unavailable
+むこう
+
+#org @gText_DexNav_ListMenuRegister
+とうろく
+
+#org @gText_DexNav_ListMenuScan
+スキャン
+
+#org @gText_DexNav_ListMenuCancel
+やめる
+
+#org @gText_DexNav_PokemonSelected
+[BUFFER1]が せんたく されました
+
+#org @gText_DexNav_NeedRod
+[BUFFER1]を サーチするには\n[BUFFER2]が ひつようです！[PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_Invalid
+そのポケモンは まだ サーチできません！[PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_NoDataForSlot
+そのポケモンの データは ありません[PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_Locked
+[R_BUTTON]で [BUFFER1]を サーチできます！[PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_TooDark
+ポケモンを さがすには くらすぎる！[PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_NoPokemonHere
+ここに ポケモンは いないようだ[PAUSE_UNTIL_PRESS]
+
+
+//Field Strings
+
 #org @gText_DexNavDescription
-ちかくに かくれている やせいのポケモンを\nサーチして みつけることができる 
+ちかくに かくれている やせいのポケモンを\nサーチして みつけることが できる 
 
 #org @gText_GotAway
 [BUFFER1]は にげだした！
@@ -52,41 +120,44 @@
 #org @gText_GotAwayShouldSneak
 [BUFFER1]は にげだした！\nもっと ゆっくり ちかづこう
 
+#org @gText_PokemonGotAway
+ポケモンが にげだした！
+
+#org @gText_PokemonGotAwayShouldSneak
+ポケモンが にげだした！\nもっと ゆっくり ちかづこう
+
 #org @gText_LostSignal
 はんのうが なくなった…
 
 #org @gText_CannotBeFound
 [BUFFER1]は\nここには いない ようだ
 
+#org @gText_FormCannotBeFound
+その すがたの [BUFFER1]は\nここには いない ようだ
+
 #org @gText_NotFoundNearby
 [BUFFER1]は\nちかくに いない ようだ
 
 #org @gText_TooDarkForDexNav
-くらすぎて ポケモンを さがすことが\nできない！
+くらすぎて ポケモンを\nさがすことが できない！
 
-#org @gText_DexNavBack
- もどる 
+#org @gText_DexNavDetectedRarePokemon
+おや？ ずかんナビが めずらしい\nポケモンを みつけたようだ！
 
-#org @gText_DexNav_CaptureToSee
-データみとうろく
+#org @gText_DexNav_UpArrow
+[F9][00]
 
-#org @gText_DexNav_NoInfo
-ーーーーーーーー
+#org @gText_DexNav_DownArrow
+[F9][01]
 
-#org @gText_DexNav_ChooseMon
-ポケモンを えらんで ください
+#org @gText_DexNav_LeftArrow
+[F9][02]
 
-#org @gText_DexNav_Invalid
-そのポケモンは まだ サーチできません！
+#org @gText_DexNav_RightArrow
+[F9][03]
 
-#org @gText_DexNav_NoDataForSlot
-そのポケモンの データは ありません
-
-#org @gText_DexNav_Locked
-[R_BUTTON]で ポケモンを サーチできます！
-
-#org @gText_DexNav_TooDark
-ポケモンを さがすには くらすぎます！
+#org @gText_DexNavHUDChainNumber
+[F9][08] 
 
 #org @gText_MenuCube
 Cube

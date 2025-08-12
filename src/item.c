@@ -1,9 +1,12 @@
 #include "defines.h"
+#include "defines_battle.h"
 #include "../include/item_menu.h"
 #include "../include/list_menu.h"
 #include "../include/menu.h"
 #include "../include/menu_helpers.h"
 #include "../include/money.h"
+#include "../include/party_menu.h"
+#include "../include/pokemon_summary_screen.h"
 #include "../include/script.h"
 #include "../include/shop.h"
 #include "../include/string_util.h"
@@ -12,12 +15,17 @@
 #include "../include/constants/items.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/pokedex.h"
+#include "../include/constants/pokemon.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/tutors.h"
 
-#include "../include/new/util.h"
+#include "../include/new/catching.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/item.h"
+#include "../include/new/learn_move.h"
 #include "../include/new/set_z_effect.h"
+#include "../include/new/util.h"
+
 /*
 item.c
 	handles all item related functions, such as returning hold effects, tm/hm expansion, etc.
@@ -360,8 +368,8 @@ u8 ReformatItemDescription(u16 itemId, u8* dest, u8 maxWidth)
 	typedef u32 TM_HM_T[2]; //extern const u32 gTMHMLearnsets[NUM_SPECIES][2];
 #endif
 
-#if (NUM_MOVE_TUTORS > 64)
-	typedef u32 ExpandedTutor_T[4]; //extern const u32 gTutorMoves[NUM_SPECIES][4];
+#if (NUM_MOVE_TUTORS > 64) //Round up to the nearest multiple of 32
+	typedef u32 ExpandedTutor_T[(NUM_MOVE_TUTORS % 32 != 0) ? NUM_MOVE_TUTORS / 32 + 1 : NUM_MOVE_TUTORS / 32]; //extern const u32 gTutorMoves[NUM_SPECIES][];
 #else
 	typedef u32 ExpandedTutor_T[2]; //extern const u32 gTutorMoves[NUM_SPECIES][2];
 #endif
@@ -429,10 +437,26 @@ bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
 			mask = 1 << (tutorId - 64);
 			return (gTutorLearnsets[species][2] & mask) != 0 ? TRUE : FALSE;
 		}
+	#endif
+	#if (NUM_MOVE_TUTORS > 96)
 		else if (tutorId >= 96 && tutorId < 128)
 		{
 			mask = 1 << (tutorId - 96);
 			return (gTutorLearnsets[species][3] & mask) != 0 ? TRUE : FALSE;
+		}
+	#endif
+	#if (NUM_MOVE_TUTORS > 128)
+		else if (tutorId >= 128 && tutorId < 160)
+		{
+			mask = 1 << (tutorId - 128);
+			return (gTutorLearnsets[species][4] & mask) != 0 ? TRUE : FALSE;
+		}
+	#endif
+	#if (NUM_MOVE_TUTORS > 160)
+		else if (tutorId >= 160 && tutorId < 192)
+		{
+			mask = 1 << (tutorId - 128);
+			return (gTutorLearnsets[species][5] & mask) != 0 ? TRUE : FALSE;
 		}
 	#endif
 	}
@@ -452,9 +476,19 @@ bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
 		case TUTOR_SPECIAL_RELIC_SONG:
 			return dexNum == NATIONAL_DEX_MELOETTA;
 		#endif
-		#ifdef NATIONAL_DEX_PIKACHU
+		#if (defined NATIONAL_DEX_PICHU && defined NATIONAL_DEX_PIKACHU && defined NATIONAL_DEX_RAICHU)
 		case TUTOR_SPECIAL_VOLT_TACKLE:
-			return dexNum == NATIONAL_DEX_PIKACHU;
+			return dexNum == NATIONAL_DEX_PICHU
+				|| dexNum == NATIONAL_DEX_PIKACHU
+				|| dexNum == NATIONAL_DEX_RAICHU
+				#ifdef UNBOUND
+				|| dexNum == NATIONAL_DEX_SHINX
+				|| dexNum == NATIONAL_DEX_LUXIO
+				|| dexNum == NATIONAL_DEX_LUXRAY
+				|| dexNum == NATIONAL_DEX_BLITZLE
+				|| dexNum == NATIONAL_DEX_ZEBSTRIKA
+				#endif
+				;
 		#endif
 		#ifdef NATIONAL_DEX_RAYQUAZA
 		case TUTOR_SPECIAL_DRAGON_ASCENT:
@@ -469,6 +503,9 @@ bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
 		case TUTOR_SPECIAL_STEEL_BEAM:
 			return gBaseStats[species].type1 == TYPE_STEEL
 				|| gBaseStats[species].type2 == TYPE_STEEL
+			#ifdef NATIONAL_DEX_SILVALLY
+				|| dexNum == NATIONAL_DEX_SILVALLY
+			#endif
 			#ifdef NATIONAL_DEX_ZACIAN
 				|| dexNum == NATIONAL_DEX_ZACIAN
 			#endif
@@ -519,10 +556,12 @@ u8 TryHandleExcuseForDracoMeteorTutor(unusedArg struct Pokemon* mon)
 
 	if (tutorId == TUTOR_SPECIAL_DRACO_METEOR)
 	{
-		u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+		u16 species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
 		Var8005 = 1;
 
-		if (gBaseStats[species].type1 != TYPE_DRAGON
+		if (species == SPECIES_EGG)
+			Var8005 = 6;
+		else if (gBaseStats[species].type1 != TYPE_DRAGON
 		&&  gBaseStats[species].type2 != TYPE_DRAGON)
 			Var8005 = 3;
 		else if (GetMonData(mon, MON_DATA_FRIENDSHIP, NULL) < MAX_FRIENDSHIP) //Dragon-type not at max friendship
@@ -718,7 +757,6 @@ bool8 CheckIsHmMove(u16 move)
 	#endif
 }
 
-
 bool8 CheckTmHmInFront(u16 item)
 {
 	#ifdef TMS_BEFORE_HMS
@@ -730,7 +768,6 @@ bool8 CheckTmHmInFront(u16 item)
 	#endif
 	return FALSE;
 }
-
 
 u8 CheckDiscIsTmHm(struct Sprite* disc, u16 itemId)
 {
@@ -749,7 +786,6 @@ u8 CheckDiscIsTmHm(struct Sprite* disc, u16 itemId)
 	return ItemId_GetMystery2(itemId);
 }
 
-
 u8 TmHMDiscPosition(unusedArg struct Sprite* disc, u8 tmId)
 {
 	u8 num;
@@ -764,7 +800,6 @@ u8 TmHMDiscPosition(unusedArg struct Sprite* disc, u8 tmId)
 
 	return num;
 }
-
 
 bool8 CheckReusableTMs(u16 item)
 {
@@ -811,7 +846,6 @@ u8 CheckHmSymbol(u16 item)
 	#endif
 }
 
-
 bool8 CheckSellTmHm(u16 item)
 {
 	#ifdef REUSABLE_TMS
@@ -831,8 +865,6 @@ bool8 CheckSellTmHm(u16 item)
 			return TRUE;
 	#endif
 }
-
-
 
 extern const u8 gText_SingleTmBuy[];
 void CheckTmPurchase(u16 item, u8 taskId)
@@ -865,7 +897,7 @@ bool8 CheckBuyableTm(u16 item, u8 taskId)
 		else
 		{
 			u32 price = ItemId_GetPrice(item);
-			gShopDataPtr->itemPrice = price;
+			gShopData.itemPrice = price;
 			if (IsEnoughMoney(&gSaveBlock1->money, price))
 				return FALSE;
 			else
@@ -876,7 +908,7 @@ bool8 CheckBuyableTm(u16 item, u8 taskId)
 		}
 	#else
 		u32 price = ItemId_GetPrice(item);
-		gShopDataPtr->itemPrice = price;
+		gShopData.itemPrice = price;
 		if (IsEnoughMoney(&gSaveBlock1->money, price))
 			return FALSE;
 		else
@@ -932,6 +964,27 @@ const void* FixTmHmDiscPalette(u8 type)
 		return 0;
 }
 
+void NewTMReplaceMove(struct Pokemon* mon, u16 move)
+{
+	u8 moveIdx = GetMoveSlotToReplace();
+
+	#ifdef TMS_DONT_RESTORE_PP
+	u8 oldPP = GetMonData(mon, MON_DATA_PP1 + moveIdx, NULL);
+	#endif
+
+	RemoveMonPPBonus(mon, moveIdx);
+	SetMonMoveSlot(mon, move, moveIdx);
+	AdjustFriendship(mon, FRIENDSHIP_EVENT_LEARN_TMHM);
+
+	#ifdef TMS_DONT_RESTORE_PP
+	s16* moves = &gPartyMenu.data1;
+	if (moves[1] == 0) //Teaching TM only
+	{
+		if (oldPP < GetMonData(mon, MON_DATA_PP1 + moveIdx, NULL))
+			SetMonData(mon, MON_DATA_PP1 + moveIdx, &oldPP); //Don't restore any PP
+	}
+	#endif
+}
 
 // Premier Ball Bonus
 #define tItemCount data[1]
@@ -981,7 +1034,7 @@ void Task_ReturnToSellListAfterTmPurchase(u8 taskId)
 	if (gMain.newKeys & (A_BUTTON | B_BUTTON))
 	{
 		IncrementGameStat(GAME_STAT_SHOPPED);
-		RemoveMoney(&gSaveBlock1->money, gShopDataPtr->itemPrice);
+		RemoveMoney(&gSaveBlock1->money, gShopData.itemPrice);
 		PlaySE(SE_MONEY);
 		PrintMoneyAmountInMoneyBox(0, GetMoney(&gSaveBlock1->money), 0);
 		RedrawListMenu(tListTaskId);
@@ -1103,9 +1156,9 @@ void HandleItemRegistration(u16 item)
 
 #define sBagItemAmounts ((u16*) 0x203C6C2)
 
-#define NUM_REGULAR_ITEMS 470
+#define NUM_REGULAR_ITEMS 450
 #define NUM_KEY_ITEMS 75
-#define NUM_POKE_BALLS 30
+#define NUM_POKE_BALLS 50
 #define NUM_BERRIES 75
 
 #define LARGEST_POCKET_NUM NUM_REGULAR_ITEMS
@@ -1115,16 +1168,6 @@ void HandleItemRegistration(u16 item)
 #if (NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS + NUM_BERRIES + NUM_TMSHMS) > TOTAL_POSSIBLE_BAG_ITEMS
 #error "The total number of bag items has exceeded 650! Please reduce the possible number of items in the bag."
 #endif
-
-struct ListBuffer1
-{
-	struct ListMenuItem subBuffers[LARGEST_POCKET_NUM];
-};
-
-struct ListBuffer2
-{
-	s8 name[LARGEST_POCKET_NUM][24];
-};
 
 struct BagSlots
 {
@@ -1170,14 +1213,29 @@ void SetMemoryForBagStorage(void)
 	*gBagPockets = sBagPocketArrangement;
 }
 
-#define sListBuffer1 (*((struct ListBuffer1**) 0x203AC90))
-#define sListBuffer2 (*((struct ListBuffer2**) 0x203AC94))
+extern void* sBagBgTilemapBuffer;
+extern struct ListMenuItem* sBagListMenuItems;
+extern u8 (*sBagListMenuItemStrings)[15];
 
-void AllocateBagItemListBuffers(void)
+bool8 AllocateBagItemListBuffers(void)
 {
 	sItemDescriptionPocket = 0; //Reset item description printer
-	sListBuffer1 = Malloc(sizeof(struct ListBuffer1));
-	sListBuffer2 = Malloc(sizeof(struct ListBuffer2));
+
+	/*if (sBagBgTilemapBuffer != NULL)
+	{
+		Free(sBagBgTilemapBuffer);
+		sBagBgTilemapBuffer = NULL;
+	}*/
+
+	sBagListMenuItems = Malloc((LARGEST_POCKET_NUM + 1) * sizeof(struct ListMenuItem));
+	if (sBagListMenuItems == NULL)
+		return FALSE;
+
+	sBagListMenuItemStrings = Malloc((LARGEST_POCKET_NUM + 1) * sizeof(*sBagListMenuItemStrings));
+	if (sBagListMenuItemStrings == NULL)
+		return FALSE;
+
+	return TRUE;
 }
 
 extern struct ListMenuItem* sBerryPouchListMenuItems;
@@ -1188,6 +1246,82 @@ bool8 AllocateBerryPouchListBuffers(void)
 		return FALSE;
 
 	return TRUE;
+}
+
+#define BagListMenuMoveCursorFunc (void*) (0x081090A0 | 1)
+#define BagListMenuItemPrintFunc (void*) (0x8109150 | 1)
+#define sListItemTextColor_RegularItem (void*) 0x08413E08
+#define gFameCheckerText_Cancel (void*) 0x83DD801
+void Bag_BuildListMenuTemplate(u8 pocket)
+{
+	u32 i, itemCount;
+	struct ItemSlot* itemSlots;
+
+	switch (pocket + 1)
+	{
+		case POCKET_ITEMS:
+		default:
+			itemSlots = gBagPockets->itemRam;
+			break;
+		case POCKET_KEY_ITEMS:
+			itemSlots = gBagPockets->keyItemRam;
+			break;
+		case POCKET_POKE_BALLS:
+			itemSlots = gBagPockets->pokeBallRam;
+			break;
+	}
+
+	for (i = 0, itemCount = GetNumItemsInPocket(pocket); i < itemCount; ++i)
+	{
+		BagListMenuGetItemNameColored(sBagListMenuItemStrings[i], itemSlots[i].itemId);
+		sBagListMenuItems[i].name = sBagListMenuItemStrings[i];
+		sBagListMenuItems[i].id = i;
+	}
+
+	StringCopy(sBagListMenuItemStrings[i], sListItemTextColor_RegularItem);
+	StringAppend(sBagListMenuItemStrings[i], gFameCheckerText_Cancel);
+	sBagListMenuItems[i].name = sBagListMenuItemStrings[i];
+	sBagListMenuItems[i].id = i;
+	gMultiuseListMenuTemplate->items = sBagListMenuItems;
+	gMultiuseListMenuTemplate->totalItems = itemCount + 1;
+	gMultiuseListMenuTemplate->windowId = 0;
+	gMultiuseListMenuTemplate->header_X = 0;
+	gMultiuseListMenuTemplate->item_X = 9;
+	gMultiuseListMenuTemplate->cursor_X = 1;
+	gMultiuseListMenuTemplate->lettersSpacing = 0;
+	gMultiuseListMenuTemplate->itemVerticalPadding = 4;
+	gMultiuseListMenuTemplate->upText_Y = 2;
+	gMultiuseListMenuTemplate->maxShowed = sBagMenuDisplay->maxShowed[pocket];
+	gMultiuseListMenuTemplate->fontId = 2;
+	#ifdef UNBOUND
+	gMultiuseListMenuTemplate->cursorPal = 1;
+	gMultiuseListMenuTemplate->cursorShadowPal = 2;
+	#else
+	gMultiuseListMenuTemplate->cursorPal = 2;
+	gMultiuseListMenuTemplate->cursorShadowPal = 3;
+	#endif
+	gMultiuseListMenuTemplate->fillValue = 0;
+	gMultiuseListMenuTemplate->moveCursorFunc = BagListMenuMoveCursorFunc;
+	gMultiuseListMenuTemplate->itemPrintFunc = BagListMenuItemPrintFunc;
+	gMultiuseListMenuTemplate->cursorKind = 0;
+	gMultiuseListMenuTemplate->scrollMultiple = LIST_MULTIPLE_SCROLL_L_R;
+}
+
+void PocketCalculateInitialCursorPosAndItemsAbove(u8 pocketId)
+{
+	if (gBagMenuState.cursorPos[pocketId] != 0
+	&& gBagMenuState.cursorPos[pocketId] + sBagMenuDisplay->maxShowed[pocketId] > GetNumItemsInPocket(pocketId) + 1)
+	{
+		gBagMenuState.cursorPos[pocketId] = (GetNumItemsInPocket(pocketId) + 1) - sBagMenuDisplay->maxShowed[pocketId];
+	}
+
+	if (gBagMenuState.cursorPos[pocketId] + gBagMenuState.itemsAbove[pocketId] >= GetNumItemsInPocket(pocketId) + 1)
+	{
+		if (GetNumItemsInPocket(pocketId) + 1 < 2)
+			gBagMenuState.itemsAbove[pocketId] = 0;
+		else
+			gBagMenuState.itemsAbove[pocketId] = GetNumItemsInPocket(pocketId);
+	}
 }
 
 extern struct BagSlots* sBackupPlayerBag;
@@ -1203,8 +1337,8 @@ void BackupPlayerBag(void)
 	sBackupPlayerBag->pocket = gBagMenuState.pocket;
 	for (i = 0; i < 3; i++)
 	{
-		sBackupPlayerBag->itemsAbove[i] = gBagMenuState.scrollPosition[i];
-		sBackupPlayerBag->cursorPos[i] = gBagMenuState.cursorPosition[i];
+		sBackupPlayerBag->itemsAbove[i] = gBagMenuState.itemsAbove[i];
+		sBackupPlayerBag->cursorPos[i] = gBagMenuState.cursorPos[i];
 	}
 
 	Memset(sBagRegularItems, 0, sizeof(struct ItemSlot) * NUM_REGULAR_ITEMS); //Too many to use ClearItemSlots
@@ -1225,8 +1359,8 @@ void RestorePlayerBag(void)
 	gBagMenuState.pocket = sBackupPlayerBag->pocket;
 	for (i = 0; i < 3; i++)
 	{
-		gBagMenuState.scrollPosition[i] = sBackupPlayerBag->itemsAbove[i];
-		gBagMenuState.cursorPosition[i] = sBackupPlayerBag->cursorPos[i];
+		gBagMenuState.cursorPos[i] = sBackupPlayerBag->cursorPos[i];
+		gBagMenuState.itemsAbove[i] = sBackupPlayerBag->itemsAbove[i];
 	}
 
 	Free(sBackupPlayerBag);
@@ -1310,6 +1444,26 @@ u16 GetCurrentPocketItemAmount(void)
 	return sBagItemAmounts[sCurrentBagPocket];
 }
 
+u16 CountTMsInBag(void)
+{
+	u32 i, count;
+	struct ItemSlot* itemMem = sBagPocketArrangement.tmRam;
+	u16 amount = sBagPocketArrangement.tmAmount;
+
+	for (i = 0, count = 0; i < amount; ++i)
+	{
+		if (itemMem[i].itemId != ITEM_NONE
+		&& itemMem[i].quantity > 0)
+		{
+			u16 id = TMIdFromItemId(itemMem[i].itemId);
+			if (id < NUM_TMS)
+				++count;
+		}	
+	}
+
+	return count;
+}
+
 bool8 DoesBagHaveBerry(void)
 {
 	if (CheckBagHasItem(ITEM_BERRY_POUCH, 1)
@@ -1321,8 +1475,46 @@ bool8 DoesBagHaveBerry(void)
 
 void CompactItemsInBagPocket(struct ItemSlot* itemSlots, u16 amount)
 {
-	MergeSort(itemSlots, 0, amount - 1, CompareItemsByHavingValue); //Sort all the null items to the back
+	u16 sortAmount = amount - 1;
+	s8 (*func)(struct ItemSlot*, struct ItemSlot*) = CompareItemsByHavingValue;
+
+	#ifdef VAR_AUTO_SORT_BAG_ITEMS
+	if (itemSlots == gBagPockets->itemRam)
+	{
+		u8 sortStyle = VarGet(VAR_AUTO_SORT_BAG_ITEMS);
+
+		if (sortStyle == 1)
+			func = CompareItemsAlphabetically;
+		else if (sortStyle == 2)
+			func = CompareItemsByType;
+		else if (sortStyle == 3)
+			func = CompareItemsByMost;
+	}
+	#endif
+
+	MergeSort(itemSlots, 0, sortAmount, func); //Sort all the null items to the back
 }
+
+#ifdef ANTI_MAX_ITEM_CHEAT
+static void Task_WipeSingleUseItems(u8 taskId)
+{
+	if (!gTasks[taskId].data[0])
+	{
+		Memset(sBagRegularItems, 0, sizeof(struct ItemSlot) * NUM_REGULAR_ITEMS);
+		Memset(sBagPokeBalls, 0, sizeof(struct ItemSlot) * NUM_POKE_BALLS);
+		Memset(sBagBerries, 0, sizeof(struct ItemSlot) * NUM_BERRIES);
+		gTasks[taskId].data[0] = TRUE; //Only wipe once
+	}
+
+	if (FuncIsActiveTask(Task_BagMenu_HandleInput))
+	{
+		//Close bag so it reloads properly
+		DestroyTask(taskId);
+		taskId = FindTaskIdByFunc(Task_BagMenu_HandleInput);
+		gTasks[taskId].func = ItemMenu_StartFadeToExitCallback;
+	}
+}
+#endif
 
 
 //Functions For Sorting Bag/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1573,6 +1765,10 @@ static s8 CompareItemsByHavingValue(struct ItemSlot* itemSlot1, struct ItemSlot*
 	else if (itemSlot2->itemId == ITEM_NONE)
 		return -1;
 
+	#ifdef ANTI_MAX_ITEM_CHEAT
+	ANTI_MAX_ITEM_CHEAT
+	#endif
+
 	if (itemSlot1->quantity == 0)
 	{
 		itemSlot1->itemId = ITEM_NONE; //Remove bugged items
@@ -1721,8 +1917,8 @@ static void BagMenu_CancelSort(u8 taskId)
 static void BagMenu_ConfirmSort(u8 taskId)
 {
 	s16* data = gTasks[taskId].data;
-	u16* scrollPos = &gBagMenuState.scrollPosition[gBagMenuState.pocket];
-	u16* cursorPos = &gBagMenuState.cursorPosition[gBagMenuState.pocket];
+	u16* cursorPos = &gBagMenuState.cursorPos[gBagMenuState.pocket];
+	u16* itemsAbove = &gBagMenuState.itemsAbove[gBagMenuState.pocket];
 
 	HideBagWindow(6);
 	sItemDescriptionPocket = 0x0; //Sorting Items
@@ -1730,10 +1926,10 @@ static void BagMenu_ConfirmSort(u8 taskId)
 	StringExpandPlaceholders(gStringVar4, gText_ItemsSortedBy);
 	BagPrintTextOnWindow(ShowBagWindow(6, 3), 2, gStringVar4, 0, 2, 1, 0, 0, 1);
 	SortItemsInBag(gBagMenuState.pocket, data[2]);
-	DestroyListMenuTask(data[0], scrollPos, cursorPos);
-	SetInitialScrollAndCursorPositions(gBagMenuState.pocket);
+	DestroyListMenuTask(data[0], cursorPos, itemsAbove);
+	PocketCalculateInitialCursorPosAndItemsAbove(gBagMenuState.pocket);
 	Bag_BuildListMenuTemplate(gBagMenuState.pocket);
-	data[0] = ListMenuInit(gMultiuseListMenuTemplate, *scrollPos, *cursorPos);
+	data[0] = ListMenuInit(gMultiuseListMenuTemplate, *cursorPos, *itemsAbove);
 	PlaySE(SE_CORRECT);
 	gTasks[taskId].func = Task_SortFinish;
 }
@@ -1826,6 +2022,8 @@ static void TryDestroyItemDescriptionTask(void)
 		DestroyTask(taskId);
 }
 
+#define Task_WaitAB_RedrawAndReturnToBag (void*) (0x810AA40 | 1)
+#define Task_WaitPressAB_AfterSell (void*) (0x810B5F0 | 1)
 void PrintItemDescriptionOnMessageWindow(u16 itemIndex)
 {
 	const u8 *description;
@@ -1838,7 +2036,9 @@ void PrintItemDescriptionOnMessageWindow(u16 itemIndex)
 		if (JOY_NEW(DPAD_DOWN | DPAD_UP) //Single item scroll
 		|| itemIndex == 0 //Top of bag
 		|| sItemDescriptionPocket != gBagMenuState.pocket + 1 //Changed pockets so print some description
-		|| sItemDescriptionPocket == 0) //Open bag or post item sort
+		|| sItemDescriptionPocket == 0 //Open bag or post item sort
+		|| FuncIsActiveTask(Task_WaitAB_RedrawAndReturnToBag) //Just finished tossing
+		|| FuncIsActiveTask(Task_WaitPressAB_AfterSell)) //Just finished selling
 		{
 			sItemDescriptionPocket = gBagMenuState.pocket + 1;
 			BagPrintTextOnWindow(1, 2, description, 0, 3, 1, 3, 0, 0); //Print description right away
@@ -1869,4 +2069,98 @@ void PrintItemDescriptionOnMessageWindow(u16 itemIndex)
 void ForceRedrawItemDescription(void)
 {
 	sItemDescriptionPocket = 0;
+}
+
+void FixCubeCursorDefaultColour(void)
+{
+	#ifdef UNBOUND
+	gMultiuseListMenuTemplate->cursorPal = 1;
+	gMultiuseListMenuTemplate->cursorShadowPal = 2;
+	#endif
+}
+
+#define sListItemTextColor_TmCase_BerryPouch (const u8*) 0x8413E0E
+void BagListMenuGetItemNameColored(u8 *dest, u16 itemId)
+{
+	if (itemId == ITEM_TM_CASE || itemId == ITEM_BERRY_POUCH)
+		StringCopy(dest, sListItemTextColor_TmCase_BerryPouch);
+	else
+		dest[0] = EOS; //No special item colour
+
+	dest = StringAppend(dest, ItemId_GetName(itemId));
+
+	u8 levelToAppend = 0;
+	u8 minUpgradedLevel = 1;
+	switch (itemId)
+	{
+		#ifdef VAR_MACHO_BRACE_LEVEL
+		case ITEM_MACHO_BRACE:
+			levelToAppend = VarGet(VAR_MACHO_BRACE_LEVEL);
+			minUpgradedLevel = 3;
+			break;
+		#endif
+		#ifdef VAR_POWER_ITEM_LEVEL
+		case ITEM_POWER_WEIGHT:
+		case ITEM_POWER_BRACER:
+		case ITEM_POWER_BELT:
+		case ITEM_POWER_LENS:
+		case ITEM_POWER_BAND:
+		case ITEM_POWER_ANKLET:
+			levelToAppend = VarGet(VAR_POWER_ITEM_LEVEL);
+			minUpgradedLevel = 2;
+			break;
+		#endif
+		#ifdef VAR_AMULET_COIN_LEVEL
+		case ITEM_AMULET_COIN:
+		case ITEM_LUCK_INCENSE:
+			levelToAppend = VarGet(VAR_AMULET_COIN_LEVEL);
+			minUpgradedLevel = 3;
+			break;
+		#endif
+		#ifdef VAR_LUCKY_EGG_LEVEL
+		case ITEM_LUCKY_EGG:
+			levelToAppend = VarGet(VAR_LUCKY_EGG_LEVEL);
+			minUpgradedLevel = 2;
+			break;
+		#endif
+	}
+
+	if (levelToAppend >= minUpgradedLevel)
+	{
+		dest = StringCopy(dest, sListItemTextColor_TmCase_BerryPouch);
+		*dest++ = 0xF9;
+		*dest++ = 0x05;
+		ConvertIntToDecimalStringN(dest, levelToAppend, STR_CONV_MODE_LEFT_ALIGN, 2);
+	}
+}
+
+u16 GetBestBallInBag(void)
+{
+	u32 i, bestOdds;
+	u16 bestBall = ITEM_NONE;
+	u8 bankAtk = (IS_SINGLE_BATTLE || BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT))) ? GetBattlerAtPosition(B_POSITION_PLAYER_LEFT) : GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+	u8 bankDef = (IS_SINGLE_BATTLE || BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))) ? GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) : GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+
+	if (IsRaidBattle())
+		bankDef = BANK_RAID_BOSS; //Both foes are "KOd", so pick the one that's actually the target
+
+	for (i = 0, bestOdds = 0; i < NUM_POKE_BALLS; ++i)
+	{
+		u16 item = sBagPokeBalls[i].itemId;
+		
+		if (item == ITEM_MASTER_BALL)
+			continue; //Obviously this is the best, but you don't want to waste it
+		else if (item == ITEM_NONE)
+			continue;
+
+		u32 odds = GetBaseBallCatchOdds(ItemId_GetType(item), bankAtk, bankDef);
+
+		if (odds > bestOdds)
+		{
+			bestBall = item;
+			bestOdds = odds;
+		}
+	}
+
+	return bestBall;
 }

@@ -23,8 +23,8 @@ enum
 //Exported Functions
 u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr);
 bool8 DefiantActivation(void);
-u8 CanStatNotBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u8 defAbility);
-bool8 CanStatBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u8 defAbility);
+u8 CanStatNotBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u16 defAbility);
+bool8 CanStatBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u16 defAbility);
 
 //Functions Hooked In
 void atk13_printfromtable(void);

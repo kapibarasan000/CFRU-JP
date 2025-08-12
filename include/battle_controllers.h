@@ -132,7 +132,7 @@ struct ChooseMoveStruct
 	bool8 bank;
 	u8 zPartyIndex;
 	u16 possibleZMoves[MAX_MON_MOVES];
-	u8 ability;
+	u16 ability;
 	bool8 canDynamax;
 	u16 possibleMaxMoves[MAX_MON_MOVES];
 	u16 maxMovePowers[MAX_MON_MOVES];
@@ -248,7 +248,7 @@ void __attribute__((long_call)) EmitChooseAction(u8 bufferId, u8 arg1, u16 arg2)
 void __attribute__((long_call)) EmitUnknownYesNoBox(u8 bufferId);
 //void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct ChooseMoveStruct *movePpData);
 void __attribute__((long_call)) EmitChooseItem(u8 bufferId, u8* arg1);
-void __attribute__((long_call)) EmitChoosePokemon(u8 bufferId, u8 caseId, u8 arg2, u8 abilityId, u8* arg4);
+//void __attribute__((long_call)) EmitChoosePokemon(u8 bufferId, u8 caseId, u8 arg2, u16 abilityId, u8* arg4);
 void __attribute__((long_call)) EmitCmd23(u8 bufferId); // unused
 void __attribute__((long_call)) EmitHealthBarUpdate(u8 bufferId, u16 hpValue);
 //void EmitExpUpdate(u8 bufferId, u8 partyId, u16 expPoints);

@@ -22,6 +22,7 @@
 #include "../include/new/move_tables.h"
 #include "../include/new/multi.h"
 #include "../include/new/new_bs_commands.h"
+#include "../include/new/party_menu.h"
 #include "../include/new/set_effect.h"
 #include "../include/new/stat_buffs.h"
 #include "../include/new/terastal.h"
@@ -96,8 +97,8 @@ void atkFC_clearspecialstatusbit(void)
 //jumpifabilitypresenttargetfield ABILITY ROM_OFFSET
 void atkFD_jumpifabilitypresenttargetfield(void)
 {
-	u8 ability = gBattlescriptCurrInstr[1];
-	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	u16 ability = T1_READ_16(gBattlescriptCurrInstr + 1);
+	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 
 	if (ABILITY(gBankTarget) == ability)
 		gBattleScripting.bank = gBankTarget;
@@ -105,7 +106,7 @@ void atkFD_jumpifabilitypresenttargetfield(void)
 		gBattleScripting.bank = PARTNER(gBankTarget);
 	else
 	{
-		gBattlescriptCurrInstr += 6;
+		gBattlescriptCurrInstr += 7;
 		return;
 	}
 
@@ -520,9 +521,9 @@ void atkFF09_jumpifcounter(void)
 void atkFF0A_setability(void)
 {
 	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
-	u8 ability = gBattlescriptCurrInstr[2];
+	u16 ability = T1_READ_16(gBattlescriptCurrInstr + 2);
 	*GetAbilityLocation(bank) = ability;
-	gBattlescriptCurrInstr += 3;
+	gBattlescriptCurrInstr += 4;
 }
 
 //jumpiftargetpartner ROM_OFFSET
@@ -564,6 +565,8 @@ void atkFF0E_setcounter(void)
 			break;
 		case Counters_Embargo:
 			gNewBS->EmbargoTimers[bank] = amount;
+			if (ItemId_GetHoldEffect(ITEM(bank)) == ITEM_EFFECT_ABILITY_SHIELD)
+				HandleAbilityShieldGetAndLost(bank);
 			break;
 		case Counters_Electrify:
 			gNewBS->ElectrifyTimers[bank] = amount;
@@ -702,7 +705,8 @@ void atkFF14_jumpiftypepresent(void)
 //jumpifstatcanbelowered BANK STAT ROM_ADDRESS
 void atkFF15_jumpifstatcanbemodified(void)
 {
-	u8 statId, ability;
+	u8 statId;
+	u16 ability;
 	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	ability = ABILITY(gActiveBattler);
 	statId = gBattlescriptCurrInstr[2];
@@ -805,13 +809,13 @@ void atkFF19_formchange(void)
 //jumpifabilitypresentattackerfield ABILITY ROM_OFFSET
 void atkFF1A_jumpifabilitypresentattackerfield(void)
 {
-	u8 ability = gBattlescriptCurrInstr[1];
-	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	u16 ability = T1_READ_16(gBattlescriptCurrInstr + 1);
+	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 
 	if (AbilityBattleEffects(ABILITYEFFECT_CHECK_BANK_SIDE, gBankAttacker, ability, 0, 0))
 		gBattlescriptCurrInstr = ptr;
 	else
-		gBattlescriptCurrInstr += 6;
+		gBattlescriptCurrInstr += 7;
 }
 
 //tryactivateswitchinability
@@ -881,7 +885,8 @@ void atkFF1F_flowershieldlooper(void)
 				gBattleCommunication[MULTISTRING_CHOOSER] = 5; //Protected by Psychic Terrain
 				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
 			}
-			else if (priority && gBankAttacker != bank && IsPriorityBlockingAbility(ABILITY(bank)))
+			else if ((priority && gBankAttacker != bank && IsPriorityBlockingAbility(ABILITY(bank)))
+			|| (gBankAttacker != bank && ABILITY(bank) == ABILITY_GOODASGOLD))
 			{
 				gBattleScripting.bank = bank;
 				gBattleCommunication[MULTISTRING_CHOOSER] = 4; //Protected by Ability
@@ -922,7 +927,7 @@ void atkFF21_tryspectralthiefsteal(void)
 {
 	s8 increment = 1;
 	bool8 success = FALSE;
-	u8 atkAbility = ABILITY(gBankAttacker);
+	u16 atkAbility = ABILITY(gBankAttacker);
 
 	for (int i = 0; i < BATTLE_STATS_NO-1; ++i)
 	{
@@ -993,34 +998,10 @@ void atkFE_prefaintmoveendeffects(void)
 			break;
 
 		case FAINT_ATTACKER_ABILITIES:
-			if (arg1 != ARG_IN_FUTURE_ATTACK
-			&& TOOK_DAMAGE(gBankTarget)
-			&& MOVE_HAD_EFFECT
-			&& BATTLER_ALIVE(gBankTarget)
-			&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
-			&& !gProtectStructs[gBankAttacker].confusionSelfDmg)
+			if (arg1 != ARG_IN_FUTURE_ATTACK)
 			{
-				switch (ABILITY(gBankAttacker)) {
-					case ABILITY_STENCH: //Check for Stench is taken care of in King's Rock check
-						if (umodsi(Random(), 100) < 10
-						&& gCurrentTurnActionNumber < GetBattlerTurnOrderNum(gBankTarget)) //Attacker moved before target
-						{
-							gBattleMons[gBankTarget].status2 |= STATUS2_FLINCHED;
-						}
-						break;
-
-					case ABILITY_POISONTOUCH:
-						if (CheckContact(gCurrentMove, gBankAttacker, gBankTarget)
-						&& ABILITY(gBankTarget) != ABILITY_SHIELDDUST
-						&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
-						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
-						&& umodsi(Random(), 100) < 30)
-						{
-							BattleScriptPushCursor();
-							gBattlescriptCurrInstr = BattleScript_PoisonTouch;
-							effect = TRUE;
-						}
-				}
+				if (AbilityBattleEffects(ABILITYEFFECT_MOVE_END_ATTACKER, gBankAttacker, 0, 0, 0))
+					effect = TRUE;
 			}
 			gNewBS->preFaintEffectsState++;
 			break;
@@ -1140,6 +1121,16 @@ void atkFE_prefaintmoveendeffects(void)
 			gNewBS->preFaintEffectsState++;
 			break;
 
+		case FAINT_TOOK_DAMAGE_COUNT:
+			if (MOVE_HAD_EFFECT
+			&& TOOK_DAMAGE(gBankTarget)
+			&& gBankAttacker != gBankTarget
+			&& (SPLIT(gCurrentMove) == SPLIT_PHYSICAL || SPLIT_SPECIAL)
+			&& gNewBS->rageFistCounter[SIDE(gBankTarget)][gBattlerPartyIndexes[gBankTarget]] < 6)
+				gNewBS->rageFistCounter[SIDE(gBankTarget)][gBattlerPartyIndexes[gBankTarget]]++;
+			gNewBS->preFaintEffectsState++;
+			break;
+
 		case FAINT_SYNCHRONIZE_TARGET: // target synchronize
 			if (gCurrentMove != MOVE_PSYCHOSHIFT || !MOVE_HAD_EFFECT) //The lazy way of taking care of Psycho Shift Status Transfer->Synchronize->Heal Status
 			{
@@ -1223,8 +1214,7 @@ void atkFF23_faintpokemonaftermove(void)
 		else
 			gBattlescriptCurrInstr = BattleScript_FaintTarget;
 
-		if (SIDE(gActiveBattler) == B_SIDE_PLAYER
-		&& (!IsTagBattle() || GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_LEFT)) //Is player's mon
+		if (SIDE(gActiveBattler) == B_SIDE_PLAYER)
 		{
 			gHitMarker |= HITMARKER_PLAYER_FAINTED;
 			if (gBattleResults.playerFaintCounter < 0xFF)
@@ -1237,6 +1227,9 @@ void atkFF23_faintpokemonaftermove(void)
 				gBattleResults.opponentFaintCounter++;
 			gBattleResults.lastOpponentSpecies = GetBankPartyData(gActiveBattler)->species;
 		}
+
+		if (IsTerastal(gActiveBattler))
+			gNewBS->terastalData.fainted[gActiveBattler] = 1;
 
 		gNewBS->RetaliateCounters[SIDE(gActiveBattler)] = 2;
 
@@ -1341,7 +1334,7 @@ void atkFF27_tryactivateprotean(void)
 {
 	u8 moveType = gBattleStruct->dynamicMoveType;
 
-	if (ABILITY(gBankAttacker) == ABILITY_PROTEAN
+	if ((ABILITY(gBankAttacker) == ABILITY_PROTEAN || ABILITY(gBankAttacker) == ABILITY_LIBERO)
 	&& !(gMoveResultFlags & MOVE_RESULT_FAILED)
 	&& gCurrentMove != MOVE_STRUGGLE
 	&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
@@ -1514,6 +1507,7 @@ void atkFF29_trysetsleep(void)
 				}
 				break;
 			case ABILITY_COMATOSE:
+			case ABILITY_PURIFYINGSALT:
 				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 				return;
 			case ABILITY_SHIELDSDOWN:
@@ -1626,6 +1620,7 @@ void atkD7_setyawn(void)
 				}
 				break;
 			case ABILITY_COMATOSE:
+			case ABILITY_PURIFYINGSALT:
 				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 				return;
 			case ABILITY_SHIELDSDOWN:
@@ -1738,6 +1733,7 @@ void atkFF2A_trysetparalysis(void)
 				break;
 			case ABILITY_LIMBER:
 			case ABILITY_COMATOSE:
+			case ABILITY_PURIFYINGSALT:
 				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 				return;
 			case ABILITY_SHIELDSDOWN:
@@ -1827,6 +1823,8 @@ void atkFF2B_trysetburn(void)
 			case ABILITY_WATERVEIL:
 			case ABILITY_WATERBUBBLE:
 			case ABILITY_COMATOSE:
+			case ABILITY_THERMALEXCHANGE:
+			case ABILITY_PURIFYINGSALT:
 				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 				return;
 			case ABILITY_SHIELDSDOWN:
@@ -1936,6 +1934,7 @@ void atkFF2C_trysetpoison(void)
 				break;
 			case ABILITY_IMMUNITY:
 			case ABILITY_COMATOSE:
+			case ABILITY_PURIFYINGSALT:
 				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 				return;
 			case ABILITY_SHIELDSDOWN:
@@ -2182,4 +2181,87 @@ void atkFF37_TryRevivalBlessing(void)
         MarkBufferBankForExecution(gBankAttacker);
 		gBattlescriptCurrInstr -= 1;
     }
+}
+
+extern const u16 gBannedBattleEatBerries[];
+//tryteatimeeatberry FAIL_ADDRESS
+void atkFF38_tryteatimeeatberry(void)
+{
+	u8 bank = 0;
+	bool8 priority = PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0;
+
+	for (; gBattleCommunication[0] < gBattlersCount; ++gBattleCommunication[0])
+	{
+		switch (gBattleCommunication[0]) {
+			case 0:
+				bank = gBankTarget = gBankAttacker;
+				break;
+			case 1:
+				bank = gBankTarget = PARTNER(gBankAttacker);
+				break;
+			case 2:
+				bank = gBankTarget = FOE(gBankAttacker);
+				break;
+			case 3:
+				bank = gBankTarget = PARTNER(FOE(gBankAttacker));
+		}
+
+		if (BATTLER_ALIVE(bank))
+		{
+			++gBattleCommunication[0];
+
+			if (IsMaxGuardUp(bank))
+			{
+				gBattleCommunication[MULTISTRING_CHOOSER] = 1; //Protected itself
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+			}
+			else if (BATTLER_SEMI_INVULNERABLE(bank) && ABILITY(gBankAttacker) != ABILITY_NOGUARD && ABILITY(bank) != ABILITY_NOGUARD)
+			{
+				gBattlescriptCurrInstr -= 1;
+			}
+			else if (priority && gBankAttacker != bank && gTerrainType == PSYCHIC_TERRAIN && CheckGrounding(bank))
+			{
+				gBattleStringLoader = PsychicTerrainAttackCancelString;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 5; //Protected by Psychic Terrain
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+			}
+			else if (priority && gBankAttacker != bank && IsPriorityBlockingAbility(ABILITY(bank)))
+			{
+				gBattleScripting.bank = bank;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 4; //Protected by Ability
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+			}
+			else if (IsBerry(ITEM(bank)))
+			{
+				if (CheckTableForItem(ITEM(bank), gBannedBattleEatBerries))
+				{
+					gBattleCommunication[MULTISTRING_CHOOSER] = 3;
+					gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+				}
+				else
+				{
+					gLastUsedItem = ITEM(bank);
+					gBattlescriptCurrInstr -= 1;
+
+					if (!ItemBattleEffects(ItemEffects_Normal, bank, TRUE, TRUE))
+					{
+						//The Berry didn't activate an effect
+						gBattleScripting.bank = bank;
+						gNewBS->canBelch[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_BerryNoEffect;
+					}
+				}
+				
+				gMoveResultFlags = 0;
+			}
+			else
+				gBattlescriptCurrInstr -= 1;
+
+			return;
+		}
+	}
+
+	gBankTarget = gBankAttacker;
+	gBattlescriptCurrInstr += 5;
 }

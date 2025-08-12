@@ -82,6 +82,7 @@ enum BallTypes
 //Make sure these two values are always correct!
 #define BALL_TYPE_MASTER_BALL 0
 #define BALL_TYPE_POKE_BALL 3
+#define BALL_TYPE_LUXURY_BALL 10
 #define BALL_TYPE_DYNAMAX_BALL 27
 
 #define LAST_BALL_INDEX BALL_TYPE_DREAM_BALL

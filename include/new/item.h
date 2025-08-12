@@ -81,7 +81,7 @@ const void* FixTmHmDiscPalette(u8 type);
 void CompactItemsInBagPocket(struct ItemSlot* itemSlots, u16 amount);
 void Task_ReturnToItemListAfterItemPurchase(u8 taskId);
 void SetMemoryForBagStorage(void);
-void AllocateBagItemListBuffers(void);
+bool8 AllocateBagItemListBuffers(void);
 bool8 AllocateBerryPouchListBuffers(void);
 void BagListMenuGetItemNameColored(u8 *dest, u16 itemId);
 void PokeDudeBackupBag(void);
@@ -173,6 +173,7 @@ enum ItemType //Sorted in this order
 	ITEM_TYPE_SPEED_WING,
 
 	//Other
+	ITEM_TYPE_MINT,
 	ITEM_TYPE_FLUTE,
 	ITEM_TYPE_STAT_BOOST_HELD_ITEM,
 	ITEM_TYPE_HELD_ITEM,

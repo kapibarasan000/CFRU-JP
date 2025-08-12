@@ -15,6 +15,7 @@
 #include "../include/party_menu.h"
 #include "../include/pokemon_icon.h"
 #include "../include/pokemon_storage_system.h"
+#include "../include/pokemon_summary_screen.h"
 #include "../include/random.h"
 #include "../include/script.h"
 #include "../include/sound.h"
@@ -28,15 +29,20 @@
 #include "../include/constants/items.h"
 #include "../include/constants/item_effects.h"
 #include "../include/constants/moves.h"
+#include "../include/constants/pokemon.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/battle_strings.h"
 #include "../include/new/build_pokemon.h"
+#include "../include/new/dns.h"
 #include "../include/new/evolution.h"
 #include "../include/new/follow_me.h"
 #include "../include/new/form_change.h"
 #include "../include/new/item.h"
+#include "../include/new/learn_move.h"
+#include "../include/new/multi.h"
 #include "../include/new/overworld.h"
 #include "../include/new/party_menu.h"
 #include "../include/new/util.h"
@@ -127,6 +133,7 @@ void __attribute__((long_call)) PartyMenuTryEvolution(u8 taskId);
 void __attribute__((long_call)) FreePartyPointers(void);
 void __attribute__((long_call)) PartyMenuDisplayYesNoMenu(void);
 s8 __attribute__((long_call)) *GetCurrentPartySlotPtr(void);
+void __attribute__((long_call)) ItemUseCB_RareCandyStep(u8 taskId, UNUSED TaskFunc func);
 
 //This file's functions:
 static void OpenSummary(u8 taskId);
@@ -138,6 +145,7 @@ static bool8 SetUpFieldMove_Waterfall(void);
 static bool8 SetUpFieldMove_Teleport(void);
 static void FieldCallback_Dive(void);
 static bool8 SetUpFieldMove_Dive(void);
+static bool8 SetUpFieldMove_SweetScent(void);
 static void FieldCallback_RockClimb(void);
 static bool8 SetUpFieldMove_RockClimb(void);
 static void FieldCallback_Defog(void);
@@ -458,27 +466,96 @@ static void OpenSummary(u8 taskId)
 
 u8 ChangeSummaryScreenMonSinglesDoubles(u8 delta)
 {
-	u8 numMons = gSummaryScreenData->maxPartyIndex + 1;
+	u8 numMons = sMonSummaryScreen->lastIndex + 1;
 	delta += numMons;
 
-	// guarantees result will be in range [0, numMons)
-	u8 result = umodsi(gCurrentPartyIndex + delta, numMons);
+	//Guarantees result will be in range [0, numMons)
+	u8 result = (sLastViewedMonIndex + delta) % numMons;
 
-	// skip over eggs on other pages
-	if (gSummaryScreenData->currentPage != PAGE_INFO)
+	//Skip over eggs on other pages
+	if (sMonSummaryScreen->curPageIndex != PAGE_INFO)
 	{
-		while (GetMonData(gSummaryScreenData->partyData+result, MON_DATA_IS_EGG, NULL))
-		{
-			result = umodsi(result + delta, numMons);
-		}
+		while (GetMonData(&sMonSummaryScreen->monList.mons[result], MON_DATA_IS_EGG, NULL))
+			result = (result + delta) % numMons;
 	}
 
 	// necessary to gracefully handle parties of 1 Pokemon
-	if (result == gCurrentPartyIndex)
+	if (result == sLastViewedMonIndex)
 		return -1;
 
 	return result;
 };
+
+#define sMultiPokemonPartyMenuOrder ((u8*) 0x8463FB8)
+s8 ChangeSummaryScreenMonMulti(s8 delta)
+{
+	u8 i;
+	u8 listPos = 0;
+	u8 numMons = PARTY_SIZE;
+	delta += numMons;
+
+	for (i = 0; i < PARTY_SIZE; ++i)
+	{
+		if (sMultiPokemonPartyMenuOrder[i] == sLastViewedMonIndex)
+		{
+			listPos = i;
+			break;
+		}
+	}
+
+	//Guarantees result will be in range [0, numMons)
+	u8 result = (listPos + delta) % numMons;
+
+	//Skip over eggs on other pages
+	if (sMonSummaryScreen->curPageIndex != PAGE_INFO)
+	{
+		while (GetMonData(&gPlayerParty[sMultiPokemonPartyMenuOrder[result]], MON_DATA_IS_EGG, NULL))
+			result = (result + delta) % numMons;
+	}
+
+	//Skip over empty slots
+	while (GetMonData(&gPlayerParty[sMultiPokemonPartyMenuOrder[result]], MON_DATA_SPECIES, NULL) == SPECIES_NONE)
+		result = (result + delta) % numMons;
+
+	return sMultiPokemonPartyMenuOrder[result];
+}
+
+bool8 SummaryScreen_IsMultiBattlePartner(void)
+{
+	#ifdef FLAG_VIEWING_MULTI_TRAINER_TEAM
+	if (FlagGet(FLAG_VIEWING_MULTI_TRAINER_TEAM))
+		return TRUE;
+	#endif
+
+	#ifdef FLAG_USE_HALF_PARTNER_TEAM
+	if (FlagGet(FLAG_USE_HALF_PARTNER_TEAM))
+	{
+		u8 multiTrainerId = gTrainers[VarGet(VAR_PARTNER)].encounterMusic;
+
+		if (multiTrainerId > 0
+		&& GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_OT_ID, NULL) == gFrontierMultiBattleTrainers[multiTrainerId - 1].otId)
+			return TRUE;
+	}
+	#endif
+
+    return IsMultiBattle()
+		&& (sLastViewedMonIndex >= 4 || sLastViewedMonIndex == 1);
+}
+
+bool32 SummaryScreenMonIsFromGBA(void)
+{
+    u8 version = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MET_GAME, 0);
+	return version == VERSION_FIRE_RED; //Not compatible with any other game
+}
+
+bool8 TryReplaceSummaryScreenLocationWithFarAwayLocation(struct Pokemon* mon, u8 metLocation)
+{
+	if (IsTradedMon(mon) && !SummaryScreen_IsMultiBattlePartner())
+		metLocation = 0; //Forces "met in a trade"
+
+	return metLocation;
+}
+
 
 //Battle Tower Selection Updates//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -831,7 +908,7 @@ struct
 	[FIELD_MOVE_DIG] = {(void*) 0x80CAC45, 0x0d},
 	[FIELD_MOVE_MILK_DRINK] = {(void*) 0x80E6631, 0x10},
 	[FIELD_MOVE_SOFT_BOILED] = {(void*) 0x80E6631, 0x10},
-	[FIELD_MOVE_SWEET_SCENT] = {(void*) 0x80DF0B1, 0x0d},
+	[FIELD_MOVE_SWEET_SCENT] = {(void*) SetUpFieldMove_SweetScent, 0x0d},
 	[FIELD_MOVE_ROCK_CLIMB] = {(void*) SetUpFieldMove_RockClimb, 0x0d},
 	[FIELD_MOVE_DEFOG] = {(void*) SetUpFieldMove_Defog, 0x0d},
 	[FIELD_MOVE_DIVE] = {SetUpFieldMove_Dive, 0x0d},
@@ -912,63 +989,117 @@ const u8 gFieldMoveBadgeRequirements[FIELD_MOVE_COUNT] =
 void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 {
 	u8 i, j, k;
+	#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
+	bool8 knowsFly = FALSE;
+	bool8 knowsDig = FALSE;
+	bool8 knowsCut = FALSE;
+	#endif
 
 	sPartyMenuInternal->numActions = 0;
 	AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SUMMARY);
+
+	#ifdef FLAG_SANDBOX_MODE
+	if (FlagGet(FLAG_SANDBOX_MODE) && FlagGet(FLAG_SYS_GAME_CLEAR))
+		goto SKIP_FIELD_MOVES;
+	#endif
+
+	#ifdef NO_FIELD_MOVES
+	goto SKIP_FIELD_MOVES;
+	#endif
 
 	//Add field moves to action list
 	for (i = 0, k = 0; i < MAX_MON_MOVES; ++i)
 	{
 		for (j = 0; j < NELEMS(gFieldMoves); ++j)
 		{
-			if (GetMonData(&mons[slotId], i + MON_DATA_MOVE1, NULL) == gFieldMoves[j])
+			if (GetMonData(&mons[slotId], MON_DATA_MOVE1 + i, NULL) == gFieldMoves[j])
 			{
+				#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
+				if (gFieldMoves[j] == MOVE_ROCKCLIMB
+				&& !CheckBagHasItem(ITEM_HM08_ROCK_CLIMB, 1))
+					continue; //Don't allow Rock Climbing until the item is obtained
+				#endif
+
 				AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, j + MENU_FIELD_MOVES);
 				++k;
 
+				#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 				if (gFieldMoves[j] == MOVE_FLY)
-					k = MAX_MON_MOVES; //No point in appending Fly if it is already there
-				break;
+					knowsFly = TRUE; //No point in appending Fly if it is already there
+				else if (gFieldMoves[j] == MOVE_DIG)
+					knowsDig = TRUE;
+				else if (gFieldMoves[j] == MOVE_CUT)
+					knowsCut = TRUE;
+				#endif
 			}
 		}
 	}
 
 	//Try to give the mon fly
 	#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
-	if (k < MAX_MON_MOVES) //Doesn't know 4 field moves
+	u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES2, NULL);
+	if (species != SPECIES_NONE && species != SPECIES_EGG)
 	{
-		#ifndef DEBUG_HMS
-		bool8 hasHM = CheckBagHasItem(ITEM_HM02_FLY, 1) > 0;
-		u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES2, NULL);
-		
-		if (species != SPECIES_NONE
-		&& species != SPECIES_EGG
-		&& hasHM
-		&& HasBadgeToUseFieldMove(FIELD_MOVE_FLY)
-		&& CanMonLearnTMTutor(&mons[slotId], ITEM_HM02_FLY, 0) == CAN_LEARN_MOVE)
-		#endif
+		if (k < MAX_MON_MOVES && !knowsCut) //Doesn't know 4 field moves
 		{
-			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_FLY);
-			++k;
+			#ifndef DEBUG_HMS
+			if (HasBadgeToUseFieldMove(FIELD_MOVE_CUT)
+			&& (CheckBagHasItem(ITEM_HM01_CUT, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_HM01_CUT, 0) == CAN_LEARN_MOVE))
+			#endif
+			{
+				AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_CUT);
+				++k;
+			}
+		}
+		
+
+		if (k < MAX_MON_MOVES && !knowsFly) //Doesn't know 4 field moves
+		{
+			if (Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) //Only add if usable
+			#ifndef DEBUG_HMS
+			&& HasBadgeToUseFieldMove(FIELD_MOVE_FLY)
+			&& (
+			 #ifdef FLAG_BOUGHT_ADM
+			 FlagGet(FLAG_BOUGHT_ADM) ||
+			#endif
+			 #ifdef FLAG_SANDBOX_MODE
+			 FlagGet(FLAG_SANDBOX_MODE) ||
+			 #endif
+			 (CheckBagHasItem(ITEM_HM02_FLY, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_HM02_FLY, 0) == CAN_LEARN_MOVE))
+			#endif
+			)
+			{
+				AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_FLY);
+				++k;
+			}
+	}
+
+	if (k < MAX_MON_MOVES && !knowsDig) //Doesn't know 4 field moves
+	{
+			if (CanUseEscapeRopeOnCurrMap() //Only add if usable
+			#ifndef DEBUG_HMS
+			&& HasBadgeToUseFieldMove(FIELD_MOVE_DIG)
+			&& (
+			 #ifdef FLAG_BOUGHT_ADM
+			 FlagGet(FLAG_BOUGHT_ADM) ||
+			 #endif
+			 #ifdef FLAG_SANDBOX_MODE
+			 FlagGet(FLAG_SANDBOX_MODE) ||
+			 #endif
+			 (CheckBagHasItem(ITEM_TM28, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_TM28, 0) == CAN_LEARN_MOVE))
+			#endif
+			)
+			{
+				AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_DIG);
+				++k;
+			}
 		}
 	}
-	/*if (k < MAX_MON_MOVES) //Doesn't know 4 field moves
-	{
-		bool8 hasTM = CheckBagHasItem(ITEM_TM29_DIG, 1) > 0;
-		u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES2, NULL);
-		
-		if (species != SPECIES_NONE
-		&& species != SPECIES_EGG
-		&& hasTM
-		&& HasBadgeToUseFieldMove(FIELD_MOVE_DIG)
-		&& CanMonLearnTMTutor(&mons[slotId], ITEM_TM29_DIG, 0) == CAN_LEARN_MOVE)
-		{
-			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_DIG);
-			++k;
-		}
-	}*/
 	#endif
 
+#ifdef FLAG_SANDBOX_MODE
+SKIP_FIELD_MOVES:
+#endif
 	if (!ShouldDisablePartyMenuItemsBattleTower())
 	{
 		if (GetMonData(&mons[1], MON_DATA_SPECIES, NULL) != SPECIES_NONE)
@@ -988,7 +1119,10 @@ static bool8 SetUpFieldMove_Fly(void)
 		return FALSE;
 
 	if (Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) == TRUE)
+	{
+		gFieldCallback2 = NULL; //Undoes when its set when party menu is accessed via R
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -997,6 +1131,9 @@ static bool8 SetUpFieldMove_Fly(void)
 static bool8 SetUpFieldMove_Surf(void)
 {
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF))
+		return FALSE;
+
+	if (IsCurrentAreaVolcano())
 		return FALSE;
 
 	u16 item = ITEM_NONE;
@@ -1060,6 +1197,14 @@ static bool8 SetUpFieldMove_Dive(void)
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_DIVE))
 		return FALSE;
 
+	if (!HasBadgeToUseFieldMove(FIELD_MOVE_DIVE))
+		return FALSE;
+
+	#if (defined FLAG_BOUGHT_ADM && !defined DEBUG_HMS)
+	if (!FlagGet(FLAG_BOUGHT_ADM))
+		return FALSE;
+	#endif
+
 	gFieldEffectArguments[1] = TrySetDiveWarp();
 	if (gFieldEffectArguments[1] != 0)
 	{
@@ -1069,6 +1214,16 @@ static bool8 SetUpFieldMove_Dive(void)
 	}
 
 	return FALSE;
+}
+
+static bool8 SetUpFieldMove_SweetScent(void)
+{
+	if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
+		return FALSE; //Sweet Scent glitches out sprites underwater
+
+	gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
+	gPostMenuFieldCallback = FieldCallback_SweetScent;
+	return TRUE;
 }
 
 static void FieldCallback_RockClimb(void)
@@ -1321,8 +1476,11 @@ static void CursorCb_MoveItemCallback(u8 taskId)
 			DisplayPartyMenuMessage(gStringVar4, 1);
 
 			//Update colors of selected boxes
-			AnimatePartySlot(gPartyMenu.slotId2, 0);
-			AnimatePartySlot(gPartyMenu.slotId, 1);
+			AnimatePartySlot(gPartyMenu.slotId2, 1);
+			AnimatePartySlot(gPartyMenu.slotId, 0);
+
+			//Move cursor to second select slot
+			gPartyMenu.slotId = gPartyMenu.slotId2;
 
 			//Return to the main party menu
 			ScheduleBgCopyTilemapToVram(2);
@@ -1380,7 +1538,7 @@ static void ItemUseCB_DNASplicersStep(u8 taskId, TaskFunc func);
 static void Task_TryLearnPostFormeChangeMove(u8 taskId);
 static struct Pokemon* GetBaseMonForFusedSpecies(u16 species);
 static void ItemUseCB_AbilityCapsule(u8 taskId, TaskFunc func);
-static u8 GetAbilityCapsuleNewAbility(struct Pokemon* mon);
+static u16 GetAbilityCapsuleNewAbility(struct Pokemon* mon);
 static void Task_OfferAbilityChange(u8 taskId);
 static void Task_HandleAbilityChangeYesNoInput(u8 taskId);
 static void Task_ChangeAbility(u8 taskId);
@@ -1388,6 +1546,10 @@ static void ItemUseCB_MaxPowder(u8 taskId, TaskFunc func);
 static void Task_OfferGigantamaxChange(u8 taskId);
 static void Task_HandleGigantamaxChangeYesNoInput(u8 taskId);
 static void Task_ChangeGigantamax(u8 taskId);
+static void ItemUseCB_NatureMint(u8 taskId, TaskFunc func);
+static void Task_OfferNatureChange(u8 taskId);
+static void Task_HandleNatureChangeYesNoInput(u8 taskId);
+static void Task_ChangeNature(u8 taskId);
 
 void Task_ClosePartyMenuAfterText(u8 taskId)
 {
@@ -1571,7 +1733,7 @@ void DrawLevelUpWindowPg2(u16 windowId, u16 *currStats, u8 bgColor, u8 fgColor, 
 void ItemUseCB_EvolutionStone(u8 taskId, TaskFunc func)
 {
     PlaySE(SE_SELECT);
-	u16 targetSpecies = GetEvolutionTargetSpecies(&gPlayerParty[gPartyMenu.slotId], 2, gSpecialVar_ItemId);
+	u16 targetSpecies = GetEvolutionTargetSpecies(&gPlayerParty[gPartyMenu.slotId], EVO_MODE_ITEM_USE, gSpecialVar_ItemId);
 
     if (targetSpecies == SPECIES_NONE)
     {
@@ -1584,7 +1746,7 @@ void ItemUseCB_EvolutionStone(u8 taskId, TaskFunc func)
     {
         FreePartyPointers();
         gCB2_AfterEvolution = gPartyMenu.exitCallback;
-        BeginEvolutionScene(&gPlayerParty[gPartyMenu.slotId], targetSpecies, 1, gPartyMenu.slotId);
+		BeginEvolutionScene(&gPlayerParty[gPartyMenu.slotId], targetSpecies, FALSE, gPartyMenu.slotId);
         DestroyTask(taskId);
 		RemoveBagItem(gSpecialVar_ItemId, 1);
     }
@@ -1687,7 +1849,9 @@ static void ItemUseCB_EVReducingBerry(u8 taskId, TaskFunc func)
 		)
 		{
 			u16 hpDiff = oldMaxHP - GetMonData(mon, MON_DATA_MAX_HP, NULL);
-			if (GetMonData(mon, MON_DATA_HP, NULL) == oldHP) //HP didn't change for some reason
+			if (oldHP == 0) //Mon was fainted before
+				SetMonData(mon, MON_DATA_HP, &oldHP); //Keep it fainted
+			else if (GetMonData(mon, MON_DATA_HP, NULL) == oldHP) //HP didn't change for some reason
 			{
 				if (hpDiff > oldHP)
 					oldHP = 1; //Don't faint it
@@ -1766,26 +1930,26 @@ static bool8 FormFuseItemMatchesSpecies(u16 item, u16 species)
 {
         switch (species)
         {
-                case SPECIES_RESHIRAM:
-                case SPECIES_ZEKROM:
-                case SPECIES_KYUREM:
-                case SPECIES_KYUREM_BLACK:
-                case SPECIES_KYUREM_WHITE:
-                        return item == ITEM_DNA_SPLICERS;
-                case SPECIES_NECROZMA:
-                        return item == ITEM_N_SOLARIZER || item == ITEM_N_LUNARIZER;
-                case SPECIES_SOLGALEO:
-                case SPECIES_NECROZMA_DUSK_MANE:
-                        return item == ITEM_N_SOLARIZER;
-                case SPECIES_LUNALA:
-                case SPECIES_NECROZMA_DAWN_WINGS:
-                        return item == ITEM_N_LUNARIZER;
-                case SPECIES_CALYREX:
-		case SPECIES_GLASTRIER:
-		case SPECIES_SPECTRIER:
-		case SPECIES_CALYREX_ICE_RIDER:
-		case SPECIES_CALYREX_SHADOW_RIDER:
-			return item == ITEM_REINS_OF_UNITY;
+            case SPECIES_RESHIRAM:
+            case SPECIES_ZEKROM:
+            case SPECIES_KYUREM:
+            case SPECIES_KYUREM_BLACK:
+            case SPECIES_KYUREM_WHITE:
+                    return item == ITEM_DNA_SPLICERS;
+            case SPECIES_NECROZMA:
+                    return item == ITEM_N_SOLARIZER || item == ITEM_N_LUNARIZER;
+            case SPECIES_SOLGALEO:
+            case SPECIES_NECROZMA_DUSK_MANE:
+                    return item == ITEM_N_SOLARIZER;
+            case SPECIES_LUNALA:
+            case SPECIES_NECROZMA_DAWN_WINGS:
+                    return item == ITEM_N_LUNARIZER;
+            case SPECIES_CALYREX:
+			case SPECIES_GLASTRIER:
+			case SPECIES_SPECTRIER:
+			case SPECIES_CALYREX_ICE_RIDER:
+			case SPECIES_CALYREX_SHADOW_RIDER:
+				return item == ITEM_REINS_OF_UNITY;
         }
 
         return FALSE;
@@ -1801,7 +1965,7 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 	switch (item) {
 		case ITEM_GRACIDEA:
 			#if (defined SPECIES_SHAYMIN && defined SPECIES_SHAYMIN_SKY)
-			if (species == SPECIES_SHAYMIN)
+			if (species == SPECIES_SHAYMIN && !IsNightTime()) //Shaymin can't change form at night
 			{
 				species = SPECIES_SHAYMIN_SKY;
 				DoItemFormChange(mon, species);
@@ -1837,6 +2001,14 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 					species = SPECIES_LANDORUS;
 					break;	
 				#endif
+				#if (defined SPECIES_ENAMORUS && defined SPECIES_ENAMORUS_THERIAN)
+				case SPECIES_ENAMORUS:
+					species = SPECIES_ENAMORUS_THERIAN;
+					break;
+				case SPECIES_ENAMORUS_THERIAN:
+					species = SPECIES_ENAMORUS;
+					break;	
+				#endif
 				default:
 					goto NO_EFFECT;
 			}
@@ -1868,6 +2040,7 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 			{
 				species = SPECIES_ORICORIO;
 				DoItemFormChange(mon, species);
+				RemoveBagItem(Var800E, 1);
 				gTasks[taskId].func = func;
 			}
 			else
@@ -1880,6 +2053,7 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 			{
 				species = SPECIES_ORICORIO_Y;
 				DoItemFormChange(mon, species);
+				RemoveBagItem(Var800E, 1);
 				gTasks[taskId].func = func;
 			}
 			else
@@ -1892,6 +2066,7 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 			{
 				species = SPECIES_ORICORIO_P;
 				DoItemFormChange(mon, species);
+				RemoveBagItem(Var800E, 1);
 				gTasks[taskId].func = func;
 			}
 			else
@@ -1991,9 +2166,9 @@ static struct Pokemon* GetBaseMonForFusedSpecies(u16 species)
 		case SPECIES_NECROZMA_DAWN_WINGS:
 			return &gSaveBlock1->fusedLunala;
 		case SPECIES_CALYREX_ICE_RIDER:
-			return &gSaveBlock1->fusedGlastrier;
+			return &gSaveBlock2->fusedGlastrier;
 		case SPECIES_CALYREX_SHADOW_RIDER:
-			return &gSaveBlock1->fusedSpectrier;
+			return &gSaveBlock2->fusedSpectrier;
 	}
 	
 	return NULL;
@@ -2031,11 +2206,11 @@ static bool8 AlreadyFused(u16 baseSpecies, u16 fuseSpecies)
 		case SPECIES_CALYREX:
 			switch (fuseSpecies) {
 				case SPECIES_SPECTRIER:
-					if (GetMonData(&gSaveBlock1->fusedSpectrier, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
+					if (GetMonData(&gSaveBlock2->fusedSpectrier, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
 						alreadyFused = TRUE;
 					break;
 				case SPECIES_GLASTRIER:
-					if (GetMonData(&gSaveBlock1->fusedGlastrier, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
+					if (GetMonData(&gSaveBlock2->fusedGlastrier, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
 						alreadyFused = TRUE;
 					break;
 			}
@@ -2151,6 +2326,7 @@ static void ItemUseCB_DNASplicersStep(u8 taskId, TaskFunc func)
 				DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].monSpriteId]);
 				DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].statusSpriteId]);
 				CompactPartySlots(); //Must be down here so Pokemon don't shift before the empty space is loaded
+				
 				if (gPartyMenu.slotId2 < gPartyMenu.slotId)
                         --gPartyMenu.slotId; //Adjust since second mon is gone
 
@@ -2295,7 +2471,7 @@ extern const u8 gText_AbilityCapsuleChangedAbility[];
 static void ItemUseCB_AbilityCapsule(u8 taskId, TaskFunc func)
 {
 	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
-	u8 changeTo = GetAbilityCapsuleNewAbility(mon); //Pick Ability to change to
+	u16 changeTo = GetAbilityCapsuleNewAbility(mon); //Pick Ability to change to
 
 	PlaySE(SE_SELECT);
 	if (changeTo != ABILITY_NONE) //Ability can be changed
@@ -2316,32 +2492,42 @@ static void ItemUseCB_AbilityCapsule(u8 taskId, TaskFunc func)
 	}
 }
 
-static u8 GetAbilityCapsuleNewAbility(struct Pokemon* mon)
+static u16 GetAbilityCapsuleNewAbility(struct Pokemon* mon)
 {
 	u16 item = Var800E;
 	u8 abilityType = ItemId_GetHoldEffectParam(item);
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-	u8 ability = GetMonAbility(mon);
-	u8 changeTo = ABILITY_NONE;
+	u16 ability = GetMonAbility(mon);
+	u16 ability1 = GetAbility1(species);
+	u16 ability2 = GetAbility2(species);
+	u16 hiddenAbility = GetHiddenAbility(species);
+	u16 changeTo = ABILITY_NONE;
 
 	if (abilityType != 0) //Hidden Ability Capsule
 	{
-		if (ability != gBaseStats[species].hiddenAbility
-		&& gBaseStats[species].hiddenAbility != ABILITY_NONE)
-			changeTo = gBaseStats[species].hiddenAbility;
+		if (ability != hiddenAbility
+		&& hiddenAbility != ABILITY_NONE
+		#ifdef UNBOUND
+		&& (FlagGet(FLAG_ABILITY_RANDOMIZER)
+		 || SpeciesToNationalPokedexNum(species) != NATIONAL_DEX_ZYGARDE) //Must be given with Power Construct
+		&& (FlagGet(FLAG_SYS_GAME_CLEAR) //Can be given once the game is cleared
+		 || VarGet(VAR_GAME_DIFFICULTY) < OPTIONS_EXPERT_DIFFICULTY //Or if the player is not on a crazy difficulty
+		 || gBaseStats[species].hiddenAbility != ABILITY_IMPOSTER) //Don't allow Imposter until the post-game
+		#endif
+		)
+			changeTo = hiddenAbility; //Set the Hidden Ability
 	}
 	else //Regular ability capsule
 	{
-		if (ability == gBaseStats[species].ability1)
+		if (ability == ability1)
 		{
-			if (ability != gBaseStats[species].ability2
-			&& gBaseStats[species].ability2 != ABILITY_NONE)
-				changeTo = gBaseStats[species].ability2;
+			if (ability != ability2 && ability2 != ABILITY_NONE)
+				changeTo = ability2;
 		}
-		else if (ability == gBaseStats[species].ability2) //Explicit check just in case the Pokemon has its Hidden Ability
+		else if (ability == ability2) //Explicit check just in case the Pokemon has its Hidden Ability
 		{
-			if (gBaseStats[species].ability1 != ABILITY_NONE)
-				changeTo = gBaseStats[species].ability1;
+			if (ability1 != ABILITY_NONE)
+				changeTo = ability1;
 		}
 	}
 	
@@ -2378,6 +2564,7 @@ static void Task_ChangeAbility(u8 taskId)
 	u16 item = Var800E;
 	u8 abilityType = ItemId_GetHoldEffectParam(item);
 	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	PlaySE(SE_USE_ITEM);
 	
 	if (abilityType != 0) //Hidden Ability capsule
@@ -2386,13 +2573,12 @@ static void Task_ChangeAbility(u8 taskId)
 	}
 	else //Regular Ability capsule
 	{
-		u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 		u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
 		u8 abilityNum = (personality & 1) ^ 1; //Flip ability bit
 
-		u32 trainerId = GetMonData(mon, MON_DATA_OT_ID, NULL);
-		u16 sid = HIHALF(trainerId);
-		u16 tid = LOHALF(trainerId);
+		u32 otId = GetMonData(mon, MON_DATA_OT_ID, NULL);
+		u16 sid = HIHALF(otId);
+		u16 tid = LOHALF(otId);
 
 		u8 gender = GetGenderFromSpeciesAndPersonality(species, personality);
 		bool8 isShiny = IsMonShiny(mon);
@@ -2415,7 +2601,9 @@ static void Task_ChangeAbility(u8 taskId)
 			personality &= ~(1);
 			personality |= abilityNum; //Either 0 or 1
 
-		} while (GetNatureFromPersonality(personality) != nature || GetGenderFromSpeciesAndPersonality(species, personality) != gender
+		} while (GetNatureFromPersonality(personality) != nature
+		|| GetGenderFromSpeciesAndPersonality(species, personality) != gender
+		|| (!isShiny && IsShinyOtIdPersonality(otId, personality)) //No free shinies
 		|| (species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter)
 		|| (isMinior && GetMiniorCoreFromPersonality(personality) != miniorCore));
 
@@ -2528,7 +2716,48 @@ void FieldUseFunc_Honey(u8 taskId)
 {
 	RemoveBagItem(Var800E, 1);
 	sItemUseOnFieldCB = Task_HoneyField;
-	sub_80A2310(taskId);
+	SetUpItemUseOnFieldCallback(taskId);
+}
+
+extern u8 GetCurrentLevelCap(void); //Must be implemented yourself
+void ItemUseCB_RareCandy(u8 taskId, TaskFunc func)
+{
+	bool8 noEffect;
+	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+	u16 item = gSpecialVar_ItemId;
+	u8 level = GetMonData(mon, MON_DATA_LEVEL, NULL);
+
+	PlaySE(SE_SELECT);
+
+	if (level >= MAX_LEVEL
+	#ifdef FLAG_HARD_LEVEL_CAP
+	|| (FlagGet(FLAG_HARD_LEVEL_CAP) && level >= GetCurrentLevelCap())
+	#endif
+	)
+	{
+		if (GetEvolutionTargetSpecies(mon, EVO_MODE_NORMAL, 0) == SPECIES_NONE) //Can't use Rare Candy to evolve mon
+			noEffect = TRUE;
+		else
+		{
+			RemoveBagItem(item, 1);
+			PartyMenuTryEvolution(taskId);
+			return;
+		}
+	}
+	else
+		noEffect = PokemonItemUseNoEffect(mon, item, gPartyMenu.slotId, 0);
+
+	if (noEffect)
+	{
+		gPartyMenuUseExitCallback = FALSE;
+		DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = func;
+	}
+	else
+	{
+		ItemUseCB_RareCandyStep(taskId, func);
+	}
 }
 
 #ifdef UNBOUND
@@ -2546,8 +2775,8 @@ void FieldUseFunc_VsSeeker(u8 taskId)
     }
     else
     {
-        sItemUseOnFieldCB = (void*) (0x810D148 | 1); //Task_VsSeeker_0
-        sub_80A2310(taskId);
+		sItemUseOnFieldCB = (void*) (0x810C670 | 1); //Task_VsSeeker_0
+		SetUpItemUseOnFieldCallback(taskId);
     }
 }
 #endif
@@ -2571,7 +2800,91 @@ static void Task_ExpShareField(u8 taskId)
 void FieldUseFunc_ExpShare(u8 taskId)
 {
     sItemUseOnFieldCB = Task_ExpShareField;
-    sub_80A2310(taskId);
+    SetUpItemUseOnFieldCallback(taskId);
+}
+
+void FieldUseFunc_NatureMint(u8 taskId)
+{
+	gItemUseCB = ItemUseCB_NatureMint;
+	SetUpItemUseCallback(taskId);
+}
+
+extern const u8 gText_MintOfferGive[];
+extern const u8 gText_MintUsed[];
+static void ItemUseCB_NatureMint(u8 taskId, TaskFunc func)
+{
+	u16 item = Var800E;
+	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+	u8 oldNature = mon->natureMint != 0 ? mon->natureMint - 1 : GetNature(mon);
+	u8 newNature = ItemId_GetMystery2(item);
+
+	PlaySE(SE_SELECT);
+
+	switch (oldNature)
+	{
+		case NATURE_HARDY:
+		case NATURE_DOCILE:
+		case NATURE_BASHFUL:
+		case NATURE_QUIRKY:
+			oldNature = NATURE_SERIOUS;
+	}
+
+	if (newNature != oldNature)
+	{
+		GetMonNickname(mon, gStringVar1);
+		StringExpandPlaceholders(gStringVar4, gText_MintOfferGive);
+		DisplayPartyMenuMessage(gStringVar4, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = Task_OfferNatureChange;
+	}
+	else //No Effect
+	{
+		gPartyMenuUseExitCallback = FALSE;
+		DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = func;
+	}
+}
+
+static void Task_OfferNatureChange(u8 taskId)
+{
+	if (IsPartyMenuTextPrinterActive() != TRUE)
+	{
+		PartyMenuDisplayYesNoMenu();
+		gTasks[taskId].func = Task_HandleNatureChangeYesNoInput;
+	}
+}
+
+static void Task_HandleNatureChangeYesNoInput(u8 taskId)
+{
+	switch (Menu_ProcessInputNoWrapClearOnChoose())
+	{
+		case 0:
+			gTasks[taskId].func = Task_ChangeNature;
+			break;
+		case MENU_B_PRESSED:
+			PlaySE(SE_SELECT);
+			// Fallthrough
+		case 1:
+			gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+			break;
+	}
+}
+
+static void Task_ChangeNature(u8 taskId)
+{
+    u16 item = Var800E;
+    struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+    
+    PlaySE(SE_USE_ITEM);
+    GetMonNickname(mon, gStringVar1);
+    mon->natureMint = ItemId_GetMystery2(item) + 1;
+    CalculateMonStats(mon);
+    StringExpandPlaceholders(gStringVar4, gText_MintUsed);
+    DisplayPartyMenuMessage(gStringVar4, TRUE);
+    ScheduleBgCopyTilemapToVram(2);
+    gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+    RemoveBagItem(Var800E, 1);
 }
 
 void ChooseFaintedMon(u8 taskId, s8 *slotPtr)
@@ -2590,4 +2903,18 @@ void ChooseFaintedMon(u8 taskId, s8 *slotPtr)
         gSelectedMonPartyId = partyId;
         Task_ClosePartyMenu(taskId);
     }
+}
+
+void EmitChoosePokemon(u8 bufferId, u8 caseId, u8 slotId, u16 abilityId, u8 *data)
+{
+    s32 i;
+
+    gBattleBuffersTransferData[0] = CONTROLLER_CHOOSEPOKEMON;
+    gBattleBuffersTransferData[1] = caseId;
+    gBattleBuffersTransferData[2] = slotId;
+    gBattleBuffersTransferData[3] = abilityId;
+	gBattleBuffersTransferData[8] = (abilityId & 0xFF00) >> 8;
+    for (i = 0; i < 3; i++)
+        gBattleBuffersTransferData[4 + i] = data[i];
+    PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, 9);
 }

@@ -61,8 +61,9 @@ move_tables.s
 .global gSpecialWholeFieldMoves
 .global gAromaVeilProtectedMoves
 .global gMovesThatLiftProtectTable
-.global gMovesWithQuietBGM
 .global gTerastalPowerBoostBannedMoves
+.global gSlicingMoves
+.global gWindMoves
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -932,6 +933,7 @@ gTypeChangeExceptionMoves:
 .hword MOVE_RAGINGBULL
 .hword MOVE_TERABLAST
 .hword MOVE_IVYCUDGEL
+.hword MOVE_TERASTARSTORM
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1250,17 +1252,6 @@ gMovesThatLiftProtectTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-gMovesWithQuietBGM:
-.hword MOVE_SING
-@.hword MOVE_PERISHSONG
-.hword MOVE_GRASSWHISTLE
-.hword MOVE_RELICSONG
-.hword MOVE_ROUND
-@.hword MOVE_DARKPULSE
-.hword 0xFFFF
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
 gTerastalPowerBoostBannedMoves:
 .hword MOVE_TWINEEDLE
 .hword MOVE_DOUBLEKICK
@@ -1325,4 +1316,56 @@ gTerastalPowerBoostBannedMoves:
 .hword MOVE_TWINBEAM
 .hword MOVE_TRIPLEDIVE
 .hword MOVE_POPULATIONBOMB
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+gSlicingMoves:
+.hword MOVE_AQUACUTTER
+.hword MOVE_CUT
+.hword MOVE_AIRCUTTER
+.hword MOVE_AIRSLASH
+.hword MOVE_STONEAXE
+.hword MOVE_BEHEMOTHBLADE
+.hword MOVE_SLASH
+.hword MOVE_CROSSPOISON
+.hword MOVE_PSYCHOCUT
+.hword MOVE_PSYBLADE
+.hword MOVE_RAZORSHELL
+.hword MOVE_XSCISSOR
+.hword MOVE_SECRETSWORD
+.hword MOVE_SACREDSWORD
+.hword MOVE_SOLARBLADE
+.hword MOVE_TACHYONCUTTER
+.hword MOVE_NIGHTSLASH
+.hword MOVE_AERIALACE
+.hword MOVE_KOWTOWCLEAVE
+.hword MOVE_POPULATIONBOMB
+.hword MOVE_RAZORLEAF
+.hword MOVE_MIGHTYCLEAVE
+.hword MOVE_CEASELESSEDGE
+.hword MOVE_BITTERBLADE
+.hword MOVE_LEAFBLADE
+.hword MOVE_FURYCUTTER
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+gWindMoves:
+.hword MOVE_AIRCUTTER
+.hword MOVE_AEROBLAST
+.hword MOVE_GUST
+.hword MOVE_WILDBOLTSTORM
+.hword MOVE_BLEAKWINDSTORM
+.hword MOVE_ICYWIND
+.hword MOVE_TWISTER
+.hword MOVE_SANDSEARSTORM
+.hword MOVE_HEATWAVE
+.hword MOVE_PETALBLIZZARD
+.hword MOVE_SPRINGTIDESTORM
+.hword MOVE_BLIZZARD
+.hword MOVE_HURRICANE
+.hword MOVE_FAIRYWIND
+.hword MOVE_SILVERWIND
+.hword MOVE_OMINOUSWIND
 .hword MOVE_TABLES_TERMIN

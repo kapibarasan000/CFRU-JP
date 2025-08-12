@@ -26,7 +26,7 @@ typedef bool8 IgnoredPalT[16];
 
 //This file's functions:
 #ifdef TIME_ENABLED
-static void FadeDayNightPalettes();
+static void FadeDayNightPalettes(void);
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color);
 static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blendColor);
 static u16 FadeColourForDNS(struct PlttData* blend, u8 coeff, s8 r, s8 g, s8 b);
@@ -54,7 +54,7 @@ void TransferPlttBuffer(void)
 }
 
 #ifdef TIME_ENABLED
-static void FadeDayNightPalettes()
+static void FadeDayNightPalettes(void)
 {
 	u32 palsToFade;
 	bool8 inOverworld, fadePalettes;
@@ -143,7 +143,7 @@ static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color)
 {
 	u16 paletteOffset;
 
-	for (paletteOffset = 256; selectedPalettes; paletteOffset += 16)
+	for (paletteOffset = 256; selectedPalettes; paletteOffset += 16) //Sprites
 	{
 		if (selectedPalettes & 1)
 		{
@@ -158,6 +158,7 @@ static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color)
 					BlendFadedPalette(paletteOffset, 16, coeff, color);
 			}
 		}
+
 		selectedPalettes >>= 1;
 	}
 }
@@ -269,12 +270,11 @@ static void FadeOverworldBackground(u32 selectedPalettes, u8 coeff, u32 color, b
 		gWindowsLitUp = FALSE;
 	}
 
-	for (u16 paletteOffset = 0; paletteOffset < 256; paletteOffset += 16) //Only background colours
+	for (u16 paletteOffset = 0; paletteOffset < 13 * 16; paletteOffset += 16) //Only background colours
 	{
 		if (selectedPalettes & 1)
-		{
 			BlendFadedUnfadedPalette(paletteOffset, 16, coeff, color, palFadeActive);
-		}
+
 		selectedPalettes >>= 1;
 	}
 }

@@ -66,7 +66,7 @@ IMAGES = './Images'
 ASFLAGS = ['-mthumb', '-I', ASSEMBLY]
 LDFLAGS = ['BPRJ.ld', '-T', 'linker.ld']
 CFLAGS = ['-mthumb', '-mno-thumb-interwork', '-mcpu=arm7tdmi', '-mtune=arm7tdmi',
-          '-mno-long-calls', '-march=armv4t', '-Wall', '-Wextra', '-Os', '-fira-loop-pressure', '-fipa-pta']
+          '-mno-long-calls', '-march=armv4t', '-Wall', '-Wextra', '-O2', '-fira-loop-pressure', '-fipa-pta']
 
 
 class Master:
@@ -331,7 +331,13 @@ def ProcessMusic(midiFile: str) -> str:
 def LinkObjects(objects: itertools.chain) -> str:
     """Link objects into one binary."""
     linked = 'build/linked.o'
-    cmd = [LD] + LDFLAGS + ['-o', linked] + list(objects)
+
+    obj_list_path = 'object_files.txt'
+    with open(obj_list_path, 'w', encoding='utf-8') as f:
+        for obj in objects:
+            f.write(obj.replace("\\", "/") + '\n')
+
+    cmd = [LD] + LDFLAGS + ['-o', linked, f'@{obj_list_path}']
     RunCommand(cmd)
     return linked
 

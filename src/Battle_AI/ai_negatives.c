@@ -111,7 +111,8 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	data->atkAbility = GetAIAbility(bankAtk, bankDef, move);
 	data->defAbility = GetAIAbility(bankDef, bankAtk, predictedMove);
 
-	if (!NO_MOLD_BREAKERS(data->atkAbility, move) && gMoldBreakerIgnoredAbilities[data->defAbility])
+	if (IsTargetAbilityIgnored(data->defAbility, data->atkAbility, move)
+	&& data->defItemEffect != ITEM_EFFECT_ABILITY_SHIELD)
 		data->defAbility = ABILITY_NONE;
 
 	u8 moveEffect = gBattleMoves[move].effect;
@@ -236,6 +237,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 			// Fire
 			case ABILITY_FLASHFIRE:
+			case ABILITY_WELLBAKEDBODY:
 				if (moveType == TYPE_FIRE)
 				{
 					if (!TARGETING_PARTNER) //Good idea to attack partner
@@ -255,6 +257,17 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			// Grass
 			case ABILITY_SAPSIPPER:
 				if (moveType == TYPE_GRASS)
+				{
+					if (!TARGETING_PARTNER) //Good idea to attack partner
+					{
+						DECREASE_VIABILITY(20);
+						return viability;
+					}
+				}
+				break;
+
+			case ABILITY_EARTHEATER:
+				if (moveType == TYPE_GROUND)
 				{
 					if (!TARGETING_PARTNER) //Good idea to attack partner
 					{
@@ -306,8 +319,20 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				}
 				break;
 
+			case ABILITY_WINDRIDER:
+				if (CheckTableForMove(move, gWindMoves))
+				{
+					if (!TARGETING_PARTNER) //Good idea to attack partner
+					{
+						DECREASE_VIABILITY(20);
+						return viability;
+					}
+				}
+				break;
+
 			case ABILITY_DAZZLING:
-			//case ABILITY_QUEENLYMAJESTY:
+			case ABILITY_QUEENLYMAJESTY:
+			case ABILITY_ARMORTAIL:
 				if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Check if right num
 				{
 					DECREASE_VIABILITY(10);
@@ -361,7 +386,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 			case ABILITY_CLEARBODY:
 			case ABILITY_FULLMETALBODY:
-			//case ABILITY_WHITESMOKE:
+			case ABILITY_WHITESMOKE:
 				if (CheckTableForMoveEffect(move, gStatLoweringMoveEffects))
 				{
 					DECREASE_VIABILITY(10);
@@ -379,6 +404,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				break;
 
 			case ABILITY_KEENEYE:
+			case ABILITY_MINDSEYE:
 				if (moveEffect == EFFECT_ACCURACY_DOWN
 				||  moveEffect == EFFECT_ACCURACY_DOWN_2)
 				{
@@ -495,7 +521,8 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					break;
 
 				case ABILITY_DAZZLING:
-				//case ABILITY_QUEENLYMAJESTY:
+				case ABILITY_QUEENLYMAJESTY:
+				case ABILITY_ARMORTAIL:
 					if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Check if right num
 					{
 						DECREASE_VIABILITY(10);
@@ -793,7 +820,7 @@ MOVESCR_CHECK_0:
 					break;
 
 				case MOVE_STUFFCHEEKS:
-					if (gNewBS->SavedConsumedItems[bankAtk] == ITEM_NONE || !IsBerry(gNewBS->SavedConsumedItems[bankAtk]))
+					if (SAVED_CONSUMED_ITEMS(bankAtk) == ITEM_NONE || !IsBerry(SAVED_CONSUMED_ITEMS(bankAtk)))
 						DECREASE_VIABILITY(10);
 					break;
 
@@ -1380,7 +1407,7 @@ MOVESCR_CHECK_0:
 				case MOVE_LASERFOCUS:
 					if (IsLaserFocused(bankAtk))
 						DECREASE_VIABILITY(10);
-					else if (data->defAbility == ABILITY_SHELLARMOR)
+					else if (data->defAbility == ABILITY_SHELLARMOR || data->defAbility == ABILITY_BATTLEARMOR)
 						DECREASE_VIABILITY(8);
 					break;
 
@@ -2024,7 +2051,7 @@ MOVESCR_CHECK_0:
 				else
 					goto AI_STANDARD_DAMAGE;
 			}
-			else if (gNewBS->SavedConsumedItems[bankAtk] == ITEM_NONE || data->atkItem != ITEM_NONE)
+			else if (SAVED_CONSUMED_ITEMS(bankAtk) == ITEM_NONE || data->atkItem != ITEM_NONE)
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -2813,7 +2840,7 @@ static void AI_Flee(void)
 
 u8 AIScript_Roaming(const u8 bankAtk, const unusedArg u8 bankDef, const unusedArg u16 move, const u8 originalViability, unusedArg struct AIScript* data)
 {
-	u8 atkAbility = ABILITY(bankAtk);
+	u16 atkAbility = ABILITY(bankAtk);
 	u8 atkItemEffect = ITEM_EFFECT(bankAtk);
 
 	if (atkAbility == ABILITY_RUNAWAY
