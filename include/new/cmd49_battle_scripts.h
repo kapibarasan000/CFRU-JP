@@ -10,7 +10,6 @@
 
 #define BattleScript_ThrashConfuses (const u8*) 0x81BD081
 #define BattleScript_DefrostedViaFireMove (const u8*) 0x81BD054
-#define BattleScript_Recoil (const u8*) 0x81BD1FF
 
 extern const u8 BattleScript_KingsShield[];
 extern const u8 BattleScript_SpikyShield[];
@@ -38,3 +37,4 @@ extern const u8 BattleScript_AbilityTransformed[];
 extern const u8 BattleScript_RaidShields[];
 extern const u8 BattleScript_BrokenRaidBarrier[];
 extern const u8 BattleScript_RaidBattleStatIncrease[];
+extern const u8 BattleScript_Recoil[];

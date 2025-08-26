@@ -37,6 +37,7 @@ cmd49_battle_scripts.s
 .global BattleScript_BrokenRaidBarrier
 .global BattleScript_RaidBattleStatIncrease
 .global BattleScript_MistProtected
+.global BattleScript_Recoil
 
 .global ToxicOrbString
 .global FlameOrbString
@@ -458,6 +459,21 @@ BattleScript_MistProtected:
 	printstring 98 @;STRINGID_PKMNPROTECTEDBYMIST
 	waitmessage DELAY_1SECOND
 	callasm TryHideActiveAbilityPopUps @;For Gooey
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_Recoil:
+	jumpifmove MOVE_STRUGGLE BattleScript_DoRecoil
+	jumpifability BANK_ATTACKER ABILITY_ROCKHEAD BattleScript_RecoilEnd
+BattleScript_DoRecoil:
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
+	healthbarupdate BANK_ATTACKER
+	datahpupdate BANK_ATTACKER
+	printstring 100 @;STRINGID_PKMNHITWITHRECOIL
+	waitmessage DELAY_1SECOND
+	faintpokemon BANK_ATTACKER 0x0 0x0
+BattleScript_RecoilEnd:
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

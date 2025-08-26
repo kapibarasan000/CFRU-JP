@@ -4018,6 +4018,7 @@ DoodlePartnerCopy:
 	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81BD298 @;Try to revert Cherrim and Castform
 	callasm RestoreOriginalAttackerAndTarget
+	callasm SetAttackerPartner
 	tryactivateswitchinability BANK_ATTACKER
 	callasm RestoreOriginalAttackerAndTarget
 	goto BS_MOVE_END
