@@ -543,14 +543,24 @@ AddFontHook:
 	lsr r2, r0, #0x18
 	cmp r2, #0x53
 	beq ChangeVu
-	ldr r3, =(0x0809F45E +1)
-	bx r3
+	mov r3, #0xFA
+	lsl r3, r3, #0x18
+	add r0, r0, r3
+	lsr r0, r0, #0x18
+	cmp r0, #0x4
+	bhi NotKaGyou
+	ldr r0, =(0x0809F46A +1)
+	bx r0
 
 ChangeVu:
 	add r0, r2, #0x0
 	add r0, #0x9E
 	ldr r3, =(0x0809F50A +1)
 	bx r3
+
+NotKaGyou:
+	ldr r0, =(0x0809F470 +1)
+	bx r0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dakuten Check
