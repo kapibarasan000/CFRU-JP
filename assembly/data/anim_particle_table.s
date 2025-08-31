@@ -653,7 +653,7 @@ animparticlepal 0x8c2f5a0,	ANIM_TAG_SMELLINGSALT_EFFECT
 animparticlepal 0x8c2fa50,	ANIM_TAG_METEOR
 animparticlepal 0x8c2fb94,	ANIM_TAG_FLAT_ROCK
 animparticlepal 0x8c2f69c,	ANIM_TAG_MAGNIFYING_GLASS
-animparticlepal 0x8cc1b3f4,	ANIM_TAG_BROWN_ORB
+animparticlepal 0x8c1b3f4,	ANIM_TAG_BROWN_ORB
 animparticlepal 0x8d79b90,	ANIM_TAG_METAL_SOUND_WAVES
 animparticlepal 0x8d799Ac,	ANIM_TAG_FLYING_DIRT
 animparticlepal 0x8d7a808,	ANIM_TAG_ICICLE_SPEAR

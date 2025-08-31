@@ -900,7 +900,7 @@ struct
 	[FIELD_MOVE_FLASH] = {(void*) 0x80CACF9, 0x0d},
 	[FIELD_MOVE_CUT] = {(void*) 0x80972C5, 0x07},
 	[FIELD_MOVE_FLY] = {SetUpFieldMove_Fly, 0x0d},
-	[FIELD_MOVE_STRENGTH] = {(void*) 0x80D18AC, 0x0d},
+	[FIELD_MOVE_STRENGTH] = {(void*) 0x80D18AD, 0x0d},
 	[FIELD_MOVE_SURF] = {SetUpFieldMove_Surf, 0x08},
 	[FIELD_MOVE_ROCK_SMASH] = {(void*) 0x80CABA5, 0x0d},
 	[FIELD_MOVE_WATERFALL] = {SetUpFieldMove_Waterfall, 0x0d},

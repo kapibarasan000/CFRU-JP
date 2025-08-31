@@ -951,9 +951,9 @@ VeryTallGrassFix:
 	mov r0, r6
 	bl GetEventObjectGraphicsInfoByEventObj
 
-.org 0xDD024, 0xFF @UpdateHotSpringsWaterFieldEffect
+/*.org 0xDD024, 0xFF @UpdateHotSpringsWaterFieldEffect
 	mov r0, r1
-	bl GetEventObjectGraphicsInfoByEventObj
+	bl GetEventObjectGraphicsInfoByEventObj*/
 
 .org 0xDD7CA, 0xFF @FldEff_SandPile
 	mov r0, r6
