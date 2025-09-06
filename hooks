@@ -461,7 +461,7 @@ FieldCB_RushInjuredPokemonToCenter 0807ED18 0
 CamomonsSummaryScreenHook 08136984 0
 ChangeSummaryScreenMonSinglesDoubles 0813B9F0 1
 ChangeSummaryScreenMonMulti 0813BB70 1
-SummaryScreenOTGenderColour 08136A8E 3
+SummaryScreenOTGenderColour 081377CC 1
 SummaryScreen_IsMultiBattlePartner 08139310 0
 SummaryScreenMonIsFromGBA 0813BFBC 0
 SummaryScreen_TradeMonMetLocationHook 08137F32 2

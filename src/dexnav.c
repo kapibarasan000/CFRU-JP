@@ -107,11 +107,11 @@ static void DexNavDrawBlackBar(u8* windowId);
 static void DexNavDrawDirectionalArrow(u8* windowId);
 static void DexNavDrawChainNumber(u8* spriteIdNumAddr, u8* spriteIdStarAddr);
 static void DexNavDrawSight(u8 sight_lvl, u8* spriteIdAddr);
-static void DexNavDrawAbility(u16 ability, u8* spriteIdAddr);
-static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr);
+//static void DexNavDrawAbility(u16 ability, u8* spriteIdAddr);
+//static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr);
 static void DexNavDrawPotential(u8 potential, u8* spriteIdAddr);
 static void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr);
-static void DexNavDrawHeldItem(u8* spriteIdAddr);
+//static void DexNavDrawHeldItem(u8* spriteIdAddr);
 static void DexNavDrawIcons(bool8 detectorMode);
 static void ExecDexNavHUD(void);
 
@@ -1698,7 +1698,7 @@ static void DexNavDrawBButton(u8* spriteIdAddr)
 	*spriteIdAddr = spriteId;
 };
 
-static void DexNavDrawAbility(u16 ability, u8* spriteIdAddr)
+/*static void DexNavDrawAbility(u16 ability, u8* spriteIdAddr)
 {
 	LoadCompressedSpriteSheetUsingHeap(&sAbilityCanvasSpriteSheet);
 	LoadSpritePalette(&gHeldItemSpritePalette);
@@ -1765,7 +1765,7 @@ static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr)
 	}
 
 	*spriteIdAddr = spriteId;
-};
+};*/
 
 static void DexNavDrawPotential(u8 potential, u8* spriteIdAddr)
 {
@@ -1799,18 +1799,18 @@ void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr)
 		gSprites[spriteId].oam.priority = 0;
 }
 
-void DexNavDrawHeldItem(u8* spriteIdAddr)
+/*void DexNavDrawHeldItem(u8* spriteIdAddr)
 {
 	//Create SPRITE for held item icon
 	LoadSpriteSheet(&gHeldItemSpriteSheet);
 	LoadSpritePalette(&gHeldItemSpritePalette);
 	u8 spriteId = CreateSprite(&gHeldItemTemplate, ICONX + 0x8, ICONY + 0xC, 0x0);
 	*spriteIdAddr = spriteId;
-}
+}*/
 
 static void DexNavDrawIcons(bool8 detectorMode)
 {
-	u8 searchLevel = sDexNavHudPtr->searchLevel;
+	//u8 searchLevel = sDexNavHudPtr->searchLevel;
 	DexNavDrawBlackBar(&sDexNavHudPtr->blackBarWindowId);
 	DexNavDrawDirectionalArrow(&sDexNavHudPtr->arrowWindowId);
 	DexNavDrawChainNumber(&sDexNavHudPtr->spriteIdChainNumber, &sDexNavHudPtr->spriteIdChainStar);
@@ -1819,9 +1819,9 @@ static void DexNavDrawIcons(bool8 detectorMode)
 	
 	if (!detectorMode)
 	{
-		DexNavDrawMove(sDexNavHudPtr->moveId[0], searchLevel, &sDexNavHudPtr->spriteIdMove);
-		DexNavDrawHeldItem(&sDexNavHudPtr->spriteIdItem);
-		DexNavDrawAbility(sDexNavHudPtr->ability, &sDexNavHudPtr->spriteIdAbility);
+		//DexNavDrawMove(sDexNavHudPtr->moveId[0], searchLevel, &sDexNavHudPtr->spriteIdMove);
+		//DexNavDrawHeldItem(&sDexNavHudPtr->spriteIdItem);
+		//DexNavDrawAbility(sDexNavHudPtr->ability, &sDexNavHudPtr->spriteIdAbility);
 		DexNavDrawPotential(sDexNavHudPtr->potential, &sDexNavHudPtr->spriteIdPotential[0]);
 		DexNavHudDrawSpeciesIcon(sDexNavHudPtr->species, &sDexNavHudPtr->spriteIdSpecies);
 	}

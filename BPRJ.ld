@@ -944,7 +944,7 @@ IsEnoughMoney = 0x809FC68 | 1;
 AddMoney = 0x809FC80 | 1;
 GetMoney = 0x809FC38 | 1;
 RemoveMoney = 0x809FCB8 | 1;
-PrintMoneyAmountInMoneyBox = 0x809FD40 | 1;
+PrintMoneyAmountInMoneyBox = 0x809FD20 | 1;
 
 /* PokeMart Functions */
 Task_ShopMenu = 0x809A62C | 1;

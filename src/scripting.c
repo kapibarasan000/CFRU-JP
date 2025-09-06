@@ -1603,8 +1603,7 @@ u8* SafariZoneBallLabel(void)
 
 void SafariZoneBattleBarCount(u8* strPtr)
 {
-
-	ConvertIntToDecimalStringN(strPtr, gSafariBallNumber, 0, SAFARI_BALL_DIGITS);
+	ConvertIntToDecimalStringN(strPtr, gSafariBallNumber, 1, SAFARI_BALL_DIGITS);
 }
 
 //Walking Specials//

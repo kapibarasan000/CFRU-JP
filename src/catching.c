@@ -145,19 +145,19 @@ void atkEF_handleballthrow(void)
 		if (gBattleMons[gBankTarget].status1 & (STATUS_SLEEP | STATUS_FREEZE))
 			odds = (odds * 25) / 10;
 		if (gBattleMons[gBankTarget].status1 & (STATUS_PSN_ANY | STATUS_BURN | STATUS_PARALYSIS))
-			odds = (odds * 15) / 10;
-
-		//Difficulty Modifier - from SwSh
-		#ifdef SWSH_CATCHING_DIFFICULTY_MODIFIER
-		if (!FlagGet(FLAG_SYS_GAME_CLEAR) && gBattleMons[gBankAttacker].level < defLevel)
-			odds /= 10;
-		#endif
+			odds = (odds * 15) / 10;	
 
 		if (IsRaidBattle()) //Dynamax Raid Pokemon can be caught easier
 			odds *= 4;
 
 		if (ballType != BALL_TYPE_SAFARI_BALL)
 		{
+			//Difficulty Modifier - from SwSh
+			#ifdef SWSH_CATCHING_DIFFICULTY_MODIFIER
+			if (!FlagGet(FLAG_SYS_GAME_CLEAR) && gBattleMons[gBankAttacker].level < defLevel)
+				odds /= 10;
+			#endif
+
 			if (ballType == BALL_TYPE_MASTER_BALL)
 				gBattleResults.usedMasterBall = 1;
 
@@ -262,7 +262,7 @@ u32 GetBaseBallCatchOdds(u8 ballType, u8 bankAtk, u8 bankDef)
 	u8 defLevel = gBattleMons[bankDef].level;
 
 	if (ballType == BALL_TYPE_SAFARI_BALL)
-		catchRate = (gBattleStruct->safariCatchFactor * 1275) % 100;
+		catchRate = (gBattleStruct->safariCatchFactor * 1275) / 100;
 	else
 		catchRate = gBaseStats[GetMonData(GetBankPartyData(bankDef), MON_DATA_SPECIES, NULL)].catchRate; //Uses party data b/c Transform update Gen 5+
 

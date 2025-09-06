@@ -1335,35 +1335,14 @@ AIXItemStringHook:
 	bx r0
 
 .pool
-@0x8136A8E with 3
+@0x81377CC with 1
 SummaryScreenOTGenderColour:
-	add r2, #0x3
-	ldr r3, =GetMonData
-	bl bxr3
-	ldr r0, [r6]
-	add r0, r5
-	mov r1, #0x31 @OT Gender
-	ldr r3, =GetMonData
-	bl bxr3
-	mov r1, #0xFC
-	mov r2, sp
-	strb r1, [r2]
-	mov r1, #0x1
-	strb r1, [r2, #0x1]
-	mov r1, #0x7
-	cmp r0, #0x0
-	beq GetOtGender_Cont
-	mov r1, #0x1
-GetOtGender_Cont:
-	strb r1, [r2, #0x2]
-	ldr r0, [r6]
-	mov r2, #0xC1
-	lsl r2, #0x6 @0x3040
-	add r0, r2
-	mov r1, sp
-	mov r2, #8
-	ldr r3, =0x8136A9E | 1
-	bx r3
+	push {r4-r7}
+	bl PokeSum_PrintOTGender
+	pop {r4-r7}
+	sub r7, #0x18
+	ldr r1, =0x81377E8 | 1
+	bx r1
 
 .pool
 @0x8137F32 with r2
