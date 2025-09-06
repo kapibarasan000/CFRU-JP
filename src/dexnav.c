@@ -666,7 +666,7 @@ static void DexNavFreeHUD(void)
 	if (sDexNavHudPtr->spriteIdChainStar < MAX_SPRITES)
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdChainStar]);
 
-	if (sDexNavHudPtr->spriteIdAbility < MAX_SPRITES)
+	/*if (sDexNavHudPtr->spriteIdAbility < MAX_SPRITES)
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdAbility]);
 
 	if (sDexNavHudPtr->spriteIdMove < MAX_SPRITES)
@@ -674,7 +674,7 @@ static void DexNavFreeHUD(void)
 
 	if (sDexNavHudPtr->spriteIdItem < MAX_SPRITES)
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdItem]);
-
+*/
 	if (sDexNavHudPtr->spriteIdPotential[0] < MAX_SPRITES)
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdPotential[0]]);
 
@@ -940,7 +940,7 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 		gSprites[sDexNavHudPtr->spriteIdSight].invisible = FALSE;
 
 	// hide everything at the start, and recalc what needs to be shown
-	if (sDexNavHudPtr->spriteIdMove < MAX_SPRITES)
+	/*if (sDexNavHudPtr->spriteIdMove < MAX_SPRITES)
 		gSprites[sDexNavHudPtr->spriteIdMove].invisible = TRUE;
 
 	if (sDexNavHudPtr->spriteIdAbility < MAX_SPRITES)
@@ -948,7 +948,7 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 
 	if (sDexNavHudPtr->spriteIdItem < MAX_SPRITES)
 		gSprites[sDexNavHudPtr->spriteIdItem].invisible = TRUE;
-
+	*/
 	if (sDexNavHudPtr->spriteIdPotential[0] < MAX_SPRITES)
 		gSprites[sDexNavHudPtr->spriteIdPotential[0]].invisible = TRUE;
 
@@ -971,7 +971,7 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 		if (searchLevel > 2)
 		{
 			// show ability, move, hide others
-			if (sDexNavHudPtr->spriteIdAbility < MAX_SPRITES)
+			/*if (sDexNavHudPtr->spriteIdAbility < MAX_SPRITES)
 				gSprites[sDexNavHudPtr->spriteIdAbility].invisible = FALSE;
 			if (sDexNavHudPtr->heldItem)
 			{
@@ -979,7 +979,7 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 				if (sDexNavHudPtr->heldItem != ITEM_NONE
 				&& sDexNavHudPtr->spriteIdItem < MAX_SPRITES)
 					gSprites[sDexNavHudPtr->spriteIdItem].invisible = FALSE;
-			}
+			}*/
 		}
 		if (searchLevel > 4)
 		{
@@ -1828,9 +1828,9 @@ static void DexNavDrawIcons(bool8 detectorMode)
 	else
 	{
 		DexNavHudDrawSpeciesIcon(SPECIES_NONE, &sDexNavHudPtr->spriteIdSpecies); //Show ? instead of species
-		sDexNavHudPtr->spriteIdMove = MAX_SPRITES;
+		/*sDexNavHudPtr->spriteIdMove = MAX_SPRITES;
 		sDexNavHudPtr->spriteIdItem = MAX_SPRITES;
-		sDexNavHudPtr->spriteIdAbility = MAX_SPRITES;
+		sDexNavHudPtr->spriteIdAbility = MAX_SPRITES;*/
 		Memset(sDexNavHudPtr->spriteIdPotential, MAX_SPRITES, sizeof(sDexNavHudPtr->spriteIdPotential));
 	}
 }
