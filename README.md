@@ -4,6 +4,13 @@
 各機能の詳細については、付属のドキュメント（英語）をご確認下さい。
 
 ## 適用方法
+ぼんじり氏がCFRU-JP/DPE-JP用のビルドツールを作成されています。  
+環境構築不要で簡単に適用する事が出来ます。
+
+[CFRU-Builder](https://blog.bzl-web.com/entry/2090/11/11/000000#CFRU-Builder)
+
+※以下は従来の適用方法です。
+
 ざっくりとした適用の流れになります。詳細は[こちら](https://github.com/Skeli789/Complete-Fire-Red-Upgrade/wiki/Windows-Installation-Instructions)  
 各インストールが終わっている場合は6.から実施して下さい。  
 ※これはWindows向けの適用方法になります。Macやその他OSについては、下の原文を参照して下さい。
