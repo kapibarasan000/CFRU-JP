@@ -1339,12 +1339,16 @@ void atkFF27_tryactivateprotean(void)
 	&& gCurrentMove != MOVE_STRUGGLE
 	&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
 	&& !(CheckTableForMove(gCurrentMove, gMovesThatCallOtherMoves))
-	&& !IsTerastal(gBankAttacker))
+	&& !IsTerastal(gBankAttacker)
+	&& !(gNewBS->proteanBits & gBitTable[gBankAttacker]))
 	{
 		if (gBattleMons[gBankAttacker].type1 != moveType
 		||  gBattleMons[gBankAttacker].type2 != moveType
 		|| (gBattleMons[gBankAttacker].type3 != moveType && gBattleMons[gBankAttacker].type3 != TYPE_BLANK))
 		{
+			#ifndef OLD_PROTEAN
+			gNewBS->proteanBits |= gBitTable[gBankAttacker];
+			#endif
 			BattleScriptPush(gBattlescriptCurrInstr + 1);
 			gBattlescriptCurrInstr = BattleScript_AbilityChangedType;
 			return;

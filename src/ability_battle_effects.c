@@ -24,6 +24,7 @@
 #include "../include/new/util.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/text.h"
+#include "../include/new/terastal.h"
 /*
 ability_battle_effects.c
 	-functions that introduce or moodify battle effects via abilities or otherwise.
@@ -1299,7 +1300,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 			break;
 
 		case ABILITY_INTREPIDSWORD:
-			if (STAT_STAGE(bank, STAT_STAGE_ATK) < STAT_STAGE_MAX)
+			if (STAT_STAGE(bank, STAT_STAGE_ATK) < STAT_STAGE_MAX
+			&& !(gNewBS->intrepidSwordDone[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]]))
 			{
 				gBankAttacker = bank;
 				gBattleScripting.statChanger = STAT_STAGE_ATK | INCREASE_1;
@@ -1308,10 +1310,14 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 				BattleScriptPushCursorAndCallback(BattleScript_AttackerAbilityStatRaiseEnd3);
 				effect++;
 			}
+			#ifndef OLD_INTREPID_SWORD
+			gNewBS->intrepidSwordDone[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
+			#endif
 			break;
 
 		case ABILITY_DAUNTLESSSHIELD:
-			if (STAT_STAGE(bank, STAT_STAGE_DEF) < STAT_STAGE_MAX)
+			if (STAT_STAGE(bank, STAT_STAGE_DEF) < STAT_STAGE_MAX
+			&& !(gNewBS->dauntlessShieldDone[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]]))
 			{
 				gBankAttacker = bank;
 				gBattleScripting.statChanger = STAT_STAGE_DEF | INCREASE_1;
@@ -1320,6 +1326,9 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 				BattleScriptPushCursorAndCallback(BattleScript_AttackerAbilityStatRaiseEnd3);
 				effect++;
 			}
+			#ifndef OLD_DAUNTLESS_SHIELD
+			gNewBS->dauntlessShieldDone[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
+			#endif
 			break;
 
 		case ABILITY_VESSELOFRUIN:
@@ -2095,7 +2104,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u16 ability, u16 special, u16 moveAr
 				&& BATTLER_ALIVE(bank)
 				&& gBankAttacker != bank
 				&& !SheerForceCheck()
-				&& gMultiHitCounter <= 1)
+				&& gMultiHitCounter <= 1
+				&& !IsTerastal(bank))
 				{
 					SET_BATTLER_TYPE(bank, moveType);
 					PREPARE_TYPE_BUFFER(gBattleTextBuff1, moveType);

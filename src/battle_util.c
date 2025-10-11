@@ -1602,6 +1602,9 @@ void ResetVarsForAbilityChange(u8 bank)
 	gDisableStructs[gBankTarget].truantCounter = 0;
 	gNewBS->cudChewBerries[bank] = 0;
 	gNewBS->cudChewTimers[bank] = 0;
+	#ifndef OLD_PROTEAN
+	gNewBS->proteanBits &= ~(gBitTable[bank]);
+	#endif
 	gStatuses3[bank] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
 	TryRemoveUnburdenBoost(bank);
 }

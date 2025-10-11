@@ -187,12 +187,17 @@ void atk02_attackstring(void)
 		{
 			if ((ABILITY(gBankAttacker) == ABILITY_PROTEAN || ABILITY(gBankAttacker) == ABILITY_LIBERO)
 			&& !(gMoveResultFlags & MOVE_RESULT_FAILED)
-			&& !CheckTableForMove(gCurrentMove, gMovesThatCallOtherMoves))
+			&& !CheckTableForMove(gCurrentMove, gMovesThatCallOtherMoves)
+			&& !IsTerastal(gBankAttacker)
+			&& !(gNewBS->proteanBits & gBitTable[gBankAttacker]))
 			{
 				if (gBattleMons[gBankAttacker].type1 != moveType
 				||  gBattleMons[gBankAttacker].type2 != moveType
 				|| (gBattleMons[gBankAttacker].type3 != moveType && gBattleMons[gBankAttacker].type3 != TYPE_BLANK))
 				{
+					#ifndef OLD_PROTEAN
+					gNewBS->proteanBits |= gBitTable[gBankAttacker];
+					#endif
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_AbilityChangedType;
 				}
@@ -5728,7 +5733,8 @@ void atkEB_settypetoterrain(void)
 {
 	u8 type = GetCamouflageType();
 
-	if (!IsOfType(gBankAttacker, type))
+	if (!IsOfType(gBankAttacker, type)
+	&& !IsTerastal(gBankAttacker))
 	{
 		gBattleMons[gBankAttacker].type1 = type;
 		gBattleMons[gBankAttacker].type2 = type;

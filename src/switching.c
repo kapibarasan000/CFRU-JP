@@ -1336,6 +1336,9 @@ void ClearSwitchBits(u8 bank)
 	gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]);
 	gNewBS->devolveForgotMove &= ~(gBitTable[bank]);
 	gNewBS->SaltcureBits &= ~(gBitTable[bank]);
+	#ifndef OLD_PROTEAN
+	gNewBS->proteanBits &= ~(gBitTable[bank]);
+	#endif
 }
 
 void PartyMenuSwitchingUpdate(void)

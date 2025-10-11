@@ -808,12 +808,15 @@ struct NewBattleStruct
 	u8 enduredDamage;
 	u8 SaltcureBits;
 	u8 commandingDondozo;
+	u8 proteanBits;
 
 	//Bit Fields for Party
 	u8 canBelch[NUM_BATTLE_SIDES];
 	u8 corrodedItems[NUM_BATTLE_SIDES];
 	u8 supersweetSyrupDone[NUM_BATTLE_SIDES];
 	u8 ZerotoHeroDone[NUM_BATTLE_SIDES];
+	u8 intrepidSwordDone[NUM_BATTLE_SIDES];
+	u8 dauntlessShieldDone[NUM_BATTLE_SIDES];
 
 	//Other Helpers
 	u8 switchOutAbilitiesState; //For tracking effects that happen on switch-out

@@ -2811,8 +2811,13 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		//1.5x Boost
 			if (data->moveType == TYPE_ELECTRIC)
 			{
+				#ifdef OLD_TRANSISTOR
 				attack = (attack * 15) / 10;
 				spAttack = (spAttack * 15) / 10;
+				#else
+				attack = (attack * 13) / 10;
+				spAttack = (spAttack * 13) / 10;
+				#endif
 			}
 			break;
 

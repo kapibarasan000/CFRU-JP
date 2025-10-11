@@ -4369,8 +4369,8 @@ GastroAcidBS:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstringnoprotean
 	ppreduce
-	callasm AbilityChangeBSFunc
 	tryactivateprotean
+	callasm AbilityChangeBSFunc
 	attackanimation
 	waitanimation
 	printstring 0x184
@@ -4397,14 +4397,14 @@ SimpleBeamBS:
 	attackstringnoprotean
 	ppreduce
 WorrySeedBS_ChangeAbility:
-	callasm AbilityChangeBSFunc
 	tryactivateprotean
+	callasm AbilityChangeBSFunc
 	attackanimation
 	waitanimation
 
 	playanimation BANK_TARGET ANIM_LOAD_ABILITY_POP_UP 0x0
-	call BattleScript_AbilityPopUpRevert
 	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
+	call BattleScript_AbilityPopUpRevert
 	call BattleScript_AbilityPopUp
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUpRevert

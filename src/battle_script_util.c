@@ -2898,7 +2898,7 @@ void SetCopyStatChange(void)
 				statValue = -6;
 
 			SET_STATCHANGER(statId, statValue, FALSE);
-			PREPARE_STAT_BUFFER(gBattleTextBuff1, statId)
+			PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
 			return;
 		}
 		else if (statValue != 0 && gBattleMons[gActiveBattler].statStages[statId - 1] < STAT_STAGE_MAX)
@@ -2942,7 +2942,7 @@ void SetCopyStatChange(void)
 				statValue = 6;
 
 			SET_STATCHANGER(statId, statValue, FALSE);
-			PREPARE_STAT_BUFFER(gBattleTextBuff1, statId)
+			PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
 			return;
 		}
 	}

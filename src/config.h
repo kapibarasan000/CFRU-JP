@@ -284,6 +284,10 @@ enum //These vars need to be one after the other (hence the enum)
 /*===== Ability Options =====*/
 //#define OLD_GALE_WINGS //Uncomment this line if you want Gale Wings to activate regardless of the user's HP
 //#define OLD_PRANKSTER //Uncomment this line if you want Prankster to be able to affect Dark-Types
+//#define OLD_INTREPID_SWORD
+//#define OLD_DAUNTLESS_SHIELD
+//#define OLD_PROTEAN
+//#define OLD_TRANSISTOR
 
 /*===== Damage Calculation Options =====*/
 //#define OLD_CRIT_DAMAGE //Uncomment this line if you want Critical hits to do 2x damage, and 3x with Sniper
