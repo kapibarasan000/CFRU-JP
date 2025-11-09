@@ -179,7 +179,7 @@ item_effect_t GetBankItemEffect(u8 bank)
 	return 0;
 }
 
-item_effect_t GetMonItemEffect(struct Pokemon* mon)
+item_effect_t GetMonItemEffect(const struct Pokemon* mon)
 {
 	if (GetMonAbility(mon) != ABILITY_KLUTZ && !IsMagicRoomActive())
 		return ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL));
@@ -679,9 +679,9 @@ bool8 IsUnusableMove(u16 move, u8 bank, u8 check, u8 pp, u16 ability, u8 holdEff
 		return TRUE;
 	else if (IsRaidBattle() && bank != BANK_RAID_BOSS && CheckTableForMove(move, gRaidBattleBannedMoves) && check & MOVE_LIMITATION_ENCORE)
 		return TRUE;
-	else if (move == MOVE_GIGATONHAMMER && gNewBS->LastUsedMove == MOVE_GIGATONHAMMER)
+	else if (move == MOVE_GIGATONHAMMER && gLastUsedMoves[bank] == MOVE_GIGATONHAMMER)
         return TRUE;
-	else if (move == MOVE_BLOODMOON && gNewBS->LastUsedMove == MOVE_BLOODMOON)
+	else if (move == MOVE_BLOODMOON && gLastUsedMoves[bank] == MOVE_BLOODMOON)
         return TRUE;
 
 	return FALSE;
@@ -746,7 +746,7 @@ bool8 IsMoveRedirectedByFollowMe(u16 move, u8 bankAtk, u8 defSide)
 
 bool8 IsMoveRedirectionPrevented(u16 move, u16 atkAbility)
 {
-	return move == MOVE_SKYDROP
+	return move == MOVE_SNIPESHOT
 		|| (move != MOVE_NONE && gBattleMoves[move].effect == EFFECT_SKY_DROP)
 		|| atkAbility == ABILITY_PROPELLERTAIL
 		|| atkAbility == ABILITY_STALWART;
@@ -2284,8 +2284,7 @@ bool8 IsMudSportActive(void)
 
 bool8 IsWaterSportActive(void)
 {
-	return gNewBS->WaterSportTimer > 0
-		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_WATER_SPORT);
+	return gNewBS->WaterSportTimer > 0;
 }
 
 bool8 IsInverseBattle(void)

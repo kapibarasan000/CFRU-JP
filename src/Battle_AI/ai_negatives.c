@@ -1192,12 +1192,6 @@ MOVESCR_CHECK_0:
 				dmg = MathMax(1, dmg / 3);
 			else if (CheckTableForMove(move, gPercent50RecoilMoves))
 				dmg = MathMax(1, dmg / 2);
-			else if (CheckTableForMove(move, gPercent66RecoilMoves))
-				dmg = MathMax(1, (dmg * 2) / 3);
-			else if (CheckTableForMove(move, gPercent75RecoilMoves))
-				dmg = MathMax(1, (dmg * 3) / 4);
-			else if (CheckTableForMove(move, gPercent100RecoilMoves))
-				dmg = MathMax(1, dmg);
 			else if (move == MOVE_MINDBLOWN || move == MOVE_STEELBEAM)
 			{
 				if (MoveBlockedBySubstitute(move, bankAtk, bankDef))

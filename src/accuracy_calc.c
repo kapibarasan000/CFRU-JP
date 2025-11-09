@@ -417,7 +417,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 	u8 defQuality = ITEM_QUALITY(bankDef);
 	u16 atkAbility = ABILITY(bankAtk);
 	//u8 defAbility = ABILITY(bankDef);
-	u8 moveSplit = CalcMoveSplit(gBankAttacker, move, bankDef);
+	u8 moveSplit = CalcMoveSplit(bankAtk, move, bankDef);
 
 	u8 acc;
 	if (defAbility == ABILITY_UNAWARE)
@@ -498,7 +498,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 			#ifdef UNBOUND
 			if (atkAbility != ABILITY_KEENEYE && atkAbility != ABILITY_INFILTRATOR)
 			#endif
-				calc = udivsi((calc * 60), 100); // 0.6 Fog loss
+				calc = (calc * 6) / 10; // 0.6 Fog loss
 		}
 	}
 
@@ -596,12 +596,12 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 	if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bankAtk)) == ABILITY_VICTORYSTAR)
 		calc = udivsi((calc * 110), 100); // 1.1 Victory Star partner boost
 
-	if (WEATHER_HAS_EFFECT &&  gBattleWeather & WEATHER_FOG_ANY)
+	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_FOG_ANY)
 	{
 		#ifdef UNBOUND
 		if (atkAbility != ABILITY_KEENEYE && atkAbility != ABILITY_INFILTRATOR)
 		#endif
-			calc = udivsi((calc * 60), 100); // 0.6 Fog loss
+			calc = (calc * 6) / 10; // 0.6 Fog loss
 	}
 
 	if (atkEffect == ITEM_EFFECT_WIDE_LENS)
@@ -646,7 +646,7 @@ void JumpIfMoveFailed(u8 adder, u16 move)
 	else
 	{
 		TrySetDestinyBondToHappen();
-		if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBattlerTarget, 0, 0, move))
+		if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBankTarget, 0, 0, move))
 			return;
 	}
 	gBattlescriptCurrInstr = BS_ptr;

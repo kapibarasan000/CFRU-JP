@@ -238,6 +238,7 @@ gRamSaveSectionLocations = 0x3005400;
 
 /* Palette RAM */
 gPaletteFade = 0x20379EC;
+gPaletteDecompressionBuffer = 0x2037A00;
 
 /* Map/Overworld RAM */
 gMapHeader = 0x2036D30;
@@ -302,6 +303,7 @@ sBagContextMenuNumItems = 0x203ACA0;
 sBackupPlayerBag = 0x203ACA4;
 sBerryPouchListMenuItems = 0x203F2F0;
 gShopData = 0x2039880;
+gShopTilemapBuffer1 = 0x20398A0;
 sShopMenuItemStrings = 0x20398B4;
 
 /* Start Menu RAM */
@@ -728,12 +730,14 @@ InitSpriteDataForLinearTranslation = 0x8074C5C | 1;
 InitAnimLinearTranslation = 0x8074C9C | 1;
 StartAnimLinearTranslation = 0x8074D34 | 1;
 AnimTranslateLinear = 0x8074D84 | 1;
+InitAndRunAnimFastLinearTranslation = 0x8074F08 | 1;
 SetSpriteRotScale = 0x8074FFC | 1;
 PrepareBattlerSpriteForRotScale = 0x8075084 | 1;
 ResetSpriteRotScale = 0x8075124 | 1;
 TrySetSpriteRotScale = 0x80751C0 | 1;
 ArcTan2Neg = 0x80752D4 | 1;
 SetGreyscaleOrOriginalPalette = 0x80752EC | 1;
+SelectBattleAnimSpriteAndBgPalettes = 0x807538C | 1;
 PrepareAffineAnimInTaskData = 0x8075A74 | 1;
 RunAffineAnimFromTaskData = 0x8075AAC | 1;
 GetBattlerSpriteSubpriority = 0x8076000 | 1;

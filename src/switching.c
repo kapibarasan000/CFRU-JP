@@ -508,7 +508,6 @@ void atk51_switchhandleorder(void)
 			}
 			else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 				SwitchPartyOrderInGameMulti(gActiveBattler, gBattleStruct->monToSwitchIntoId[gActiveBattler]);
-
 			else
 				SwitchPartyOrder(gActiveBattler);
 
@@ -822,7 +821,7 @@ void atk52_switchineffects(void)
 
 		case SwitchIn_PrimalReversion:	;
 			const u8* script = DoPrimalReversion(gActiveBattler, 1);
-			if(!IsMegaZMoveBannedBattle() && script != NULL)
+			if (!IsMegaZMoveBannedBattle() && script != NULL)
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = script;

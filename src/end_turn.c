@@ -1562,6 +1562,7 @@ u8 TurnBasedEffects(void)
 							{
 								newSpecies = SPECIES_WISHIWASHI_S;
 								changedForm = TRUE;
+								reloadType = TRUE;
 								reloadStats = TRUE;
 								battleScript = BattleScript_StartedSchooling;
 							}
@@ -1571,6 +1572,7 @@ u8 TurnBasedEffects(void)
 							{
 								newSpecies = SPECIES_WISHIWASHI;
 								changedForm = TRUE;
+								reloadType = TRUE;
 								reloadStats = TRUE;
 								battleScript = BattleScript_StoppedSchooling;
 							}
@@ -1584,6 +1586,7 @@ u8 TurnBasedEffects(void)
 							{
 								newSpecies = GetMiniorCoreSpecies(mon);
 								changedForm = TRUE;
+								reloadType = TRUE;
 								reloadStats = TRUE;
 								battleScript = BattleScript_ShieldsDownToCore;
 							}
@@ -1592,6 +1595,7 @@ u8 TurnBasedEffects(void)
 							{
 								newSpecies = SPECIES_MINIOR_SHIELD;
 								changedForm = TRUE;
+								reloadType = TRUE;
 								reloadStats = TRUE;
 								battleScript = BattleScript_ShieldsDownToMeteor;
 							}
@@ -1608,6 +1612,8 @@ u8 TurnBasedEffects(void)
 									{
 										newSpecies = SPECIES_CHERRIM_SUN;
 										changedForm = TRUE;
+										reloadType = TRUE;
+										reloadStats = TRUE;
 										battleScript = BattleScript_FlowerGiftEnd2;
 									}
 									break;
@@ -1619,6 +1625,8 @@ u8 TurnBasedEffects(void)
 									{
 										newSpecies = SPECIES_CHERRIM;
 										changedForm = TRUE;
+										reloadType = TRUE;
+										reloadStats = TRUE;
 										battleScript = BattleScript_FlowerGiftEnd2;
 									}
 									break;
@@ -1632,12 +1640,16 @@ u8 TurnBasedEffects(void)
 							{
 								newSpecies = SPECIES_MORPEKO_HANGRY;
 								changedForm = TRUE;
+								reloadType = TRUE;
+								reloadStats = TRUE;
 								battleScript = BattleScript_FlowerGiftEnd2;
 							}
 							else if (species == SPECIES_MORPEKO_HANGRY)
 							{
 								newSpecies = SPECIES_MORPEKO;
 								changedForm = TRUE;
+								reloadType = TRUE;
+								reloadStats = TRUE;
 								battleScript = BattleScript_FlowerGiftEnd2;
 							}
 						#endif

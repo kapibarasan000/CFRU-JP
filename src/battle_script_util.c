@@ -3,6 +3,7 @@
 #include "../include/battle_anim.h"
 #include "../include/battle_string_ids.h"
 #include "../include/random.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/ability_battle_effects.h"
@@ -122,7 +123,7 @@ void AcupressureFunc(void)
 	do
 	{
 		stat = umodsi(Random(), BATTLE_STATS_NO-1) + 1;
-	} while (gBattleMons[gActiveBattler].statStages[stat - 1] == 12);
+	} while (STAT_STAGE(gBankTarget, stat) >= STAT_STAGE_MAX);
 
 	SET_STATCHANGER(stat, 2, FALSE);
 }
@@ -463,8 +464,8 @@ void ClearBeakBlastBit(void)
 
 void BestowItem(void)
 {
-	if (ITEM(gBankTarget) == 0
-	&& ITEM(gBankAttacker) != 0
+	if (ITEM(gBankTarget) == ITEM_NONE
+	&& ITEM(gBankAttacker) != ITEM_NONE
 	&& CanTransferItem(SPECIES(gBankTarget), ITEM(gBankAttacker))
 	&& CanTransferItem(SPECIES(gBankAttacker), ITEM(gBankAttacker))
 	&& !(gNewBS->corrodedItems[SIDE(gBankTarget)] & gBitTable[gBattlerPartyIndexes[gBankTarget]]))
@@ -1736,7 +1737,7 @@ void TryUpperHand(void)
 {
 	if (SPLIT(gChosenMovesByBanks[gBankTarget]) != SPLIT_STATUS
 	&& GetBattlerTurnOrderNum(gBankTarget) > gCurrentTurnActionNumber
-	&& PriorityCalc(gBankTarget, gChosenActionByBank[gBankTarget], gChosenMovesByBanks[gBankTarget]) != 0)
+	&& PriorityCalc(gBankTarget, gChosenActionByBank[gBankTarget], gChosenMovesByBanks[gBankTarget]) > 0)
 		return;
 
 	gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
@@ -1788,14 +1789,14 @@ void HandleForfeitYesNoBox(void)
 		gBattleCommunication[CURSOR_POSITION] = 0;
 		BattleCreateYesNoCursorAt(0);
 	}
-	if (gMain.newKeys & DPAD_DOWN && gBattleCommunication[CURSOR_POSITION] == 0)
+	else if (gMain.newKeys & DPAD_DOWN && gBattleCommunication[CURSOR_POSITION] == 0)
 	{
 		PlaySE(SE_SELECT);
 		BattleDestroyYesNoCursorAt(gBattleCommunication[CURSOR_POSITION]);
 		gBattleCommunication[CURSOR_POSITION] = 1;
 		BattleCreateYesNoCursorAt(1);
 	}
-	if (gMain.newKeys & A_BUTTON)
+	else if (gMain.newKeys & A_BUTTON)
 	{
 		PlaySE(SE_SELECT);
 
@@ -1880,7 +1881,7 @@ void ClearSwitchInEffectsState(void)
 		gBattlescriptCurrInstr = BattleScript_HandleFaintedMonDoublesSwitchInEffects - 5;
 		WipeSwitchInEffectsState();
 	}
-};
+}
 
 void UpdatePrimalAbility(void)
 {
@@ -1986,12 +1987,12 @@ void TryAbilityShieldMsg(void)
 
 void TryLoadSecondFriskTargetDoubles(void)
 {
-	u8 partner = PARTNER(gBankTarget);
+	u8 partner = PARTNER(gEffectBank);
 
 	if (IsDoubleBattle() && BATTLER_ALIVE(partner) && ITEM(partner))
 	{
 		gLastUsedItem = ITEM(partner);
-		gBankTarget = partner;
+		gEffectBank = partner;
 		return;
 	}
 
@@ -3037,4 +3038,9 @@ void TeatimeTargets(void)
         gBattlescriptCurrInstr = BattleScript_TeatimeFailed - 5;
 
 	gBattleStringLoader = gText_TeaTimeAteBerry;
+}
+
+void ClearHailStartFlag(void)
+{
+	gNewBS->hailStart = FALSE;
 }

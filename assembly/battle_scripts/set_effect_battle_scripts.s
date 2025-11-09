@@ -230,6 +230,7 @@ BattleScript_MaxMoveSetWeather:
 	printfromtable 0x83C44F4 
 	waitmessage DELAY_1SECOND 
 	call 0x81BD298
+	callasm ClearHailStartFlag
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

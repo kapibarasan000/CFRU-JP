@@ -918,6 +918,7 @@ struct NewBattleStruct
 	bool8 mirrorHerbActive : 1;
 	bool8 fickleBeamBoosted : 1;
 	bool8 AbilityShieldLost : 1;
+	bool8 hailStart : 1;
 
 	//Other
 	u16 LastUsedMove;

@@ -83,10 +83,9 @@ void SetZEffect(void)
 		case Z_EFFECT_RESET_STATS:
 			for (i = 0; i < BATTLE_STATS_NO-1; ++i)
 			{
-				if (gBattleMons[gBankAttacker].statStages[i] < 6) {
+				if (gBattleMons[gBankAttacker].statStages[i] < 6)
 					gBattleMons[gBankAttacker].statStages[i] = 6;
 				}
-			}
 			BattleScriptPush(gBattlescriptCurrInstr + 5);
 			gBattlescriptCurrInstr = BattleScript_StatsResetZMove - 5;
 			break;
@@ -99,6 +98,7 @@ void SetZEffect(void)
 					if (gBattleMons[gBankAttacker].statStages[i] < STAT_STAGE_MAX)
 						++gBattleMons[gBankAttacker].statStages[i];
 				}
+
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
 				gBattlescriptCurrInstr = BattleScript_AllStatsUpZMove - 5;
 			}
@@ -183,6 +183,7 @@ void SetZEffect(void)
 			}
 			break;
 	}
+
 	gNewBS->zMoveData.runningZEffect = FALSE;
 }
 

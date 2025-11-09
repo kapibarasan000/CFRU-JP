@@ -649,7 +649,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 					case SPECIES_AEGISLASH:
 						if (SPLIT(gCurrentMove) != SPLIT_STATUS)
 						{
-							DoFormChange(gBankAttacker, SPECIES_AEGISLASH_BLADE, FALSE, TRUE, FALSE);
+							DoFormChange(gBankAttacker, SPECIES_AEGISLASH_BLADE, TRUE, TRUE, FALSE);
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_StanceChangeToBlade;
 							gBattleScripting.bank = gBankAttacker;
@@ -660,7 +660,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 					case SPECIES_AEGISLASH_BLADE:
 						if (gCurrentMove == MOVE_KINGSSHIELD)
 						{
-							DoFormChange(gBankAttacker, SPECIES_AEGISLASH, FALSE, TRUE, FALSE);
+							DoFormChange(gBankAttacker, SPECIES_AEGISLASH, TRUE, TRUE, FALSE);
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_StanceChangeToShield;
 							gBattleScripting.bank = gBankAttacker;
@@ -868,7 +868,6 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			&& gBankAttacker != gBankTarget
 			&& (IS_SINGLE_BATTLE || gBankTarget != PARTNER(gBankAttacker)) //Can still hit partner
 			&& PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0
-			&& !CheckTableForMove(gCurrentMove, gSpecialWholeFieldMoves)
 			&& !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD) //Spikes are never affected
 			&& !ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE)
 			&& !MissesDueToSemiInvulnerability(gBankAttacker, gBankTarget, gCurrentMove))
@@ -1329,7 +1328,6 @@ static bool8 IsTargetUnaffectedByPrankster(u8 bankAtk, u8 bankDef, u16 currentMo
 		&& (ABILITY(bankDef) != ABILITY_MAGICBOUNCE || !(gBattleMoves[currentMove].flags & FLAG_MAGIC_COAT_AFFECTED)) //This move would be bounced back and not affected
 		&& (!gProtectStructs[bankDef].bounceMove || !(gBattleMoves[currentMove].flags & FLAG_MAGIC_COAT_AFFECTED)) //Bounce back with Magic Coat if can
 		&& AttacksThisTurn(bankAtk, currentMove) == 2
-		&& !CheckTableForMove(gCurrentMove, gSpecialWholeFieldMoves)
 		&& !ProtectAffects(currentMove, bankAtk, bankDef, FALSE)
 		&& !MissesDueToSemiInvulnerability(bankAtk, bankDef, currentMove);
 }
@@ -1342,7 +1340,7 @@ bool8 DoesTargetHaveAbilityImmunity(void)
 	if (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, gBankTarget, 0, 0, 0)
 	||  AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBankTarget, 0, 0, 0))
 	{
-		BattleScriptPop(); //Restory the original script
+		BattleScriptPop(); //Restore the original script
 		return TRUE;
 	}
 

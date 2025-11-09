@@ -611,6 +611,7 @@ void atkFF0E_setcounter(void)
 			gNewBS->SyrupBombTimers[bank] = amount;
 			break;
 	}
+
 	gBattlescriptCurrInstr += 4;
 }
 

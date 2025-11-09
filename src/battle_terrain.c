@@ -234,7 +234,8 @@ void DrawBattleEntryBackground(void)
 	}
 }
 
-void LoadBattleTerrainGfx(u8 terrainId) {
+void LoadBattleTerrainGfx(u8 terrainId)
+{
 	struct BattleBackground* table = gBattleTerrainTable;
 
 	if (gTerrainType) //A terrain like Electric Terrain is active

@@ -521,6 +521,7 @@
 .equ Template_LusterPurgeHits, 0x83AF194
 .equ Template_Leer, 0x83C4DC4
 .equ Template_MiniFirePlume, 0x83AED1C
+.equ Template_GrantingStars, 0x83AA938
 .equ Template_FireSpin, 0x83AE97C
 .equ Template_WillOWispFire, 0x83AD428
 .equ Template_Pal_Fade, 0x83AF068
@@ -572,6 +573,7 @@
 .equ Template_ThunderWave, 0x83AD5FC
 .equ Template_EyeSparkle, 0x83AB840
 .equ Template_MegaPunchKick, 0x83ADD04
+.equ Template_DirtPlume, 0x83AEFF0
 .equ Template_ComplexPaletteBlend, 0x83AF080
 .equ Template_KnockOffStrike, 0x83C55F8
 .equ Template_ThinRingShrinking, 0x83AB60C
@@ -581,6 +583,8 @@
 .equ Template_BlizzardIceCrystal, 0x83AD96C
 .equ Template_SwirlingSnowball, 0x83AD954
 .equ Template_FlatterSpotlight, 0x83C5234
+.equ Template_DiveBall, 0x83AE284
+.equ Template_DiveWaterSplash, 0x83AE2C0
 .equ Template_Whirlpool, 0x83AE964
 .equ Template_SlashSlice, 0x83AAAE8
 .equ Template_Moon, 0x83AAC78
@@ -700,6 +704,7 @@
 .equ EMBER_FIRE_HIT, 0x81ABC91
 .equ DRAGON_CLAW_FIRE_SPIRAL, 0x81B7169
 .equ PSYBEAM_RINGS, 0x81B4D90
+.equ DIVE_SET_UP_WATER_DROPLETS, 0x81B8172
 .equ SONIC_BOOM_PROJECTILE, 0x81ABECE
 
 @supercommands

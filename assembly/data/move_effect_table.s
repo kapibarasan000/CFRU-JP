@@ -308,10 +308,9 @@ gStatLoweringMoveEffects:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 gConfusionMoveEffects:
-.byte EFFECT_CONFUSE_HIT
+.byte EFFECT_CONFUSE
 .byte EFFECT_SWAGGER
 .byte EFFECT_FLATTER
-.byte EFFECT_TEETER_DANCE
 .byte MOVE_EFFECT_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

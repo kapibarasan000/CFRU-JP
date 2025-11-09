@@ -2755,7 +2755,7 @@ static void PrintGUIHiddenAbility(u16 species)
 
 		if (GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT)) //Only display hidden ability if Pokemon has been caught
 		{
-			u8 hiddenAbility = GetHiddenAbility(species);
+			u16 hiddenAbility = GetHiddenAbility(species);
 
 			if (species != SPECIES_NONE && hiddenAbility != ABILITY_NONE)
 				text = GetAbilityName(hiddenAbility);

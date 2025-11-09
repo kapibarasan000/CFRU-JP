@@ -5,12 +5,6 @@
 #include "../include/pokemon_summary_screen.h"
 #include "../include/constants/moves.h"
 
-static const struct TextColor sPSSTextColors =
-{
-	.bgColor = TEXT_COLOR_TRANSPARENT,
-	.fgColor = TEXT_DYNAMIC_COLOR_5,
-	.shadowColor = TEXT_DYNAMIC_COLOR_1,
-};
 
 void PokeSum_PrintMonTypeIcons(void)
 {
@@ -45,18 +39,13 @@ void PokeSum_PrintMonTypeIcons(void)
     }
 }
 
+static const struct TextColor sOTGenderTextColors[] =
+{
+    {0, 7, 10},
+    {0, 12, 10},
+};
+
 void PokeSum_PrintOTGender(void)
 {
-    u8 buff[10];
-
-    buff[0] = 0xFC;
-    buff[1] = 0x1;
-
-    if (GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_OT_GENDER, NULL))
-        buff[2] = 0xC;
-    else
-        buff[2] = 0x7;
-
-    StringCopy(&buff[3], sMonSummaryScreen->summary.otNameStrBuf);
-    WindowPrint(sMonSummaryScreen->windowIds[3], 2, 26, 43, &sPSSTextColors, 0xFF, buff);
+    WindowPrint(sMonSummaryScreen->windowIds[3], 2, 26, 43, &sOTGenderTextColors[GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_OT_GENDER, NULL)], 0xFF, sMonSummaryScreen->summary.otNameStrBuf);
 }

@@ -100,6 +100,16 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					break;
 
+				case EVO_MAUSHOLD_THREE:
+					if (gEvolutionTable[species][i].param <= level && ((personality >> 1) % 100) != 0)
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+
+				case EVO_MAUSHOLD_FOUR:
+					if (gEvolutionTable[species][i].param <= level && ((personality >> 1) % 100) == 0)
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+
 				case EVO_LEVEL_NINJASK:
 					if (gEvolutionTable[species][i].param <= level)
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
@@ -218,6 +228,16 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					}
 					#endif
 					break;
+
+				case EVO_DUDUNSPARCE_TWO:
+					if (((personality >> 1) % 100) != 0)
+						goto REGULAR_EVO_MOVE;
+					break;
+
+				case EVO_DUDUNSPARCE_THREE:
+					if (((personality >> 1) % 100) == 0)
+						goto REGULAR_EVO_MOVE;
+					break;
 				
 				case EVO_MOVE_MALE:
 					if (GetMonGender(mon) != MON_MALE)
@@ -276,7 +296,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					{
 						for (j = 0; j < PARTY_SIZE; ++j)
 						{
-							if (mon == &gPlayerParty[j] || mon == &gEnemyParty[j]) //Get the correct mon id
+							if (mon == &gPlayerParty[j]) //Get the correct mon id
 							{
 								if (gScored3CritsInBattle & gBitTable[j])
 									targetSpecies = gEvolutionTable[species][i].targetSpecies;

@@ -632,6 +632,10 @@ enum EvolutionMethods
 	EVO_MOVE_MALE, // Knows a given move and is male
 	EVO_MOVE_FEMALE, // Knows a given move and is female
 	EVO_ITEM_NIGHT, // Item is used on it at night
+    EVO_MAUSHOLD_THREE,
+    EVO_MAUSHOLD_FOUR,
+    EVO_DUDUNSPARCE_TWO,
+    EVO_DUDUNSPARCE_THREE,
 };
 #define EVO_TERASTAL 0xFC
 #define EVO_GIGANTAMAX 0xFD
@@ -759,7 +763,7 @@ u16 __attribute__((long_call)) SpeciesToPokedexNum(u16 species);
 u16 __attribute__((long_call)) GetCombinedOTID(void);
 u8 __attribute__((long_call)) GetTrainerEncounterMusicId(u16 trainerOpponentId);
 bool8 __attribute__((long_call)) ExecuteTableBasedItemEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
-void __attribute__((long_call)) SetMonMoveSlot(struct Pokemon *mon, u16 move, u8 slot);
+void __attribute__((long_call)) SetMonMoveSlotOld(struct Pokemon *mon, u16 move, u8 slot);
 void __attribute__((long_call)) ShiftMoveSlot(struct Pokemon *mon, u8 slotTo, u8 slotFrom);
 void __attribute__((long_call)) RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
 bool8 __attribute__((long_call)) TryIncrementMonLevel(struct Pokemon *mon);

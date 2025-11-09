@@ -5,6 +5,7 @@ TagTeamExecutionCompleteHook 802DB60
 
 ##Script Commands
 ScrCmd_message 8162E60
+ScrCmd_fadescreenswapbuffers 8162EA0
 ScrCmd_hidemappopup 8162F88
 CreateSpriteLoadTable 08162F6C
 WaitForAorBPress 806B33C

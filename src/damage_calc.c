@@ -101,8 +101,8 @@ void atk04_critcalc(void)
 
 		u16 defAbility = ABILITY(bankDef);
 
-		if (defAbility == ABILITY_SHELLARMOR
-		||  defAbility == ABILITY_BATTLEARMOR
+		if (defAbility == ABILITY_BATTLEARMOR
+		||  defAbility == ABILITY_SHELLARMOR
 		||  CantScoreACrit(NULL)
 		||  gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_OAK_TUTORIAL | BATTLE_TYPE_POKE_DUDE)
 		||  gNewBS->LuckyChantTimers[SIDE(bankDef)])
@@ -122,10 +122,10 @@ void atk04_critcalc(void)
 						+ (CheckTableForMove(gCurrentMove, gHighCriticalChanceMoves))
 						+ (atkEffect == ITEM_EFFECT_SCOPE_LENS)
 						+ (atkAbility == ABILITY_SUPERLUCK)
-						#ifdef SPECIES_CHANSEY
+						#ifdef NATIONAL_DEX_CHANSEY
 						+ 2 * (atkEffect == ITEM_EFFECT_LUCKY_PUNCH && SpeciesToNationalPokedexNum(SPECIES(gBankAttacker)) == NATIONAL_DEX_CHANSEY)
 						#endif
-						#ifdef SPECIES_FARFETCHD
+						#if (defined NATIONAL_DEX_FARFETCHD && defined NATIONAL_DEX_SIRFETCHD)
 						+ 2 * (atkEffect == ITEM_EFFECT_STICK && (SpeciesToNationalPokedexNum(SPECIES(gBankAttacker)) == NATIONAL_DEX_FARFETCHD
 						                                       || SpeciesToNationalPokedexNum(SPECIES(gBankAttacker)) == NATIONAL_DEX_SIRFETCHD))
 						#endif
@@ -194,8 +194,8 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 	if (IsTargetAbilityIgnored(defAbility, atkAbility, move))
 		defAbility = ABILITY_NONE; //Ignore Ability
 
-	if (defAbility == ABILITY_SHELLARMOR
-	||  defAbility == ABILITY_BATTLEARMOR
+	if (defAbility == ABILITY_BATTLEARMOR
+	||  defAbility == ABILITY_SHELLARMOR
 	||  CantScoreACrit(monAtk)
 	||  gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_OAK_TUTORIAL)
 	||  gNewBS->LuckyChantTimers[SIDE(bankDef)])
@@ -215,10 +215,10 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 					+ (CheckTableForMove(move, gHighCriticalChanceMoves))
 					+ (atkEffect == ITEM_EFFECT_SCOPE_LENS)
 					+ (atkAbility == ABILITY_SUPERLUCK)
-					#ifdef SPECIES_CHANSEY
+					#ifdef NATIONAL_DEX_CHANSEY
 					+ 2 * (atkEffect == ITEM_EFFECT_LUCKY_PUNCH && SpeciesToNationalPokedexNum(atkSpecies) == NATIONAL_DEX_CHANSEY)
 					#endif
-					#ifdef SPECIES_FARFETCHD
+					#ifdef NATIONAL_DEX_FARFETCHD
 					+ 2 * (atkEffect == ITEM_EFFECT_STICK && (SpeciesToNationalPokedexNum(SPECIES(atkSpecies)) == NATIONAL_DEX_FARFETCHD
 						                                    || SpeciesToNationalPokedexNum(SPECIES(atkSpecies)) == NATIONAL_DEX_SIRFETCHD))
 					#endif
@@ -239,6 +239,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 				return 2; //50 % Chance
 		#endif
 	}
+
 	return FALSE;
 }
 
@@ -507,6 +508,7 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 
 u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, struct DamageCalc* damageData)
 {
+	u32 damage;
 	u8 resultFlags = TypeCalc(move, bankAtk, bankDef, monAtk, TRUE);
 	if (gBattleMoves[move].effect != EFFECT_PAIN_SPLIT
 	&& (SPLIT(move) == SPLIT_STATUS || resultFlags & MOVE_RESULT_NO_EFFECT))
@@ -514,17 +516,34 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 
 	switch (gBattleMoves[move].effect) {
 		case EFFECT_SUPER_FANG:
-			return GetBaseCurrentHP(bankDef) / 2; //50 % of base HP
+			damage = GetBaseCurrentHP(bankDef) / 2; //50 % of base HP
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage += GetBaseCurrentHP(bankDef) / 4; //75 % of base HP
+			return damage;
 		case EFFECT_DRAGON_RAGE:
-			return 40;
+			damage = 40;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_SONICBOOM:
-			return 20;
+			damage = 20;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_LEVEL_DAMAGE:
-			return monAtk->level;
+			damage = monAtk->level;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_PSYWAVE:
-			return GetPsywaveDamage(monAtk->level, 50); //On average, 50 will be selected as the random number
+			damage = GetPsywaveDamage(monAtk->level, 50); //On average, 50 will be selected as the random number
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_MEMENTO: //Final Gambit
-			return monAtk->hp;
+			if (move == MOVE_FINALGAMBIT)
+				return monAtk->hp;
+			return 0;
 		case EFFECT_ENDEAVOR:
 			if (gBattleMons[bankDef].hp <= monAtk->hp)
 				return 0;
@@ -540,7 +559,7 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 	if (SPLIT(move) == SPLIT_STATUS) //At this point we don't care about Status moves anymore
 		return 0;
 
-	u32 damage = 0;
+	damage = 0;
 	struct DamageCalc data = {0};
 	gBattleScripting.dmgMultiplier = 1;
 
@@ -607,6 +626,7 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 
 u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, struct DamageCalc* damageData)
 {
+	u32 damage;
 	u8 resultFlags = AI_TypeCalc(move, bankAtk, bankDef, monDef);
 	if (gBattleMoves[move].effect != EFFECT_PAIN_SPLIT
 	&& (SPLIT(move) == SPLIT_STATUS || resultFlags & MOVE_RESULT_NO_EFFECT))
@@ -614,17 +634,34 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 
 	switch (gBattleMoves[move].effect) {
 		case EFFECT_SUPER_FANG:
-			return monDef->hp / 2; //50 % of base HP
+			damage = monDef->hp / 2; //50 % of base HP
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage += monDef->hp / 4; //75 % of base HP
+			return damage;
 		case EFFECT_DRAGON_RAGE:
-			return 40;
+			damage = 40;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_SONICBOOM:
-			return 20;
+			damage = 20;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_LEVEL_DAMAGE:
-			return gBattleMons[bankAtk].level;
+			damage = gBattleMons[bankAtk].level;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_PSYWAVE:
-			return GetPsywaveDamage(gBattleMons[bankAtk].level, 50); //On average, 50 will be selected as the random number
+			damage = GetPsywaveDamage(gBattleMons[bankAtk].level, 50); //On average, 50 will be selected as the random number
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_MEMENTO: //Final Gambit
-			return gBattleMons[bankAtk].hp;
+			if (move == MOVE_FINALGAMBIT)
+				return gBattleMons[bankAtk].hp;
+			return 0;
 		case EFFECT_ENDEAVOR:
 			if (monDef->hp <= gBattleMons[bankAtk].hp)
 				return 0;
@@ -645,7 +682,7 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 			break;
 	}
 
-	u32 damage = 0;
+	damage = 0;
 	struct DamageCalc data = {0};
 	gBattleScripting.dmgMultiplier = 1;
 
@@ -823,7 +860,7 @@ void atk06_typecalc(void)
 				}
 				else if (defEffect == ITEM_EFFECT_SAFETY_GOGGLES)
 				{
-					gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+					gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 					gLastLandedMoves[bankDef] = 0;
 					gLastHitByType[bankDef] = 0xFF;
 					TrySetMissStringForSafetyGoggles(bankDef);
@@ -935,7 +972,7 @@ void atk4A_typecalc2(void)
 		}
 		else if (defEffect == ITEM_EFFECT_SAFETY_GOGGLES)
 		{
-			gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+			gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 			gLastLandedMoves[gBankTarget] = 0;
 			TrySetMissStringForSafetyGoggles(gBankTarget);
 			RecordItemEffectBattle(gBankTarget, defEffect);
@@ -1156,7 +1193,7 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monDef)
 		if (atkAbility == ABILITY_ADAPTABILITY)
 			gBattleMoveDamage *= 2;
 		else
-			gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
+			gBattleMoveDamage = udivsi(gBattleMoveDamage * 15, 10);
 	}
 
 	//Check Special Ground Immunities
@@ -1241,7 +1278,7 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 		if (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, moveType))
 			gBattleMoveDamage *= 2;
 		else if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
-			gBattleMoveDamage = (gBattleMoveDamage * 9) / 2;
+			gBattleMoveDamage = (gBattleMoveDamage * 225) / 100;
 		else if (atkAbility == ABILITY_ADAPTABILITY)
 			gBattleMoveDamage *= 2;
 		else
@@ -1333,15 +1370,15 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 
 		defType1 = GetMonType(monIllusion, 0);
 		defType2 = GetMonType(monIllusion, 1);
-		defType3 = gBattleMons[bankDef].type3;
 	}
 	else
 	{
 		defAbility = GetRecordedAbility(bankDef);
 		defType1 = gBattleMons[bankDef].type1;
 		defType2 = gBattleMons[bankDef].type2;
-		defType3 = gBattleMons[bankDef].type3;
 	}
+
+	defType3 = gBattleMons[bankDef].type3; //Not affected by Illusion
 
 	if (IsTargetAbilityIgnored(defAbility, atkAbility, move))
 		defAbility = ABILITY_NONE; //Ignore Ability
@@ -1381,7 +1418,7 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	{
 		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 	}
-	else if (move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
+	else if (moveEffect == EFFECT_SKY_DROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
 	{
 		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 	}
@@ -2570,7 +2607,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	}
 	else //Load from bank
 	{
-		switch (data->move) {
+		switch (move) {
 			case MOVE_BODYPRESS:
 				attack = gBattleMons[bankAtk].defense;
 				spAttack = gBattleMons[bankAtk].spDefense;
@@ -4007,7 +4044,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 				power = (power * 15) / 10;
 			break;
 
-		case ABILITY_RIVALRY: ;
+		case ABILITY_RIVALRY:
 		//1.25x / 0.75x Boost
 		if (!(data->specialFlags & FLAG_IGNORE_TARGET))
 		{
@@ -4193,7 +4230,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 				power = (power * 12) / 10;
 			break;
 
-		#ifdef SPECIES_DIALGA
+		#ifdef NATIONAL_DEX_DIALGA
 		case ITEM_EFFECT_ADAMANT_ORB:
 		//1.2x Boost
 			if (SpeciesToNationalPokedexNum(data->atkSpecies) == NATIONAL_DEX_DIALGA
@@ -4202,7 +4239,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 			break;
 		#endif
 
-		#ifdef SPECIES_PALKIA
+		#ifdef NATIONAL_DEX_PALKIA
 		case ITEM_EFFECT_LUSTROUS_ORB:
 		//1.2x Boost
 			if (SpeciesToNationalPokedexNum(data->atkSpecies) == NATIONAL_DEX_PALKIA
@@ -4211,7 +4248,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 			break;
 		#endif
 
-		#if (defined SPECIES_GIRATINA && defined SPECIES_GIRATINA_ORIGIN)
+		#ifdef NATIONAL_DEX_GIRATINA
 		case ITEM_EFFECT_GRISEOUS_ORB:
 		//1.2x Boost
 			if (SpeciesToNationalPokedexNum(data->atkSpecies) == NATIONAL_DEX_GIRATINA
@@ -4220,7 +4257,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 			break;
 		#endif
 
-		#if (defined SPECIES_OGERPON)
+		#ifdef NATIONAL_DEX_OGERPON
 		case ITEM_EFFECT_MASKS:
 		//1.2x Boost
 			if (SpeciesToNationalPokedexNum(data->atkSpecies) == NATIONAL_DEX_OGERPON)
@@ -4228,7 +4265,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 			break;
 		#endif
 
-		#if (!(defined OLD_SOUL_DEW_EFFECT) && defined SPECIES_LATIOS && defined SPECIES_LATIAS)
+		#if (!(defined OLD_SOUL_DEW_EFFECT) && defined NATIONAL_DEX_LATIOS && defined NATIONAL_DEX_LATIAS)
 		case ITEM_EFFECT_SOUL_DEW:
 		//1.2x Boost
 			if ((SpeciesToNationalPokedexNum(data->atkSpecies) == NATIONAL_DEX_LATIOS
@@ -4344,10 +4381,16 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 			break;
 	}
 
-	if (GetBattlerTeraType(bankAtk) == data->moveType 
-	&& power < 60
+	if (power < 60
 	&& !CheckTableForMove(move, gTerastalPowerBoostBannedMoves))
-		power = 60;
+	{
+		u8 atkTeraType = GetBattlerTeraType(bankAtk);
+		
+		if (atkTeraType == data->moveType
+		|| (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, data->moveType)))
+			power = 60;
+	}
+	
 
 	return power;
 }

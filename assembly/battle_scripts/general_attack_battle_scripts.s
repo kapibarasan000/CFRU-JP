@@ -3539,6 +3539,7 @@ HailSkipPrimalWeatherCheck:
 	waitmessage DELAY_1SECOND
 	jumpifmovehadnoeffect BS_MOVE_END @;Prevents Ice Face from activatig on fail
 	call BS_WEATHER_FORM_CHANGES
+	callasm ClearHailStartFlag
 	jumpifmove MOVE_CHILLYRECEPTION ChillyReceptionSwitchOutBS
 	goto BS_MOVE_END
 

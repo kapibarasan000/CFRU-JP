@@ -666,4 +666,3 @@ void PrepareStringForAIUsingXItem(void)
 	gBattleScripting.animArg1 = gBattleTextBuff1[2] + STAT_ANIM_PLUS2 - 1;
 	gBattleScripting.animArg2 = 0;
 }
-

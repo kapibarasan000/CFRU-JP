@@ -2141,6 +2141,49 @@ u8 sp0D0_PokemonInPartyThatCanLearnTMHM(void)
 	return PARTY_SIZE;
 }
 
+//Fix fadescreens in rain
+bool8 __attribute__((long_call)) IsPaletteNotActive(void);
+
+static bool8 IsPaletteFadeNotActive(void)
+{
+	return IsPaletteNotActive()
+		&& gWeatherPtr->palProcessingState != WEATHER_PAL_STATE_SCREEN_FADING_IN; //Used instead of gPaletteFade.active in certain weathers
+}
+
+static bool8 ResetUnfadedPaletteWhenPaletteNotActive(void)
+{
+	if (IsPaletteFadeNotActive())
+	{
+		CpuCopy32(gPaletteDecompressionBuffer, gPlttBufferUnfaded, PLTT_DECOMP_BUFFER_SIZE); //Restore original unfaded pelette
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+bool8 ScrCmd_fadescreenswapbuffers(struct ScriptContext *ctx)
+{
+	u8 mode = ScriptReadByte(ctx);
+
+	switch (mode)
+	{
+		case FADE_TO_BLACK:
+		case FADE_TO_WHITE:
+		default:
+			CpuCopy32(gPlttBufferUnfaded, gPaletteDecompressionBuffer, PLTT_DECOMP_BUFFER_SIZE); //Backup because replaced with faded palette in weather
+			FadeScreen(mode, 0);
+			SetupNativeScript(ctx, ResetUnfadedPaletteWhenPaletteNotActive);
+			break;
+		case FADE_FROM_BLACK:
+		case FADE_FROM_WHITE:
+			FadeScreen(mode, 0);
+			SetupNativeScript(ctx, IsPaletteFadeNotActive);
+			break;
+	}
+
+	return TRUE;
+}
+
 //Naming Screen Special////////////////////////////////////////////////////////////////////////////
 //Pointer+1 at 083E23D0, orig func at 0809F11C
 bool8 KeyboardKeyHandler_Character(u8 event)

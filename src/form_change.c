@@ -548,7 +548,7 @@ void TrySetCorrectToxtricityForm(struct BoxPokemon* mon)
 
 //Overworld Form Change Functions////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static u16 sTypeToArceusForm[NUMBER_OF_MON_TYPES] =
+static const u16 sTypeToArceusForm[NUMBER_OF_MON_TYPES] =
 {
 	[TYPE_NORMAL] =		0,
 	[TYPE_FIGHTING] =	SPECIES_ARCEUS_FIGHT,

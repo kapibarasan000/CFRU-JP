@@ -106,7 +106,7 @@ species_t GetMegaSpecies(unusedArg u16 species, unusedArg u16 item, unusedArg co
 	#else
 
 	const struct Evolution* evolutions = gEvolutionTable[species];
-	int i, j;
+	u32 i, j;
 
 	for (i = 0; i < EVOS_PER_MON; ++i) 
 	{
@@ -224,6 +224,7 @@ const u8* DoPrimalReversion(u8 bank, u8 caseId)
 			}
 		}
 	}
+
 	return NULL;
 }
 

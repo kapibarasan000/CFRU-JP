@@ -33,7 +33,6 @@ void SpriteCB_CentredElectricity(struct Sprite* sprite);
 void SpriteCB_CoreEnforcerHits(struct Sprite* sprite);
 void SpriteCB_CoreEnforcerBeam(struct Sprite* sprite);
 void CoreEnforcerLoadBeamTarget(struct Sprite* sprite);
-void SpriteCB_FlareBlitzUpFlames(struct Sprite* sprite);
 void SpriteCB_SunsteelStrikeRings(struct Sprite* sprite);
 void SpriteCB_MindBlownBall(struct Sprite *sprite);
 void SpriteCB_MindBlownExplosion(struct Sprite* sprite);
@@ -61,7 +60,6 @@ bool8 IsAnimMoveBulletSeed(void);
 bool8 IsAnimMoveKingsShield(void);
 
 //Functions hooked in
-bank_t LoadBattleAnimTarget(u8 arg);
 void ScriptCmd_loadspritegfx(void);
 bool8 ShadowSneakAnimHelper(void);
 void UpdatedAnimStealItemFinalCallback(struct Sprite* sprite);

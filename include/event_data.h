@@ -63,6 +63,7 @@ void sub_806E6FC(void);
 #define gSpecialVar_PlayerFacing (*((u16*) 0x2037008)) //extern u16 gSpecialVar_PlayerFacing;
 #define gSpecialVar_MonBoxId (*((u16*) 0x203700A)) //extern u16 gSpecialVar_MonBoxId;
 #define gSpecialVar_MonBoxPos (*((u16*) 0x203700C)) //extern u16 gSpecialVar_MonBoxPos;
+#define gSpecialVar_TextColor (*((u16*) 0x203700E)) //extern u16 gSpecialVar_TextColor;
 
 /*
 extern u16 gSpecialVar_0x8000;

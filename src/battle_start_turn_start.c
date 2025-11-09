@@ -969,6 +969,7 @@ void SetActionsAndBanksTurnOrder(void)
 					++turnOrderId;
 				}
 			}
+
 			for (i = 0; i < gBattlersCount - 1; i++)
 			{
 				for (j = i + 1; j < gBattlersCount; j++)
@@ -1059,7 +1060,6 @@ void RunTurnActionsFunctions(void)
 			}
 		}
 	}
-
 	
 	gNewBS->activatedCustapQuickClaw = TRUE; //So the animation only plays once
 
@@ -1572,7 +1572,7 @@ void HandleAction_UseMove(void)
 	else if (IS_DOUBLE_BATTLE
 		  && gSideTimers[side].followmeTimer == 0
 		  && !IsMoveRedirectionPrevented(gCurrentMove, atkAbility)
-		  && (SPLIT(gCurrentMove) != SPLIT_STATUS ||  moveTarget != MOVE_TARGET_USER)
+		  && (SPLIT(gCurrentMove) != SPLIT_STATUS || moveTarget != MOVE_TARGET_USER)
 		  && !(moveTarget & (MOVE_TARGET_ALL | MOVE_TARGET_BOTH))
 		  && NO_MOLD_BREAKERS(ABILITY(gBankAttacker), gCurrentMove))
 	{ //Try Ability Redirection
@@ -1849,7 +1849,6 @@ u16 GetMUS_ForBattle(void)
 				if (song != 0)
 					return song;
 			}
-			
 		}
 		else
 		{
@@ -2125,7 +2124,8 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move)
 		if (move != MOVE_BIDE && gBattleMons[bank].status2 & STATUS2_BIDE)
 			priority = 1;
 
-		switch (ABILITY(bank)) {
+		switch (ABILITY(bank))
+		{
 			case ABILITY_PRANKSTER:
 				if (SPLIT(move) == SPLIT_STATUS)
 					++priority;
@@ -2144,6 +2144,7 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move)
 			case ABILITY_TRIAGE:
 				if (gBattleMoves[move].flags & FLAG_TRIAGE_AFFECTED)
 					priority += 3;
+				break;
 		}
 		
 		if (move == MOVE_GRASSYGLIDE && gTerrainType == GRASSY_TERRAIN && CheckGrounding(bank))
@@ -2176,6 +2177,7 @@ s8 PriorityCalcMon(struct Pokemon* mon, u16 move)
 		case ABILITY_TRIAGE:
 			if (gBattleMoves[move].flags & FLAG_TRIAGE_AFFECTED)
 				priority += 3;
+			break;
 	}
 
 	return priority;

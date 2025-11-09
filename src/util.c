@@ -220,7 +220,9 @@ bool8 CanSpeciesEvolve(u16 species)
 	{
 		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
 			break; //Break now to save time
-		else if (evolutions[i].method != MEGA_EVOLUTION && evolutions[i].method != EVO_GIGANTAMAX)
+		else if (evolutions[i].method != MEGA_EVOLUTION
+		&& evolutions[i].method != EVO_GIGANTAMAX
+		&& evolutions[i].method != EVO_TERASTAL)
 			return TRUE;
 	}
 

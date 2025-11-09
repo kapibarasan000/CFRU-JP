@@ -212,7 +212,7 @@ gNaturalGiftTable:
 .byte TYPE_DARK, 100
 
 .hword ITEM_ROSELI_BERRY
-.byte TYPE_FAIRY, 100
+.byte TYPE_FAIRY, 80
 
 .hword ITEM_KEE_BERRY
 .byte TYPE_FAIRY, 100

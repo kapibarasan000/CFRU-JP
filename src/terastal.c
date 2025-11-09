@@ -39,30 +39,30 @@ static const item_t sTeraOrbTable[] =
 
 static const u16 sTeraTypeColor[NUMBER_OF_MON_TYPES] =
 {
-	RGB(31, 31, 31),
-    RGB(26, 8, 14),
-    RGB(31, 26, 7),
-    RGB(26, 10, 25),
-    RGB(25, 23, 18),
-    RGB(18, 16, 8),
-    RGB(18, 24, 6),
-    RGB(12, 10, 16),
-    RGB(19, 19, 20),
+	RGB(21, 21, 15),
+    RGB(24, 6, 5),
+    RGB(21, 18, 30),
+    RGB(20, 8, 20),
+    RGB(28, 24, 13),
+    RGB(23, 20, 7),
+    RGB(21, 23, 4),
+    RGB(14, 11, 19),
+    RGB(23, 23, 26),
     RGB(31, 31, 31),
-    RGB(31, 20, 11),
-    RGB(10, 18, 27),
-    RGB(12, 24, 11),
-    RGB(30, 26, 7),
-    RGB(31, 14, 15),
-    RGB(14, 26, 25),
-    RGB(10, 18, 27),
-    RGB(6, 5, 8),
-    RGB(31, 31, 31),
-    RGB(31, 31, 31),
+    RGB(30, 16, 6),
+    RGB(13, 18, 30),
+    RGB(15, 25, 10),
+    RGB(31, 26, 6),
+    RGB(31, 11, 17),
+    RGB(19, 27, 27),
+    RGB(14, 7, 31),
+    RGB(14, 11, 9),
     RGB(31, 31, 31),
     RGB(31, 31, 31),
     RGB(31, 31, 31),
-    RGB(31, 15, 21),
+    RGB(31, 31, 31),
+    RGB(31, 31, 31),
+    RGB(29, 17, 25),
 	RGB(31, 31, 31),
 };
 
@@ -340,7 +340,7 @@ const u8* DoTerastal(u8 bank)
 	u16 terastalFormSpecies = GetTerastalFormSpecies(mon->species);
 
 	if (terastalFormSpecies != SPECIES_NONE)
-		DoFormChange(bank, terastalFormSpecies, FALSE, TRUE, TRUE);
+		DoFormChange(bank, terastalFormSpecies, TRUE, TRUE, TRUE);
 
 	return BattleScript_Terastal;
 }

@@ -709,11 +709,11 @@ bool8 IsMegaZMoveBannedBattle(void)
 #define LOAD_TIER_CHECKING_ABILITY										\
 {																		\
 	if (spread->ability == 0 && gBaseStats[species].hiddenAbility != 0)	\
-		ability = GetHiddenAbility(species);					\
+		ability = GetHiddenAbility(species);							\
 	else if (spread->ability == 2 && gBaseStats[species].ability2 != 0)	\
-		ability = GetAbility2(species);							\
+		ability = GetAbility2(species);									\
 	else																\
-		ability = GetAbility1(species);						\
+		ability = GetAbility1(species);									\
 }
 
 bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const struct Pokemon* const mon, const u8 tier, const u8 checkFromLocationType)
@@ -953,7 +953,8 @@ bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTower
 				return TRUE;
 
 			//Check Banned Moves
-			for (i = 0; i < MAX_MON_MOVES; ++i) {
+			for (i = 0; i < MAX_MON_MOVES; ++i)
+			{
 				if (CheckTableForMove(moveLoc[i], gSmogon_MoveBanList)
 				|| moveLoc[i] == MOVE_BATONPASS
 				|| moveLoc[i] == MOVE_SWAGGER)
@@ -1353,12 +1354,12 @@ u16 sp056_DetermineBattlePointsToGive(void)
 
 		switch (BATTLE_FACILITY_NUM) {
 			case IN_BATTLE_TOWER:
-				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_FACILITY_MONOTYPE)
+				if (tier != BATTLE_FACILITY_MONOTYPE)
 					toGive = 20; //Battle against frontier brain
 				break;
 
 			case IN_BATTLE_SANDS:
-				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_FACILITY_MONOTYPE)
+				if (tier != BATTLE_FACILITY_MONOTYPE)
 					toGive = 20; //Battle against frontier brain
 				break;
 
@@ -1367,7 +1368,7 @@ u16 sp056_DetermineBattlePointsToGive(void)
 				break;
 
 			case IN_BATTLE_CIRCUS:
-				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_FACILITY_MONOTYPE)
+				if (tier != BATTLE_FACILITY_MONOTYPE)
 					toGive = 20; //Battle against frontier brain
 				break;
 		}
@@ -1384,12 +1385,12 @@ u16 sp056_DetermineBattlePointsToGive(void)
 
 		switch (BATTLE_FACILITY_NUM) {
 			case IN_BATTLE_TOWER:
-				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_FACILITY_MONOTYPE)
+				if (tier != BATTLE_FACILITY_MONOTYPE)
 					toGive = 50; //Battle against frontier brain
 				break;
 
 			case IN_BATTLE_SANDS:
-				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_FACILITY_MONOTYPE)
+				if (tier != BATTLE_FACILITY_MONOTYPE)
 					toGive = 50; //Battle against frontier brain
 				break;
 
@@ -1398,7 +1399,7 @@ u16 sp056_DetermineBattlePointsToGive(void)
 				break;
 
 			case IN_BATTLE_CIRCUS:
-				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_FACILITY_MONOTYPE)
+				if (tier != BATTLE_FACILITY_MONOTYPE)
 					toGive = 50; //Battle against frontier brain
 				break;
 		}

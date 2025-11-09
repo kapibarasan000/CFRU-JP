@@ -388,7 +388,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 
 			case MOVE_EFFECT_TRI_ATTACK:
-				if (gBattleMons[gEffectBank].status1)
+				if (gBattleMons[gEffectBank].status1 != 0)
 				{
 					gBattlescriptCurrInstr++;
 				}

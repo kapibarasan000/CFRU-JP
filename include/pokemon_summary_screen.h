@@ -13,7 +13,7 @@ void __attribute__((long_call)) SummaryScreen_SetUnknownTaskId(u8 a0);
 void __attribute__((long_call)) SummaryScreen_DestroyUnknownTask(void);
 u8 __attribute__((long_call)) GetLastViewedMonIndex(void);
 void __attribute__((long_call)) ShowPokemonSummaryScreen(struct Pokemon * party, u8 cursorPos, u8 lastIdx, void (*callback)(void), u8 a4);
-void __attribute__((long_call)) sub_81392FC(u8);
+void __attribute__((long_call)) SetPokemonSummaryScreenMode(u8);
 
 // The Pokemon Summary Screen can operate in different modes. Certain features,
 // such as move re-ordering, are available in the different modes.
@@ -23,7 +23,7 @@ enum PokemonSummaryScreenMode
     PSS_MODE_UNK1,
     PSS_MODE_SELECT_MOVE,
     PSS_MODE_FORGET_MOVE,
-    PSS_MODE_UNK4,
+    PSS_MODE_TRADE,
     PSS_MODE_BOX,
 };
 
@@ -39,13 +39,13 @@ enum PokemonSummaryScreenPage
 
 enum PokemonSummaryScreenState321C
 {
-    PSS_STATE321C_0,
-    PSS_STATE321C_1,
-    PSS_STATE321C_2,
-    PSS_STATE321C_3,
-    PSS_STATE321C_4,
-    PSS_STATE321C_5,
-    PSS_STATE321C_6
+    PSS_STATE3270_FADEIN,
+    PSS_STATE3270_PLAYCRY,
+    PSS_STATE3270_HANDLEINPUT,
+    PSS_STATE3270_FLIPPAGES,
+    PSS_STATE3270_ATEXIT_FADEOUT,
+    PSS_STATE3270_ATEXIT_WAITLINKDELAY,
+    PSS_STATE3270_ATEXIT_WAITFADE
 };
 
 enum PokemonSummaryScreenStat

@@ -422,6 +422,7 @@ void __attribute__((long_call)) SpriteCB_80BBA7C(struct Sprite *sprite);
 void __attribute__((long_call)) SpriteCB_AnimSolarbeamBigOrb(struct Sprite *sprite);
 void __attribute__((long_call)) InitAnimLinearTranslation(struct Sprite *sprite);
 bool8 __attribute__((long_call)) AnimTranslateLinear(struct Sprite *sprite);
+void  __attribute__((long_call)) InitAndRunAnimFastLinearTranslation(struct Sprite *sprite);
 u16 __attribute__((long_call)) ArcTan2Neg(s16 a, s16 b);
 void __attribute__((long_call)) TrySetSpriteRotScale(struct Sprite *sprite, bool8 a2, s16 xScale, s16 yScale, u16 rotation);
 void __attribute__((long_call)) PrepareBattlerSpriteForRotScale(u8 spriteId, u8 objMode);
@@ -452,6 +453,7 @@ bool8 __attribute__((long_call)) CreateShockWaveLightning(struct Task *task, u8 
 u8 __attribute__((long_call)) CreateMonPicBattleAnim(u16 species, bool8 isBackpic, u8 a3, s16 x, s16 y, u8 subpriority, u32 personality, u32 trainerId, u32 battlerId, u32 a10);
 void __attribute__((long_call)) TranslateSpriteLinearFixedPoint(struct Sprite *sprite);
 void __attribute__((long_call)) SpriteCB_SetInvisible(struct Sprite *sprite);
+u32 __attribute__((long_call)) SelectBattleAnimSpriteAndBgPalettes(bool8 battleBackground, bool8 attacker, bool8 target, bool8 attackerPartner, bool8 targetPartner, bool8 a6, bool8 a7);
 void __attribute__((long_call)) SetAnimBgAttribute(u8 bgId, u8 attributeId, u8 value);
 void __attribute__((long_call)) GetBattleAnimBg1Data(struct BattleAnimBgData *animBgData);
 void __attribute__((long_call)) AnimLoadCompressedBgTilemap(u32 bgId, const u32 *src);

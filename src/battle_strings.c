@@ -333,7 +333,7 @@ void BufferStringBattle(u16 stringID)
 				switch (gBattleTextBuff1[0])
 				{
 				case B_OUTCOME_WON:
-					if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
+					if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 						stringPtr = BattleText_TwoInGameTrainersDefeated; //NEED DATA
 					else
 						stringPtr = BattleText_TwoLinkTrainersDefeated; //0x83FCCF8
@@ -593,9 +593,6 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 					toCpy = gTrainerClassNames[GetFrontierTrainerClassId(gTrainerBattleOpponent_A, 0)];
 				else
 					toCpy = gTrainerClassNames[gTrainers[gTrainerBattleOpponent_A].trainerClass];
-
-				if (toCpy[3] == 0x8) //Expanded Trainer Class Names
-					toCpy = T1_READ_PTR(toCpy);
 				break;
 			case B_TXT_TRAINER1_NAME: // trainer1 name
 				if (gTrainerBattleOpponent_A == 0x400) //Was used for Secret Bases in Ruby
@@ -763,9 +760,6 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				else
 					toCpy = gTrainerClassNames[gTrainers[VarGet(VAR_SECOND_OPPONENT)].trainerClass];
 
-
-				if (toCpy[3] == 0x8) //Expanded Trainer Class Names
-					toCpy = T1_READ_PTR(toCpy);
 
 				break;
 

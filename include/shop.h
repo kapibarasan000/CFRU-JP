@@ -33,6 +33,8 @@ struct ShopData
 
 extern struct ShopData gShopData;
 
+extern u16 (*gShopTilemapBuffer1)[0x400];
+
 void CreatePokemartMenu(const u16 *);
 void CreateDecorationShop1Menu(const u16 *);
 void CreateDecorationShop2Menu(const u16 *);

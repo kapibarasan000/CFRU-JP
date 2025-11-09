@@ -809,13 +809,27 @@ static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 
 		//Check Macho Brace
 		if (holdEffect == ITEM_EFFECT_MACHO_BRACE && itemQuality == QUALITY_MACHO_BRACE)
+		{
+			#ifdef VAR_MACHO_BRACE_LEVEL
+			evIncrease *= MathMin(max(2, VarGet(VAR_MACHO_BRACE_LEVEL)), EV_CAP);
+			#else
 			evIncrease *= 2;
+			#endif
+		}
 
 		AddEVs(mon, stat, evIncrease);
 
+		//Check Power Item
 		if (holdEffect == ITEM_EFFECT_MACHO_BRACE && itemQuality > 0 && itemQuality - 1 == stat)
 		{
 			evIncrease = POWER_ITEM_EV_YIELD * pkrsMultiplier;
+
+			#ifdef VAR_POWER_ITEM_LEVEL
+			u8 powerItemLevel = VarGet(VAR_POWER_ITEM_LEVEL);
+			if (powerItemLevel >= 2) //At least doubling
+				evIncrease *= MathMin(powerItemLevel, EV_CAP);
+			#endif
+
 			AddEVs(mon, stat, evIncrease); //Power items always add to requested stat
 		}
 	}

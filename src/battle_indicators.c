@@ -131,10 +131,10 @@ static void SpriteCB_DynamaxTrigger(struct Sprite* self);
 static void SpriteCB_RaidShield(struct Sprite* sprite);
 static void SpriteCB_TerastalTrigger(struct Sprite* self);
 static void SpriteCB_LastBallTrigger(struct Sprite* self);
-static void DestroyMegaTriggers(void);
-static void DestroyZTrigger(void);
-static void DestroyDynamaxTrigger(void);
-static void DestroyTerastalTrigger(void);
+static void DestroyMegaTriggers(struct Sprite* sprite);
+static void DestroyZTrigger(struct Sprite* sprite);
+static void DestroyDynamaxTrigger(struct Sprite* sprite);
+static void DestroyTerastalTrigger(struct Sprite* sprite);
 static void DestroyLastBallTrigger(struct Sprite* sprite);
 static void DestroyLastBallTriggerBall(struct Sprite* sprite);
 
@@ -174,8 +174,10 @@ static const struct CompressedSpriteSheet sUltraIndicatorSpriteSheet = {Ultra_In
 static const struct SpritePalette sMegaIndicatorPalette = {Mega_IndicatorPal, GFX_TAG_MEGA_INDICATOR};
 
 static const struct CompressedSpriteSheet sMegaTriggerSpriteSheet = {Mega_TriggerTiles, (32 * 32) / 2, GFX_TAG_MEGA_TRIGGER};
-static const struct CompressedSpriteSheet sUltraTriggerSpriteSheet = {Ultra_TriggerTiles, (32 * 32) / 2, GFX_TAG_ULTRA_TRIGGER};
 static const struct SpritePalette sMegaTriggerPalette = {Mega_TriggerPal, GFX_TAG_MEGA_TRIGGER};
+
+static const struct CompressedSpriteSheet sUltraTriggerSpriteSheet = {Ultra_TriggerTiles, (32 * 32) / 2, GFX_TAG_ULTRA_TRIGGER};
+static const struct SpritePalette sUltraTriggerPalette = {Mega_TriggerPal, GFX_TAG_ULTRA_TRIGGER};
 
 static const struct CompressedSpriteSheet sZTriggerSpriteSheet = {Z_Move_TriggerTiles, (32 * 32) / 2, GFX_TAG_Z_TRIGGER};
 static const struct SpritePalette sZTriggerPalette = {Z_Move_TriggerPal, GFX_TAG_Z_TRIGGER};
@@ -804,7 +806,7 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 			self->data[3] += 2;
 		else
 		{
-			DestroyMegaTriggers();
+			DestroyMegaTriggers(self);
 			return;
 		}
 	}
@@ -875,6 +877,19 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 
 static void SpriteCB_MegaIndicator(struct Sprite* self)
 {
+	struct Sprite* healthbox = GetHealthboxSprite(INDICATOR_BANK);
+
+	//Hide if the healthbox its attached to is hidden
+	if (healthbox->invisible)
+	{
+		self->invisible = TRUE;
+		return;
+	}
+	else
+	{
+		self->invisible = FALSE;
+	}
+
 	switch(TAG) {
 		case GFX_TAG_ALPHA_INDICATOR:
 			if (!IsBluePrimal(INDICATOR_BANK))
@@ -901,7 +916,10 @@ static void SpriteCB_MegaIndicator(struct Sprite* self)
 			break;
 
 		case GFX_TAG_DYNAMAX_INDICATOR:
-			if (gNewBS == NULL || !IsDynamaxed(INDICATOR_BANK))
+			if (gNewBS == NULL)
+				return;
+
+			if (!HasDynamaxSymbol(INDICATOR_BANK))
 			{
 				self->invisible = TRUE;
 				return;
@@ -912,6 +930,9 @@ static void SpriteCB_MegaIndicator(struct Sprite* self)
 		case GFX_TAG_TERASTAL_INDICATOR_OPPONENT_LEFT:
 		case GFX_TAG_TERASTAL_INDICATOR_PLAYER_RIGHT:
 		case GFX_TAG_TERASTAL_INDICATOR_OPPONENT_RIGHT:
+			if (gNewBS == NULL)
+				return;
+
 			if (!IsTerastal(INDICATOR_BANK))
 			{
 				self->invisible = TRUE;
@@ -920,23 +941,14 @@ static void SpriteCB_MegaIndicator(struct Sprite* self)
 			break;
 
 		default: //GFX_TAG_MEGA_INDICATOR
+			if (gNewBS == NULL)
+				return;
+
 			if (!IsMega(INDICATOR_BANK))
 			{
 				self->invisible = TRUE;
 				return;
 			}
-	}
-
-	struct Sprite* healthbox = GetHealthboxSprite(INDICATOR_BANK);
-
-	if (healthbox->invisible)
-	{
-		self->invisible = TRUE;
-		return;
-	}
-	else
-	{
-		self->invisible = FALSE;
 	}
 
 	u8 y = healthbox->oam.y;
@@ -1051,7 +1063,7 @@ static void SpriteCB_ZTrigger(struct Sprite* self)
 			self->data[3] += 2;
 		else
 		{
-			DestroyZTrigger();
+			DestroyZTrigger(self);
 			return;
 		}
 	}
@@ -1131,7 +1143,7 @@ static void SpriteCB_DynamaxTrigger(struct Sprite* self)
 			self->data[3] += 2;
 		else
 		{
-			DestroyDynamaxTrigger();
+			DestroyDynamaxTrigger(self);
 			return;
 		}
 	}
@@ -1314,7 +1326,7 @@ void LoadMegaGraphics(u8 state)
 			}
 			else
 			#endif
-			if (IsDynamaxed(bank))
+			if (HasDynamaxSymbol(bank))
 			{
 				if (!loadedDynamaxGfx)
 				{
@@ -1398,7 +1410,7 @@ static void SpriteCB_TerastalTrigger(struct Sprite* self)
 			self->data[3] += 2;
 		else
 		{
-			DestroyTerastalTrigger();
+			DestroyTerastalTrigger(self);
 			return;
 		}
 	}
@@ -1460,52 +1472,95 @@ void DestroyMegaIndicator(u8 bank)
 
 void TryLoadMegaTriggers(void)
 {
-	u8 spriteId;
+	u8 spriteId, i;
+	bool8 noNewMegaTrigger = FALSE;
+	bool8 noNewUltraTrigger = FALSE;
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN))
 		return;
 
-	LoadSpritePalette(&sMegaTriggerPalette);
-	LoadCompressedSpriteSheetUsingHeap(&sMegaTriggerSpriteSheet);
-	LoadCompressedSpriteSheetUsingHeap(&sUltraTriggerSpriteSheet);
+	if (IndexOfSpritePaletteTag(GFX_TAG_MEGA_TRIGGER) == 0xFF)
+		LoadSpritePalette(&sMegaTriggerPalette);
+	if (IndexOfSpritePaletteTag(GFX_TAG_ULTRA_TRIGGER) == 0xFF)
+		LoadSpritePalette(&sUltraTriggerPalette);
+	if (IndexOfSpriteTileTag(GFX_TAG_MEGA_TRIGGER) == 0xFF)
+		LoadCompressedSpriteSheetUsingHeap(&sMegaTriggerSpriteSheet);
+	if (IndexOfSpriteTileTag(GFX_TAG_ULTRA_TRIGGER) == 0xFF)
+		LoadCompressedSpriteSheetUsingHeap(&sUltraTriggerSpriteSheet);
 
-	spriteId = CreateSprite(&sMegaTriggerSpriteTemplate, 130, 90, 1);
-	gSprites[spriteId].data[3] = 32;
-	gSprites[spriteId].pos1.y = -32;
-	gSprites[spriteId].data[4] = gActiveBattler;
+	//See if there are old triggers that haven't disappeared yet
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (!gSprites[i].inUse)
+			continue;
 
-	spriteId = CreateSprite(&sUltraTriggerSpriteTemplate, 130, 90, 1);
-	gSprites[spriteId].data[3] = 32;
-	gSprites[spriteId].pos1.y = -32;
-	gSprites[spriteId].data[4] = gActiveBattler;
+		if (gSprites[i].template->tileTag == GFX_TAG_MEGA_TRIGGER
+		&& gSprites[i].data[4] == gActiveBattler)
+			noNewMegaTrigger = TRUE;
+		
+		if (gSprites[i].template->tileTag == GFX_TAG_ULTRA_TRIGGER
+		&& gSprites[i].data[4] == gActiveBattler)
+			noNewUltraTrigger = TRUE;
+	}
+
+	if (!noNewMegaTrigger) //No old Mega Trigger exists
+	{
+		spriteId = CreateSprite(&sMegaTriggerSpriteTemplate, 130, 90, 1);
+		gSprites[spriteId].data[3] = 32;
+		gSprites[spriteId].pos1.y = -32;
+		gSprites[spriteId].data[4] = gActiveBattler;
+	}
+
+	if (!noNewUltraTrigger) //No old Ultra Trigger exists
+	{
+		spriteId = CreateSprite(&sUltraTriggerSpriteTemplate, 130, 90, 1);
+		gSprites[spriteId].data[3] = 32;
+		gSprites[spriteId].pos1.y = -32;
+		gSprites[spriteId].data[4] = gActiveBattler;
+	}
 }
 
-static void DestroyMegaTriggers(void)
+static void DestroyMegaTriggers(struct Sprite* sprite)
 {
+	u32 i;
+	DestroySprite(sprite);
+
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (!gSprites[i].inUse)
+			continue;
+	
+		if (gSprites[i].template->tileTag == GFX_TAG_MEGA_TRIGGER
+		||  gSprites[i].template->tileTag == GFX_TAG_ULTRA_TRIGGER)
+			return; //Tiles and palette are still in use
+	}
+
 	FreeSpritePaletteByTag(GFX_TAG_MEGA_TRIGGER);
 	FreeSpriteTilesByTag(GFX_TAG_MEGA_TRIGGER);
 	FreeSpritePaletteByTag(GFX_TAG_ULTRA_TRIGGER);
 	FreeSpriteTilesByTag(GFX_TAG_ULTRA_TRIGGER);
-
-	for (int i = 0; i < MAX_SPRITES; ++i)
-	{
-		if (gSprites[i].template->tileTag == GFX_TAG_MEGA_TRIGGER
-		||  gSprites[i].template->tileTag == GFX_TAG_ULTRA_TRIGGER)
-		{
-			DestroySprite(&gSprites[i]);
-		}
-	}
 }
 
 void TryLoadZTrigger(void)
 {
-	u8 spriteId;
+	u8 spriteId, i;
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN))
 		return;
 
-	LoadSpritePalette(&sZTriggerPalette);
-	LoadCompressedSpriteSheetUsingHeap(&sZTriggerSpriteSheet);
+	if (IndexOfSpritePaletteTag(GFX_TAG_Z_TRIGGER) == 0xFF)
+		LoadSpritePalette(&sZTriggerPalette);
+	if (IndexOfSpriteTileTag(GFX_TAG_Z_TRIGGER) == 0xFF)
+		LoadCompressedSpriteSheetUsingHeap(&sZTriggerSpriteSheet);
+
+	//See if there's an old trigger that hasn't disappeared yet
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse
+		&& gSprites[i].template->tileTag == GFX_TAG_Z_TRIGGER
+		&& gSprites[i].data[4] == gActiveBattler)
+			return; //Don't create a new trigger
+	}
 
 	spriteId = CreateSprite(&sZTriggerSpriteTemplate, 130, 90, 1);
 	gSprites[spriteId].data[3] = 32;
@@ -1513,21 +1568,24 @@ void TryLoadZTrigger(void)
 	gSprites[spriteId].data[4] = gActiveBattler;
 }
 
-static void DestroyZTrigger(void)
+static void DestroyZTrigger(struct Sprite* sprite)
 {
+	u32 i;
+	DestroySprite(sprite);
+
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse && gSprites[i].template->tileTag == GFX_TAG_Z_TRIGGER)
+			return; //Tiles and palette are still in use
+	}
+
 	FreeSpritePaletteByTag(GFX_TAG_Z_TRIGGER);
 	FreeSpriteTilesByTag(GFX_TAG_Z_TRIGGER);
-
-	for (int i = 0; i < MAX_SPRITES; ++i)
-	{
-		if (gSprites[i].template->tileTag == GFX_TAG_Z_TRIGGER)
-			DestroySprite(&gSprites[i]);
-	}
 }
 
 void TryLoadDynamaxTrigger(void)
 {
-	u8 spriteId;
+	u8 spriteId, i;
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN))
 		return;
@@ -1535,8 +1593,19 @@ void TryLoadDynamaxTrigger(void)
 	if (!(gBattleTypeFlags & BATTLE_TYPE_DYNAMAX))
 		return;
 
-	LoadSpritePalette(&sDynamaxTriggerPalette);
-	LoadCompressedSpriteSheetUsingHeap(&sDynamaxTriggerSpriteSheet);
+	if (IndexOfSpritePaletteTag(GFX_TAG_DYNAMAX_TRIGGER) == 0xFF)
+		LoadSpritePalette(&sDynamaxTriggerPalette);
+	if (IndexOfSpriteTileTag(GFX_TAG_DYNAMAX_TRIGGER) == 0xFF)
+		LoadCompressedSpriteSheetUsingHeap(&sDynamaxTriggerSpriteSheet);
+
+	//See if there's an old trigger that hasn't disappeared yet
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse
+		&& gSprites[i].template->tileTag == GFX_TAG_DYNAMAX_TRIGGER
+		&& gSprites[i].data[4] == gActiveBattler)
+			return; //Don't create a new trigger
+	}
 
 	spriteId = CreateSprite(&sDynamaxTriggerSpriteTemplate, 130, 90, 1);
 	gSprites[spriteId].data[3] = 32;
@@ -1544,16 +1613,19 @@ void TryLoadDynamaxTrigger(void)
 	gSprites[spriteId].data[4] = gActiveBattler;
 }
 
-static void DestroyDynamaxTrigger(void)
+static void DestroyDynamaxTrigger(struct Sprite* sprite)
 {
+	u32 i;
+	DestroySprite(sprite);
+
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse && gSprites[i].template->tileTag == GFX_TAG_DYNAMAX_TRIGGER)
+			return; //Tiles and palette are still in use
+	}
+
 	FreeSpritePaletteByTag(GFX_TAG_DYNAMAX_TRIGGER);
 	FreeSpriteTilesByTag(GFX_TAG_DYNAMAX_TRIGGER);
-
-	for (int i = 0; i < MAX_SPRITES; ++i)
-	{
-		if (gSprites[i].template->tileTag == GFX_TAG_DYNAMAX_TRIGGER)
-			DestroySprite(&gSprites[i]);
-	}
 }
 
 static void DestroyRaidShieldSpriteAndMatrix(struct Sprite *sprite)
@@ -1612,16 +1684,19 @@ void TryLoadTerastalTrigger(void)
 	gSprites[spriteId].data[4] = gActiveBattler;
 }
 
-static void DestroyTerastalTrigger(void)
+static void DestroyTerastalTrigger(struct Sprite* sprite)
 {
+	u32 i;
+	DestroySprite(sprite);
+
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse && gSprites[i].template->tileTag == GFX_TAG_TERASTAL_TRIGGER)
+			return;
+	}
+
 	FreeSpritePaletteByTag(GFX_TAG_TERASTAL_TRIGGER);
 	FreeSpriteTilesByTag(GFX_TAG_TERASTAL_TRIGGER);
-
-	for (int i = 0; i < MAX_SPRITES; ++i)
-	{
-		if (gSprites[i].template->tileTag == GFX_TAG_TERASTAL_TRIGGER)
-			DestroySprite(&gSprites[i]);
-	}
 }
 
 u16 GetLastUsedBall(void)

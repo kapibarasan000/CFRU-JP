@@ -648,7 +648,7 @@ static void RestoreNonConsumableItems(void)
 	bool8 keepConsumables = FALSE;
 	#endif
 
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER || IsRaidBattle())
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER || IsRaidBattle() || keepConsumables)
 	{
 		for (int i = 0; i < PARTY_SIZE; ++i)
 		{
@@ -685,7 +685,8 @@ static void RecalcAllStats(void)
 }
 
 static void BringBackTheDead(void)
-{ //Used after Multi Battles that you lost, but your partner won
+{
+	//Used after Multi Battles that you lost, but your partner won
 	if (ViableMonCount(gPlayerParty) == 0)
 	{
 		for (int i = 0; i < PARTY_SIZE; ++i)
@@ -743,15 +744,14 @@ static void EndPartnerBattlePartyRestore(void)
 					Memcpy(&gPlayerParty[i], &backup[counter++], sizeof(struct Pokemon));
 			}
 		}
+
 		Free(ExtensionState.partyBackup);
 	}
 }
 
-
-//TO DO, restore party order like above
 static void EndSkyBattlePartyRestore(void)
 {
-	int i;
+	u32 i;
 	u8 counter = 0;
 	struct Pokemon* backup = ExtensionState.skyBattlePartyBackup;
 
@@ -819,7 +819,8 @@ static void EndBattleFlagClear(void)
 		if (gNewBS->criticalHitsThisBattle[i] >= 3)
 		{
 			gScored3CritsInBattle |= gBitTable[i];
-			if (EvolvesViaScoring3Crits(&gPlayerParty[i]))
+			if (EvolvesViaScoring3Crits(&gPlayerParty[i])
+			&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BENJAMIN_BUTTERFREE | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER)))
 				gLeveledUpInBattle |= gBitTable[i];
 		}
 	}
@@ -880,7 +881,8 @@ bool8 IsConsumable(u16 item)
 {
 	u8 effect = gItems[SanitizeItemId(item)].holdEffect;
 
-	for (u32 i = 0; gConsumableItemEffects[i] != 0xFF; ++i) {
+	for (u32 i = 0; gConsumableItemEffects[i] != 0xFF; ++i)
+	{
 		if (effect == gConsumableItemEffects[i])
 			return TRUE;
 	}

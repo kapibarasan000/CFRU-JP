@@ -623,7 +623,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					{
 						if (gNewBS->zMoveData.active)
 							gLastLandedMoves[bankDef] = gChosenMove;
-
 						else
 							gLastLandedMoves[bankDef] = gCurrentMove;
 
@@ -1099,7 +1098,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			if (arg1 != ARG_IN_FUTURE_ATTACK
 			&&  !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE))
 			{
-				if ((gCurrentMove == MOVE_MINDBLOWN || gCurrentMove == MOVE_STEELBEAM)
+				if ((gCurrentMove == MOVE_MINDBLOWN || gCurrentMove == MOVE_STEELBEAM || gCurrentMove == MOVE_CHLOROBLAST)
 				&& ABILITY(gBankAttacker) != ABILITY_MAGICGUARD
 				&& BATTLER_ALIVE(gBankAttacker)
 				&& !(gMoveResultFlags & MOVE_RESULT_FAILED))
@@ -1163,27 +1162,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						gBattlescriptCurrInstr = BattleScript_Recoil;
 						effect = 1;
 					}
-					else if (CheckTableForMove(gCurrentMove, gPercent66RecoilMoves))
-					{
-						gBattleMoveDamage = MathMax(1, (gNewBS->totalDamageGiven * 2) / 3);
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_Recoil;
-						effect = 1;
-					}
-					else if (CheckTableForMove(gCurrentMove, gPercent75RecoilMoves))
-					{
-						gBattleMoveDamage = MathMax(1, (gNewBS->totalDamageGiven * 3) / 4);
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_Recoil;
-						effect = 1;
-					}
-					else if (CheckTableForMove(gCurrentMove, gPercent100RecoilMoves))
-					{
-						gBattleMoveDamage = MathMax(1, gNewBS->totalDamageGiven);
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_Recoil;
-						effect = 1;
-					}
 				}
 				
 				if (effect)
@@ -1202,12 +1180,12 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				for (i = 0; i < gBattlersCount; ++i)
 				{
 					if (banks[i] != gBankAttacker
-					&&  gBattleMons[banks[i]].hp
+					&&  BATTLER_ALIVE(banks[i])
 					&&  !SheerForceCheck()
 					&&  ITEM_EFFECT(banks[i]) == ITEM_EFFECT_EJECT_BUTTON
 					&&  !(gNewBS->ResultFlags[banks[i]] & MOVE_RESULT_NO_EFFECT)
 					&&  gNewBS->turnDamageTaken[banks[i]] != 0
-					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
+					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, banks[i])
 					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(i) == B_SIDE_PLAYER)
 					&&  HasMonToSwitchTo(banks[i])) //Wilds can't activate
 					{
@@ -1346,6 +1324,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			u8 itemEffect = ITEM_EFFECT(gBankAttacker);
 
 			if (arg1 != ARG_IN_FUTURE_ATTACK
+			&& arg1 != ARG_PARTING_SHOT
 			&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
 			&& (itemEffect == ITEM_EFFECT_LIFE_ORB
 			 || itemEffect == ITEM_EFFECT_SHELL_BELL
@@ -1491,6 +1470,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 			gNewBS->totalDamageGiven = 0;
 			gNewBS->selfInflictedDamage = 0;
+			gNewBS->enduredDamage = 0;
 			gNewBS->lessThanHalfHPBeforeShellBell = FALSE;
 			ResetDoublesSpreadMoveCalcs();
 			ClearCopyStats();

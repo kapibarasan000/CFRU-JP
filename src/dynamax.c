@@ -101,6 +101,7 @@ static const struct GMaxMove sGMaxMoveTable[] =
 	{SPECIES_APPLETUN_GIGA,       TYPE_GRASS,      MOVE_G_MAX_SWEETNESS_P},
 	{SPECIES_SANDACONDA_GIGA,     TYPE_GROUND,     MOVE_G_MAX_SANDBLAST_P},
 	{SPECIES_TOXTRICITY_GIGA,     TYPE_ELECTRIC,   MOVE_G_MAX_STUN_SHOCK_P},
+	{SPECIES_TOXTRICITY_LOW_KEY_GIGA,     TYPE_ELECTRIC,   MOVE_G_MAX_STUN_SHOCK_P},
 	{SPECIES_CENTISKORCH_GIGA,    TYPE_FIRE,       MOVE_G_MAX_CENTIFERNO_P},
 	{SPECIES_HATTERENE_GIGA,      TYPE_FAIRY,      MOVE_G_MAX_SMITE_P},
 	{SPECIES_GRIMMSNARL_GIGA,     TYPE_DARK,       MOVE_G_MAX_SNOOZE_P},
@@ -122,7 +123,7 @@ const u8 gRaidBattleStarsByBadges[NUM_BADGE_OPTIONS][2] =
 	[6] = {THREE_STAR_RAID, FOUR_STAR_RAID},
 	[7] = {FOUR_STAR_RAID,  FOUR_STAR_RAID},
 	[8] = {FOUR_STAR_RAID,  FIVE_STAR_RAID},
-	[9] = {FIVE_STAR_RAID,  SIX_STAR_RAID}, //Beat Game
+	[9] = {FOUR_STAR_RAID,  SIX_STAR_RAID}, //Beat Game
 };
 
 const u8 gRaidBattleLevelRanges[RAID_STAR_COUNT][2] =
@@ -206,7 +207,7 @@ static const struct SpriteTemplate sSummaryScreenMaxFriendshipIconTemplate =
 };
 #endif
 
-static const struct CompressedSpriteSheet   sSummaryScreenGigantamaxIconSpriteSheet =	{GigantamaxSummaryScreenIconTiles, (16 * 16) / 2, GFX_TAG_GIGANTAMAX_ICON};
+static const struct CompressedSpriteSheet sSummaryScreenGigantamaxIconSpriteSheet =	{GigantamaxSummaryScreenIconTiles, (16 * 16) / 2, GFX_TAG_GIGANTAMAX_ICON};
 static const struct SpritePalette sSummaryScreenGigantamaxIconSpritePalette =	{GigantamaxSummaryScreenIconPal, GFX_TAG_GIGANTAMAX_ICON};
 #ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
 static const struct CompressedSpriteSheet sSummaryScreenMaxFriendshipIconSpriteSheet = {MaxFriendshipSummaryScreenIconTiles, (8 * 8 * 5) / 2, GFX_TAG_MAX_FRIENDSHIP_ICON};
@@ -1473,9 +1474,6 @@ bool8 ProtectedByMaxGuard(u8 bankDef, u16 move)
 		if (gBattleMoves[move].target & (MOVE_TARGET_DEPENDS | MOVE_TARGET_OPPONENTS_FIELD))
 			return (gBattleMoves[move].flags & FLAG_PROTECT_AFFECTED) != 0;
 
-		if (gBattleMoves[move].target & MOVE_TARGET_ALL && CheckTableForMove(gCurrentMove, gSpecialWholeFieldMoves))
-			return FALSE;
-
 		return TRUE;
 	}
 
@@ -1718,6 +1716,11 @@ void CreateRaidShieldSprites(void)
 	u8 bank = BANK_RAID_BOSS;
 	u16 baseStatTotal = GetBaseStatsTotal(SPECIES(bank));
 
+	#ifdef SPECIES_SHEDINJA
+	if (SPECIES(bank) == SPECIES_SHEDINJA)
+		numShields = MAX_NUM_RAID_SHIELDS; //Always gets max shields
+	else
+	#endif
 	#ifdef FLAG_RAID_BATTLE_NO_FORCE_END
 	if (!FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END)) //Less shields for battle that ends in 10 turns
 	#endif
@@ -1999,7 +2002,7 @@ void DetermineRaidSpecies(void)
 
 		if (ShouldTryGigantamaxRaidMon())
 		{
-			altSpecies = GetGigantamaxSpecies(raid->data[index].species, TRUE);
+			altSpecies = GetGigantamaxSpecies(gRaidBattleSpecies, TRUE);
 			if (altSpecies != SPECIES_NONE)
 				gRaidBattleSpecies = altSpecies; //Update with Gigantamax form
 		}
@@ -2053,12 +2056,12 @@ void DetermineRaidPartners(bool8* checkedPartners, u8 maxPartners)
 	randomNum += VarGet(VAR_RAID_PARTNER_RANDOM_NUM); //Helps give more varied results
 	#endif
 
-	for (u32 i = 1; i < /*1000*/ 0xFFFFFFFF; ++i)
+	for (u32 i = 1; i < /*1000*/ 0xFFFFFFFF; i += 3)
 	{
 		if (randomNum == 0) //0 causes an infinite loop
 			randomNum = 0xFFFFFFFF;
 
-		randomNum ^= i;
+		randomNum *= i;
 		index = randomNum % gNumRaidPartners;
 
 		if (checkedPartners[index] == 0)

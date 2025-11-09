@@ -147,6 +147,7 @@ BattleScript_NewWeatherAbilityActivatesCall:
 BattleScript_NewWeatherAbilityActivatesReturn:
 	call BattleScript_AbilityPopUpRevert
 	call 0x81BD298 @;BattleScript_WeatherFormChanges
+	callasm ClearHailStartFlag
 	return
 
 OrichalcumPulseMsg:

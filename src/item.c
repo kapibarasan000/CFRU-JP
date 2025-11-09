@@ -816,7 +816,6 @@ bool8 CheckReusableTMs(u16 item)
 	#endif
 }
 
-
 u8 CheckHmSymbol(u16 item)
 {
 	#ifdef EXPANDED_TMSHMS
