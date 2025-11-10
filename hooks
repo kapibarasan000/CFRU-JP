@@ -466,6 +466,7 @@ SummaryScreen_IsMultiBattlePartner 08139310 0
 SummaryScreenMonIsFromGBA 0813BFBC 0
 SummaryScreen_TradeMonMetLocationHook 08137F32 2
 PokeSum_PrintMonTypeIcons 08139200 0
+PrintSkillsPage 081378B4 0
 
 ## Hall of Fame Fix
 CB2_DoHallOfFameScreen 080F2E5C 3

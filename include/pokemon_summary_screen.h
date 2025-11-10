@@ -110,8 +110,8 @@ struct PokemonSummaryScreenData
 
         u8 ALIGNED(4) unk3074[3];
         u8 ALIGNED(4) unk3078[7];
-        u8 unk3080[11];
-        u8 ALIGNED(4) unk308B[5][5];
+        u8 curHpStrBuf[11];
+        u8 ALIGNED(4) statValueStrBufs[5][5];
 
         u8 ALIGNED(4) unk30A8[5][11];
         u8 ALIGNED(4) unk30E0[4][11];
@@ -120,8 +120,8 @@ struct PokemonSummaryScreenData
         u8 ALIGNED(4) unk3140[5][5];
         u8 ALIGNED(4) unk315C[5][5];
 
-        u8 ALIGNED(4) unk3178[9];
-        u8 ALIGNED(4) unk3184[8];
+        u8 ALIGNED(4) expPointsStrBuf[9];
+        u8 ALIGNED(4) expToNextLevelStrBuf[8];
 
         u8 unk318C[9];
         u8 ALIGNED(4) unk3195[19];
