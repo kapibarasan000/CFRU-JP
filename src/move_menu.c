@@ -1211,8 +1211,6 @@ static bool8 MoveSelectionDisplayMaxMove(void)
 
 		BattlePutTextOnWindow(gDisplayedStringBattle, 3 + 2); //Slot of Move 3
 
-		MaxMoveSelectionDisplayPower();
-
 		if (IsGMaxMove(maxMove))
 		{
 			gDisplayedStringBattle[0] = PC_KI;
@@ -1229,6 +1227,7 @@ static bool8 MoveSelectionDisplayMaxMove(void)
 		}
 
 		BattlePutTextOnWindow(gDisplayedStringBattle, 3);
+		MaxMoveSelectionDisplayPower();
 		MoveSelectionCreateCursorAt(0, 0);
 		gNewBS->dynamaxData.viewing = TRUE;
 		gNewBS->terastalData.chosen[gActiveBattler] = FALSE;
@@ -1278,7 +1277,7 @@ static void ZMoveSelectionDisplayPower(void)
 	{
 		txtPtr = StringCopy(gDisplayedStringBattle, gText_Power);
 		ConvertIntToDecimalStringN(txtPtr, power, STR_CONV_MODE_LEFT_ALIGN, 3);
-		BattlePutTextOnWindow(gDisplayedStringBattle, 3 + 2); //Slot of Move 2
+		BattlePutTextOnWindow(gDisplayedStringBattle, 3 + 2); //Slot of Move 3
 	/*
 		txtPtr = StringCopy(gDisplayedStringBattle, gText_Power);
 		txtPtr[0] = EXT_CTRL_CODE_BEGIN;
@@ -1296,6 +1295,7 @@ static void ZMoveSelectionDisplayPower(void)
 static void MaxMoveSelectionDisplayPower(void)
 {
 	#ifdef DYNAMAX_FEATURE
+	u8 *txtPtr;
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
 	#ifdef DISPLAY_REAL_POWER_ON_MENU
@@ -1306,9 +1306,9 @@ static void MaxMoveSelectionDisplayPower(void)
 
 	if (moveInfo->moveSplit[gMoveSelectionCursor[gActiveBattler]] != SPLIT_STATUS)
 	{
-		BattlePutTextOnWindow(gText_Power, 9);
-		ConvertIntToDecimalStringN(gDisplayedStringBattle, power, STR_CONV_MODE_LEFT_ALIGN, 3);
-		BattlePutTextOnWindow(gDisplayedStringBattle, 7);
+		txtPtr = StringCopy(gDisplayedStringBattle, gText_Power);
+		ConvertIntToDecimalStringN(txtPtr, power, STR_CONV_MODE_LEFT_ALIGN, 3);
+		BattlePutTextOnWindow(gDisplayedStringBattle, 3 + 1); //Slot of Move 2
 	}
 	#endif
 }
