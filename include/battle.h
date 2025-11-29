@@ -196,9 +196,9 @@ enum
 // defines for the gTypeEffectiveness multipliers
 #define TYPE_MUL_NO_DATA			0
 #define TYPE_MUL_NO_EFFECT          1
-#define TYPE_MUL_NOT_EFFECTIVE      5
-#define TYPE_MUL_NORMAL             10
-#define TYPE_MUL_SUPER_EFFECTIVE    20
+#define TYPE_MUL_NOT_EFFECTIVE      500
+#define TYPE_MUL_NORMAL             1000
+#define TYPE_MUL_SUPER_EFFECTIVE    2000
 
 // special type table Ids
 #define TYPE_FORESIGHT  0xFE

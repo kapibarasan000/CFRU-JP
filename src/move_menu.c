@@ -537,6 +537,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	#ifdef DYNAMAX_FEATURE
 	tempMoveStruct->dynamaxed = IsDynamaxed(gActiveBattler);
 	tempMoveStruct->dynamaxDone = gNewBS->dynamaxData.used[gActiveBattler];
+	tempMoveStruct->dynamaxPartyIndex = gNewBS->dynamaxData.partyIndex[SIDE(gActiveBattler)];
 	if ((!gNewBS->dynamaxData.used[gActiveBattler] || IsDynamaxed(gActiveBattler))
 	&& !(IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gActiveBattler)) && gNewBS->dynamaxData.toBeUsed[PARTNER(gActiveBattler)]) //Partner didn't already select it
 	&& DynamaxEnabled(gActiveBattler)

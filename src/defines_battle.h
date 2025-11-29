@@ -111,7 +111,7 @@ enum
 };
 
 extern const struct BattleMove gBattleMoves[];
-extern const u8 gTypeEffectiveness[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES];
+extern const u16 gTypeEffectiveness[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES];
 #define BattleScript_MoveEnd (u8*) 0x81BA90A
 #define BattleScript_Atk49 (u8*) 0x81BA910
 extern u8 BattleScript_ButItFailed[];

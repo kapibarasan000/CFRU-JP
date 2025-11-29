@@ -56,7 +56,7 @@ static const u16 sCriticalHitChances[] =
 //This file's functions:
 static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, struct Pokemon* monDef);
 static void TypeDamageModificationByDefTypes(u16 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags, u8 defType1, u8 defType2, u8 defType3, struct Pokemon* monDef);
-static u8 ModulateDmgByType(const u16 move, const u8 moveType, const u8 defType, const u8 bankDef, u16 atkAbility, struct Pokemon* monDef);
+static u32 ModulateDmgByType(const u16 move, const u8 moveType, const u8 defType, const u8 bankDef, u16 atkAbility, struct Pokemon* monDef);
 static bool8 AbilityCanChangeTypeAndBoost(u16 move, u16 atkAbility, u8 electrifyTimer, bool8 zMoveActive);
 static s32 CalculateBaseDamage(struct DamageCalc* data);
 static u16 GetBasePower(struct DamageCalc* data);
@@ -1496,12 +1496,12 @@ void TypeDamageModification(u16 atkAbility, u8 bankDef, u16 move, u8 moveType, u
 		return TypeDamageModificationByDefTypes(atkAbility, bankDef, move, moveType, flags, gBattleMons[bankDef].type1, gBattleMons[bankDef].type2, gBattleMons[bankDef].type3, NULL);
 }
 
-u8 ModulateMultiplier(u8 multiplier, u8 modifier)
+u32 ModulateMultiplier(u32 multiplier, u32 modifier)
 {
-	return (multiplier * modifier) / 10;
+	return (multiplier * modifier) / 1000;
 }
 
-static void UpdateMoveResultFlags(u8 multiplier, u8* flags)
+static void UpdateMoveResultFlags(u32 multiplier, u8* flags)
 {
 	if (multiplier == 0)
 	{
@@ -1526,7 +1526,7 @@ static void UpdateMoveResultFlags(u8 multiplier, u8* flags)
 
 static void TypeDamageModificationByDefTypes(u16 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags, u8 defType1, u8 defType2, u8 defType3, struct Pokemon* monDef)
 {
-	u8 multiplier = TYPE_MUL_NORMAL;
+	u32 multiplier = TYPE_MUL_NORMAL;
 
 TYPE_LOOP:
 	//If the multiplier is 0, that means normal damage. No effect is 1 (it is modified to 0 later).
@@ -1569,12 +1569,13 @@ TYPE_LOOP:
 	UpdateMoveResultFlags(multiplier, flags);
 
 	if (multiplier != TYPE_MUL_NORMAL)
-		gBattleMoveDamage = MathMax(1, (gBattleMoveDamage * multiplier) / 10);
+		gBattleMoveDamage = MathMax(1, (gBattleMoveDamage * multiplier) / 1000);
 }
 
 void TypeDamageModificationPartyMon(u16 atkAbility, struct Pokemon* monDef, u16 move, u8 moveType, u8* flags)
 {
-	u8 defType1, defType2, multiplier;
+	u8 defType1, defType2;
+	u32 multiplier;
 
 	if (IsMonTerastal(monDef))
 	{
@@ -1617,12 +1618,12 @@ TYPE_LOOP_AI:
 	UpdateMoveResultFlags(multiplier, flags);
 
 	if (multiplier != TYPE_MUL_NORMAL)
-		gBattleMoveDamage = MathMax(1, (gBattleMoveDamage * multiplier) / 10);
+		gBattleMoveDamage = MathMax(1, (gBattleMoveDamage * multiplier) / 1000);
 }
 
-static u8 ModulateDmgByType(const u16 move, const u8 moveType, const u8 defType, const u8 bankDef, u16 atkAbility, struct Pokemon* monDef)
+static u32 ModulateDmgByType(const u16 move, const u8 moveType, const u8 defType, const u8 bankDef, u16 atkAbility, struct Pokemon* monDef)
 {
-	u8 multiplier = gTypeEffectiveness[moveType][defType];
+	u32 multiplier = gTypeEffectiveness[moveType][defType];
 	bool8 checkMonDef = monDef != NULL;
 
 	if (multiplier == TYPE_MUL_NO_DATA)
@@ -1708,8 +1709,8 @@ static u8 ModulateDmgByType(const u16 move, const u8 moveType, const u8 defType,
 
 void ModulateByTypeEffectiveness(u8 moveType, u8 defType1, u8 defType2, u8* var)
 {
-	u8 multiplier1 = gTypeEffectiveness[moveType][defType1];
-	u8 multiplier2 = gTypeEffectiveness[moveType][defType2];
+	u32 multiplier1 = gTypeEffectiveness[moveType][defType1];
+	u32 multiplier2 = gTypeEffectiveness[moveType][defType2];
 
 	//Fix multiplier 1 calculation
 	if (multiplier1 == TYPE_MUL_NO_DATA)
@@ -1723,8 +1724,8 @@ void ModulateByTypeEffectiveness(u8 moveType, u8 defType1, u8 defType2, u8* var)
 	else if (multiplier2 == TYPE_MUL_NO_EFFECT)
 		multiplier2 = 0;
 
-	*var = (*var * multiplier1) / 10;
-	*var = (*var * multiplier2) / 10;
+	*var = (*var * multiplier1) / 1000;
+	*var = (*var * multiplier2) / 1000;
 }
 
 u8 GetMoveTypeSpecial(u8 bankAtk, u16 move)
