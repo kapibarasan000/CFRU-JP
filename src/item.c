@@ -455,7 +455,7 @@ bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
 	#if (NUM_MOVE_TUTORS > 160)
 		else if (tutorId >= 160 && tutorId < 192)
 		{
-			mask = 1 << (tutorId - 128);
+			mask = 1 << (tutorId - 160);
 			return (gTutorLearnsets[species][5] & mask) != 0 ? TRUE : FALSE;
 		}
 	#endif

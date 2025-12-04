@@ -48,20 +48,18 @@ UpdateCryForIllusionHook:
 	mov r0, r5
 	bl IsDynamaxed
 	cmp r0, #0x0
-	bne IllusionCryUseRegularSpecies
+	bne SkipUpdateCryIllusion
 	mov r0, r5
 	bl GetIllusionPartyData @;Don't want to replace the mon in r7 because the illusion mon's health is used for the strength of the cry
-	b IllusionCryReturn
-
-IllusionCryUseRegularSpecies:
-	mov r0, r7
-
-IllusionCryReturn:
 	mov r1, #0xB @MON_DATA_SPECIES
 	ldr r2, =GetMonData
 	bl bxr2
 	ldr r1, =0x804AAE4 | 1
 	bx r1
+
+SkipUpdateCryIllusion:
+	ldr r0, =0x804ABD8 | 1
+	bx r0
 
 @0x8074598 with r2
 UpdateAltitudeForIllusionHook:
