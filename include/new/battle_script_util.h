@@ -156,3 +156,4 @@ void DragonCheerFunc(void);
 void TryFailAuraWheel(void);
 void SkipUseNextPkmnPromptIfCantRun(void);
 void TeraBlastFunc(void);
+bool8 NoMoveEffect(u8 bank);

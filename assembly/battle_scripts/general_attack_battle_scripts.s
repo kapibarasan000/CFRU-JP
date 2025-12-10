@@ -21,6 +21,7 @@ general_attack_battle_scripts.s
 .global CantUseHyperspaceFuryString
 .global CantUseMoveString
 .global WrongHoopaFormString
+.global HealBlockSetString
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -2046,12 +2047,11 @@ EerieSpellBS:
 	call STANDARD_DAMAGE
 	jumpifmovehadnoeffect BS_MOVE_FAINT
 	jumpifbehindsubstitute BANK_TARGET BS_MOVE_FAINT
-	reducepprandom EerieSpellPostEffect
-	printstring 0x8D
-	waitmessage DELAY_1SECOND
-EerieSpellPostEffect:
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
+	reducepprandom BS_MOVE_END
+	printstring 0x8D
+	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2793,6 +2793,7 @@ BS_128_Pursuit:
 .global BattleScript_DefogAdditionalEffects_PlayAttackAnim
 .global BattleScript_DefogAdditionalEffects
 .global BattleScript_SideStatusWoreOffRet
+.global BattleScript_TidyUpStatsCheck
 BS_129_RapidSpin:
 	jumpifmove MOVE_DEFOG DefogBS
 	jumpifmove MOVE_MORTALSPIN MortalSpinBS
@@ -2865,10 +2866,10 @@ BattleScript_SideStatusWoreOffRet:
 MortalSpinBS:
 	attackcanceler
 	accuracycheck BS_MOVE_MISSED 0x0
-	setmoveeffect MOVE_EFFECT_RAPIDSPIN | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
+	setmoveeffect MOVE_EFFECT_POISON
 	call STANDARD_DAMAGE
 	seteffectwithchancetarget
-	setmoveeffect MOVE_EFFECT_POISON
+	setmoveeffect MOVE_EFFECT_RAPIDSPIN | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
 	seteffectwithchancetarget
 	goto BS_MOVE_FAINT
 
@@ -2876,60 +2877,23 @@ TidyUpBS:
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifbehindsubstitute BANK_TARGET SecondTidyUpCheck_TryFail
-	accuracycheck SecondTidyUpCheck_FailPlayResultMessage 0x0
-	setstatchanger STAT_EVSN | DECREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR SecondTidyUpCheck_TryFail
-	jumpifbyte LESSTHAN MULTISTRING_CHOOSER 0x2 TidyUpLoweredStat
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 SecondTidyUpCheck_TryFail
-	pause DELAY_HALFSECOND
-	printfromtable gStatDownStringIds
-	waitmessage DELAY_1SECOND
-SecondTidyUpCheck:
-	callasm DefogHelperFunc @;Automatically redirects to BattleScript_TidyUpAdditionalEffects if applicable
-	goto BS_MOVE_END
-
-SecondTidyUpCheck_TryFail:
-	setword OUTCOME, OUTCOME_NO_EFFECT
-SecondTidyUpCheck_FailPlayResultMessage:
-	pause 0x20
-	resultmessage
-	waitmessage DELAY_1SECOND
-	goto SecondTidyUpCheck
-
-TidyUpLoweredStat:
+	callasm TryTidyUp
 	attackanimation
 	waitanimation
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_SPD, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setstatchanger STAT_ATK | INCREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN TidyUpSpd_Up
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 TidyUpSpd_Up
-	printfromtable gStatUpStringIds
-	waitmessage DELAY_1SECOND
-
-TidyUpSpd_Up:
-	setstatchanger STAT_SPD | INCREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable gStatUpStringIds
-	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
-
-BattleScript_TidyUpAdditionalEffects_PlayAttackAnim:
-	bicword OUTCOME, OUTCOME_NO_EFFECT
-BattleScript_TidyUpAdditionalEffects:
-	attackanimation @;Should only play after the Second TidyUp Check
-	waitanimation
-	jumpifweather weather_circus SkipRemoveFogBS
-	jumpifweather weather_fog | weather_permament_fog RemoveFogBS
-
-IS_Remove:
-	seteffectprimary
-	playanimation2 BANK_ATTACKER ANIM_ARG_1 0x0
+	copyhword BACKUP_HWORD USER_BANK @;Backup original atatcker + target
+	breakfree
+	copyhword USER_BANK BACKUP_HWORD @;Restore original attacker + target
+	setword BATTLE_STRING_LOADER gText_TidyUpComplete
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX BattleScript_DragonDanceSkipAnim
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
+	goto BattleScript_DragonDanceSkipAnim
+
+BattleScript_TidyUpStatsCheck:
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX DragonDance_Atk
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
+	goto DragonDance_Atk
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -5319,6 +5283,7 @@ DragonDanceBS:
 DragonDance_Atk:
 	attackanimation
 	waitanimation
+BattleScript_DragonDanceSkipAnim:
 	setbyte STAT_ANIM_PLAYED 0x0
 	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_SPD, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
 	setstatchanger STAT_ATK | INCREASE_1
@@ -5846,17 +5811,12 @@ ThroatChopBS:
 	goto BS_MOVE_END
 
 PsychicNoiseBS:
-	jumpifbehindsubstitute BANK_TARGET 0x81BA8E3
 	accuracycheck BS_MOVE_MISSED 0x0
 	call STANDARD_DAMAGE
+	callasm PSHealBlockTimer
+	seteffectwithchancetarget
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
-	jumpiffainted BANK_TARGET BS_MOVE_END
-	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
-	callasm PSHealBlockTimer
-	setword BATTLE_STRING_LOADER HealBlockSetString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -6118,18 +6078,8 @@ BS_242_LastResort:
 .global BS_243_DamageSetTerrain
 BS_243_DamageSetTerrain:
 	attackcanceler
-	jumpifmove MOVE_ICESPINNER IceSpinner_BS
 	callasm TryFailSteelRoller
 	accuracycheck BS_MOVE_MISSED 0x0
-	call STANDARD_DAMAGE
-	jumpifmovehadnoeffect BS_MOVE_FAINT
-	seteffectwithchancetarget
-	prefaintmoveendeffects 0x0
-	faintpokemonaftermove
-	call BattleScript_SetTerrain
-	goto BS_MOVE_END
-
-IceSpinner_BS:
 	call STANDARD_DAMAGE
 	jumpifmovehadnoeffect BS_MOVE_FAINT
 	seteffectwithchancetarget

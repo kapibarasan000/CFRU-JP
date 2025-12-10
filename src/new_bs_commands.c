@@ -235,6 +235,7 @@ void atkFF06_setterrain(void)
 			case MOVE_SPLINTERED_STORMSHARDS:
 			case MOVE_DEFOG:
 			case MOVE_STEELROLLER:
+			case MOVE_ICESPINNER:
 			REMOVE_TERRAIN:
 				type = 0;
 				//gNewBS->terrainForcefullyRemoved = TRUE;

@@ -115,24 +115,23 @@ void atk15_seteffectwithchance(void)
 {
 	u32 percentChance = gBattleMoves[gCurrentMove].secondaryEffectChance;
 
+	if (gCurrentMove == MOVE_TRIPLEARROWS && gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_FLINCH)
+		percentChance = 30;
+
 	//if (CheckSoundMove(gCurrentMove) || ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
 	//{
 	//	gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
 	//}
 	if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || BankSideHasRainbow(gBankAttacker))
 	{
-		if (gCurrentMove == MOVE_TRIPLEARROWS && gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_FLINCH)
-			percentChance = 30 * 2;
-		else
+		percentChance *= 2;
+
+		if ((ABILITY(gBankAttacker) == ABILITY_SERENEGRACE && BankSideHasRainbow(gBankAttacker))
+		&& (gBattleCommunication[MOVE_EFFECT_BYTE] & 0x3F) != MOVE_EFFECT_FLINCH)
 			percentChance *= 2;
 	}
-	else
-	{
-		if (gCurrentMove == MOVE_TRIPLEARROWS && gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_FLINCH)
-			percentChance = 30;
-	}
 
-	if (!SheerForceCheck() || (gBattleCommunication[MOVE_EFFECT_BYTE] & 0x3F) == MOVE_EFFECT_RAPIDSPIN)
+	if (!SheerForceCheck())
 	{
 		if ((gBattleCommunication[MOVE_EFFECT_BYTE] & MOVE_EFFECT_CERTAIN) && MOVE_HAD_EFFECT)
 		{
@@ -721,11 +720,6 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					gBattlescriptCurrInstr++;
 				break;
 
-			case MOVE_EFFECT_RAPIDSPIN:
-				BattleScriptPush(gBattlescriptCurrInstr + 1);
-				gBattlescriptCurrInstr = BattleScript_RapidSpinAway;
-				break;
-
 			case MOVE_EFFECT_SYRUP_BOMB:
 				if (gNewBS->SyrupBombTimers[gEffectBank] == 0)
 				{
@@ -896,6 +890,9 @@ CLEAR_MOVE_EFFECT_BYTE:
 		case MOVE_EFFECT_BRING_DOWN:
 		case MOVE_EFFECT_ION_DELUGE:
 			gNewBS->backupMoveEffect = gBattleCommunication[MOVE_EFFECT_BYTE];
+			break;
+		case MOVE_EFFECT_RAPIDSPIN:
+			gNewBS->backupMoveEffect = MOVE_EFFECT_RAPIDSPIN | MOVE_EFFECT_AFFECTS_USER;
 	}
 
 	gBattleCommunication[MOVE_EFFECT_BYTE] = 0;
@@ -1140,6 +1137,12 @@ bool8 SetMoveEffect2(void)
 			BattleScriptPushCursor();
 			gBattleStringLoader = IonDelugeShowerString;
 			gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+			effect = TRUE;
+			break;
+
+		case MOVE_EFFECT_RAPIDSPIN:
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_RapidSpinAway;
 			effect = TRUE;
 			break;
 	}

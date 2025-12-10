@@ -107,6 +107,7 @@ extern const u8 BattleScript_MaxMoveLowerSpeed2Foes[];
 extern const u8 BattleScript_AbilityShield[];
 extern const u8 BattleScript_BerryNoEffect[];
 extern const u8 BattleScript_TeatimeFailed[];
+extern const u8 BattleScript_TidyUpStatsCheck[];
 
 //Strings
 extern const u8 gText_SuperEffectiveTarget[];
@@ -180,6 +181,7 @@ extern const u8 ToxicSpikesLayString[];
 extern const u8 StickyWebLayString[];
 extern const u8 gText_DragonCheerString[];
 extern const u8 gText_TeaTimeAteBerry[];
+extern const u8 HealBlockSetString[];
 
 extern const u8 ElectricTerrainSetString[];
 extern const u8 GrassyTerrainSetString[];

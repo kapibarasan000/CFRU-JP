@@ -2167,15 +2167,31 @@ void SetHealBlockTimer(void)
 		gNewBS->HealBlockTimers[gBankTarget] = 5;
 }
 
+bool8 NoMoveEffect(u8 bank)
+{
+	return SheerForceCheck()
+	|| ABILITY(bank) == ABILITY_SHIELDDUST
+	|| ITEM_EFFECT(bank) == ITEM_EFFECT_COVERT_CLOAK
+	|| !BATTLER_ALIVE(bank);
+}
+
 void PSHealBlockTimer(void)
 {
-	if (!IsHealBlocked(gBankTarget))
+	if (!IsHealBlocked(gBankTarget)
+	&& !NoMoveEffect(gBankTarget)
+	&& ABILITY(gBankTarget) != ABILITY_AROMAVEIL)
+	{
 		gNewBS->HealBlockTimers[gBankTarget] = 2;
+		gBattleStringLoader = HealBlockSetString;
+		gBattlescriptCurrInstr += 5;
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_PrintCustomString - 5;
+	}	
 }
 
 void SetThroatChopTimer(void)
 {
-	if (!CantUseSoundMoves(gBankTarget) && !SheerForceCheck())
+	if (!CantUseSoundMoves(gBankTarget) && !NoMoveEffect(gBankTarget))
 		gNewBS->ThroatChopTimers[gBankTarget] = 2;
 }
 
@@ -3043,4 +3059,23 @@ void TeatimeTargets(void)
 void ClearHailStartFlag(void)
 {
 	gNewBS->hailStart = FALSE;
+}
+
+void TryTidyUp(void)
+{
+	u32 i;
+
+	for (i = 0; i < NUM_BATTLE_SIDES; i++)
+    {
+        if (gSideStatuses[i] & SIDE_STATUS_SPIKES)
+            return;
+    }
+
+	for (i = 0; i < gBattlersCount; i++)
+    {
+        if (IS_BEHIND_SUBSTITUTE(i))
+            return;
+    }
+
+	gBattlescriptCurrInstr = BattleScript_TidyUpStatsCheck - 5;
 }

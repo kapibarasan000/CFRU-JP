@@ -15,6 +15,7 @@
 #include "../include/new/ability_tables.h"
 #include "../include/new/accuracy_calc.h"
 #include "../include/new/attackcanceler.h"
+#include "../include/new/battle_script_util.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/battle_strings.h"
@@ -4047,6 +4048,10 @@ bool8 TrySpitePPReduce(u8 bank, u8 lostPP)
 {
 	u8 movePos = FindMovePositionInMoveset(gLastUsedMoves[bank], bank);
 
+	if (gCurrentMove == MOVE_EERIESPELL
+	&& (NoMoveEffect(bank) || !BATTLER_ALIVE(gBankAttacker)))
+		return FALSE;
+
 	if (gLastUsedMoves[bank] != MOVE_NONE && gLastUsedMoves[bank] != 0xFFFF
 	&& movePos < MAX_MON_MOVES && gBattleMons[bank].pp[movePos] > 0
 	&& (!BATTLER_SEMI_INVULNERABLE(bank) || CanHitSemiInvulnerableTarget(gBankAttacker, bank, MOVE_SPITE)))
@@ -4670,7 +4675,7 @@ void atkBE_rapidspinfree(void)
 	u8 sideAtk = SIDE(bankAtk);
 	u8 sideDef = SIDE(gBankTarget);
 
-	if (gCurrentMove == MOVE_RAPIDSPIN)
+	if (gCurrentMove == MOVE_RAPIDSPIN || gCurrentMove == MOVE_MORTALSPIN)
 	{
 		if (gBattleMons[bankAtk].status2 & STATUS2_WRAPPED)
 		{
@@ -4700,7 +4705,8 @@ void atkBE_rapidspinfree(void)
 			gSideTimers[sideAtk].stickyWeb = 0;
 			gSideTimers[sideAtk].steelsurge = 0;
 			BattleScriptPushCursor();
-			gBattlescriptCurrInstr = BattleScript_SpikesFree;
+			gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+			gBattleStringLoader = RemovedEntryHazardsString;
 		}
 		else
 		{
@@ -4714,6 +4720,45 @@ void atkBE_rapidspinfree(void)
 			else
 				gBattlescriptCurrInstr++;
 		}
+	}
+	else if (gCurrentMove == MOVE_TIDYUP)
+	{
+		u32 i;
+
+		for (i = 0; i < gBattlersCount; i++)
+		{
+			if (IS_BEHIND_SUBSTITUTE(i))
+			{
+				BattleScriptPushCursor();
+				gBankTarget = i;
+				gBattleMons[i].status2 &= ~(STATUS2_SUBSTITUTE);
+				gDisableStructs[i].substituteHP = 0;
+				gBattlescriptCurrInstr = BattleScript_SubstituteFade;
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
+				return;
+			}
+		}
+
+		for (i = 0; i < NUM_BATTLE_SIDES; i++)
+		{
+			if (gSideStatuses[i] & SIDE_STATUS_SPIKES)
+			{
+				gBankAttacker = i;
+				gSideStatuses[i] &= ~(SIDE_STATUS_SPIKES);
+				gSideTimers[i].spikesAmount = 0;
+				gSideTimers[i].tspikesAmount = 0;
+				gSideTimers[i].srAmount = 0;
+				gSideTimers[i].stickyWeb = 0;
+				gSideTimers[i].steelsurge = 0;
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+				gBattleStringLoader = RemovedEntryHazardsString;
+				return;
+			}
+		}
+
+		gBattlescriptCurrInstr++;
 	}
 	else //Defog + G-Max Windrage
 	{
