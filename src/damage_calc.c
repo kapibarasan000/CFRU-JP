@@ -783,30 +783,43 @@ void atk06_typecalc(void)
 			//Check Stab
 			if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
 			{
-				if (atkTeraType == TYPE_STELLAR && CanStellarBoost(gBankAttacker, moveType))
+				if (atkTeraType == TYPE_STELLAR)
 				{
-					gBattleMoveDamage *= 2;
-					gNewBS->terastalBoost = TRUE;
+					if (CanStellarBoost(gBankAttacker, moveType))
+					{
+						gBattleMoveDamage *= 2;
+						gNewBS->terastalBoost = TRUE;
+					}
+					else
+						gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
 				}
-				else if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
+				else if (atkAbility == ABILITY_ADAPTABILITY)
 				{
-					gBattleMoveDamage = (gBattleMoveDamage * 225) / 100;
-					gNewBS->terastalBoost = TRUE;
+					if (atkTeraType == moveType)
+					{
+						gBattleMoveDamage = (gBattleMoveDamage * 225) / 100;
+						gNewBS->terastalBoost = TRUE;
+					}
+					else if (IS_BLANK_TYPE(atkTeraType))
+						gBattleMoveDamage *= 2;
+					else
+						gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
 				}
 				else if (atkTeraType == moveType)
 				{
 					gBattleMoveDamage *= 2;
 					gNewBS->terastalBoost = TRUE;
 				}
-				else if (atkAbility == ABILITY_ADAPTABILITY)
-					gBattleMoveDamage *= 2;
 				else
 					gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
 			}
-			else if (atkTeraType == TYPE_STELLAR && CanStellarBoost(gBankAttacker, moveType))
+			else if (atkTeraType == TYPE_STELLAR)
 			{
-				gBattleMoveDamage = (gBattleMoveDamage * 12) / 10;
-				gNewBS->terastalBoost = TRUE;
+				if (CanStellarBoost(gBankAttacker, moveType))
+				{
+					gBattleMoveDamage = (gBattleMoveDamage * 12) / 10;
+					gNewBS->terastalBoost = TRUE;
+				}
 			}
 			else if (atkTeraType == moveType)
 			{
@@ -1076,18 +1089,29 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType
 	|| ((atkAbility == ABILITY_PROTEAN || atkAbility == ABILITY_LIBERO) && IS_BLANK_TYPE(atkTeraType)))
 	{
-		if (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, moveType))
-			gBattleMoveDamage *= 2;
-		else if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
-			gBattleMoveDamage = udivsi(gBattleMoveDamage * 225, 100);
+		if (atkTeraType == TYPE_STELLAR)
+		{
+			if (CanStellarBoost(bankAtk, moveType))
+				gBattleMoveDamage *= 2;
+			else
+				gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
+		}
 		else if (atkAbility == ABILITY_ADAPTABILITY)
-			gBattleMoveDamage *= 2;
+		{
+			if (atkTeraType == moveType)
+				gBattleMoveDamage = udivsi(gBattleMoveDamage * 225, 100);
+			else if (IS_BLANK_TYPE(atkTeraType))
+				gBattleMoveDamage *= 2;
+			else
+				gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
+		}
 		else
 			gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
 	}
-	else if (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, moveType))
+	else if (atkTeraType == TYPE_STELLAR)
 	{
-		gBattleMoveDamage = udivsi(gBattleMoveDamage * 120, 100);
+		if (CanStellarBoost(bankAtk, moveType))
+			gBattleMoveDamage = udivsi(gBattleMoveDamage * 120, 100);
 	}
 	else if (atkTeraType == moveType)
 	{
@@ -1175,25 +1199,36 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monDef)
 	//Check stab
 	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
 	{
-		if (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, moveType))
-			gBattleMoveDamage *= 2;
-		else if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
-			gBattleMoveDamage = udivsi(gBattleMoveDamage * 225, 100);
-		else if (atkAbility == ABILITY_ADAPTABILITY || atkTeraType == moveType)
-			gBattleMoveDamage *= 2;
+		if (atkTeraType == TYPE_STELLAR)
+		{
+			if (CanStellarBoost(bankAtk, moveType))
+				gBattleMoveDamage *= 2;
+			else
+				gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
+		}
+		else if (atkAbility == ABILITY_ADAPTABILITY)
+		{
+			if (atkTeraType == moveType)
+				gBattleMoveDamage = udivsi(gBattleMoveDamage * 225, 100);
+			else if (IS_BLANK_TYPE(atkTeraType))
+				gBattleMoveDamage *= 2;
+			else
+				gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
+		}
 		else
 			gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
 	}
-	else if (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, moveType))
+	else if (atkTeraType == TYPE_STELLAR)
 	{
-		gBattleMoveDamage = udivsi(gBattleMoveDamage * 120, 100);
+		if (CanStellarBoost(bankAtk, moveType))
+			gBattleMoveDamage = udivsi(gBattleMoveDamage * 120, 100);
 	}
 	else if (atkTeraType == moveType)
 	{
 		if (atkAbility == ABILITY_ADAPTABILITY)
 			gBattleMoveDamage *= 2;
 		else
-			gBattleMoveDamage = udivsi(gBattleMoveDamage * 15, 10);
+			gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
 	}
 
 	//Check Special Ground Immunities
@@ -1275,25 +1310,36 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	//Check STAB
 	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
 	{
-		if (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, moveType))
-			gBattleMoveDamage *= 2;
-		else if (atkAbility == ABILITY_ADAPTABILITY && atkTeraType == moveType)
-			gBattleMoveDamage = (gBattleMoveDamage * 225) / 100;
+		if (atkTeraType == TYPE_STELLAR)
+		{
+			if (CanStellarBoost(bankAtk, moveType))
+				gBattleMoveDamage *= 2;
+			else
+				gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
+		}
 		else if (atkAbility == ABILITY_ADAPTABILITY)
-			gBattleMoveDamage *= 2;
+		{
+			if (atkTeraType == moveType)
+				gBattleMoveDamage = udivsi(gBattleMoveDamage * 225, 100);
+			else if (IS_BLANK_TYPE(atkTeraType))
+				gBattleMoveDamage *= 2;
+			else
+				gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
+		}
 		else
-			gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
+			gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
 	}
-	else if (atkTeraType == TYPE_STELLAR && CanStellarBoost(bankAtk, moveType))
+	else if (atkTeraType == TYPE_STELLAR)
 	{
-		gBattleMoveDamage = udivsi(gBattleMoveDamage * 120, 100);
+		if (CanStellarBoost(bankAtk, moveType))
+			gBattleMoveDamage = udivsi(gBattleMoveDamage * 120, 100);
 	}
 	else if (atkTeraType == moveType)
 	{
 		if (atkAbility == ABILITY_ADAPTABILITY)
 			gBattleMoveDamage *= 2;
 		else
-			gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
+			gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
 	}
 	
 	//Check Special Ground Immunities
@@ -1841,6 +1887,7 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 	u16 item = ITEM(bankAtk);
 	u8 effect = ITEM_EFFECT(bankAtk);
 	u8 quality = ITEM_QUALITY(bankAtk);
+	u16 species = SPECIES(bankAtk);
 
 	switch (move) {
 		case MOVE_HIDDENPOWER:
@@ -1929,21 +1976,32 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 
 		case MOVE_AURAWHEEL:
 			#ifdef SPECIES_MORPEKO_HANGRY
-			if (SPECIES(bankAtk) == SPECIES_MORPEKO_HANGRY)
+			if (species == SPECIES_MORPEKO_HANGRY)
 				moveType = TYPE_DARK;
+			#endif
+			break;
+
+		case MOVE_RAGINGBULL:
+			#ifdef SPECIES_TAUROS_P
+			if (species == SPECIES_TAUROS_P)
+				moveType = TYPE_FIGHTING;
+			else if (species == SPECIES_TAUROS_BLAZE_P)
+				moveType = TYPE_FIRE;
+			else if (species == SPECIES_TAUROS_AQUA_P)
+				moveType = TYPE_WATER;
 			#endif
 			break;
 
 		case MOVE_IVYCUDGEL:
 			#if (defined SPECIES_OGERPON && SPECIES_OGERPON_WELLSPRING_MASK && SPECIES_OGERPON_HEARTHFLAME_MASK && SPECIES_OGERPON_CORNERSTONE_MASK)
-			if (SPECIES(bankAtk) == SPECIES_OGERPON_CORNERSTONE_MASK
-			|| SPECIES(bankAtk) == SPECIES_OGERPON_CORNERSTONE_TERASTAL)
+			if (species == SPECIES_OGERPON_CORNERSTONE_MASK
+			|| species == SPECIES_OGERPON_CORNERSTONE_TERASTAL)
 				moveType = TYPE_ROCK;
-			else if (SPECIES(bankAtk) == SPECIES_OGERPON_WELLSPRING_MASK
-			|| SPECIES(bankAtk) == SPECIES_OGERPON_WELLSPRING_TERASTAL)
+			else if (species == SPECIES_OGERPON_WELLSPRING_MASK
+			|| species == SPECIES_OGERPON_WELLSPRING_TERASTAL)
 				moveType = TYPE_WATER;
-			else if (SPECIES(bankAtk) == SPECIES_OGERPON_HEARTHFLAME_MASK
-			|| SPECIES(bankAtk) == SPECIES_OGERPON_HEARTHFLAME_TERASTAL)
+			else if (species == SPECIES_OGERPON_HEARTHFLAME_MASK
+			|| species == SPECIES_OGERPON_HEARTHFLAME_TERASTAL)
 				moveType = TYPE_FIRE;
 			else
 				moveType = TYPE_GRASS;
@@ -2052,6 +2110,17 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 			else
 			#endif
 				moveType = TYPE_ELECTRIC;
+			break;
+
+		case MOVE_RAGINGBULL:
+			#ifdef SPECIES_TAUROS_P
+			if (mon->species == SPECIES_TAUROS_P)
+				moveType = TYPE_FIGHTING;
+			else if (mon->species == SPECIES_TAUROS_BLAZE_P)
+				moveType = TYPE_FIRE;
+			else if (mon->species == SPECIES_TAUROS_AQUA_P)
+				moveType = TYPE_WATER;
+			#endif
 			break;
 
 		case MOVE_IVYCUDGEL:
