@@ -2562,7 +2562,7 @@ BS_124_Safeguard:
 .global BS_125_BurnUp
 BS_125_BurnUp:
 	attackcanceler
-	jumpifnotmove MOVE_DOUBLESHOCK DoubleShockBS
+	jumpifmove MOVE_DOUBLESHOCK DoubleShockBS
 	jumpiftype BANK_ATTACKER TYPE_FIRE DoBurnUp
 	goto FAILED_PRE
 
@@ -5804,6 +5804,7 @@ ThroatChopBS:
 	jumpifbehindsubstitute BANK_TARGET 0x81BA8E3
 	accuracycheck BS_MOVE_MISSED 0x0
 	call STANDARD_DAMAGE
+	jumpifmovehadnoeffect BS_MOVE_FAINT
 	callasm SetThroatChopTimer
 	seteffectwithchancetarget
 	prefaintmoveendeffects 0x0
@@ -5813,6 +5814,7 @@ ThroatChopBS:
 PsychicNoiseBS:
 	accuracycheck BS_MOVE_MISSED 0x0
 	call STANDARD_DAMAGE
+	jumpifmovehadnoeffect BS_MOVE_FAINT
 	callasm PSHealBlockTimer
 	seteffectwithchancetarget
 	prefaintmoveendeffects 0x0
