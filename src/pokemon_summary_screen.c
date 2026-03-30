@@ -92,7 +92,7 @@ void PrintSkillsPage(void)
     u8 nature = sMonSummaryScreen->currentMon.natureMint != 0 ? sMonSummaryScreen->currentMon.natureMint - 1 : GetNature(&sMonSummaryScreen->currentMon);
     const s8 *natureMod = sNatureStatTable[nature];
 
-    WindowPrint(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, sMonSkillsPrinterXpos->curHpStr, 4, &sNatureTextColors[0], 0xFF, sMonSummaryScreen->summary.curHpStrBuf);
+    WindowPrint(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 2 + sMonSkillsPrinterXpos->curHpStr, 4, &sNatureTextColors[0], 0xFF, sMonSummaryScreen->summary.curHpStrBuf);
     WindowPrint(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 50 + sMonSkillsPrinterXpos->atkStr, 22, &sNatureTextColors[GetNatureTextColor(natureMod[STAT_ATK - 1])], 0xFF, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_ATK]);
     WindowPrint(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 50 + sMonSkillsPrinterXpos->defStr, 35, &sNatureTextColors[GetNatureTextColor(natureMod[STAT_DEF - 1])], 0xFF, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_DEF]);
     WindowPrint(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 50 + sMonSkillsPrinterXpos->spAStr, 48, &sNatureTextColors[GetNatureTextColor(natureMod[STAT_SPATK - 1])], 0xFF, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_SPA]);
