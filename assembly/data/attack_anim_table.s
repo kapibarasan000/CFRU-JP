@@ -30870,7 +30870,7 @@ ANIM_ALLURINGVOICE:
     endanimation
 
 .align 2 @;Copies Temp2757_B
-MUSIC_FLOAT_TARGET: objtemplate ANIM_TAG_MUSIC_NOTES ANIM_TAG_MUSIC_NOTES OAM_DOUBLE_16x16 0x83AAD64 0x0 0x81F11F0 0x80B4491
+MUSIC_FLOAT_TARGET: objtemplate ANIM_TAG_MUSIC_NOTES ANIM_TAG_MUSIC_NOTES OAM_DOUBLE_16x16 0x83AAD88 0x0 0x81F11F0 0x80B4491
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
