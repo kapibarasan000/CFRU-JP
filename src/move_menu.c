@@ -1995,13 +1995,13 @@ u8 TrySetCantSelectMoveBattleScript(void)
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingMoveWithNoPP;
 		++limitations;
 	}
-	else if(move == MOVE_GIGATONHAMMER && gLastUsedMoves[gActiveBattler] == MOVE_GIGATONHAMMER)
+	else if(move == MOVE_GIGATONHAMMER && gLastPrintedMoves[gActiveBattler] == MOVE_GIGATONHAMMER)
     {
         gCurrentMove = MOVE_GIGATONHAMMER;
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedGigatonHammer;
         ++limitations;
     }
-	else if(move == MOVE_BLOODMOON && gLastUsedMoves[gActiveBattler] == MOVE_BLOODMOON)
+	else if(move == MOVE_BLOODMOON && gLastPrintedMoves[gActiveBattler] == MOVE_BLOODMOON)
     {
         gCurrentMove = MOVE_BLOODMOON;
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedGigatonHammer;

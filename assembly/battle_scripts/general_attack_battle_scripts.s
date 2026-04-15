@@ -3493,7 +3493,9 @@ HailBS:
 	attackstringnoprotean
 	ppreduce
 	jumpifweather WEATHER_HAIL_ANY, HailSkipPrimalWeatherCheck @;Fails normally
-	tryblockweatherwithprimalweather
+	jumpifweather weather_harsh_sun, Hail_ExtremelyHarshSunlightWasNotLessened
+	jumpifweather weather_heavy_rain, Hail_NoReliefFromHeavyRain
+	jumpifweather weather_air_current, Hail_MysteriousAirCurrentBlowsOn
 HailSkipPrimalWeatherCheck:
 	sethail
 	tryactivateprotean
@@ -3501,9 +3503,10 @@ HailSkipPrimalWeatherCheck:
 	waitanimation
 	printfromtable 0x83C44F4 @;gMoveWeatherChangeStringIds
 	waitmessage DELAY_1SECOND
-	jumpifmovehadnoeffect BS_MOVE_END @;Prevents Ice Face from activatig on fail
+	jumpifmovehadnoeffect HailEnd @;Prevents Ice Face from activatig on fail
 	call BS_WEATHER_FORM_CHANGES
 	callasm ClearHailStartFlag
+HailEnd:
 	jumpifmove MOVE_CHILLYRECEPTION ChillyReceptionSwitchOutBS
 	goto BS_MOVE_END
 
@@ -3523,6 +3526,18 @@ ChillyReceptionSwitchOutBS:
 	playanimation BANK_SWITCHING ANIM_CALL_BACK_POKEMON 0x0
 	callasm MakeSwitchingBankInvisible @;So the sprite stays hidden
 	goto BatonPassSwitchOutBS
+
+Hail_ExtremelyHarshSunlightWasNotLessened:
+	call BattleScript_ExtremelyHarshSunlightWasNotLessenedRet
+	goto HailEnd
+
+Hail_NoReliefFromHeavyRain:
+	call BattleScript_NoReliefFromHeavyRainRet
+	goto HailEnd
+
+Hail_MysteriousAirCurrentBlowsOn:
+	call BattleScript_MysteriousAirCurrentBlowsOnRet
+	goto HailEnd
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
