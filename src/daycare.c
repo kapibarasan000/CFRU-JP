@@ -53,8 +53,8 @@ static void InheritIVs(struct Pokemon* egg, struct DayCare* daycare);
 static void AlterEggSpeciesWithIncenseItem(u16* species, struct DayCare* daycare);
 static void AlterSpeciesWithIncenseItems(u16* species, u16 motherItem, u16 fatherItem);
 static void InheritPokeBall(struct Pokemon* egg, struct BoxPokemon* father, struct BoxPokemon* mother);
-static u32 DetermineEggPersonality(struct DayCare* daycare, struct BoxPokemon* mother);
-static bool8 DetermineEggHiddenAbility(struct BoxPokemon* father, struct BoxPokemon* mother);
+static u32 DetermineEggPersonality(struct DayCare* daycare);
+static void DetermineEggAbility(struct Pokemon* egg, unusedArg struct BoxPokemon* father, struct BoxPokemon* mother);
 static void SetInitialEggData(struct Pokemon* mon, u16 species, u32 personality);
 static u8 GetEggStepsToSubtract(void);
 
@@ -600,23 +600,14 @@ static void InheritPokeBall(struct Pokemon* egg, struct BoxPokemon* father, stru
 	SetMonData(egg, MON_DATA_POKEBALL, &parentBall);
 }
 
-static u32 DetermineEggPersonality(struct DayCare* daycare, struct BoxPokemon* mother)
+static u32 DetermineEggPersonality(struct DayCare* daycare)
 {
 	u32 personality;
 	s32 natureSlot = GetSlotToInheritNature(daycare);	//Updated nature slot check
-	u8 abilityBit = Random() & 1;
-
-	if (!((struct Pokemon*) mother)->hiddenAbility
-	#ifdef SPECIES_DITTO
-	&& GetBoxMonData(mother, MON_DATA_SPECIES, NULL) != SPECIES_DITTO
-	#endif
-	&& Random() % 100 < 80) //80 % chance to pass down slotted ability
-		abilityBit = GetBoxMonData(mother, MON_DATA_PERSONALITY, NULL) & 1;
 
 	if (natureSlot < 0)
 	{
-		personality = Random32() & ~(1); //Clear ability bit
-		personality |= abilityBit;
+		personality = Random32();
 	}
 	else
 	{
@@ -624,8 +615,7 @@ static u32 DetermineEggPersonality(struct DayCare* daycare, struct BoxPokemon* m
 
 		do
 		{
-			personality = Random32() & ~(1);
-			personality |= abilityBit;
+			personality = Random32();
 		} while (wantedNature != GetNatureFromPersonality(personality));
 
 		//We found a personality with the same nature
@@ -634,7 +624,7 @@ static u32 DetermineEggPersonality(struct DayCare* daycare, struct BoxPokemon* m
 	return personality;
 }
 
-static bool8 DetermineEggHiddenAbility(unusedArg struct BoxPokemon* father, struct BoxPokemon* mother)
+static void DetermineEggAbility(struct Pokemon* egg, unusedArg struct BoxPokemon* father, struct BoxPokemon* mother)
 {
 	#ifdef SPECIES_DITTO
 	if (GetBoxMonData(mother, MON_DATA_SPECIES, NULL) == SPECIES_DITTO)
@@ -642,9 +632,21 @@ static bool8 DetermineEggHiddenAbility(unusedArg struct BoxPokemon* father, stru
 	#endif
 
 	if (((struct Pokemon*) mother)->hiddenAbility)
-		return Random() % 100 < 60; //60 % chance to pass down Hidden Ability
+	{
+		if (Random() % 100 < 60) //60 % chance to pass down Hidden Ability
+			egg->hiddenAbility = TRUE;
+	}
+	else
+	{
+		if (gBaseStats[GetMonData(egg, MON_DATA_SPECIES, NULL)].ability2)
+		{
+			u8 abilityNum = GetBoxMonData(mother, MON_DATA_ALT_ABILITY, NULL);
 
-	return FALSE;
+			if (Random() % 100 >= 80) //80 % chance to pass down slotted ability
+				abilityNum ^= 1;
+			SetMonData(egg, MON_DATA_ALT_ABILITY, &abilityNum);
+		}
+	}
 }
 
 static void TryDoMasudaMethod(struct Pokemon* mon, struct BoxPokemon* parent1, struct BoxPokemon* parent2)
@@ -677,7 +679,6 @@ static void SetInitialEggData(struct Pokemon* mon, u16 species, u32 personality)
 	//u8 ball;
 	u8 metLevel;
 	u8 language;
-	bool8 hiddenAbility = mon->hiddenAbility;
 
 	CreateMon(mon, species, EGG_HATCH_LEVEL, 0x20, TRUE, personality, FALSE, 0);
 	metLevel = 0;
@@ -691,7 +692,6 @@ static void SetInitialEggData(struct Pokemon* mon, u16 species, u32 personality)
 	SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].eggCycles);	//required steps to hatch
 	SetMonData(mon, MON_DATA_MET_LEVEL, &metLevel);
 	SetMonData(mon, MON_DATA_LANGUAGE, &language);
-	mon->hiddenAbility = hiddenAbility;
 }
 
 void CreateEgg(struct Pokemon *mon, u16 species) //The function used by the giveegg scripting command
@@ -722,11 +722,11 @@ void GiveEggFromDaycare(struct DayCare* daycare)
 	bool8 isEgg;
 
 	DetermineEggParentSlots(daycare, parentSlots);
-	egg.hiddenAbility = DetermineEggHiddenAbility(&daycare->mons[parentSlots[1]].mon, &daycare->mons[parentSlots[0]].mon);
-	u32 personality = DetermineEggPersonality(daycare, &daycare->mons[parentSlots[0]].mon);
+	u32 personality = DetermineEggPersonality(daycare);
 	species = DetermineEggSpeciesAndParentSlots(daycare, parentSlots, personality);
 	AlterEggSpeciesWithIncenseItem(&species, daycare);
 	SetInitialEggData(&egg, species, personality);	// sets base data (ball, met level, lang, etc)
+	DetermineEggAbility(&egg, &daycare->mons[parentSlots[1]].mon, &daycare->mons[parentSlots[0]].mon);
 	TryDoMasudaMethod(&egg, &daycare->mons[parentSlots[0]].mon, &daycare->mons[parentSlots[1]].mon);
 	InheritIVs(&egg, daycare);	// destiny knot check
 	InheritPokeBall(&egg, &daycare->mons[parentSlots[1]].mon, &daycare->mons[parentSlots[0]].mon);
@@ -777,7 +777,7 @@ void CreateHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 {
 	u16 species;
 	u32 personality, pokerus;
-	u8 i, friendship, language, gameMet, markings, hidden;
+	u8 i, friendship, language, gameMet, markings, abilityNum, hidden;
 	u16 moves[4];
 	u32 ivs[NUM_STATS];
 	u8 ballType;
@@ -803,6 +803,7 @@ void CreateHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 	pokerus = GetMonData(egg, MON_DATA_POKERUS, NULL);
 
 	//obedience = GetMonData(egg, MON_DATA_OBEDIENCE, NULL);
+	abilityNum = GetMonData(egg, MON_DATA_ALT_ABILITY, NULL);
 	hidden = egg->hiddenAbility;
 
 	CreateMon(temp, species, EGG_HATCH_LEVEL, 32, TRUE, personality, 0, 0);
@@ -828,6 +829,7 @@ void CreateHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 	SetMonData(temp, MON_DATA_POKERUS, &pokerus);
 
 	//SetMonData(temp, MON_DATA_OBEDIENCE, &obedience);
+	SetMonData(temp, MON_DATA_ALT_ABILITY, &abilityNum);
 	temp->hiddenAbility = hidden;
 
 	*egg = *temp;

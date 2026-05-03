@@ -2078,6 +2078,7 @@ extern const u8 DESC_HEAVY_DUTY_BOOTS[];
 extern const u8 DESC_UTILITY_UMBRELLA[];
 extern const u8 DESC_THROAT_SPRAY[];
 extern const u8 DESC_ABILITY_CAPSULE[];
+extern const u8 DESC_ABILITY_PATCH[];
 extern const u8 DESC_AUSPICIOUS_ARMOR[];
 extern const u8 DESC_MALICIOUS_ARMOR[];
 extern const u8 DESC_BLACK_AUGURITE[];

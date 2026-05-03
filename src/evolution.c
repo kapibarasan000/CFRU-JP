@@ -101,12 +101,12 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					break;
 
 				case EVO_MAUSHOLD_THREE:
-					if (gEvolutionTable[species][i].param <= level && ((personality >> 1) % 100) != 0)
+					if (gEvolutionTable[species][i].param <= level && (personality % 100) != 0)
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					break;
 
 				case EVO_MAUSHOLD_FOUR:
-					if (gEvolutionTable[species][i].param <= level && ((personality >> 1) % 100) == 0)
+					if (gEvolutionTable[species][i].param <= level && (personality % 100) == 0)
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					break;
 
@@ -230,12 +230,12 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					break;
 
 				case EVO_DUDUNSPARCE_TWO:
-					if (((personality >> 1) % 100) != 0)
+					if ((personality % 100) != 0)
 						goto REGULAR_EVO_MOVE;
 					break;
 
 				case EVO_DUDUNSPARCE_THREE:
-					if (((personality >> 1) % 100) == 0)
+					if ((personality % 100) == 0)
 						goto REGULAR_EVO_MOVE;
 					break;
 				

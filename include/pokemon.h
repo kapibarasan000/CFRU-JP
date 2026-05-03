@@ -237,7 +237,8 @@ struct PokemonSubstruct3
  /* 0x02 */ u16 metLevel:7;
  /* 0x02 */ u16 metGame:4;
  /* 0x03 */ u16 gigantamax:1;
- /* 0x03 */ u16 blank:3;
+ /* 0x03 */ u16 hiddenAbility:1;
+ /* 0x03 */ u16 blank:2;
  /* 0x03 */ u16 otGender:1;
 
  /* 0x04 */ u32 hpIV:5;
@@ -247,7 +248,7 @@ struct PokemonSubstruct3
  /* 0x05 */ u32 spAttackIV:5;
  /* 0x06 */ u32 spDefenseIV:5;
  /* 0x07 */ u32 isEgg:1;
- /* 0x07 */ u32 hiddenAbility:1;
+ /* 0x07 */ u32 abilityNum:1;
 
  /* 0x08 */ u32 coolRibbon:3;
  /* 0x08 */ u32 beautyRibbon:3;
@@ -354,7 +355,8 @@ typedef struct Pokemon
  /* 0x02 */ u16 metLevel:7;
  /* 0x02 */ u16 metGame:4;
  /* 0x03 */ u16 gigantamax:1;
- /* 0x03 */ u16 blank:3;
+ /* 0x03 */ u16 hiddenAbility:1;
+ /* 0x03 */ u16 blank:2;
  /* 0x03 */ u16 otGender:1;
 
  /* 0x04 */ u32 hpIV:5;
@@ -364,7 +366,7 @@ typedef struct Pokemon
  /* 0x05 */ u32 spAttackIV:5;
  /* 0x06 */ u32 spDefenseIV:5;
  /* 0x07 */ u32 isEgg:1;
- /* 0x07 */ u32 hiddenAbility:1;
+ /* 0x07 */ u32 abilityNum:1;
 
  /* 0x08 */ u32 coolRibbon:3;
  /* 0x08 */ u32 beautyRibbon:3;

@@ -2564,7 +2564,6 @@ static void Task_ChangeAbility(u8 taskId)
 	u16 item = Var800E;
 	u8 abilityType = ItemId_GetHoldEffectParam(item);
 	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
-	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	PlaySE(SE_USE_ITEM);
 	
 	if (abilityType != 0) //Hidden Ability capsule
@@ -2573,42 +2572,9 @@ static void Task_ChangeAbility(u8 taskId)
 	}
 	else //Regular Ability capsule
 	{
-		u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
-		u8 abilityNum = (personality & 1) ^ 1; //Flip ability bit
-
-		u32 otId = GetMonData(mon, MON_DATA_OT_ID, NULL);
-		u16 sid = HIHALF(otId);
-		u16 tid = LOHALF(otId);
-
-		u8 gender = GetGenderFromSpeciesAndPersonality(species, personality);
-		bool8 isShiny = IsMonShiny(mon);
-		u8 letter = GetUnownLetterFromPersonality(personality);
-		u8 nature = GetNatureFromPersonality(personality);
-		bool8 isMinior = IsMinior(species);
-		u16 miniorCore = GetMiniorCoreFromPersonality(personality);
-
-		//Change the ability while keeping other personality values the same
-		do
-		{
-			personality = Random32();
-
-			if (isShiny)
-			{
-				u8 shinyRange = 1;
-				personality = (((shinyRange ^ (sid ^ tid)) ^ LOHALF(personality)) << 16) | LOHALF(personality);
-			}
-
-			personality &= ~(1);
-			personality |= abilityNum; //Either 0 or 1
-
-		} while (GetNatureFromPersonality(personality) != nature
-		|| GetGenderFromSpeciesAndPersonality(species, personality) != gender
-		|| (!isShiny && IsShinyOtIdPersonality(otId, personality)) //No free shinies
-		|| (species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter)
-		|| (isMinior && GetMiniorCoreFromPersonality(personality) != miniorCore));
-
+		u8 abilityNum = GetMonData(mon, MON_DATA_ALT_ABILITY, NULL) ^ 1; //Flip ability bit
 		mon->hiddenAbility = FALSE;
-		SetMonData(mon, MON_DATA_PERSONALITY, &personality);
+		SetMonData(mon, MON_DATA_ALT_ABILITY, &abilityNum);
 		CalculateMonStats(mon);
 	}
 

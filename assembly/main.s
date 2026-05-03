@@ -279,6 +279,7 @@ NoHack:
 @ SPECIALS
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ hook at 46116 via r0
+/*
 .align 2
 .pool
 DaycareInheritHiddenAbility:
@@ -342,3 +343,4 @@ func_get_attr: .word 0x0803F354 + 1
 func_rand: .word 0x0804448C + 1
 func_set_attr: .word 0x0803FA70 + 1
 func_return: .word 0x080456E4 + 1
+*/

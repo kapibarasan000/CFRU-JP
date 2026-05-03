@@ -2294,7 +2294,10 @@ void GiveMonNatureAndAbility(struct Pokemon* mon, u8 nature, u8 abilityNum, bool
 	if (abilityNum == 0xFF) //Hidden Ability
 		mon->hiddenAbility = TRUE;
 	else
+	{
 		abilityNum = MathMin(1, abilityNum); //Either 0 or 1
+		SetMonData(mon, MON_DATA_ALT_ABILITY, &abilityNum);
+	}
 
 	do
 	{
@@ -2303,12 +2306,6 @@ void GiveMonNatureAndAbility(struct Pokemon* mon, u8 nature, u8 abilityNum, bool
 		{
 			u8 shinyRange = Random() % SHINY_ODDS;
 			personality = (((shinyRange ^ (sid ^ tid)) ^ LOHALF(personality)) << 16) | LOHALF(personality);
-		}
-
-		if (abilityNum != 0xFF)
-		{
-			personality &= ~(1);
-			personality |= abilityNum; 
 		}
 	} while (GetNatureFromPersonality(personality) != nature
 	|| (keepGender && GetGenderFromSpeciesAndPersonality(species, personality) != gender)
@@ -3991,9 +3988,7 @@ void ForceMonShiny(struct Pokemon* mon)
 
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
-	u8 ability = personality & 1;
 	u8 nature = GetNatureFromPersonality(personality);
-	bool8 abilityMatters = !mon->hiddenAbility;
 	u8 gender = GetGenderFromSpeciesAndPersonality(species, personality);
 	u8 letter = GetUnownLetterFromPersonality(personality);
 	bool8 isMinior = IsMinior(species);
@@ -4005,12 +4000,6 @@ void ForceMonShiny(struct Pokemon* mon)
 
 		u8 shinyRange = Random() % SHINY_ODDS;
 		personality = (((shinyRange ^ (sid ^ tid)) ^ LOHALF(personality)) << 16) | LOHALF(personality);
-
-		if (abilityMatters)
-		{
-			personality &= ~(1);
-			personality |= ability; //Either 0 or 1
-		}
 
 	} while (GetNatureFromPersonality(personality) != nature || GetGenderFromSpeciesAndPersonality(species, personality) != gender
 	|| (species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter)
@@ -4216,6 +4205,12 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 		#endif
 	}
 
+	if (gBaseStats[species].ability2)
+    {
+        value = personality & 1;
+        SetBoxMonData(boxMon, MON_DATA_ALT_ABILITY, &value);
+    }
+
 	((struct Pokemon*) boxMon)->hiddenAbility = FALSE; //Set base hidden ability to 0
 	SetBoxMonData(boxMon, MON_DATA_PERSONALITY, &personality);
 
@@ -4395,8 +4390,8 @@ u16 GetMonAbility(const struct Pokemon* mon)
 	if (mon->hiddenAbility && gBaseStats[species].hiddenAbility != ABILITY_NONE)
 		return GetHiddenAbility(species);
 
-	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
-	if ((personality & 1) == 0 || gBaseStats[species].ability2 == ABILITY_NONE)
+	u8 abilityNum = GetMonData(mon, MON_DATA_ALT_ABILITY, NULL);
+	if (abilityNum == 0 || gBaseStats[species].ability2 == ABILITY_NONE)
 		ability = GetAbility1(species);
 	else
 		ability = GetAbility2(species);
