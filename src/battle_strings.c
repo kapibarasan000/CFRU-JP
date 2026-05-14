@@ -79,7 +79,7 @@ void BufferStringBattle(u16 stringID)
 
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 	{
-		gAbilitiesPerBank[i] = (*gStringInfo)->abilities[i];
+		gNewBS->abilitiesPerBank[i] = (*gStringInfo)->abilities[i];
 	}
 	for (i = 0; i < TEXT_BUFF_ARRAY_COUNT; i++)
 	{
@@ -569,16 +569,16 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				toCpy = GetAbilityName(gLastUsedAbility);
 				break;
 			case B_TXT_ATK_ABILITY: // attacker ability
-				toCpy = GetAbilityName(gAbilitiesPerBank[gBankAttacker]);
+				toCpy = GetAbilityName(gNewBS->abilitiesPerBank[gBankAttacker]);
 				break;
 			case B_TXT_DEF_ABILITY: // target ability
-				toCpy = GetAbilityName(gAbilitiesPerBank[gBankTarget]);
+				toCpy = GetAbilityName(gNewBS->abilitiesPerBank[gBankTarget]);
 				break;
 			case B_TXT_SCR_ACTIVE_ABILITY: // scripting active ability
-				toCpy = GetAbilityName(gAbilitiesPerBank[gBattleScripting.bank]);
+				toCpy = GetAbilityName(gNewBS->abilitiesPerBank[gBattleScripting.bank]);
 				break;
 			case B_TXT_EFF_ABILITY: // effect battlerId ability
-				toCpy = GetAbilityName(gAbilitiesPerBank[gEffectBank]);
+				toCpy = GetAbilityName(gNewBS->abilitiesPerBank[gEffectBank]);
 				break;
 			case B_TXT_TRAINER1_CLASS: // trainer class name
 				if (gTrainerBattleOpponent_A == 0x400) //Lol Secret Bases

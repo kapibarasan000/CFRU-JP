@@ -3511,6 +3511,7 @@ HailEnd:
 	goto BS_MOVE_END
 
 ChillyReceptionBS:
+	jumpiffainted BANK_ATTACKER HailBS
 	setword BATTLE_STRING_LOADER gText_ChillyReception
 	printstring 0x184
 	waitmessage DELAY_1SECOND

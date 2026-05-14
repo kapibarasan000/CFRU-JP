@@ -176,7 +176,7 @@ extern u8 gDexNavSearchLevels[999]; //0x203C6D4 -999 slots
 //extern struct CompressedPokemon gBox21[30] //0x203D210
 //extern struct CompressedPokemon gBox22[30] //0x203D8DC
 
-#define gPokeBackupPtr (*((const void**) 0x203DFAD))
+#define gPokeBackupPtr (*((const void**) 0x203DFAC))
 //#define sDexNavStatePtr/sFrontierRecordsPtr/gNewBS //0x203E038
 extern bool8 gInShop; //0x203E043
 #define gBattleCircusFlags (*((u32*) 0x203DFBC))
@@ -207,7 +207,6 @@ extern u16 gLastDexNavSpecies; //0x203E086
 //extern struct ListMenuItem[7] gMultiChoice; //0x203E088 - up to 7 pointers, 8 bytes each
 //extern u8 gPartyPresetTeamIndices[PARTY_SIZE]; //0x203E0C0
 extern u8 gScored3CritsInBattle;
-#define gAbilitiesPerBank ((u16*) 0x203E040)
 //FREE: 0x203E03E
 
 //DON'T GO PAST 0x203E0D4 for BTS!

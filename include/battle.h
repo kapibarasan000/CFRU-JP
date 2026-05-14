@@ -780,6 +780,7 @@ struct NewBattleStruct
 	u8 opportunistBoostStats[MAX_BATTLERS_COUNT][BATTLE_STATS_NO];
 	u8 opportunistState[MAX_BATTLERS_COUNT];
 	u16 commanderActive[MAX_BATTLERS_COUNT];
+	u16 abilitiesPerBank[MAX_BATTLERS_COUNT];
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
