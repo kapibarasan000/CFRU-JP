@@ -1514,7 +1514,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->terastalBoostAnimationPlayed = FALSE;
 			gNewBS->poisonPuppeteerConfusion = FALSE;
 			#ifdef GEN9_CHARGE
-			if (moveType == TYPE_ELECTRIC)
+			if (moveType == TYPE_ELECTRIC && gChosenMove != MOVE_CHARGE && gCurrentMove != MOVE_CHARGE)
 				gStatuses3[gBankAttacker] &= ~STATUS3_CHARGED_UP;
 			#endif
 			gBattleScripting.atk49_state++;
