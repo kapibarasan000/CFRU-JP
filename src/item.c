@@ -804,7 +804,7 @@ u8 TmHMDiscPosition(unusedArg struct Sprite* disc, u8 tmId)
 bool8 CheckReusableTMs(u16 item)
 {
 	#ifdef REUSABLE_TMS
-		if (TMIdFromItemId(item) != 0)
+		if (TMIdFromItemId(item) != 255)
 			return TRUE;
 		else
 			return FALSE;
