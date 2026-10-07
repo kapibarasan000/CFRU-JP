@@ -553,7 +553,7 @@ CreateBoxMonHook 803D23E 0
 
 ##TM/HM/Tutor Expansion
 CanMonLearnTMHM 08043278 2
-CanMonLearnTMTutor 08121310 3
+CanMonLearnVanillaTMTutor 08121310 3
 ItemIdToBattleMoveId 081263C4 1
 RemoveTMPPRestoreHook 08126910 2
 LoadTMNameWithNo 08132548 2
@@ -568,7 +568,7 @@ FixMartTmListing 0809AE94 0
 #TmMartDescriptionFix 0809AD54 1
 
 #ifdef EXPANDED_MOVE_TUTORS
-GetExpandedTutorMove 08121398 1
+GetVanillaTutorMove 08121398 1
 DracoMeteorMoveTutorHook 81277A4 0
 DracoMeteorMoveTutorHook2 81277AC 0
 #endif
