@@ -142,6 +142,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 						if (gBattleMoves[mon->moves[j]].type == gEvolutionTable[species][i].param)
 						{
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+							i = EVOS_PER_MON;
 							break;
 						}
 					}
