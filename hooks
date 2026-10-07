@@ -344,7 +344,7 @@ GetMonAbility 804042C 1
 RandomlyGivePartyPokerus 8043124 1
 UpdatePartyPokerusTime 80431F4 1
 PartySpreadPokerus 80431FC 1
-SetMonExpWithMaxLevelCheck 8043204 2
+TryIncrementMonLevelNew 8043204 2
 GiveRandomFrontierMonByTier 8028014 3
 RandomizerShowPokepicHook 809CD34 3
 GetMegaSpecies 801CFA4 3

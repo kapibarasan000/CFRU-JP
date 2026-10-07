@@ -4408,6 +4408,27 @@ void SetMonExpWithMaxLevelCheck(struct Pokemon *mon, u16 species, unusedArg u8 u
     }
 }
 
+bool8 TryIncrementMonLevelNew(struct Pokemon *mon)
+{
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u8 level = GetMonData(mon, MON_DATA_LEVEL, NULL);
+	u8 newLevel = level + 1;
+	u32 exp = GetMonData(mon, MON_DATA_EXP, NULL);
+
+	if (level < MAX_LEVEL)
+	{
+		if (exp > gExperienceTables[gBaseStats[species].growthRate][newLevel])
+		{
+			SetMonData(mon, MON_DATA_LEVEL, &newLevel);
+			SetMonExpWithMaxLevelCheck(mon, species, newLevel, exp);
+			return TRUE;
+		}
+		return FALSE;
+	}
+	SetMonExpWithMaxLevelCheck(mon, species, level, exp);
+	return FALSE;
+}
+
 void RandomlyGivePartyPokerus(struct Pokemon *party)
 {
 	u16 rnd = Random();
