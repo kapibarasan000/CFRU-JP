@@ -312,7 +312,10 @@ u16 BuildLearnableMoveset(struct Pokemon* mon, u16* moves)
 			++numTotalMoves;
 			++moves; //Increase Ptr
 		}
+	}
 
+	for (int i = 0; i <= LAST_TOTAL_TUTOR_NUM; ++i)
+	{
 		#ifdef EXPANDED_MOVE_TUTORS
 		u8 tutRet = CanMonLearnTutorMove(mon, i);
 		#else

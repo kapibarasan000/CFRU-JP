@@ -416,49 +416,12 @@ u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm)
 
 bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
 {
-	u32 mask;
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 
 	if (tutorId < NUM_MOVE_TUTORS)
 	{
-		if (tutorId < 32)
-		{
-			mask = 1 << tutorId;
-			return (gTutorLearnsets[species][0] & mask) != 0 ? TRUE : FALSE;
-		}
-		else if (tutorId >= 32 && tutorId < 64)
-		{
-			mask = 1 << (tutorId - 32);
-			return (gTutorLearnsets[species][1] & mask) != 0 ? TRUE : FALSE;
-		}
-	#if (NUM_MOVE_TUTORS > 64)
-		else if (tutorId >= 64 && tutorId < 96)
-		{
-			mask = 1 << (tutorId - 64);
-			return (gTutorLearnsets[species][2] & mask) != 0 ? TRUE : FALSE;
-		}
-	#endif
-	#if (NUM_MOVE_TUTORS > 96)
-		else if (tutorId >= 96 && tutorId < 128)
-		{
-			mask = 1 << (tutorId - 96);
-			return (gTutorLearnsets[species][3] & mask) != 0 ? TRUE : FALSE;
-		}
-	#endif
-	#if (NUM_MOVE_TUTORS > 128)
-		else if (tutorId >= 128 && tutorId < 160)
-		{
-			mask = 1 << (tutorId - 128);
-			return (gTutorLearnsets[species][4] & mask) != 0 ? TRUE : FALSE;
-		}
-	#endif
-	#if (NUM_MOVE_TUTORS > 160)
-		else if (tutorId >= 160 && tutorId < 192)
-		{
-			mask = 1 << (tutorId - 160);
-			return (gTutorLearnsets[species][5] & mask) != 0 ? TRUE : FALSE;
-		}
-	#endif
+		const u8* row = ((const u8*) gTutorLearnsets) + species * ((NUM_MOVE_TUTORS + 7) / 8);
+		return (row[tutorId / 8] & (1 << (tutorId % 8))) != 0 ? TRUE : FALSE;
 	}
 
 	//Special move tutors not stored in a table
