@@ -801,6 +801,15 @@ static void Task_OverworldMultiTrainers(u8 id)
 			break;
 
 		case 3:
+		{
+			struct EventObject* second = &gEventObjects[ExtensionState.spotted.trainers[1].id];
+			if (second->active && second->frozen)
+			{
+				second->frozen = FALSE;
+				gSprites[second->spriteId].animPaused = second->spriteAnimPausedBackup;
+				gSprites[second->spriteId].affineAnimPaused = second->spriteAffineAnimPausedBackup;
+			}
+		}
 			ExtensionState.multiTaskStateHelper = 0;
 			gApproachingTrainerId = 1;
 			SetUpTwoTrainersBattle();
