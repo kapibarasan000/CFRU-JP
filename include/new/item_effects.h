@@ -2,11 +2,9 @@
 
 #include "../global.h"
 
-static const u8 sItemEffect_Potion[8] = {
-    [3] = 0x20,
+static const u8 sItemEffect_Potion[7] = {
     [4] = ITEM4_HEAL_HP,
-    [6] = 0x14, // Byte 7 (cura de 20 HP)
-    [7] = 0xFF,
+    [6] = 20,
 };
 
 static const u8 sItemEffect_Antidote[6] = {
