@@ -173,9 +173,32 @@ void OpponentHandleChooseMove(void)
 }
 
 #define STATE_BEFORE_ACTION_CHOSEN 0
+//上流は「右側なら後から選ぶ」とだけ見ていた。けれど下の ShouldAIChooseAction は AI どうしのダブルでは
+//速い順（同じ素早さなら左が先）に選ぶので、右側が速いと、味方がまだ選んでいない（前のターンの技が残っている）のに選び直しを頼んでいた。
+//英語の本家も同じ所を b637a278 で直している（本家は素早さを比べる形・ただし本家の直しは BIT_SIDE で比べていて、相手の側では
+//同じ素早さのとき必ず選び直す）。ここでは ShouldAIChooseAction と同じ決め方の逆＝「味方より後に選ぶ」ときだけにする。
+//味方が倒れているときも選び直さない（いない味方に技を選ばせない）
+static bool8 ChoosesActionAfterPartner(void)
+{
+	u8 position = GetBattlerPosition(gActiveBattler);
+
+	if (!(gBattleTypeFlags & BATTLE_TYPE_LINK) //Vs AI
+	&& IS_DOUBLE_BATTLE
+	&& (SIDE(gActiveBattler) == B_SIDE_OPPONENT || IsMockBattle())) //AI controlled side
+	{
+		u32 speedCalcBank = SpeedCalc(gActiveBattler);
+		u32 speedCalcPartner = SpeedCalc(PARTNER(gActiveBattler));
+
+		return speedCalcBank < speedCalcPartner
+			|| (speedCalcBank == speedCalcPartner && (position & BIT_FLANK) != B_FLANK_LEFT); //Speed tie: left slot goes first
+	}
+
+	return (position & BIT_FLANK) != B_FLANK_LEFT;
+}
+
 static void TryRechoosePartnerMove(u16 chosenMove)
 {
-	if (GetBattlerPosition(gActiveBattler) & BIT_FLANK) //Second to choose action on either side
+	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gActiveBattler)) && ChoosesActionAfterPartner()) //Second to choose action on either side
 	{
 		switch (gChosenMovesByBanks[PARTNER(gActiveBattler)]) {
 			case MOVE_HELPINGHAND:
