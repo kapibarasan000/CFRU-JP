@@ -350,7 +350,9 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_GORILLATACTICS] = 4,
 };
 
-const bool8 gMoldBreakerIgnoredAbilities[] =
+//上流は長さ指定なし＝「いちばん大きい指定の番号 + 1」で、ABILITIES_COUNT より短かった。
+//読む側は特性の番号を範囲の確かめなしに添字にするので、表の外の 1 バイトを読んでかたやぶりの判定がずれうる。特性を足すたびに同じずれが戻るので長さを決める
+const bool8 gMoldBreakerIgnoredAbilities[ABILITIES_COUNT] =
 {
 	[ABILITY_ARMORTAIL] =		TRUE,
 	[ABILITY_BATTLEARMOR] =		TRUE,
