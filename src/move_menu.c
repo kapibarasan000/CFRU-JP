@@ -125,7 +125,9 @@ static const struct OamData sTypeIconOAM =
 };
 
 #define type_icon_frame(ptr, frame) {.data = (u8 *)ptr + (1 * 2 * frame * 32), .size = 1 * 2 * 32}
-static const struct SpriteFrameImage sTypeIconPicTable[] =
+//上流は長さ指定なし＝TYPE_FAIRY + 1（24）で、タイプの数（TYPE_STELLAR まで 25）より 1 つ短かった。
+//ステラの絵は無いので、使わない番号と同じ「？？？」の絵にする
+static const struct SpriteFrameImage sTypeIconPicTable[NUMBER_OF_MON_TYPES] =
 {
 	[TYPE_NORMAL] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_NORMAL),
 	[TYPE_FIGHTING] =	type_icon_frame(CamomonsTypeIconsTiles, TYPE_FIGHTING),
@@ -151,6 +153,7 @@ static const struct SpriteFrameImage sTypeIconPicTable[] =
 	[0x15] = 			type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
 	[0x16] = 			type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
 	[TYPE_FAIRY] = 		type_icon_frame(CamomonsTypeIconsTiles, TYPE_FAIRY),
+	[TYPE_STELLAR] = 	type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
 };
 
 static struct SpriteTemplate sTypeIconSpriteTemplate =
