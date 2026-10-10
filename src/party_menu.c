@@ -486,7 +486,9 @@ u8 ChangeSummaryScreenMonSinglesDoubles(u8 delta)
 	return result;
 };
 
-#define sMultiPokemonPartyMenuOrder ((u8*) 0x8463FB8)
+//英語版（BPRE）の番地 0x8463FB8 のままだった。日本語版の 0x08463FB8 は無関係なデータで、それを手持ちの添字にして
+//gPlayerParty の外を読んでいた。同じ表（00 02 03 01 04 05）は日本語版では 0x0842D344 の 1 か所だけ
+#define sMultiPokemonPartyMenuOrder ((u8*) 0x842D344)
 s8 ChangeSummaryScreenMonMulti(s8 delta)
 {
 	u8 i;
