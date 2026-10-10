@@ -2076,7 +2076,9 @@ void RestoreEffectBankHPStatsAndRemoveBackupSpecies(void)
 	//Update Moveset
 	struct Pokemon* mon = GetBankPartyData(gEffectBank);
 	bool8 canLearnMove[MAX_MON_MOVES] = {FALSE};
-	u16 moves[MAX_LEARNABLE_MOVES + EGG_MOVES_ARRAY_COUNT + EGG_MOVES_ARRAY_COUNT + NUM_TMSHMS + (LAST_TOTAL_TUTOR_NUM + 1)] = {MOVE_NONE};
+	//上流はこの一覧（約 860 バイト）をスタックに置き、この関数だけで 928 バイト・中で呼ぶ GetAllEggMoves と合わせて
+	//2,224 バイト（スタックの約 2.5KB の大半）だった → ヒープへ（Calloc は 0 で埋める＝上流の = {MOVE_NONE} と同じ）
+	u16* moves = Calloc(sizeof(u16) * (MAX_LEARNABLE_MOVES + EGG_MOVES_ARRAY_COUNT + EGG_MOVES_ARRAY_COUNT + NUM_TMSHMS + (LAST_TOTAL_TUTOR_NUM + 1)));
 	u16 numMoves = BuildLearnableMoveset(mon, moves);
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
@@ -2094,6 +2096,7 @@ void RestoreEffectBankHPStatsAndRemoveBackupSpecies(void)
 		if (j < numMoves)
 			canLearnMove[i] = TRUE;
 	}
+	Free(moves);
 
 	u16 newMoves[MAX_MON_MOVES] = {0};
 	u16 newPP[MAX_MON_MOVES] = {0};

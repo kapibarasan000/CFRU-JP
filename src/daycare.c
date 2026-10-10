@@ -990,13 +990,27 @@ u8 ModifyBreedingScoreForOvalCharm(u8 score)
 	return score;
 }
 
+//上流は bool8 moveInList[MOVES_COUNT]（今の技の数で約 1,000 バイト）をスタックに置いていた。この関数だけで
+//1,264 バイト・RestoreEffectBankHPStatsAndRemoveBackupSpecies（928 バイト）から呼ばれると 2,224 バイト＝スタックの約 2.5KB の大半。
+//集めるのは最大 EGG_MOVES_ARRAY_COUNT（50）個なので、集めた一覧の中を探せば足りる
+static bool8 IsMoveInList(const u16* moves, u32 count, u16 move)
+{
+	u32 i;
+
+	for (i = 0; i < count; ++i)
+	{
+		if (moves[i] == move)
+			return TRUE;
+	}
+	return FALSE;
+}
+
 u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves)
 {
 	u8 numEggMoves;
 	u32 i, j;
 	struct Pokemon dummyMon = {0};
 	u16 eggMovesBuffer[EGG_MOVES_ARRAY_COUNT];
-	bool8 moveInList[MOVES_COUNT] = {FALSE};
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u16 eggSpecies = GetEggSpecies(species);
 	eggSpecies = GetOverrideEggSpecies(eggSpecies);
@@ -1008,10 +1022,7 @@ u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves
 	for (i = 0, j = 0; i < numEggMoves; ++i)
 	{
 		if (!ignoreAlreadyKnownMoves || !MoveInMonMoveset(eggMovesBuffer[i], mon))
-		{
 			moves[j++] = eggMovesBuffer[i];
-			moveInList[eggMovesBuffer[i]] = TRUE;
-		}
 	}
 
 	u16 eggSpecies2 = eggSpecies;
@@ -1024,7 +1035,7 @@ u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves
 		//Filter out any egg moves the Pokemon already knows
 		for (i = 0; i < numEggMoves && j < EGG_MOVES_ARRAY_COUNT; ++i)
 		{
-			if (!moveInList[eggMovesBuffer[i]]) //Move wasn't already added above
+			if (!IsMoveInList(moves, j, eggMovesBuffer[i])) //Move wasn't already added above
 			{
 				if (!ignoreAlreadyKnownMoves || !MoveInMonMoveset(eggMovesBuffer[i], mon))
 					moves[j++] = eggMovesBuffer[i];
