@@ -116,13 +116,17 @@ __aeabi_idiv:
     .thumb_func
     .type __aeabi_idivmod,function
 __aeabi_idivmod:
-	push {lr}
-	bl ActualModulationInt
-.byte 0x01, 0x1C @;mov r1, r0 - Return to r1 for some reason
-	pop {pc}
-	
-ActualModulationInt:
-	ldr r3, =(__modsi3)
+	@ AEABI: r0 = 商, r1 = 余り
+	push {r4, r5, lr}
+	movs r4, r0
+	movs r5, r1
+	bl ActualDivisionInt
+	muls r5, r0, r5
+	subs r1, r4, r5
+	pop {r4, r5, pc}
+
+ActualDivisionInt:
+	ldr r3, =(__divsi3)
 	bx r3
 	.size __aeabi_idivmod, . - __aeabi_idivmod
 
@@ -132,13 +136,17 @@ ActualModulationInt:
     .thumb_func
     .type __aeabi_uidivmod,function
 __aeabi_uidivmod:
-	push {lr}
-	bl ActualModulationUInt
-.byte 0x01, 0x1C @;mov r1, r0 - Return to r1 for some reason
-	pop {pc}
-	
-ActualModulationUInt:
-	ldr r3, =(__umodsi3)
+	@ AEABI: r0 = 商, r1 = 余り
+	push {r4, r5, lr}
+	movs r4, r0
+	movs r5, r1
+	bl ActualDivisionUInt
+	muls r5, r0, r5
+	subs r1, r4, r5
+	pop {r4, r5, pc}
+
+ActualDivisionUInt:
+	ldr r3, =(__udivsi3)
 	bx r3
 	.size __aeabi_uidivmod, . - __aeabi_uidivmod
 
